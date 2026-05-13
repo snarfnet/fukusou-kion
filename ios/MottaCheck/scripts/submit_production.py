@@ -169,6 +169,14 @@ def ensure_release_prerequisites(version_id):
             "attributes": {"copyright": "2026 Tokyo Nasu"},
         }
     })
+    response = api("PATCH", f"/appStoreVersions/{version_id}", json={
+        "data": {
+            "type": "appStoreVersions",
+            "id": version_id,
+            "attributes": {"usesIdfa": True},
+        }
+    })
+    print(f"IDFA declaration: {response.status_code}")
     ensure_free_price()
     ensure_review_detail(version_id)
 
@@ -412,9 +420,16 @@ def submit_for_review(version_id):
             "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
         }
     })
-    if response.status_code != 201:
+    if response.status_code == 201:
+        submission_id = body["data"]["id"]
+    elif response.status_code == 409:
+        submission_id = find_reusable_review_submission()
+        if not submission_id:
+            raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
+        print(f"Reusing review submission: {submission_id}")
+    else:
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
-    submission_id = body["data"]["id"]
+
     for attempt in range(20):
         response = api("POST", "/reviewSubmissionItems", json={
             "data": {
@@ -435,6 +450,18 @@ def submit_for_review(version_id):
     if response.status_code != 200:
         raise RuntimeError(f"Review submit failed {response.status_code}: {response.text[:300]}")
     print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+
+
+def find_reusable_review_submission():
+    response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    if response.status_code != 200:
+        return None
+    reusable_states = ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES")
+    for submission in body.get("data", []):
+        state = submission.get("attributes", {}).get("state")
+        if state in reusable_states:
+            return submission["id"]
+    return None
 
 
 def main():
