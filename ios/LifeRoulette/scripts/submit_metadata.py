@@ -225,6 +225,120 @@ def update_metadata(version_id):
             raise RuntimeError(f"Metadata failed {locale}: {response.text[:500]}")
 
 
+def ensure_release_prerequisites(app_id, version_id):
+    response = api(
+        "PATCH",
+        f"/apps/{app_id}",
+        json={
+            "data": {
+                "type": "apps",
+                "id": app_id,
+                "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"},
+            }
+        },
+    )
+    print(f"Content rights: {response.status_code}")
+
+    response, body = api_json("GET", f"/apps/{app_id}/appInfos?limit=10")
+    app_infos = body.get("data", []) if response.status_code == 200 else []
+    if app_infos:
+        app_info_id = app_infos[0]["id"]
+        response = api(
+            "PATCH",
+            f"/appInfos/{app_info_id}",
+            json={
+                "data": {
+                    "type": "appInfos",
+                    "id": app_info_id,
+                    "relationships": {
+                        "primaryCategory": {"data": {"type": "appCategories", "id": "ENTERTAINMENT"}}
+                    },
+                }
+            },
+        )
+        print(f"Primary category: {response.status_code}")
+        if response.status_code not in (200, 201):
+            raise RuntimeError(f"Primary category failed {response.status_code}: {response.text[:500]}")
+        update_age_rating(app_info_id)
+        update_app_info_localizations(app_info_id)
+
+    ensure_version_attributes(version_id)
+    response = api(
+        "PATCH",
+        f"/appStoreVersions/{version_id}",
+        json={
+            "data": {
+                "type": "appStoreVersions",
+                "id": version_id,
+                "attributes": {"usesIdfa": False},
+            }
+        },
+    )
+    print(f"IDFA declaration: {response.status_code}")
+
+
+def update_age_rating(app_info_id):
+    string_keys = [
+        "alcoholTobaccoOrDrugUseOrReferences",
+        "contests",
+        "gamblingSimulated",
+        "gunsOrOtherWeapons",
+        "medicalOrTreatmentInformation",
+        "profanityOrCrudeHumor",
+        "sexualContentGraphicAndNudity",
+        "sexualContentOrNudity",
+        "horrorOrFearThemes",
+        "matureOrSuggestiveThemes",
+        "violenceCartoonOrFantasy",
+        "violenceRealisticProlongedGraphicOrSadistic",
+        "violenceRealistic",
+    ]
+    bool_keys = [
+        "messagingAndChat",
+        "gambling",
+        "parentalControls",
+        "ageAssurance",
+        "userGeneratedContent",
+        "healthOrWellnessTopics",
+        "unrestrictedWebAccess",
+        "lootBox",
+    ]
+    attrs = {key: "NONE" for key in string_keys}
+    attrs.update({key: False for key in bool_keys})
+    attrs["advertising"] = False
+    response = api(
+        "PATCH",
+        f"/ageRatingDeclarations/{app_info_id}",
+        json={"data": {"type": "ageRatingDeclarations", "id": app_info_id, "attributes": attrs}},
+    )
+    print(f"Age rating: {response.status_code}")
+
+
+def update_app_info_localizations(app_info_id):
+    response, body = api_json("GET", f"/appInfos/{app_info_id}/appInfoLocalizations?limit=20")
+    if response.status_code != 200:
+        print(f"App info localizations: {response.status_code}")
+        return
+    for loc in body.get("data", []):
+        locale = loc["attributes"].get("locale")
+        subtitle = "日付と名前の数字占い" if locale == "ja" else "Simple number readings"
+        response = api(
+            "PATCH",
+            f"/appInfoLocalizations/{loc['id']}",
+            json={
+                "data": {
+                    "type": "appInfoLocalizations",
+                    "id": loc["id"],
+                    "attributes": {
+                        "subtitle": subtitle,
+                        "privacyPolicyUrl": "https://snarfnet.github.io/privacy.html",
+                    },
+                }
+            },
+        )
+        print(f"App info {locale}: {response.status_code}")
+
+
 def upload_screenshots(version_id):
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
@@ -500,6 +614,7 @@ def main():
     app_id = find_app_id()
     version_id, state = find_or_create_version(app_id)
     update_metadata(version_id)
+    ensure_release_prerequisites(app_id, version_id)
 
     if os.environ.get("PREPARE_APP_ONLY") == "1":
         print("App Store Connect metadata is ready.")
@@ -514,7 +629,6 @@ def main():
     print("Waiting for screenshot processing...")
     time.sleep(300)
     assign_build(version_id, build_id)
-    ensure_version_attributes(version_id)
     ensure_review_detail(version_id)
     response = submit_app_store_version(version_id)
     if response.status_code in (200, 201):
