@@ -1,0 +1,307 @@
+import hashlib
+import os
+import sys
+import time
+
+import jwt
+import requests
+
+KEY_ID = os.environ["ASC_KEY_ID"]
+ISSUER = os.environ["ASC_ISSUER_ID"]
+APP_ID = os.environ.get("APP_ID", "6769013627")
+APP_VERSION = os.environ.get("APP_VERSION", "1.0")
+BUILD_NUMBER = os.environ["BUILD_NUMBER"]
+P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
+SCREENSHOT_DIR = "MarketingAssets/Screenshots"
+
+SCREENSHOT_GROUPS = [
+    ("APP_IPHONE_67", ["iphone69_01_home.png", "iphone69_02_check.png", "iphone69_03_template.png", "iphone69_04_notice.png", "iphone69_05_history.png"]),
+    ("APP_IPHONE_65", ["iphone65_01_home.png", "iphone65_02_check.png", "iphone65_03_template.png", "iphone65_04_notice.png", "iphone65_05_history.png"]),
+    ("APP_IPHONE_55", ["iphone55_01_home.png", "iphone55_02_check.png", "iphone55_03_template.png", "iphone55_04_notice.png", "iphone55_05_history.png"]),
+    ("APP_IPAD_PRO_3GEN_129", ["ipad129_01_home.png", "ipad129_02_check.png", "ipad129_03_template.png", "ipad129_04_notice.png", "ipad129_05_history.png"]),
+]
+
+META = {
+    "ja": {
+        "description": """忘れ物ゼロは、外出前の持ち物チェックをすばやく済ませるアプリです。
+
+仕事、学校、旅行、ジム、病院など、よく使うシーンのテンプレートを用意しました。自分用のリストも作れます。
+
+朝や出発前の通知を設定して、財布、鍵、スマホなどを出る前に確認できます。忘れやすい持ち物は履歴で見返せます。""",
+        "keywords": "忘れ物,持ち物,チェックリスト,通知,旅行,仕事,学校,ジム,病院,リマインダー",
+        "whatsNew": "初回リリースです。",
+        "promotionalText": "出る前に、財布、鍵、スマホをすばやくチェック。",
+        "marketingUrl": "https://snarfnet.github.io/",
+    },
+    "en-US": {
+        "description": """Forgot Nothing helps you check what to bring before leaving.
+
+Use ready-made templates for work, school, travel, gym, and hospital visits, or create your own list.
+
+Set morning and pre-departure notifications, then review items like your wallet, keys, and phone before you go.""",
+        "keywords": "checklist,packing,reminder,travel,work,school,gym,notification,items,forgot",
+        "whatsNew": "Initial release.",
+        "promotionalText": "Check your wallet, keys, phone, and more before you leave.",
+        "marketingUrl": "https://snarfnet.github.io/",
+    },
+}
+
+p8 = open(P8_PATH, encoding="utf-8").read()
+
+
+def token():
+    now = int(time.time())
+    return jwt.encode(
+        {"iss": ISSUER, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+        p8,
+        algorithm="ES256",
+        headers={"kid": KEY_ID},
+    )
+
+
+def headers():
+    return {"Authorization": f"Bearer {token()}", "Content-Type": "application/json"}
+
+
+def api(method, path, **kwargs):
+    for _ in range(6):
+        response = requests.request(
+            method,
+            f"https://api.appstoreconnect.apple.com/v1{path}",
+            headers=headers(),
+            timeout=120,
+            **kwargs,
+        )
+        if response.status_code not in (401, 429, 500, 502, 503, 504):
+            return response
+        time.sleep(20)
+    return response
+
+
+def api_json(method, path, **kwargs):
+    response = api(method, path, **kwargs)
+    try:
+        body = response.json()
+    except Exception:
+        body = {}
+    return response, body
+
+
+def list_all(path):
+    rows = []
+    next_path = path
+    while next_path:
+        response, body = api_json("GET", next_path)
+        if response.status_code != 200:
+            raise RuntimeError(f"List failed {response.status_code}: {response.text[:300]}")
+        rows.extend(body.get("data", []))
+        next_url = body.get("links", {}).get("next")
+        next_path = next_url.split("/v1", 1)[1] if next_url else None
+    return rows
+
+
+def find_or_create_version():
+    for version in list_all(f"/apps/{APP_ID}/appStoreVersions?filter[platform]=IOS&limit=200"):
+        attrs = version.get("attributes", {})
+        if attrs.get("versionString") == APP_VERSION:
+            print(f"Found version {APP_VERSION}: {version['id']} state={attrs.get('appStoreState')}")
+            return version["id"], attrs.get("appStoreState")
+
+    response, body = api_json("POST", "/appStoreVersions", json={
+        "data": {
+            "type": "appStoreVersions",
+            "attributes": {"platform": "IOS", "versionString": APP_VERSION},
+            "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
+        }
+    })
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Version create failed {response.status_code}: {response.text[:300]}")
+    return body["data"]["id"], "PREPARE_FOR_SUBMISSION"
+
+
+def wait_for_build():
+    for index in range(90):
+        response, body = api_json(
+            "GET",
+            f"/builds?filter[app]={APP_ID}&filter[version]={BUILD_NUMBER}&filter[processingState]=VALID&limit=1",
+        )
+        if body.get("data"):
+            build_id = body["data"][0]["id"]
+            print(f"Build ready: {build_id}")
+            return build_id
+        print(f"Waiting for build processing... {index + 1}/90")
+        time.sleep(30)
+    raise RuntimeError(f"Build {BUILD_NUMBER} did not finish processing")
+
+
+def ensure_localizations(version_id):
+    localizations = list_all(f"/appStoreVersions/{version_id}/appStoreVersionLocalizations?limit=200")
+    existing = {item["attributes"]["locale"]: item for item in localizations}
+    for locale in META:
+        if locale in existing:
+            continue
+        response, body = api_json("POST", "/appStoreVersionLocalizations", json={
+            "data": {
+                "type": "appStoreVersionLocalizations",
+                "attributes": {"locale": locale},
+                "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}},
+            }
+        })
+        if response.status_code in (200, 201):
+            existing[locale] = body["data"]
+    return list(existing.values())
+
+
+def update_metadata(version_id):
+    for loc in ensure_localizations(version_id):
+        locale = loc["attributes"]["locale"]
+        meta = META.get(locale, META["en-US"])
+        response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json={
+            "data": {
+                "type": "appStoreVersionLocalizations",
+                "id": loc["id"],
+                "attributes": meta,
+            }
+        })
+        if response.status_code == 409 and "whatsNew" in meta:
+            meta = {key: value for key, value in meta.items() if key != "whatsNew"}
+            response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json={
+                "data": {
+                    "type": "appStoreVersionLocalizations",
+                    "id": loc["id"],
+                    "attributes": meta,
+                }
+            })
+        print(f"Metadata {locale}: {response.status_code}")
+
+
+def upload_screenshots(version_id):
+    for loc in ensure_localizations(version_id):
+        locale = loc["attributes"]["locale"]
+        print(f"Screenshots for {locale}")
+        sets = list_all(f"/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets?limit=200")
+        existing = {item["attributes"]["screenshotDisplayType"]: item["id"] for item in sets}
+        for display_type, filenames in SCREENSHOT_GROUPS:
+            set_id = existing.get(display_type)
+            if not set_id:
+                response, body = api_json("POST", "/appScreenshotSets", json={
+                    "data": {
+                        "type": "appScreenshotSets",
+                        "attributes": {"screenshotDisplayType": display_type},
+                        "relationships": {
+                            "appStoreVersionLocalization": {
+                                "data": {"type": "appStoreVersionLocalizations", "id": loc["id"]}
+                            }
+                        },
+                    }
+                })
+                if response.status_code not in (200, 201):
+                    raise RuntimeError(f"Screenshot set create failed {response.status_code}: {response.text[:300]}")
+                set_id = body["data"]["id"]
+            for screenshot in list_all(f"/appScreenshotSets/{set_id}/appScreenshots?limit=200"):
+                api("DELETE", f"/appScreenshots/{screenshot['id']}")
+            for filename in filenames:
+                upload_screenshot(set_id, filename)
+
+
+def upload_screenshot(set_id, filename):
+    path = os.path.join(SCREENSHOT_DIR, filename)
+    if not os.path.exists(path):
+        raise RuntimeError(f"Missing screenshot: {path}")
+    data = open(path, "rb").read()
+    checksum = hashlib.md5(data).hexdigest()
+    response, body = api_json("POST", "/appScreenshots", json={
+        "data": {
+            "type": "appScreenshots",
+            "attributes": {"fileName": filename, "fileSize": len(data)},
+            "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}},
+        }
+    })
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Screenshot create failed {response.status_code}: {response.text[:300]}")
+    screenshot_id = body["data"]["id"]
+    for operation in body["data"]["attributes"]["uploadOperations"]:
+        request_headers = {item["name"]: item["value"] for item in operation["requestHeaders"]}
+        start = operation["offset"]
+        end = start + operation["length"]
+        requests.put(operation["url"], headers=request_headers, data=data[start:end], timeout=120)
+    response = api("PATCH", f"/appScreenshots/{screenshot_id}", json={
+        "data": {
+            "type": "appScreenshots",
+            "id": screenshot_id,
+            "attributes": {"uploaded": True, "sourceFileChecksum": checksum},
+        }
+    })
+    print(f"  {filename}: {response.status_code}")
+
+
+def assign_build(version_id, build_id):
+    api("PATCH", f"/builds/{build_id}", json={
+        "data": {"type": "builds", "id": build_id, "attributes": {"usesNonExemptEncryption": False}}
+    })
+    response = api("PATCH", f"/appStoreVersions/{version_id}/relationships/build", json={
+        "data": {"type": "builds", "id": build_id}
+    })
+    print(f"Build assigned: {response.status_code}")
+
+
+def submit_for_review(version_id):
+    response, body = api_json("POST", "/reviewSubmissions", json={
+        "data": {
+            "type": "reviewSubmissions",
+            "attributes": {"platform": "IOS"},
+            "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
+        }
+    })
+    if response.status_code != 201:
+        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
+    submission_id = body["data"]["id"]
+    for attempt in range(20):
+        response = api("POST", "/reviewSubmissionItems", json={
+            "data": {
+                "type": "reviewSubmissionItems",
+                "relationships": {
+                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                },
+            }
+        })
+        print(f"Review item {attempt + 1}/20: {response.status_code}")
+        if response.status_code == 201:
+            break
+        time.sleep(30)
+    response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
+        "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+    })
+    if response.status_code != 200:
+        raise RuntimeError(f"Review submit failed {response.status_code}: {response.text[:300]}")
+    print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+
+
+def main():
+    response, body = api_json("GET", f"/apps/{APP_ID}")
+    if response.status_code != 200:
+        raise RuntimeError(f"App lookup failed {response.status_code}: {response.text[:300]}")
+    attrs = body["data"]["attributes"]
+    print(f"App: {attrs.get('name')} / {attrs.get('bundleId')}")
+
+    version_id, state = find_or_create_version()
+    if os.environ.get("PREPARE_APP_ONLY") == "1":
+        update_metadata(version_id)
+        print("App Store Connect metadata is ready.")
+        return
+    if state in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
+        print(f"Already submitted: {state}")
+        return
+
+    build_id = wait_for_build()
+    update_metadata(version_id)
+    upload_screenshots(version_id)
+    print("Waiting for screenshot processing...")
+    time.sleep(300)
+    assign_build(version_id, build_id)
+    submit_for_review(version_id)
+
+
+if __name__ == "__main__":
+    main()
