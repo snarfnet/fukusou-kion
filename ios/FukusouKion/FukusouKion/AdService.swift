@@ -73,7 +73,7 @@ final class InterstitialAdCoordinator: NSObject, ObservableObject, GADFullScreen
             return
         }
 
-        ad.present(from: rootViewController)
+        ad.present(fromRootViewController: rootViewController)
         self.ad = nil
     }
 
