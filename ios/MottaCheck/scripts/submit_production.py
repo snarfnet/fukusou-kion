@@ -5,6 +5,7 @@ import time
 
 import jwt
 import requests
+from requests import RequestException
 
 KEY_ID = os.environ["ASC_KEY_ID"]
 ISSUER = os.environ["ASC_ISSUER_ID"]
@@ -391,7 +392,7 @@ def upload_screenshot(set_id, filename):
         request_headers = {item["name"]: item["value"] for item in operation["requestHeaders"]}
         start = operation["offset"]
         end = start + operation["length"]
-        requests.put(operation["url"], headers=request_headers, data=data[start:end], timeout=120)
+        upload_binary_part(operation["url"], request_headers, data[start:end])
     response = api("PATCH", f"/appScreenshots/{screenshot_id}", json={
         "data": {
             "type": "appScreenshots",
@@ -400,6 +401,20 @@ def upload_screenshot(set_id, filename):
         }
     })
     print(f"  {filename}: {response.status_code}")
+
+
+def upload_binary_part(url, headers, data):
+    for attempt in range(1, 6):
+        try:
+            response = requests.put(url, headers=headers, data=data, timeout=120)
+            if response.status_code < 500:
+                return response
+        except RequestException as error:
+            if attempt == 5:
+                raise
+            print(f"  Upload retry {attempt}/5: {error}")
+        time.sleep(5 * attempt)
+    return response
 
 
 def assign_build(version_id, build_id):
