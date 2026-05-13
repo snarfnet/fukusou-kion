@@ -16,6 +16,15 @@ APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 BUILD_NUMBER = os.environ.get("BUILD_NUMBER")
 P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 SCREENSHOT_DIR = "MarketingAssets/Screenshots"
+REVIEW_CONTACT = {
+    "contactFirstName": "Tokyo",
+    "contactLastName": "Nasu",
+    "contactEmail": "tokyonasu@yahoo.co.jp",
+    "contactPhone": "+81 80-2368-9194",
+    "demoAccountRequired": False,
+    "demoAccountName": "",
+    "demoAccountPassword": "",
+}
 
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone69_01_home.png", "iphone69_02_name.png", "iphone69_03_choice.png", "iphone69_04_history.png"]),
@@ -321,6 +330,44 @@ def assign_build(version_id, build_id):
         raise RuntimeError(f"Build assign failed {response.status_code}: {response.text[:500]}")
 
 
+def ensure_review_detail(version_id):
+    response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
+    if response.status_code == 200 and body.get("data"):
+        detail_id = body["data"]["id"]
+        response = api(
+            "PATCH",
+            f"/appStoreReviewDetails/{detail_id}",
+            json={
+                "data": {
+                    "type": "appStoreReviewDetails",
+                    "id": detail_id,
+                    "attributes": REVIEW_CONTACT,
+                }
+            },
+        )
+        print(f"Review detail updated: {response.status_code}")
+        if response.status_code not in (200, 201):
+            raise RuntimeError(f"Review detail update failed {response.status_code}: {response.text[:500]}")
+        return
+
+    response = api(
+        "POST",
+        "/appStoreReviewDetails",
+        json={
+            "data": {
+                "type": "appStoreReviewDetails",
+                "attributes": REVIEW_CONTACT,
+                "relationships": {
+                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
+                },
+            }
+        },
+    )
+    print(f"Review detail created: {response.status_code}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Review detail create failed {response.status_code}: {response.text[:500]}")
+
+
 def submit_app_store_version(version_id):
     response = api(
         "POST",
@@ -450,6 +497,7 @@ def main():
     print("Waiting for screenshot processing...")
     time.sleep(300)
     assign_build(version_id, build_id)
+    ensure_review_detail(version_id)
     response = submit_app_store_version(version_id)
     if response.status_code in (200, 201):
         print("Submitted for App Review via appStoreVersionSubmissions.")
