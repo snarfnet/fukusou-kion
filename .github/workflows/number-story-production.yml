@@ -44,6 +44,16 @@ jobs:
           cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" /tmp/asc_key.p8
           cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
 
+      - name: Resolve App Store bundle ID
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_ID: ${{ vars.NUMBER_STORY_APP_ID }}
+        run: |
+          . .venv/bin/activate
+          python scripts/resolve_app_bundle.py >> "$GITHUB_ENV"
+
       - name: Install distribution certificate
         env:
           IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
@@ -66,7 +76,6 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
           APP_ID: ${{ vars.NUMBER_STORY_APP_ID }}
-          APP_BUNDLE_ID: com.tokyonasu.numberstory
           APP_NAME: "数字のお話"
           APP_SKU: numberstory
           APP_VERSION: "1.0"
@@ -81,7 +90,6 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
-          APP_BUNDLE_ID: com.tokyonasu.numberstory
           PROFILE_NAME: "NumberStory App Store"
         run: |
           . .venv/bin/activate
@@ -105,6 +113,7 @@ jobs:
             CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM=83VGKGSQUH \
             PROVISIONING_PROFILE_SPECIFIER="NumberStory App Store" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}"
 
       - name: Export IPA
@@ -112,6 +121,9 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string NumberStory App Store" export_options.plist
           xcodebuild -exportArchive \
             -archivePath build/LifeRoulette.xcarchive \
             -exportPath build/export \
@@ -140,7 +152,6 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
           APP_ID: ${{ vars.NUMBER_STORY_APP_ID }}
-          APP_BUNDLE_ID: com.tokyonasu.numberstory
           APP_NAME: "数字のお話"
           APP_SKU: numberstory
           APP_VERSION: "1.0"
