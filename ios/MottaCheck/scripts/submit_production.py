@@ -428,6 +428,12 @@ def assign_build(version_id, build_id):
 
 
 def submit_for_review(version_id):
+    existing_submission_id = find_reusable_review_submission(prefer_unresolved=True)
+    if existing_submission_id:
+        print(f"Reusing review submission: {existing_submission_id}")
+        submit_review_submission(existing_submission_id)
+        return
+
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
             "type": "reviewSubmissions",
@@ -438,7 +444,7 @@ def submit_for_review(version_id):
     if response.status_code == 201:
         submission_id = body["data"]["id"]
     elif response.status_code == 409:
-        submission_id = find_reusable_review_submission()
+        submission_id = find_reusable_review_submission(prefer_unresolved=False)
         if not submission_id:
             raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
         print(f"Reusing review submission: {submission_id}")
@@ -459,23 +465,34 @@ def submit_for_review(version_id):
         if response.status_code == 201:
             break
         time.sleep(30)
-    response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
-        "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
-    })
-    if response.status_code != 200:
-        raise RuntimeError(f"Review submit failed {response.status_code}: {response.text[:300]}")
-    print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+    submit_review_submission(submission_id)
 
 
-def find_reusable_review_submission():
+def submit_review_submission(submission_id):
+    last_response = None
+    for attempt in range(1, 31):
+        response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
+            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+        })
+        if response.status_code == 200:
+            print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+            return
+        last_response = response
+        print(f"Review submit {attempt}/30: {response.status_code}")
+        time.sleep(60)
+    raise RuntimeError(f"Review submit failed {last_response.status_code}: {last_response.text[:300]}")
+
+
+def find_reusable_review_submission(prefer_unresolved):
     response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
     if response.status_code != 200:
         return None
-    reusable_states = ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES")
-    for submission in body.get("data", []):
-        state = submission.get("attributes", {}).get("state")
-        if state in reusable_states:
-            return submission["id"]
+    states = ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW") if prefer_unresolved else ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES")
+    for wanted_state in states:
+        for submission in body.get("data", []):
+            state = submission.get("attributes", {}).get("state")
+            if state == wanted_state:
+                return submission["id"]
     return None
 
 
