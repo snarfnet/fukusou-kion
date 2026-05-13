@@ -342,14 +342,20 @@ def submit_app_store_version(version_id):
     return response
 
 
-def cancel_open_review_submissions(app_id):
+def reusable_review_submission(app_id):
     response, body = api_json("GET", f"/reviewSubmissions?filter[app]={app_id}&filter[platform]=IOS&limit=200")
     if response.status_code != 200:
         print(f"Could not list review submissions: {response.status_code}")
-        return
+        return None
     for submission in body.get("data", []):
         state = submission.get("attributes", {}).get("state")
         submission_id = submission.get("id")
+        if state in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
+            print(f"Already submitted: {submission_id} ({state})")
+            return submission_id
+        if state == "READY_FOR_REVIEW":
+            print(f"Reusing review submission {submission_id} ({state})")
+            return submission_id
         if state in ("READY_FOR_REVIEW", "WAITING_FOR_REVIEW"):
             response = api(
                 "PATCH",
@@ -364,25 +370,26 @@ def cancel_open_review_submissions(app_id):
             )
             print(f"Canceled review submission {submission_id} ({state}): {response.status_code}")
             time.sleep(10)
+    return None
 
 
 def submit_for_review(app_id, version_id):
-    cancel_open_review_submissions(app_id)
-
-    response, body = api_json(
-        "POST",
-        "/reviewSubmissions",
-        json={
-            "data": {
-                "type": "reviewSubmissions",
-                "attributes": {"platform": "IOS"},
-                "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
-            }
-        },
-    )
-    if response.status_code != 201:
-        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
-    submission_id = body["data"]["id"]
+    submission_id = reusable_review_submission(app_id)
+    if not submission_id:
+        response, body = api_json(
+            "POST",
+            "/reviewSubmissions",
+            json={
+                "data": {
+                    "type": "reviewSubmissions",
+                    "attributes": {"platform": "IOS"},
+                    "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+                }
+            },
+        )
+        if response.status_code != 201:
+            raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
+        submission_id = body["data"]["id"]
 
     for attempt in range(20):
         response = api(
