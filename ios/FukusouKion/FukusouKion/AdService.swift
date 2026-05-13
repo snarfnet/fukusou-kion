@@ -36,37 +36,33 @@ struct AdMobBannerSlotView: View {
 private struct AdMobBannerView: UIViewRepresentable {
     let unitID: String
 
-    func makeUIView(context: Context) -> BannerView {
-        let banner = BannerView(adSize: AdSizeBanner)
+    func makeUIView(context: Context) -> GADBannerView {
+        let banner = GADBannerView(adSize: GADAdSizeBanner)
         banner.adUnitID = unitID
 
         DispatchQueue.main.async {
             if let rootViewController = UIApplication.shared.activeRootViewController {
                 banner.rootViewController = rootViewController
-                banner.load(Request())
+                banner.load(GADRequest())
             }
         }
 
         return banner
     }
 
-    func updateUIView(_ uiView: BannerView, context: Context) {}
+    func updateUIView(_ uiView: GADBannerView, context: Context) {}
 }
 
 @MainActor
-final class InterstitialAdCoordinator: NSObject, ObservableObject, FullScreenContentDelegate {
-    private var ad: InterstitialAd?
+final class InterstitialAdCoordinator: NSObject, ObservableObject, GADFullScreenContentDelegate {
+    private var ad: GADInterstitialAd?
     private let unitID = "ca-app-pub-3940256099942544/4411468910"
 
     func load() {
         guard !AdService.shared.isAdFree else { return }
-        Task {
-            do {
-                ad = try await InterstitialAd.load(with: unitID, request: Request())
-                ad?.fullScreenContentDelegate = self
-            } catch {
-                ad = nil
-            }
+        GADInterstitialAd.load(withAdUnitID: unitID, request: GADRequest()) { [weak self] ad, _ in
+            self?.ad = ad
+            self?.ad?.fullScreenContentDelegate = self
         }
     }
 
@@ -81,7 +77,7 @@ final class InterstitialAdCoordinator: NSObject, ObservableObject, FullScreenCon
         self.ad = nil
     }
 
-    func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         load()
     }
 }

@@ -7,7 +7,7 @@ struct FukusouKionApp: App {
     @StateObject private var appModel = WeatherAppModel()
 
     init() {
-        MobileAds.shared.start(completionHandler: nil)
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
     }
 
     var body: some Scene {

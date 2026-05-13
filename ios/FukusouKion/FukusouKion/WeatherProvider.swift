@@ -38,7 +38,7 @@ struct WeatherProvider {
             high: day.highTemperature.converted(to: .celsius).value,
             low: day.lowTemperature.converted(to: .celsius).value,
             precipitationChance: day.precipitationChance,
-            windSpeed: day.highWindSpeed?.converted(to: .metersPerSecond).value ?? 0,
+            windSpeed: day.wind.speed.converted(to: .metersPerSecond).value,
             uvIndex: day.uvIndex.value
         )
     }
