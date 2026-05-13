@@ -1,0 +1,6 @@
+platform :ios, '17.0'
+use_frameworks! :linkage => :static
+
+target 'MottaCheck' do
+  pod 'Google-Mobile-Ads-SDK', '11.13.0'
+end

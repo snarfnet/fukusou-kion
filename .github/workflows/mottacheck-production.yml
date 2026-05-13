@@ -28,6 +28,7 @@ jobs:
       - name: Install tools
         run: |
           brew install xcodegen
+          sudo gem install cocoapods
           python3 -m venv .venv
           . .venv/bin/activate
           python -m pip install --upgrade pip
@@ -46,7 +47,9 @@ jobs:
           cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
 
       - name: Generate Xcode project
-        run: xcodegen generate
+        run: |
+          xcodegen generate
+          pod install
 
       - name: Archive
         env:
@@ -54,7 +57,7 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
           xcodebuild archive \
-            -project MottaCheck.xcodeproj \
+            -workspace MottaCheck.xcworkspace \
             -scheme MottaCheck \
             -destination "generic/platform=iOS" \
             -archivePath build/MottaCheck.xcarchive \
@@ -62,9 +65,8 @@ jobs:
             -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="iOS Team Store Provisioning Profile: com.tokyonasu.mottacheck" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
             CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}"
 
       - name: Export IPA

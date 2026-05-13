@@ -1,8 +1,4 @@
 name: MottaCheck
-packages:
-  GoogleMobileAds:
-    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
-    exactVersion: 11.13.0
 options:
   bundleIdPrefix: com.tokyonasu
   deploymentTarget:
@@ -23,9 +19,6 @@ targets:
     type: application
     platform: iOS
     sources: [MottaCheck]
-    dependencies:
-      - package: GoogleMobileAds
-        product: GoogleMobileAds
     settings:
       base:
         INFOPLIST_FILE: MottaCheck/Info.plist
