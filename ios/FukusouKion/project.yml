@@ -42,7 +42,7 @@ targets:
         CFBundleDisplayName: "服装気温"
         CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         GADApplicationIdentifier: "$(GAD_APPLICATION_IDENTIFIER)"
         GADBannerAdUnitID: "$(GAD_BANNER_AD_UNIT_ID)"
