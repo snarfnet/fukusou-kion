@@ -275,6 +275,7 @@ def ensure_release_prerequisites(app_id, version_id):
         },
     )
     print(f"IDFA declaration: {response.status_code}")
+    ensure_free_price(app_id)
 
 
 def update_age_rating(app_info_id):
@@ -337,6 +338,40 @@ def update_app_info_localizations(app_info_id):
             },
         )
         print(f"App info {locale}: {response.status_code}")
+
+
+def ensure_free_price(app_id):
+    response, body = api_json("GET", f"/apps/{app_id}/appPricePoints?filter[territory]=USA&limit=1")
+    points = body.get("data", []) if response.status_code == 200 else []
+    if not points:
+        print(f"Free price point lookup: {response.status_code}")
+        return
+    price_id = points[0]["id"]
+    local_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": app_id}},
+                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [
+            {
+                "type": "appPrices",
+                "id": local_id,
+                "attributes": {"startDate": "2026-05-13"},
+                "relationships": {
+                    "appPricePoint": {"data": {"type": "appPricePoints", "id": price_id}}
+                },
+            }
+        ],
+    }
+    response = api("POST", "/appPriceSchedules", json=payload)
+    print(f"Free price: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        raise RuntimeError(f"Free price failed {response.status_code}: {response.text[:500]}")
 
 
 def upload_screenshots(version_id):
@@ -586,7 +621,9 @@ def submit_for_review(app_id, version_id):
         print(f"Review item {attempt + 1}/20: {response.status_code}")
         if response.status_code == 201:
             break
-        print(response.text[:1000])
+        print(response.text[:3000])
+        if "APP_DATA_USAGES_REQUIRED" in response.text or "APP_PRICING_REQUIRED" in response.text:
+            raise RuntimeError("Review submission is blocked by required App Store Connect setup.")
         time.sleep(30)
 
     for attempt in range(20):
