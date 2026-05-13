@@ -50,7 +50,7 @@ final class AdService: ObservableObject {
     func start() async {
         guard !isReady else { return }
         await requestTrackingAuthorizationIfNeeded()
-        MobileAds.shared.start()
+        await MobileAds.shared.start()
         isReady = true
     }
 
