@@ -18,12 +18,30 @@ enum NumberTheme: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var colors: [Color] {
+    var promptTitle: String {
         switch self {
-        case .today: [.yellow, .orange, .pink]
-        case .name: [.cyan, .blue, .indigo]
-        case .choice: [.mint, .green, .yellow]
-        case .custom: [.white, .cyan, .pink]
+        case .today: "日付や今日の気分"
+        case .name: "名前"
+        case .choice: "迷っていること"
+        case .custom: "数字や短い言葉"
+        }
+    }
+
+    var placeholder: String {
+        switch self {
+        case .today: "例: 2026/05/14"
+        case .name: "例: さくら"
+        case .choice: "例: 転職するか迷っている"
+        case .custom: "例: 777"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .today: Color(red: 0.93, green: 0.62, blue: 0.18)
+        case .name: Color(red: 0.20, green: 0.62, blue: 0.72)
+        case .choice: Color(red: 0.37, green: 0.58, blue: 0.36)
+        case .custom: Color(red: 0.72, green: 0.34, blue: 0.49)
         }
     }
 }
