@@ -329,7 +329,12 @@ def submit_for_review(app_id, version_id):
             "data": {
                 "type": "reviewSubmissions",
                 "attributes": {"platform": "IOS"},
-                "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": app_id}},
+                    "appStoreVersionForReview": {
+                        "data": {"type": "appStoreVersions", "id": version_id}
+                    },
+                },
             }
         },
     )
@@ -337,6 +342,7 @@ def submit_for_review(app_id, version_id):
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
     submission_id = body["data"]["id"]
 
+    item_created = False
     for attempt in range(20):
         response = api(
             "POST",
@@ -353,8 +359,11 @@ def submit_for_review(app_id, version_id):
         )
         print(f"Review item {attempt + 1}/20: {response.status_code}")
         if response.status_code == 201:
+            item_created = True
             break
         time.sleep(30)
+    if not item_created:
+        print("Review item was not created separately; continuing because appStoreVersionForReview is set.")
 
     response, body = api_json(
         "PATCH",
