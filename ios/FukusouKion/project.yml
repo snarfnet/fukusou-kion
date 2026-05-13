@@ -35,7 +35,6 @@ targets:
         LSRequiresIPhoneOS: true
         GADApplicationIdentifier: "ca-app-pub-3940256099942544~1458002511"
         NSLocationWhenInUseUsageDescription: "現在地の天気から、今日の服装を提案します。"
-        NSUserTrackingUsageDescription: "広告の表示品質を上げるために使います。"
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:

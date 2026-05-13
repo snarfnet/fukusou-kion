@@ -1,5 +1,4 @@
 import SwiftUI
-import AppTrackingTransparency
 
 @main
 struct FukusouKionApp: App {
@@ -11,11 +10,6 @@ struct FukusouKionApp: App {
                 .environmentObject(appModel)
                 .task {
                     await appModel.refresh()
-                }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                        ATTrackingManager.requestTrackingAuthorization { _ in }
-                    }
                 }
         }
     }
