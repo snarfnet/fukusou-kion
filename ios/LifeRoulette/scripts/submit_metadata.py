@@ -9,6 +9,7 @@ import requests
 KEY_ID = os.environ.get("ASC_KEY_ID")
 ISSUER = os.environ.get("ASC_ISSUER_ID")
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.numberstory")
+APP_ID = os.environ.get("APP_ID")
 APP_NAME = os.environ.get("APP_NAME", "数字のお話")
 APP_SKU = os.environ.get("APP_SKU", "numberstory")
 APP_VERSION = os.environ.get("APP_VERSION", "1.0")
@@ -120,6 +121,13 @@ def list_all(path):
 
 
 def find_app_id():
+    if APP_ID:
+        response, body = api_json("GET", f"/apps/{APP_ID}")
+        if response.status_code != 200:
+            raise RuntimeError(f"APP_ID lookup failed {response.status_code}: {response.text[:500]}")
+        print(f"App found by APP_ID: {APP_ID}")
+        return APP_ID
+
     response, body = api_json("GET", f"/apps?filter[bundleId]={BUNDLE_ID}")
     data = body.get("data", [])
     if data:
@@ -127,23 +135,10 @@ def find_app_id():
         print(f"App found: {app_id}")
         return app_id
 
-    payload = {
-        "data": {
-            "type": "apps",
-            "attributes": {
-                "bundleId": BUNDLE_ID,
-                "name": APP_NAME,
-                "primaryLocale": "ja",
-                "sku": APP_SKU,
-            },
-        }
-    }
-    response, body = api_json("POST", "/apps", json=payload)
-    if response.status_code not in (200, 201):
-        raise RuntimeError(f"App create failed {response.status_code}: {response.text[:500]}")
-    app_id = body["data"]["id"]
-    print(f"App created: {app_id}")
-    return app_id
+    raise RuntimeError(
+        "App Store Connect app record was not found for "
+        f"{BUNDLE_ID}. Create the app in App Store Connect first, or set APP_ID to the existing app id."
+    )
 
 
 def find_or_create_version(app_id):

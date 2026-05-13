@@ -49,6 +49,7 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
+          APP_ID: ${{ vars.NUMBER_STORY_APP_ID }}
           APP_BUNDLE_ID: com.tokyonasu.numberstory
           APP_NAME: "数字のお話"
           APP_SKU: numberstory
@@ -109,6 +110,7 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
+          APP_ID: ${{ vars.NUMBER_STORY_APP_ID }}
           APP_BUNDLE_ID: com.tokyonasu.numberstory
           APP_NAME: "数字のお話"
           APP_SKU: numberstory
