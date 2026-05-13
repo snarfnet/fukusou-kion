@@ -1,8 +1,4 @@
 name: FukusouKion
-packages:
-  GoogleMobileAds:
-    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
-    from: "11.0.0"
 options:
   bundleIdPrefix: com.tokyonasu
   deploymentTarget:
@@ -28,9 +24,6 @@ targets:
       base:
         PRODUCT_NAME: FukusouKion
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    dependencies:
-      - package: GoogleMobileAds
-        product: GoogleMobileAds
     info:
       path: FukusouKion/Info.plist
       properties:
