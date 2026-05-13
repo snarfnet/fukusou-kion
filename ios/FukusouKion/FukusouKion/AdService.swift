@@ -64,18 +64,12 @@ struct AdMobBannerSlotView: View {
         if AdService.shared.isAdFree {
             EmptyView()
         } else {
-            GeometryReader { proxy in
-                let width = max(proxy.size.width, 320)
-                let adSize = largeAnchoredAdaptiveBanner(width: width)
-
-                BannerViewContainer(
-                    adSize: adSize,
-                    adUnitID: AdService.shared.bannerUnitID(for: placement)
-                )
-                .frame(width: adSize.size.width, height: adSize.size.height)
-                .frame(maxWidth: .infinity)
-            }
-            .frame(height: 60)
+            BannerViewContainer(
+                adSize: AdSizeBanner,
+                adUnitID: AdService.shared.bannerUnitID(for: placement)
+            )
+            .frame(width: AdSizeBanner.size.width, height: AdSizeBanner.size.height)
+            .frame(maxWidth: .infinity)
             .accessibilityLabel("広告")
         }
     }
