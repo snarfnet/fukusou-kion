@@ -342,7 +342,33 @@ def submit_app_store_version(version_id):
     return response
 
 
+def cancel_open_review_submissions(app_id):
+    response, body = api_json("GET", f"/reviewSubmissions?filter[app]={app_id}&filter[platform]=IOS&limit=200")
+    if response.status_code != 200:
+        print(f"Could not list review submissions: {response.status_code}")
+        return
+    for submission in body.get("data", []):
+        state = submission.get("attributes", {}).get("state")
+        submission_id = submission.get("id")
+        if state in ("READY_FOR_REVIEW", "WAITING_FOR_REVIEW"):
+            response = api(
+                "PATCH",
+                f"/reviewSubmissions/{submission_id}",
+                json={
+                    "data": {
+                        "type": "reviewSubmissions",
+                        "id": submission_id,
+                        "attributes": {"canceled": True},
+                    }
+                },
+            )
+            print(f"Canceled review submission {submission_id} ({state}): {response.status_code}")
+            time.sleep(10)
+
+
 def submit_for_review(app_id, version_id):
+    cancel_open_review_submissions(app_id)
+
     response, body = api_json(
         "POST",
         "/reviewSubmissions",
