@@ -35,8 +35,10 @@ jobs:
         run: |
           test -n "$ASC_PRIVATE_KEY"
           mkdir -p /tmp/asc
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
           printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8"
           cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
 
       - name: Generate Xcode project
         run: xcodegen generate
@@ -78,9 +80,11 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
           xcrun altool --upload-app \
             --type ios \
-            --file build/export/FukusouKion.ipa \
+            --file "$IPA_PATH" \
             --apiKey "$ASC_KEY_ID" \
             --apiIssuer "$ASC_ISSUER_ID"
 
