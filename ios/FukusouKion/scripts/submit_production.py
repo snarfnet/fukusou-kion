@@ -15,6 +15,12 @@ APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 BUILD_NUMBER = os.environ["BUILD_NUMBER"]
 P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 SCREENSHOT_DIR = "MarketingAssets/Screenshots"
+REVIEW_CONTACT = {
+    "contactFirstName": "Tokyo",
+    "contactLastName": "Nasu",
+    "contactEmail": "tokyonasu@yahoo.co.jp",
+    "contactPhone": "+81 80-2368-9194",
+}
 
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone69_01.png", "iphone69_02.png", "iphone69_03.png", "iphone69_04.png"]),
@@ -179,6 +185,36 @@ def update_metadata(version_id):
         print(f"Metadata {locale}: {response.status_code}")
 
 
+def update_review_detail(version_id):
+    attrs = {
+        **REVIEW_CONTACT,
+        "demoAccountRequired": False,
+        "demoAccountName": "",
+        "demoAccountPassword": "",
+        "notes": (
+            "This build adds the AppTrackingTransparency permission request before Google Mobile Ads starts. "
+            "The ATT prompt is shown shortly after launch, before ads are loaded."
+        ),
+    }
+    response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
+    if response.status_code == 200 and body.get("data"):
+        detail_id = body["data"]["id"]
+        response = api("PATCH", f"/appStoreReviewDetails/{detail_id}", json={
+            "data": {"type": "appStoreReviewDetails", "id": detail_id, "attributes": attrs}
+        })
+        print(f"Review detail: {response.status_code}")
+        return
+    payload = {
+        "data": {
+            "type": "appStoreReviewDetails",
+            "attributes": attrs,
+            "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}},
+        }
+    }
+    response = api("POST", "/appStoreReviewDetails", json=payload)
+    print(f"Review detail create: {response.status_code}")
+
+
 def upload_screenshots(version_id):
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
@@ -255,6 +291,28 @@ def assign_build(version_id, build_id):
     print(f"Build assigned: {response.status_code}")
 
 
+def cancel_blocking_submissions(app_id):
+    canceled = False
+    for state in ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW"):
+        response, body = api_json("GET", f"/apps/{app_id}/reviewSubmissions?filter[state]={state}&limit=200")
+        if response.status_code != 200:
+            continue
+        for submission in body.get("data", []):
+            submission_id = submission["id"]
+            response = api("PATCH", f"/reviewSubmissions/{submission_id}", json={
+                "data": {
+                    "type": "reviewSubmissions",
+                    "id": submission_id,
+                    "attributes": {"canceled": True},
+                }
+            })
+            print(f"Canceled {submission_id}: {response.status_code}")
+            canceled = True
+    if canceled:
+        print("Waiting for cancellation to propagate...")
+        time.sleep(30)
+
+
 def submit_for_review(app_id, version_id):
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
@@ -301,9 +359,11 @@ def main():
         return
     build_id = wait_for_build(app_id)
     update_metadata(version_id)
+    update_review_detail(version_id)
     upload_screenshots(version_id)
     print("Waiting for screenshot processing...")
     time.sleep(300)
+    cancel_blocking_submissions(app_id)
     assign_build(version_id, build_id)
     submit_for_review(app_id, version_id)
 

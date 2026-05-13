@@ -8,8 +8,9 @@ struct FukusouKionApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(appModel)
+                .environmentObject(AdService.shared)
                 .task {
-                    AdService.shared.start()
+                    await AdService.shared.start()
                     await appModel.refresh()
                 }
         }

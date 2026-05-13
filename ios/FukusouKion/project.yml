@@ -60,6 +60,7 @@ targets:
           - SKAdNetworkIdentifier: c6k4g5qg8m.skadnetwork
           - SKAdNetworkIdentifier: s39g8k73mm.skadnetwork
         NSLocationWhenInUseUsageDescription: "現在地の天気から、今日の服装を提案します。"
+        NSUserTrackingUsageDescription: "広告の効果測定と、より関連性の高い広告表示のために使用します。"
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:

@@ -1,0 +1,10 @@
+_book_scan_tmp/
+book_catalog.csv
+book_catalog.json
+book_list_by_theme.md
+ios_app_ideas_report.md
+.DS_Store
+Thumbs.db
+*.log
+ios/*/build/
+**/__pycache__/

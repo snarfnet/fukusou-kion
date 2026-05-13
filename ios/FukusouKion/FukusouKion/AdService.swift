@@ -1,3 +1,4 @@
+import AppTrackingTransparency
 import GoogleMobileAds
 import SwiftUI
 import UIKit
@@ -38,15 +39,19 @@ struct AdConfiguration {
 }
 
 @MainActor
-final class AdService {
+final class AdService: ObservableObject {
     static let shared = AdService()
 
     let isAdFree = false
+    @Published private(set) var isReady = false
 
     private init() {}
 
-    func start() {
+    func start() async {
+        guard !isReady else { return }
+        await requestTrackingAuthorizationIfNeeded()
         MobileAds.shared.start()
+        isReady = true
     }
 
     func bannerUnitID(for placement: AdPlacement) -> String {
@@ -55,18 +60,32 @@ final class AdService {
             AdConfiguration.bannerUnitID
         }
     }
+
+    private func requestTrackingAuthorizationIfNeeded() async {
+        guard #available(iOS 14.5, *),
+              ATTrackingManager.trackingAuthorizationStatus == .notDetermined else {
+            return
+        }
+
+        _ = await withCheckedContinuation { continuation in
+            ATTrackingManager.requestTrackingAuthorization { status in
+                continuation.resume(returning: status)
+            }
+        }
+    }
 }
 
 struct AdMobBannerSlotView: View {
     let placement: AdPlacement
+    @EnvironmentObject private var adService: AdService
 
     var body: some View {
-        if AdService.shared.isAdFree {
+        if adService.isAdFree || !adService.isReady {
             EmptyView()
         } else {
             BannerViewContainer(
                 adSize: AdSizeBanner,
-                adUnitID: AdService.shared.bannerUnitID(for: placement)
+                adUnitID: adService.bannerUnitID(for: placement)
             )
             .frame(width: AdSizeBanner.size.width, height: AdSizeBanner.size.height)
             .frame(maxWidth: .infinity)
@@ -102,6 +121,7 @@ final class InterstitialAdCoordinator: NSObject, ObservableObject, FullScreenCon
 
     func load() {
         guard !AdService.shared.isAdFree,
+              AdService.shared.isReady,
               AdConfiguration.canShowInterstitial,
               !isLoading else { return }
 
