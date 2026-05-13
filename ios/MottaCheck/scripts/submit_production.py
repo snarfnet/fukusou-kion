@@ -428,11 +428,7 @@ def assign_build(version_id, build_id):
 
 
 def submit_for_review(version_id):
-    existing_submission_id = find_reusable_review_submission(prefer_unresolved=True)
-    if existing_submission_id:
-        print(f"Reusing review submission: {existing_submission_id}")
-        submit_review_submission(existing_submission_id)
-        return
+    remove_rejected_review_items()
 
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
@@ -484,7 +480,7 @@ def submit_review_submission(submission_id):
 
 
 def find_reusable_review_submission(prefer_unresolved):
-    response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?include=items&limit=20")
     if response.status_code != 200:
         return None
     states = ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW") if prefer_unresolved else ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES")
@@ -494,6 +490,26 @@ def find_reusable_review_submission(prefer_unresolved):
             if state == wanted_state:
                 return submission["id"]
     return None
+
+
+def remove_rejected_review_items():
+    response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?include=items&limit=20")
+    if response.status_code != 200:
+        return
+    rejected_item_ids = []
+    for item in body.get("included", []):
+        if item.get("type") == "reviewSubmissionItems" and item.get("attributes", {}).get("state") == "REJECTED":
+            rejected_item_ids.append(item["id"])
+    for item_id in rejected_item_ids:
+        response = api("PATCH", f"/reviewSubmissionItems/{item_id}", json={
+            "data": {
+                "type": "reviewSubmissionItems",
+                "id": item_id,
+                "attributes": {"removed": True},
+            }
+        })
+        print(f"Removed rejected review item {item_id}: {response.status_code}")
+        time.sleep(10)
 
 
 def main():
