@@ -125,7 +125,6 @@ jobs:
           APP_NAME: "服装気温"
           APP_SKU: fukusoukion
           APP_VERSION: "1.0"
-          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
           PREPARE_APP_ONLY: "1"
         run: |
           . .venv/bin/activate
@@ -153,7 +152,7 @@ jobs:
           APP_NAME: "服装気温"
           APP_SKU: fukusoukion
           APP_VERSION: "1.0"
-          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
         run: |
           . .venv/bin/activate
+          echo "Submitting build $BUILD_NUMBER"
           python scripts/submit_production.py
