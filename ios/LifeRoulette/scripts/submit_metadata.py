@@ -356,37 +356,43 @@ def submit_for_review(app_id, version_id):
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
     submission_id = body["data"]["id"]
 
-    item_created = False
+    response = api(
+        "PATCH",
+        f"/reviewSubmissions/{submission_id}",
+        json={
+            "data": {
+                "type": "reviewSubmissions",
+                "id": submission_id,
+                "relationships": {
+                    "appStoreVersionForReview": {
+                        "data": {"type": "appStoreVersions", "id": version_id}
+                    }
+                },
+            }
+        },
+    )
+    print(f"Review version relationship: {response.status_code}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Review version relationship failed {response.status_code}: {response.text[:500]}")
+
     for attempt in range(20):
-        response = api(
-            "POST",
-            "/reviewSubmissionItems",
+        response, body = api_json(
+            "PATCH",
+            f"/reviewSubmissions/{submission_id}",
             json={
                 "data": {
-                    "type": "reviewSubmissionItems",
-                    "relationships": {
-                        "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                        "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
-                    },
+                    "type": "reviewSubmissions",
+                    "id": submission_id,
+                    "attributes": {"submitted": True},
                 }
             },
         )
-        print(f"Review item {attempt + 1}/20: {response.status_code}")
-        if response.status_code == 201:
-            item_created = True
-            break
+        print(f"Review submit {attempt + 1}/20: {response.status_code}")
+        if response.status_code == 200:
+            print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+            return
         time.sleep(30)
-    if not item_created:
-        print("Review item was not created separately; continuing because appStoreVersionForReview is set.")
-
-    response, body = api_json(
-        "PATCH",
-        f"/reviewSubmissions/{submission_id}",
-        json={"data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}},
-    )
-    if response.status_code != 200:
-        raise RuntimeError(f"Review submit failed {response.status_code}: {response.text[:500]}")
-    print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+    raise RuntimeError("Review submit did not become ready in time.")
 
 
 def main():
