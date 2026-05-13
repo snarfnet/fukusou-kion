@@ -1,8 +1,4 @@
 name: MottaCheck
-packages:
-  GoogleMobileAds:
-    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
-    from: "11.0.0"
 options:
   bundleIdPrefix: com.tokyonasu
   deploymentTarget:
@@ -23,9 +19,6 @@ targets:
     type: application
     platform: iOS
     sources: [MottaCheck]
-    dependencies:
-      - package: GoogleMobileAds
-        product: GoogleMobileAds
     settings:
       base:
         INFOPLIST_FILE: MottaCheck/Info.plist
@@ -50,10 +43,3 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         UIUserInterfaceStyle: Light
-        NSUserTrackingUsageDescription: "広告の表示と効果測定のために使います。許可しなくてもアプリは使えます。"
-        GADApplicationIdentifier: "ca-app-pub-3940256099942544~1458002511"
-        SKAdNetworkItems:
-          - SKAdNetworkIdentifier: "cstr6suwn9.skadnetwork"
-          - SKAdNetworkIdentifier: "4fzdc2evr5.skadnetwork"
-          - SKAdNetworkIdentifier: "2fnua5tdw4.skadnetwork"
-          - SKAdNetworkIdentifier: "ydx93a7ass.skadnetwork"

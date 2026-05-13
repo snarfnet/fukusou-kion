@@ -1,7 +1,5 @@
 import SwiftData
 import SwiftUI
-import GoogleMobileAds
-import AppTrackingTransparency
 
 @main
 struct MottaCheckApp: App {
@@ -20,19 +18,10 @@ struct MottaCheckApp: App {
         }
     }()
 
-    init() {
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
-    }
-
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .modelContainer(sharedModelContainer)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                        ATTrackingManager.requestTrackingAuthorization { _ in }
-                    }
-                }
         }
     }
 }

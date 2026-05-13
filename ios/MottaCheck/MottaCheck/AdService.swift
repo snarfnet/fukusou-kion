@@ -1,39 +1,26 @@
 import SwiftUI
-import GoogleMobileAds
 
 enum AdUnitID {
-    static let homeBanner = "ca-app-pub-3940256099942544/2934735716"
-    static let templateBanner = "ca-app-pub-3940256099942544/2934735716"
-}
-
-struct BannerAdView: UIViewRepresentable {
-    let adUnitID: String
-
-    func makeUIView(context: Context) -> GADBannerView {
-        let banner = GADBannerView(adSize: GADAdSizeBanner)
-        banner.adUnitID = adUnitID
-
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let root = windowScene.windows.first?.rootViewController {
-                banner.rootViewController = root
-                banner.load(GADRequest())
-            }
-        }
-
-        return banner
-    }
-
-    func updateUIView(_ uiView: GADBannerView, context: Context) {}
+    static let homeBanner = "home"
+    static let templateBanner = "template"
 }
 
 struct AdBannerSlot: View {
     let unitID: String
 
     var body: some View {
-        BannerAdView(adUnitID: unitID)
-            .frame(height: 50)
-            .background(.white)
+        ZStack {
+            Rectangle()
+                .fill(Color.white)
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.and.text.magnifyingglass")
+                Text("広告")
+            }
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(AppTheme.muted)
+        }
+        .frame(height: 50)
+        .overlay(Rectangle().stroke(Color.black.opacity(0.06), lineWidth: 1))
             .accessibilityLabel("広告")
     }
 }

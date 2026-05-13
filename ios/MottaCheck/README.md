@@ -18,7 +18,7 @@
 - SwiftData
 - UserNotifications
 - AppStorage
-- Google AdMob
+- 広告表示枠
 
 ## セットアップ
 
@@ -27,7 +27,7 @@ xcodegen generate
 open MottaCheck.xcodeproj
 ```
 
-AdMobの本番IDは `project.yml` と `AdService.swift` で差し替えてください。今はGoogleのテストIDを入れています。
+AdMobの本番IDが用意できたら、`AdService.swift` をSDK実装に差し替えられます。提出用MVPでは署名を安定させるため、広告枠はネイティブ表示です。
 
 ## App Store Connect
 
