@@ -321,6 +321,25 @@ def assign_build(version_id, build_id):
         raise RuntimeError(f"Build assign failed {response.status_code}: {response.text[:500]}")
 
 
+def submit_app_store_version(version_id):
+    response = api(
+        "POST",
+        "/appStoreVersionSubmissions",
+        json={
+            "data": {
+                "type": "appStoreVersionSubmissions",
+                "relationships": {
+                    "appStoreVersion": {
+                        "data": {"type": "appStoreVersions", "id": version_id}
+                    }
+                },
+            }
+        },
+    )
+    print(f"App Store version submission: {response.status_code}")
+    return response
+
+
 def submit_for_review(app_id, version_id):
     response, body = api_json(
         "POST",
@@ -329,12 +348,7 @@ def submit_for_review(app_id, version_id):
             "data": {
                 "type": "reviewSubmissions",
                 "attributes": {"platform": "IOS"},
-                "relationships": {
-                    "app": {"data": {"type": "apps", "id": app_id}},
-                    "appStoreVersionForReview": {
-                        "data": {"type": "appStoreVersions", "id": version_id}
-                    },
-                },
+                "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
             }
         },
     )
@@ -394,6 +408,10 @@ def main():
     print("Waiting for screenshot processing...")
     time.sleep(300)
     assign_build(version_id, build_id)
+    response = submit_app_store_version(version_id)
+    if response.status_code in (200, 201):
+        print("Submitted for App Review via appStoreVersionSubmissions.")
+        return
     submit_for_review(app_id, version_id)
 
 
