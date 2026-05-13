@@ -330,6 +330,23 @@ def assign_build(version_id, build_id):
         raise RuntimeError(f"Build assign failed {response.status_code}: {response.text[:500]}")
 
 
+def ensure_version_attributes(version_id):
+    response = api(
+        "PATCH",
+        f"/appStoreVersions/{version_id}",
+        json={
+            "data": {
+                "type": "appStoreVersions",
+                "id": version_id,
+                "attributes": {"copyright": "2026 Tokyo Nasu"},
+            }
+        },
+    )
+    print(f"Version attributes updated: {response.status_code}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Version attribute update failed {response.status_code}: {response.text[:500]}")
+
+
 def ensure_review_detail(version_id):
     response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
     if response.status_code == 200 and body.get("data"):
@@ -497,6 +514,7 @@ def main():
     print("Waiting for screenshot processing...")
     time.sleep(300)
     assign_build(version_id, build_id)
+    ensure_version_attributes(version_id)
     ensure_review_detail(version_id)
     response = submit_app_store_version(version_id)
     if response.status_code in (200, 201):
