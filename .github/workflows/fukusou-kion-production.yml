@@ -49,7 +49,12 @@ jobs:
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          GAD_APPLICATION_IDENTIFIER: ${{ vars.GAD_APPLICATION_IDENTIFIER }}
+          GAD_BANNER_AD_UNIT_ID: ${{ vars.GAD_BANNER_AD_UNIT_ID }}
+          GAD_INTERSTITIAL_AD_UNIT_ID: ${{ vars.GAD_INTERSTITIAL_AD_UNIT_ID || 'disabled' }}
         run: |
+          test -n "$GAD_APPLICATION_IDENTIFIER"
+          test -n "$GAD_BANNER_AD_UNIT_ID"
           xcodebuild archive \
             -project FukusouKion.xcodeproj \
             -scheme FukusouKion \
@@ -59,9 +64,10 @@ jobs:
             -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}"
+            CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
+            GAD_APPLICATION_IDENTIFIER="$GAD_APPLICATION_IDENTIFIER" \
+            GAD_BANNER_AD_UNIT_ID="$GAD_BANNER_AD_UNIT_ID" \
+            GAD_INTERSTITIAL_AD_UNIT_ID="$GAD_INTERSTITIAL_AD_UNIT_ID"
 
       - name: Export IPA
         env:
