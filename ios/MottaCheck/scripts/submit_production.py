@@ -119,6 +119,165 @@ def find_or_create_version():
     return body["data"]["id"], "PREPARE_FOR_SUBMISSION"
 
 
+def cancel_open_review_submissions():
+    response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    if response.status_code != 200:
+        return
+    for submission in body.get("data", []):
+        state = submission.get("attributes", {}).get("state")
+        if state in ("READY_FOR_REVIEW", "WAITING_FOR_REVIEW"):
+            response = api("PATCH", f"/reviewSubmissions/{submission['id']}", json={
+                "data": {
+                    "type": "reviewSubmissions",
+                    "id": submission["id"],
+                    "attributes": {"canceled": True},
+                }
+            })
+            print(f"Canceled review submission {submission['id']}: {response.status_code}")
+            time.sleep(10)
+
+
+def ensure_release_prerequisites(version_id):
+    api("PATCH", f"/apps/{APP_ID}", json={
+        "data": {
+            "type": "apps",
+            "id": APP_ID,
+            "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"},
+        }
+    })
+
+    response, body = api_json("GET", f"/apps/{APP_ID}/appInfos?limit=10")
+    app_infos = body.get("data", []) if response.status_code == 200 else []
+    if app_infos:
+        app_info_id = app_infos[0]["id"]
+        api("PATCH", f"/appInfos/{app_info_id}", json={
+            "data": {
+                "type": "appInfos",
+                "id": app_info_id,
+                "relationships": {
+                    "primaryCategory": {"data": {"type": "appCategories", "id": "PRODUCTIVITY"}}
+                },
+            }
+        })
+        update_age_rating(app_info_id)
+        update_app_info_localizations(app_info_id)
+
+    api("PATCH", f"/appStoreVersions/{version_id}", json={
+        "data": {
+            "type": "appStoreVersions",
+            "id": version_id,
+            "attributes": {"copyright": "2026 Tokyo Nasu"},
+        }
+    })
+    ensure_free_price()
+    ensure_review_detail(version_id)
+
+
+def update_age_rating(app_info_id):
+    string_keys = [
+        "alcoholTobaccoOrDrugUseOrReferences",
+        "contests",
+        "gamblingSimulated",
+        "gunsOrOtherWeapons",
+        "medicalOrTreatmentInformation",
+        "profanityOrCrudeHumor",
+        "sexualContentGraphicAndNudity",
+        "sexualContentOrNudity",
+        "horrorOrFearThemes",
+        "matureOrSuggestiveThemes",
+        "violenceCartoonOrFantasy",
+        "violenceRealisticProlongedGraphicOrSadistic",
+        "violenceRealistic",
+    ]
+    bool_keys = [
+        "messagingAndChat",
+        "gambling",
+        "parentalControls",
+        "ageAssurance",
+        "userGeneratedContent",
+        "healthOrWellnessTopics",
+        "unrestrictedWebAccess",
+        "lootBox",
+    ]
+    attrs = {key: "NONE" for key in string_keys}
+    attrs.update({key: False for key in bool_keys})
+    attrs["advertising"] = True
+    response = api("PATCH", f"/ageRatingDeclarations/{app_info_id}", json={
+        "data": {"type": "ageRatingDeclarations", "id": app_info_id, "attributes": attrs}
+    })
+    print(f"Age rating: {response.status_code}")
+
+
+def update_app_info_localizations(app_info_id):
+    response, body = api_json("GET", f"/appInfos/{app_info_id}/appInfoLocalizations?limit=20")
+    if response.status_code != 200:
+        return
+    for loc in body.get("data", []):
+        locale = loc["attributes"].get("locale")
+        subtitle = "出る前の持ち物チェック" if locale == "ja" else "Checklist before you leave"
+        response = api("PATCH", f"/appInfoLocalizations/{loc['id']}", json={
+            "data": {
+                "type": "appInfoLocalizations",
+                "id": loc["id"],
+                "attributes": {
+                    "subtitle": subtitle,
+                    "privacyPolicyUrl": "https://snarfnet.github.io/privacy.html",
+                },
+            }
+        })
+        print(f"App info {locale}: {response.status_code}")
+
+
+def ensure_free_price():
+    response, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1")
+    points = body.get("data", []) if response.status_code == 200 else []
+    if not points:
+        return
+    price_id = points[0]["id"]
+    local_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [{
+            "type": "appPrices",
+            "id": local_id,
+            "attributes": {"startDate": "2026-05-13"},
+            "relationships": {
+                "appPricePoint": {"data": {"type": "appPricePoints", "id": price_id}}
+            },
+        }],
+    }
+    response = api("POST", "/appPriceSchedules", json=payload)
+    print(f"Free price: {response.status_code}")
+
+
+def ensure_review_detail(version_id):
+    payload = {
+        "data": {
+            "type": "appStoreReviewDetails",
+            "attributes": {
+                "contactFirstName": "Tokyo",
+                "contactLastName": "Nasu",
+                "contactPhone": "+1 844 209 0611",
+                "contactEmail": "support@snarfnet.github.io",
+                "demoAccountRequired": False,
+                "notes": "No login is required.",
+            },
+            "relationships": {
+                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
+            },
+        }
+    }
+    response = api("POST", "/appStoreReviewDetails", json=payload)
+    print(f"Review detail: {response.status_code}")
+
+
 def wait_for_build():
     for index in range(90):
         response, body = api_json(
@@ -286,12 +445,11 @@ def main():
     print(f"App: {attrs.get('name')} / {attrs.get('bundleId')}")
 
     version_id, state = find_or_create_version()
+    cancel_open_review_submissions()
+    ensure_release_prerequisites(version_id)
     if os.environ.get("PREPARE_APP_ONLY") == "1":
         update_metadata(version_id)
         print("App Store Connect metadata is ready.")
-        return
-    if state in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
-        print(f"Already submitted: {state}")
         return
 
     build_id = wait_for_build()

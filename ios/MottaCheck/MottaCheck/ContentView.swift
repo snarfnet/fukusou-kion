@@ -39,6 +39,8 @@ struct HomeView: View {
                 AppTheme.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
+                    AdBannerSlot(unitID: AdUnitID.topBanner)
+
                     ScrollView {
                         VStack(alignment: .leading, spacing: 18) {
                             header
@@ -61,7 +63,7 @@ struct HomeView: View {
                         .padding(18)
                     }
 
-                    AdBannerSlot(unitID: AdUnitID.homeBanner)
+                    AdBannerSlot(unitID: AdUnitID.bottomBanner)
                 }
             }
             .navigationTitle("持った？")
@@ -424,6 +426,8 @@ struct TemplateView: View {
                 AppTheme.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
+                    AdBannerSlot(unitID: AdUnitID.topBanner)
+
                     ScrollView {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], spacing: 12) {
                             ForEach(PackingTemplate.defaults) { template in
@@ -435,7 +439,7 @@ struct TemplateView: View {
                         .padding(18)
                     }
 
-                    AdBannerSlot(unitID: AdUnitID.templateBanner)
+                    AdBannerSlot(unitID: AdUnitID.bottomBanner)
                 }
             }
             .navigationTitle("テンプレート")
