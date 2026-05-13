@@ -290,6 +290,11 @@ def submit_for_review(app_id, version_id):
 
 def main():
     app_id = find_app_id()
+    if os.environ.get("PREPARE_APP_ONLY") == "1":
+        find_or_create_version(app_id)
+        print("App Store Connect app record is ready.")
+        return
+
     version_id, state = find_or_create_version(app_id)
     if state in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
         print(f"Already submitted: {state}")
