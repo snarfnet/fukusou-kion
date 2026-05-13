@@ -43,7 +43,7 @@ targets:
         CFBundleDisplayName: "まとめ・よみきり"
         CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         GADApplicationIdentifier: "ca-app-pub-9404799280370656~4316108976"
         GADBannerBottomAdUnitID: "$(GAD_BANNER_BOTTOM_AD_UNIT_ID)"
