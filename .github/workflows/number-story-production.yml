@@ -2,12 +2,10 @@ name: Number Story Production Submit
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/fukusou-kion-production
-    paths:
-      - ".github/workflows/number-story-production.yml"
-      - "ios/LifeRoulette/**"
+
+concurrency:
+  group: number-story-production
+  cancel-in-progress: true
 
 jobs:
   submit-production:

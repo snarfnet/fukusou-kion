@@ -337,6 +337,8 @@ def submit_app_store_version(version_id):
         },
     )
     print(f"App Store version submission: {response.status_code}")
+    if response.status_code not in (200, 201):
+        print(response.text[:1000])
     return response
 
 
@@ -356,24 +358,25 @@ def submit_for_review(app_id, version_id):
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
     submission_id = body["data"]["id"]
 
-    response = api(
-        "PATCH",
-        f"/reviewSubmissions/{submission_id}",
-        json={
-            "data": {
-                "type": "reviewSubmissions",
-                "id": submission_id,
-                "relationships": {
-                    "appStoreVersionForReview": {
-                        "data": {"type": "appStoreVersions", "id": version_id}
-                    }
-                },
-            }
-        },
-    )
-    print(f"Review version relationship: {response.status_code}")
-    if response.status_code not in (200, 201):
-        raise RuntimeError(f"Review version relationship failed {response.status_code}: {response.text[:500]}")
+    for attempt in range(20):
+        response = api(
+            "POST",
+            "/reviewSubmissionItems",
+            json={
+                "data": {
+                    "type": "reviewSubmissionItems",
+                    "relationships": {
+                        "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                        "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                    },
+                }
+            },
+        )
+        print(f"Review item {attempt + 1}/20: {response.status_code}")
+        if response.status_code == 201:
+            break
+        print(response.text[:1000])
+        time.sleep(30)
 
     for attempt in range(20):
         response, body = api_json(
