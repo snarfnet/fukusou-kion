@@ -20,20 +20,20 @@ struct AdBannerSlot: View {
 private struct AdMobBannerView: UIViewRepresentable {
     let unitID: String
 
-    func makeUIView(context: Context) -> GADBannerView {
-        let banner = GADBannerView(adSize: GADAdSizeBanner)
+    func makeUIView(context: Context) -> BannerView {
+        let banner = BannerView(adSize: AdSizeBanner)
         banner.adUnitID = unitID
 
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let root = windowScene.windows.first?.rootViewController {
                 banner.rootViewController = root
-                banner.load(GADRequest())
+                banner.load(Request())
             }
         }
 
         return banner
     }
 
-    func updateUIView(_ uiView: GADBannerView, context: Context) {}
+    func updateUIView(_ uiView: BannerView, context: Context) {}
 }
