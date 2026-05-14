@@ -43,7 +43,7 @@ GitHub Actionsで本番ビルドする場合は、Repository Secretsに以下を
 - `ADMOB_APP_ID`
 - `ADMOB_BANNER_ID`
 
-AdMob Secretsが未設定の場合、Googleのテスト広告IDでビルドします。
+AdMob Secretsが未設定の場合、提出用workflowは止まります。テスト広告ID入りのバイナリは提出しません。
 
 ## ASCで確認すること
 
