@@ -1,0 +1,151 @@
+name: ZettaiOsunaYo Production Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/zettai-osunayo-production
+    paths:
+      - ".github/workflows/zettai-osunayo-production.yml"
+      - "ios/ZettaiOsunaYo/**"
+
+jobs:
+  build:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ZettaiOsunaYo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Configure AdMob IDs
+        env:
+          ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID }}
+          ADMOB_BANNER_ID: ${{ secrets.ADMOB_BANNER_ID }}
+        run: |
+          . .venv/bin/activate
+          python tools/configure_ads.py \
+            --app-id "${ADMOB_APP_ID:-ca-app-pub-3940256099942544~1458002511}" \
+            --banner-id "${ADMOB_BANNER_ID:-ca-app-pub-3940256099942544/2934735716}"
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID"
+          mkdir -p /tmp/asc
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+
+      - name: Install distribution certificate
+        env:
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        run: |
+          test -n "$IOS_DISTRIBUTION_P12_BASE64"
+          test -n "$IOS_DISTRIBUTION_P12_PASSWORD"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/distribution.p12
+          security import /tmp/distribution.p12 -k build.keychain -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_BUNDLE_ID: "com.tokyonasu.zettaiosunayo"
+          PROFILE_NAME: "ZettaiOsunaYo App Store"
+        run: |
+          . .venv/bin/activate
+          python tools/prepare_profile.py
+
+      - name: Generate Xcode project
+        run: |
+          xcodegen generate
+
+      - name: Archive
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          xcodebuild archive \
+            -project ZettaiOsunaYo.xcodeproj \
+            -scheme ZettaiOsunaYo \
+            -destination "generic/platform=iOS" \
+            -archivePath build/ZettaiOsunaYo.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="ZettaiOsunaYo App Store" \
+            PRODUCT_BUNDLE_IDENTIFIER="com.tokyonasu.zettaiosunayo" \
+            CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}"
+
+      - name: Export IPA
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:com.tokyonasu.zettaiosunayo string ZettaiOsunaYo App Store" export_options.plist
+          xcodebuild -exportArchive \
+            -archivePath build/ZettaiOsunaYo.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload build to App Store Connect
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Submit App Store review
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_ID: "6769247677"
+          APP_VERSION: "1.0"
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          . .venv/bin/activate
+          python tools/submit_production.py
