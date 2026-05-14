@@ -509,7 +509,31 @@ def main():
     time.sleep(300)
     assign_build(version_id, build_id)
     cancel_open_review_submissions()
-    submit_for_review(version_id)
+    submit_app_store_version(version_id)
+
+
+def submit_app_store_version(version_id):
+    payload = {
+        "data": {
+            "type": "appStoreVersionSubmissions",
+            "relationships": {
+                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
+            },
+        }
+    }
+    for attempt in range(1, 31):
+        response, body = api_json("POST", "/appStoreVersionSubmissions", json=payload)
+        if response.status_code in (200, 201):
+            print(f"Submitted App Store version for review: {body.get('data', {}).get('id')}")
+            return
+        print(f"App Store version submit {attempt}/30: {response.status_code}")
+        if "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
+            time.sleep(60)
+            continue
+        if response.status_code != 409:
+            break
+        time.sleep(60)
+    raise RuntimeError(f"App Store version submit failed: {response.status_code} {response.text[:4000]}")
 
 
 if __name__ == "__main__":
