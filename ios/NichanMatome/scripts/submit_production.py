@@ -16,18 +16,21 @@ SCREENSHOT_DIR = "MarketingAssets/Screenshots"
 
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone67_01_home.png", "iphone67_02_insights.png", "iphone67_03_sources.png"]),
+    ("APP_IPAD_PRO_3GEN_129", ["ipad129_01_home.png", "ipad129_02_insights.png", "ipad129_03_sources.png"]),
 ]
 
 META = {
     "ja": {
         "description": """まとめ・よみきりは、1000件のRSS配信元から届く記事を、ただ並べずに読みやすく整理するアプリです。
 
-話題クラスタ、3分まとめ、偏りメーター、NG疲れワード、読後メモで、情報の洪水から今読む順番を作れます。
+話題クラスター、3分まとめ、偏りメーター、NGワード、読後メモを使って、今読むべき記事をすばやく選べます。
 
-記事本文は元サイトで開きます。アプリ内では見出し、要約、配信元、リンクを扱い、自分用の保存やメモを端末内に残せます。""",
+記事は各配信元サイトで開きます。アプリ内には見出し、要約、配信元、リンク、保存した記事、自分用メモだけを端末内に保存します。""",
         "keywords": "まとめ,RSS,ニュース,5ch,2ch,話題,あとで読む,メモ,フィルター,速報",
         "whatsNew": "初回リリースです。",
-        "promotionalText": "1000ソースを、3分で読める順番に。",
+        "promotionalText": "1000ソースを、1本の読みやすい流れに。",
+        "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": """Matome Yomikiri organizes a large set of Japanese RSS sources into a calmer reading flow.
@@ -38,6 +41,8 @@ Articles open on their original websites. The app stores headlines, summaries, l
         "keywords": "rss,news,reader,japan,topics,digest,bookmark,notes,filter,headlines",
         "whatsNew": "Initial release.",
         "promotionalText": "Turn 1000 sources into a readable flow.",
+        "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
 }
 
@@ -153,6 +158,137 @@ def update_metadata(version_id):
                 }
             })
         print(f"Metadata {locale}: {response.status_code}")
+
+
+def ensure_release_prerequisites(version_id):
+    api("PATCH", f"/apps/{APP_ID}", json={
+        "data": {
+            "type": "apps",
+            "id": APP_ID,
+            "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"},
+        }
+    })
+
+    response, body = api_json("GET", f"/apps/{APP_ID}/appInfos?limit=10")
+    app_infos = body.get("data", []) if response.status_code == 200 else []
+    if app_infos:
+        app_info_id = app_infos[0]["id"]
+        response = api("PATCH", f"/appInfos/{app_info_id}", json={
+            "data": {
+                "type": "appInfos",
+                "id": app_info_id,
+                "relationships": {
+                    "primaryCategory": {"data": {"type": "appCategories", "id": "NEWS"}}
+                },
+            }
+        })
+        print(f"Primary category: {response.status_code}")
+        update_age_rating(app_info_id)
+        update_app_info_localizations(app_info_id)
+
+    response = api("PATCH", f"/appStoreVersions/{version_id}", json={
+        "data": {
+            "type": "appStoreVersions",
+            "id": version_id,
+            "attributes": {"copyright": "2026 Tokyo Nasu"},
+        }
+    })
+    print(f"Copyright: {response.status_code}")
+    response = api("PATCH", f"/appStoreVersions/{version_id}", json={
+        "data": {
+            "type": "appStoreVersions",
+            "id": version_id,
+            "attributes": {"usesIdfa": True},
+        }
+    })
+    print(f"IDFA declaration: {response.status_code}")
+    ensure_free_price()
+    ensure_review_detail(version_id)
+
+
+def update_age_rating(app_info_id):
+    string_keys = [
+        "alcoholTobaccoOrDrugUseOrReferences",
+        "contests",
+        "gamblingSimulated",
+        "gunsOrOtherWeapons",
+        "medicalOrTreatmentInformation",
+        "profanityOrCrudeHumor",
+        "sexualContentGraphicAndNudity",
+        "sexualContentOrNudity",
+        "horrorOrFearThemes",
+        "matureOrSuggestiveThemes",
+        "violenceCartoonOrFantasy",
+        "violenceRealisticProlongedGraphicOrSadistic",
+        "violenceRealistic",
+    ]
+    bool_keys = [
+        "messagingAndChat",
+        "gambling",
+        "parentalControls",
+        "ageAssurance",
+        "userGeneratedContent",
+        "healthOrWellnessTopics",
+        "lootBox",
+    ]
+    attrs = {key: "NONE" for key in string_keys}
+    attrs.update({key: False for key in bool_keys})
+    attrs["advertising"] = True
+    attrs["unrestrictedWebAccess"] = True
+    response = api("PATCH", f"/ageRatingDeclarations/{app_info_id}", json={
+        "data": {"type": "ageRatingDeclarations", "id": app_info_id, "attributes": attrs}
+    })
+    print(f"Age rating: {response.status_code}")
+
+
+def update_app_info_localizations(app_info_id):
+    response, body = api_json("GET", f"/appInfos/{app_info_id}/appInfoLocalizations?limit=20")
+    if response.status_code != 200:
+        return
+    for loc in body.get("data", []):
+        locale = loc["attributes"].get("locale")
+        subtitle = "1000ソースを読みやすく整理" if locale == "ja" else "A calmer RSS reading flow"
+        response = api("PATCH", f"/appInfoLocalizations/{loc['id']}", json={
+            "data": {
+                "type": "appInfoLocalizations",
+                "id": loc["id"],
+                "attributes": {
+                    "subtitle": subtitle,
+                    "privacyPolicyUrl": "https://snarfnet.github.io/privacy.html",
+                },
+            }
+        })
+        print(f"App info {locale}: {response.status_code}")
+
+
+def ensure_free_price():
+    response, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1")
+    points = body.get("data", []) if response.status_code == 200 else []
+    if not points:
+        print("Free price: skipped")
+        return
+    price_id = points[0]["id"]
+    local_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [{
+            "type": "appPrices",
+            "id": local_id,
+            "attributes": {"startDate": "2026-05-13"},
+            "relationships": {
+                "appPricePoint": {"data": {"type": "appPricePoints", "id": price_id}}
+            },
+        }],
+    }
+    response = api("POST", "/appPriceSchedules", json=payload)
+    print(f"Free price: {response.status_code}")
 
 
 def ensure_review_detail(version_id):
@@ -317,6 +453,8 @@ def submit_for_review(version_id):
         print(f"Review item {attempt + 1}/20: {response.status_code}")
         if response.status_code == 201:
             break
+        if response.status_code == 409:
+            raise RuntimeError(f"Review item blocked: {response.text[:4000]}")
         time.sleep(30)
     for attempt in range(1, 31):
         response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
@@ -338,7 +476,7 @@ def main():
     print(f"App: {attrs.get('name')} / {attrs.get('bundleId')}")
 
     version_id = find_or_create_version()
-    ensure_review_detail(version_id)
+    ensure_release_prerequisites(version_id)
     update_metadata(version_id)
     if os.environ.get("PREPARE_APP_ONLY") == "1":
         print("App Store Connect metadata is ready.")
