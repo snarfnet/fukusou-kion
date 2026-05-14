@@ -418,6 +418,26 @@ def assign_build(version_id, build_id):
     print(f"Build assigned: {response.status_code}")
 
 
+def wait_for_version_reviewable(version_id):
+    ready_states = {"PREPARE_FOR_SUBMISSION", "READY_FOR_REVIEW"}
+    for index in range(30):
+        response, body = api_json(
+            "GET",
+            f"/appStoreVersions/{version_id}?fields[appStoreVersions]=appVersionState,appStoreState",
+        )
+        if response.status_code != 200:
+            print(f"Version state check {index + 1}/30: {response.status_code} {response.text[:300]}")
+            time.sleep(30)
+            continue
+        attrs = body["data"]["attributes"]
+        state = attrs.get("appVersionState") or attrs.get("appStoreState")
+        print(f"Version state after build assignment: {state}")
+        if state in ready_states:
+            return
+        time.sleep(30)
+    raise RuntimeError("App Store version did not become reviewable after assigning the build")
+
+
 def submit_for_review(version_id):
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
@@ -436,6 +456,28 @@ def submit_for_review(version_id):
     else:
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
 
+    ensure_review_submission_item(submission_id, version_id)
+
+    for attempt in range(1, 31):
+        response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
+            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+        })
+        if response.status_code == 200:
+            print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+            return
+        print(f"Review submit {attempt}/30: {response.status_code} {response.text[:500]}")
+        if "RELATIONSHIP.REQUIRED" in response.text:
+            ensure_review_submission_item(submission_id, version_id)
+        time.sleep(60)
+    raise RuntimeError("Review submit did not complete")
+
+
+def ensure_review_submission_item(submission_id, version_id):
+    existing_item = find_review_submission_item(submission_id, version_id)
+    if existing_item:
+        print(f"Review item already exists: {existing_item}")
+        return
+
     response = api("POST", "/reviewSubmissionItems", json={
         "data": {
             "type": "reviewSubmissionItems",
@@ -445,18 +487,30 @@ def submit_for_review(version_id):
             },
         }
     })
-    print(f"Review item: {response.status_code}")
+    print(f"Review item: {response.status_code} {response.text[:500]}")
+    if response.status_code in (200, 201):
+        return
 
-    for attempt in range(1, 31):
-        response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
-            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
-        })
-        if response.status_code == 200:
-            print(f"Submitted for App Review: {body['data']['attributes']['state']}")
-            return
-        print(f"Review submit {attempt}/30: {response.status_code} {response.text[:300]}")
-        time.sleep(60)
-    raise RuntimeError("Review submit did not complete")
+    existing_item = find_review_submission_item(submission_id, version_id)
+    if existing_item:
+        print(f"Review item found after conflict: {existing_item}")
+        return
+    raise RuntimeError(f"Review item create failed {response.status_code}: {response.text[:500]}")
+
+
+def find_review_submission_item(submission_id, version_id):
+    response, body = api_json(
+        "GET",
+        f"/reviewSubmissions/{submission_id}/items?include=appStoreVersion&fields[reviewSubmissionItems]=state,appStoreVersion&limit=50",
+    )
+    if response.status_code != 200:
+        print(f"Review item lookup failed: {response.status_code} {response.text[:300]}")
+        return None
+    for item in body.get("data", []):
+        relationship = item.get("relationships", {}).get("appStoreVersion", {}).get("data")
+        if relationship and relationship.get("id") == version_id:
+            return item["id"]
+    return None
 
 
 def find_reusable_review_submission():
@@ -489,6 +543,7 @@ def main():
     time.sleep(300)
     build_id = wait_for_build()
     assign_build(version_id, build_id)
+    wait_for_version_reviewable(version_id)
     submit_for_review(version_id)
 
 
