@@ -392,13 +392,19 @@ def upload_screenshot(set_id, filename):
         start = operation["offset"]
         end = start + operation["length"]
         requests.put(operation["url"], headers=request_headers, data=data[start:end], timeout=120)
-    response = api("PATCH", f"/appScreenshots/{screenshot_id}", json={
-        "data": {
-            "type": "appScreenshots",
-            "id": screenshot_id,
-            "attributes": {"uploaded": True, "sourceFileChecksum": checksum},
-        }
-    })
+    response = None
+    for attempt in range(1, 7):
+        response = api("PATCH", f"/appScreenshots/{screenshot_id}", json={
+            "data": {
+                "type": "appScreenshots",
+                "id": screenshot_id,
+                "attributes": {"uploaded": True, "sourceFileChecksum": checksum},
+            }
+        })
+        if response.status_code in (200, 201):
+            break
+        print(f"  {filename}: upload confirm retry {attempt}/6 status={response.status_code}")
+        time.sleep(20)
     print(f"  {filename}: {response.status_code}")
 
 
@@ -454,6 +460,10 @@ def submit_for_review(version_id):
         if response.status_code == 201:
             break
         if response.status_code == 409:
+            if "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
+                print("Screenshots are still processing. Waiting before retry.")
+                time.sleep(60)
+                continue
             raise RuntimeError(f"Review item blocked: {response.text[:4000]}")
         time.sleep(30)
     for attempt in range(1, 31):
