@@ -137,7 +137,6 @@ def ensure_release_prerequisites(version_id):
             "id": APP_ID,
             "attributes": {
                 "contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
-                "streamlinedPurchasingEnabled": False,
             },
         }
     })
@@ -163,6 +162,7 @@ def ensure_release_prerequisites(version_id):
         }
     })
     print(f"Version settings: {response.status_code}")
+    ensure_free_price()
     ensure_review_detail(version_id)
 
 
@@ -224,6 +224,38 @@ def update_app_info_localizations(app_info_id):
             "data": {"type": "appInfoLocalizations", "id": loc["id"], "attributes": attrs}
         })
         print(f"App info {locale}: {response.status_code}")
+
+
+def ensure_free_price():
+    response, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1")
+    points = body.get("data", []) if response.status_code == 200 else []
+    if not points:
+        print("Free price: no USA price point found")
+        return
+
+    local_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [
+            {
+                "type": "appPrices",
+                "id": local_id,
+                "attributes": {"startDate": "2026-05-13"},
+                "relationships": {
+                    "appPricePoint": {"data": {"type": "appPricePoints", "id": points[0]["id"]}}
+                },
+            }
+        ],
+    }
+    response = api("POST", "/appPriceSchedules", json=payload)
+    print(f"Free price: {response.status_code}")
 
 
 def ensure_review_detail(version_id):
