@@ -68,14 +68,14 @@ struct BiasMetric: Identifiable {
 }
 
 enum ArticleCategory: String, CaseIterable, Identifiable {
-    case all = "全部"
+    case all = "すべて"
     case news = "ニュース"
     case internet = "ネット"
     case entertainment = "芸能"
     case gameAnime = "ゲーム・アニメ"
     case money = "お金"
-    case life = "生活"
-    case other = "雑多"
+    case life = "暮らし"
+    case other = "その他"
 
     var id: String { rawValue }
 
@@ -146,7 +146,7 @@ enum ArticleTimeScope: String, CaseIterable, Identifiable {
 enum ArticleSortMode: String, CaseIterable, Identifiable {
     case newest = "新着順"
     case source = "サイト順"
-    case titleLength = "濃い順"
+    case titleLength = "長文順"
 
     var id: String { rawValue }
 }

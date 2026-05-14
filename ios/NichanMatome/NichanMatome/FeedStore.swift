@@ -15,7 +15,8 @@ final class FeedStore: ObservableObject {
     private let savedKey = "matome.savedArticles"
     private let fatigueWordsKey = "matome.fatigueWords"
     private let articleNotesKey = "matome.articleNotes"
-    private let refreshBatchSize = 12
+    private let refreshBatchSize = 8
+    private let refreshSourceLimit = 16
 
     init() {
         if let savedSources = Self.load([FeedSource].self, key: sourcesKey) {
@@ -30,11 +31,12 @@ final class FeedStore: ObservableObject {
     }
 
     func refresh() async {
+        guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
 
-        let enabledSources = sources.filter(\.isEnabled)
+        let enabledSources = Array(sources.filter(\.isEnabled).prefix(refreshSourceLimit))
         guard !enabledSources.isEmpty else {
             articles = []
             return
@@ -51,8 +53,12 @@ final class FeedStore: ObservableObject {
                 for source in batch {
                     group.addTask {
                         do {
-                            let request = URLRequest(url: source.feedURL, timeoutInterval: 8)
-                            let (data, _) = try await URLSession.shared.data(for: request)
+                            let request = URLRequest(url: source.feedURL, timeoutInterval: 6)
+                            let (data, response) = try await URLSession.shared.data(for: request)
+                            if let httpResponse = response as? HTTPURLResponse,
+                               !(200..<400).contains(httpResponse.statusCode) {
+                                throw URLError(.badServerResponse)
+                            }
                             let parsed = try FeedParser(sourceName: source.name).parse(data)
                             return .success(parsed)
                         } catch {
@@ -75,10 +81,12 @@ final class FeedStore: ObservableObject {
         articles = fetchedArticles
             .uniquedByLink()
             .sorted { ($0.publishedAt ?? .distantPast) > ($1.publishedAt ?? .distantPast) }
+            .prefix(160)
+            .map { $0 }
         lastUpdatedAt = Date()
 
         if articles.isEmpty, !failures.isEmpty {
-            errorMessage = "記事を読み込めませんでした。配信元を確認してください。"
+            errorMessage = "記事を読み込めませんでした。通信環境を確認して、もう一度お試しください。"
         }
     }
 
@@ -166,7 +174,7 @@ final class FeedStore: ObservableObject {
     func fatigueScore(for article: Article) -> Int {
         let text = article.analysisText
         let fatigueHits = fatigueWords.filter { !$0.isEmpty && text.contains($0.lowercased()) }.count
-        let hotWords = ["炎上", "批判", "速報", "悲報", "激怒", "物議", "拡散", "やばい", "終了", "逮捕"]
+        let hotWords = ["炎上", "批判", "速報", "悲報", "激怒", "物議", "拡散", "ひどい", "終了", "逮捕"]
         let hotHits = hotWords.filter { text.contains($0.lowercased()) }.count
         return min(100, fatigueHits * 30 + hotHits * 12)
     }
@@ -254,7 +262,7 @@ final class FeedStore: ObservableObject {
     }
 
     var hotKeywords: [String] {
-        let ignored = Set(["これ", "それ", "さん", "する", "した", "速報", "画像", "動画", "ニュース"])
+        let ignored = Set(["これ", "それ", "さん", "する", "した", "速報", "画像", "動画", "ニュース", "まとめ"])
         let separators = CharacterSet.whitespacesAndNewlines
             .union(.punctuationCharacters)
             .union(.symbols)
@@ -310,14 +318,16 @@ final class FeedStore: ObservableObject {
     }
 
     private static func merged(_ savedSources: [FeedSource], with defaultSources: [FeedSource]) -> [FeedSource] {
-        var urls = Set(savedSources.map(\.feedURL))
-        var mergedSources = savedSources
+        var mergedSources = savedSources.filter { source in
+            !source.name.contains("?") && !source.name.contains("縺") && !source.name.contains("繧")
+        }
+        var urls = Set(mergedSources.map(\.feedURL))
 
         for source in defaultSources where !urls.contains(source.feedURL) {
             mergedSources.append(source)
             urls.insert(source.feedURL)
         }
-        return mergedSources
+        return mergedSources.isEmpty ? defaultSources : mergedSources
     }
 
     private func clusterKey(for article: Article) -> String {

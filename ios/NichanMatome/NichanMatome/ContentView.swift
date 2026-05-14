@@ -21,7 +21,7 @@ struct ContentView: View {
                         }
                 }
                 .tabItem {
-                    Label("総合", systemImage: "rectangle.grid.1x2")
+                    Label("読む", systemImage: "rectangle.grid.1x2")
                 }
 
                 NavigationStack {
@@ -128,8 +128,12 @@ private struct DenseFeedView: View {
             .listRowBackground(Color.clear)
 
             if filteredArticles.isEmpty {
-                ContentUnavailableView("条件に合う記事がありません", systemImage: "line.3.horizontal.decrease.circle")
-                    .listRowBackground(Color.clear)
+                ContentUnavailableView(
+                    store.isLoading ? "記事を読み込み中" : "記事がありません",
+                    systemImage: store.isLoading ? "arrow.triangle.2.circlepath" : "line.3.horizontal.decrease.circle",
+                    description: Text(store.isLoading ? "数秒で終わらない場合は再読み込みしてください。" : "配信元や通信環境を確認してください。")
+                )
+                .listRowBackground(Color.clear)
             } else {
                 Section {
                     ForEach(Array(filteredArticles.enumerated()), id: \.element.id) { index, article in
@@ -154,7 +158,7 @@ private struct DenseFeedView: View {
         .background(Color.matomePaper)
         .searchable(text: $searchText, prompt: "タイトル、要約、サイトで検索")
         .overlay {
-            if store.isLoading {
+            if store.isLoading && !store.articles.isEmpty {
                 ProgressView()
                     .controlSize(.large)
                     .padding(28)
@@ -190,7 +194,7 @@ private struct DashboardPanel: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("いま読める量")
+                    Text("いま読める記事")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                     Text("\(visibleCount)件")
@@ -223,7 +227,7 @@ private struct DashboardPanel: View {
             }
 
             if !store.hotKeywords.isEmpty {
-                FlowLine(title: "よく出る語", values: store.hotKeywords)
+                FlowLine(title: "よく出る言葉", values: store.hotKeywords)
             }
 
             if !store.sourceBreakdown.isEmpty {
@@ -253,10 +257,6 @@ private struct DashboardPanel: View {
                         }
                     }
                 }
-            }
-
-            if !store.topicClusters.isEmpty {
-                FlowLine(title: "話題クラスタ", values: store.topicClusters.prefix(8).map { "\($0.title) \($0.articles.count)" })
             }
         }
         .padding(16)
@@ -339,9 +339,9 @@ private struct InsightsView: View {
                 }
             }
 
-            Section("話題クラスタ") {
+            Section("話題クラスター") {
                 if store.topicClusters.isEmpty {
-                    ContentUnavailableView("同じ話題はまだ見つかりません", systemImage: "square.stack.3d.up")
+                    ContentUnavailableView("近い話題はまだ見つかりません", systemImage: "square.stack.3d.up")
                 } else {
                     ForEach(store.topicClusters.prefix(12)) { cluster in
                         VStack(alignment: .leading, spacing: 8) {
@@ -398,7 +398,7 @@ private struct InsightsView: View {
                 }
             }
 
-            Section("NG疲れワード") {
+            Section("NGワード") {
                 HStack {
                     TextField("例: 炎上", text: $fatigueWord)
                     Button("追加") {
@@ -430,18 +430,18 @@ private struct InsightHero: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("1000ソースを整理")
+            Text("RSSを読みやすく整理")
                 .font(.title2.weight(.black))
                 .foregroundStyle(Color.matomeText)
 
-            Text("話題の重複、勢い、偏り、疲れやすさを見て、読む順番を作ります。")
+            Text("話題の重なり、カテゴリの偏り、あとで読みたい記事をまとめて見られます。")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             MetricStrip(items: [
                 ("配信元", "\(store.sources.count)"),
                 ("有効", "\(store.sources.filter(\.isEnabled).count)"),
-                ("クラスタ", "\(store.topicClusters.count)"),
+                ("クラスター", "\(store.topicClusters.count)"),
                 ("メモ", "\(store.articleNotes.count)")
             ])
         }
@@ -516,7 +516,7 @@ private struct SavedArticleView: View {
     var body: some View {
         Group {
             if store.savedArticles.isEmpty {
-                ContentUnavailableView("保存はまだありません", systemImage: "bookmark")
+                ContentUnavailableView("保存した記事はまだありません", systemImage: "bookmark")
             } else {
                 List(store.savedArticles) { article in
                     ArticleRow(article: article, compact: false)
@@ -734,7 +734,7 @@ private struct SourcesView: View {
                             store.setAllSourcesEnabled(false)
                         }
 
-                        Button("初期100件に戻す", role: .destructive) {
+                        Button("初期配信元に戻す", role: .destructive) {
                             showsResetConfirmation = true
                         }
                     } label: {
@@ -787,7 +787,7 @@ private struct SourcesView: View {
             }
 
             Section("データの扱い") {
-                Text("RSSと元記事リンクを読み込みます。本文の転載はアプリ内に保存しません。公開前に各サイトの利用条件を確認してください。")
+                Text("RSSの見出し、要約、リンクを読み込みます。記事本文は元サイトで開きます。保存記事とメモは端末内に保存します。")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -798,13 +798,13 @@ private struct SourcesView: View {
         .sheet(item: $editorMode) { mode in
             SourceEditorView(mode: mode)
         }
-        .confirmationDialog("初期100件に戻しますか？", isPresented: $showsResetConfirmation, titleVisibility: .visible) {
-            Button("初期100件に戻す", role: .destructive) {
+        .confirmationDialog("初期配信元に戻しますか？", isPresented: $showsResetConfirmation, titleVisibility: .visible) {
+            Button("初期配信元に戻す", role: .destructive) {
                 store.resetToDefaultSources()
             }
             Button("キャンセル", role: .cancel) {}
         } message: {
-            Text("追加・編集した配信元は消えます。あとで読む記事は残ります。")
+            Text("追加・編集した配信元は消えます。保存した記事とメモは残ります。")
         }
     }
 }

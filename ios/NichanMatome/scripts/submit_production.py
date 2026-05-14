@@ -21,26 +21,26 @@ SCREENSHOT_GROUPS = [
 
 META = {
     "ja": {
-        "description": """まとめ・よみきりは、1000件のRSS配信元から届く記事を、ただ並べずに読みやすく整理するアプリです。
+        "description": """まとめ・よみきりは、複数のRSS配信元から届く見出しを、読みやすく整理するニュースリーダーです。
 
-話題クラスター、3分まとめ、偏りメーター、NGワード、読後メモを使って、今読むべき記事をすばやく選べます。
+新着記事、カテゴリ、話題の重なり、あとで読む記事をまとめて確認できます。気になる記事は元サイトで開き、読後メモも端末内に保存できます。
 
-記事は各配信元サイトで開きます。アプリ内には見出し、要約、配信元、リンク、保存した記事、自分用メモだけを端末内に保存します。""",
+検索、期間フィルター、NGワード、サイト別の内訳を使って、今読む記事を落ち着いて選べます。""",
         "keywords": "まとめ,RSS,ニュース,5ch,2ch,話題,あとで読む,メモ,フィルター,速報",
         "whatsNew": "初回リリースです。",
-        "promotionalText": "1000ソースを、1本の読みやすい流れに。",
+        "promotionalText": "RSSの見出しを、読みやすい流れに整理します。",
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
-        "description": """Matome Yomikiri organizes a large set of Japanese RSS sources into a calmer reading flow.
+        "description": """Matome Yomikiri organizes Japanese RSS headlines into a calmer reading flow.
 
-Use topic clusters, a three-minute digest, category balance, fatigue-word filtering, and personal notes to decide what to read next.
+Use new articles, topic clusters, category balance, fatigue-word filtering, bookmarks, and private notes to decide what to read next.
 
-Articles open on their original websites. The app stores headlines, summaries, links, saved items, and your private notes on device.""",
+Articles open on their original websites. The app stores headlines, summaries, links, saved items, and your notes on device.""",
         "keywords": "rss,news,reader,japan,topics,digest,bookmark,notes,filter,headlines",
         "whatsNew": "Initial release.",
-        "promotionalText": "Turn 1000 sources into a readable flow.",
+        "promotionalText": "Turn RSS headlines into a readable flow.",
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
     },
@@ -247,7 +247,7 @@ def update_app_info_localizations(app_info_id):
         return
     for loc in body.get("data", []):
         locale = loc["attributes"].get("locale")
-        subtitle = "1000ソースを読みやすく整理" if locale == "ja" else "A calmer RSS reading flow"
+        subtitle = "RSSを読みやすく整理" if locale == "ja" else "A calmer RSS reading flow"
         response = api("PATCH", f"/appInfoLocalizations/{loc['id']}", json={
             "data": {
                 "type": "appInfoLocalizations",
