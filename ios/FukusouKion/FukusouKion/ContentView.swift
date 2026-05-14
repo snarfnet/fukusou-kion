@@ -2,7 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var appModel: WeatherAppModel
+    @EnvironmentObject private var adService: AdService
     @StateObject private var interstitial = InterstitialAdCoordinator()
+    @State private var didStartMainFlow = false
 
     var body: some View {
         TabView(selection: $appModel.selectedTab) {
@@ -23,13 +25,96 @@ struct ContentView: View {
                 .tag(AppTab.settings)
         }
         .tint(.blue)
-        .onAppear {
-            interstitial.load()
+        .task {
+            await adService.prepareForLaunch()
+            await startMainFlowIfReady()
+        }
+        .onChange(of: adService.didCompleteTrackingFlow) { _, _ in
+            Task { await startMainFlowIfReady() }
         }
         .onChange(of: appModel.selectedTab) { _, tab in
             if tab == .week {
                 interstitial.showIfReady()
             }
+        }
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { adService.shouldShowTrackingPermissionGate },
+                set: { _ in }
+            )
+        ) {
+            TrackingPermissionIntroView {
+                Task {
+                    await adService.requestTrackingAuthorizationFromGate()
+                    await startMainFlowIfReady()
+                }
+            }
+            .interactiveDismissDisabled(true)
+        }
+    }
+
+    @MainActor
+    private func startMainFlowIfReady() async {
+        guard adService.didCompleteTrackingFlow, !didStartMainFlow else { return }
+        didStartMainFlow = true
+        await appModel.refresh()
+        interstitial.load()
+    }
+}
+
+private struct TrackingPermissionIntroView: View {
+    let onContinue: () -> Void
+    @State private var isRequesting = false
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color(red: 0.91, green: 0.97, blue: 1.0),
+                    Color(red: 1.0, green: 0.96, blue: 0.88)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Image(systemName: "sparkles.rectangle.stack.fill")
+                    .symbolRenderingMode(.multicolor)
+                    .font(.system(size: 56, weight: .semibold))
+
+                VStack(spacing: 12) {
+                    Text("広告の確認")
+                        .font(.largeTitle.bold())
+
+                    Text("服装気温では、広告の表示と効果測定のためにトラッキング許可を確認します。許可しなくても、天気と服装の提案はそのまま使えます。")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                        .frame(maxWidth: 520)
+                }
+
+                Button {
+                    guard !isRequesting else { return }
+                    isRequesting = true
+                    onContinue()
+                } label: {
+                    HStack(spacing: 8) {
+                        if isRequesting {
+                            ProgressView()
+                                .tint(.white)
+                        }
+                        Text("続ける")
+                            .font(.headline)
+                    }
+                    .frame(maxWidth: 320)
+                    .padding(.vertical, 15)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(isRequesting)
+            }
+            .padding(28)
         }
     }
 }

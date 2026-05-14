@@ -44,26 +44,33 @@ final class AdService: ObservableObject {
 
     let isAdFree = false
     @Published private(set) var isReady = false
+    @Published private(set) var didCompleteTrackingFlow = false
+    @Published private(set) var shouldShowTrackingPermissionGate = false
+
+    private var isStarting = false
 
     private init() {}
 
-    func start() async {
-        guard !isReady else { return }
-        await requestTrackingAuthorizationIfNeeded()
-        await MobileAds.shared.start()
-        isReady = true
-    }
-
-    func bannerUnitID(for placement: AdPlacement) -> String {
-        switch placement {
-        case .homeBottom:
-            AdConfiguration.bannerUnitID
+    func prepareForLaunch() async {
+        guard !didCompleteTrackingFlow else {
+            await startAdsIfNeeded()
+            return
         }
+
+        guard needsTrackingAuthorizationPrompt else {
+            didCompleteTrackingFlow = true
+            await startAdsIfNeeded()
+            return
+        }
+
+        shouldShowTrackingPermissionGate = true
     }
 
-    private func requestTrackingAuthorizationIfNeeded() async {
-        guard #available(iOS 14.5, *),
-              ATTrackingManager.trackingAuthorizationStatus == .notDetermined else {
+    func requestTrackingAuthorizationFromGate() async {
+        guard needsTrackingAuthorizationPrompt else {
+            shouldShowTrackingPermissionGate = false
+            didCompleteTrackingFlow = true
+            await startAdsIfNeeded()
             return
         }
 
@@ -71,6 +78,32 @@ final class AdService: ObservableObject {
             ATTrackingManager.requestTrackingAuthorization { status in
                 continuation.resume(returning: status)
             }
+        }
+
+        shouldShowTrackingPermissionGate = false
+        didCompleteTrackingFlow = true
+        await startAdsIfNeeded()
+    }
+
+    private var needsTrackingAuthorizationPrompt: Bool {
+        guard #available(iOS 14.5, *) else { return false }
+        return ATTrackingManager.trackingAuthorizationStatus == .notDetermined
+    }
+
+    private func startAdsIfNeeded() async {
+        guard !isReady, !isStarting else { return }
+        isStarting = true
+        await MobileAds.shared.start()
+        isReady = true
+        isStarting = false
+    }
+}
+
+extension AdService {
+    func bannerUnitID(for placement: AdPlacement) -> String {
+        switch placement {
+        case .homeBottom:
+            AdConfiguration.bannerUnitID
         }
     }
 }

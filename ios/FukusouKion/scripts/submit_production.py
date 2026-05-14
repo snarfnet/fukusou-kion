@@ -192,8 +192,10 @@ def update_review_detail(version_id):
         "demoAccountName": "",
         "demoAccountPassword": "",
         "notes": (
-            "This build adds the AppTrackingTransparency permission request before Google Mobile Ads starts. "
-            "The ATT prompt is shown shortly after launch, before ads are loaded."
+            "This build shows an in-app tracking explanation screen on first launch before weather refresh, "
+            "location permission, Google Mobile Ads startup, or ad loading. Tap the '続ける' button on that screen "
+            "to display the AppTrackingTransparency system permission request. After the ATT flow completes, "
+            "the app continues to the weather/outfit screen and only then starts Google Mobile Ads."
         ),
     }
     response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")

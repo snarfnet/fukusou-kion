@@ -9,10 +9,6 @@ struct FukusouKionApp: App {
             ContentView()
                 .environmentObject(appModel)
                 .environmentObject(AdService.shared)
-                .task {
-                    await AdService.shared.start()
-                    await appModel.refresh()
-                }
         }
     }
 }
