@@ -1,5 +1,6 @@
 import hashlib
 import os
+import re
 import sys
 import time
 
@@ -464,8 +465,18 @@ def submit_for_review(version_id):
                 print("Screenshots are still processing. Waiting before retry.")
                 time.sleep(60)
                 continue
+            if "ITEM_PART_OF_ANOTHER_SUBMISSION" in response.text:
+                match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", response.text)
+                if match:
+                    print(f"Using existing review submission: {match.group(1)}")
+                    finish_review_submission(match.group(1))
+                    return
             raise RuntimeError(f"Review item blocked: {response.text[:4000]}")
         time.sleep(30)
+    finish_review_submission(submission_id)
+
+
+def finish_review_submission(submission_id):
     for attempt in range(1, 31):
         response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
             "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
