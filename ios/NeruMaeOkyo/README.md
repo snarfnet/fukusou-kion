@@ -29,7 +29,7 @@ $env:OPENAI_API_KEY="sk-..."
 .\scripts\generate_priest_tts.ps1
 ```
 
-生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。`ffmpeg`が入っている場合は、睡眠向けの控えめな残響を自動でかけます。
+生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。声が機械的にならないよう、生成後の速度変更や残響加工はかけません。
 
 1人だけ作る場合:
 
