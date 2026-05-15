@@ -192,6 +192,9 @@ struct HeroWeatherCard: View {
                         .monospacedDigit()
                     Text(snapshot.currentCondition)
                         .font(.headline)
+
+                    WeatherAttributionInlineView()
+                        .padding(.top, 4)
                 }
 
                 Spacer()
@@ -330,12 +333,43 @@ struct MetricTile: View {
 
 struct WeatherAttributionView: View {
     var body: some View {
-        Link("Weather data: Apple Weather",
-             destination: URL(string: "https://weatherkit.apple.com/legal-attribution.html")!)
-            .font(.caption)
-            .foregroundStyle(.secondary)
+        Link(destination: URL(string: "https://weatherkit.apple.com/legal-attribution.html")!) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Weather data provided by  Weather")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.primary)
+
+                Text("https://weatherkit.apple.com/legal-attribution.html")
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.blue)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 4)
+            .padding(12)
+            .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Weather data provided by Apple Weather. Legal attribution link.")
+    }
+}
+
+struct WeatherAttributionInlineView: View {
+    var body: some View {
+        Link(destination: URL(string: "https://weatherkit.apple.com/legal-attribution.html")!) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Weather data provided by  Weather")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.primary)
+                Text("https://weatherkit.apple.com/legal-attribution.html")
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.blue)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Weather data provided by Apple Weather. Legal attribution link.")
     }
 }
 
@@ -373,6 +407,9 @@ struct WeekView: View {
                     }
                     .padding(.vertical, 8)
                 }
+
+                WeatherAttributionView()
+                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
             }
             .navigationTitle("7日分の服装")
         }

@@ -195,7 +195,10 @@ def update_review_detail(version_id):
             "This build shows an in-app tracking explanation screen on first launch before weather refresh, "
             "location permission, Google Mobile Ads startup, or ad loading. Tap the '続ける' button on that screen "
             "to display the AppTrackingTransparency system permission request. After the ATT flow completes, "
-            "the app continues to the weather/outfit screen and only then starts Google Mobile Ads."
+            "the app continues to the weather/outfit screen and only then starts Google Mobile Ads. "
+            "WeatherKit attribution is displayed on the Home screen and Weekly Forecast screen as "
+            "'Weather data provided by  Weather' with the legal source link "
+            "https://weatherkit.apple.com/legal-attribution.html."
         ),
     }
     response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")

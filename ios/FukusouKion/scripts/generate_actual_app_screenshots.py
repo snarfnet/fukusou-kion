@@ -109,6 +109,26 @@ def banner(draw, width, height):
     draw.text((x + box_width / 2, y + box_height / 2), "広告", font=font(scale(18, width)), fill=(116, 130, 145), anchor="mm")
 
 
+def weather_attribution(draw, width, y):
+    x = scale(64, width)
+    box_width = width - scale(128, width)
+    box_height = scale(106, width)
+    rounded(draw, (x, y, x + box_width, y + box_height), scale(18, width), (255, 255, 255), (226, 233, 240))
+    draw.text(
+        (x + scale(24, width), y + scale(22, width)),
+        "Weather data provided by  Weather",
+        font=font(scale(20, width), True),
+        fill=(20, 45, 79),
+    )
+    draw.text(
+        (x + scale(24, width), y + scale(58, width)),
+        "https://weatherkit.apple.com/legal-attribution.html",
+        font=font(scale(16, width)),
+        fill=(39, 117, 204),
+    )
+    return y + box_height + scale(22, width)
+
+
 def home(width, height):
     image = background(width, height)
     draw = ImageDraw.Draw(image)
@@ -150,6 +170,9 @@ def home(width, height):
     draw.text((x + scale(36, width), y + scale(34, width)), "傘いる？", font=font(scale(24, width), True), fill=(72, 89, 112))
     draw.text((x + scale(36, width), y + scale(88, width)), "今日は不要", font=font(scale(34, width), True), fill=(20, 45, 79))
     draw.text((x + card_width - scale(92, width), y + scale(92, width)), "☂", font=font(scale(56, width), True), fill=(80, 132, 191), anchor="mm")
+
+    y += scale(225, width)
+    weather_attribution(draw, width, y)
 
     banner(draw, width, height)
     tab_bar(draw, width, height, 0)
@@ -217,6 +240,7 @@ def week(width, height):
             (235, 244, 255),
         )
         draw.text((x + card_width - scale(147, width), top + scale(74, width)), umbrella, font=font(scale(19, width), True), fill=(55, 91, 137), anchor="mm")
+    weather_attribution(draw, width, y + len(days) * (row_height + scale(18, width)) + scale(8, width))
     tab_bar(draw, width, height, 1)
     return image
 
