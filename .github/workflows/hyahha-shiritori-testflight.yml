@@ -91,7 +91,8 @@ jobs:
         run: |
           . .venv/bin/activate
           python scripts/ensure_asc_app.py
-          python scripts/resolve_app_bundle.py >> "$GITHUB_ENV"
+          python scripts/resolve_app_bundle.py | tee /tmp/hyahha-app-bundle.log
+          grep '^APP_BUNDLE_ID=' /tmp/hyahha-app-bundle.log >> "$GITHUB_ENV"
 
       - name: Prepare provisioning profile
         env:
