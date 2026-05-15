@@ -60,5 +60,6 @@ MVP用の仮音源を同梱しています。
 - `ASC_PRIVATE_KEY` または `ASC_API_KEY_CONTENT`
 - `IOS_DISTRIBUTION_P12_BASE64` または `DIST_CERT_BASE64`
 - `IOS_DISTRIBUTION_P12_PASSWORD` または `DIST_CERT_PASSWORD`
+- `NERU_MAE_OKYO_APP_ID`。App Store Connectでアプリを手動作成する場合に使います。
 
 ワークフローは`com.tokyonasu.nerumaeokyo`のBundle IDとApp Store Connectアプリを確認し、なければ作成します。ビルド番号は`GITHUB_RUN_NUMBER + 100`です。

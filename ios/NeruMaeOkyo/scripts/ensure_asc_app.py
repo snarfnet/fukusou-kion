@@ -53,10 +53,15 @@ def ensure_app(bundle):
             },
         }
     }
-    app = api_json("POST", "/apps", data=json_body(payload))["data"]
-    print(f"App created: {app['attributes'].get('name')} ({app['id']})")
-    print(f"APP_ID={app['id']}")
-    return app
+    try:
+        app = api_json("POST", "/apps", data=json_body(payload))["data"]
+        print(f"App created: {app['attributes'].get('name')} ({app['id']})")
+        print(f"APP_ID={app['id']}")
+        return app
+    except Exception as error:
+        print(f"App Store Connect app was not created: {error}")
+        print("Create the app manually in App Store Connect, then set GitHub Secret NERU_MAE_OKYO_APP_ID.")
+        return None
 
 
 def main():

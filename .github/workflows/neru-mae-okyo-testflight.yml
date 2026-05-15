@@ -25,6 +25,7 @@ jobs:
       APP_SKU: neru-mae-okyo
       BUNDLE_NAME: NeruMaeOkyo
       PROFILE_NAME: "NeruMaeOkyo App Store"
+      NERU_MAE_OKYO_APP_ID: ${{ secrets.NERU_MAE_OKYO_APP_ID }}
 
     steps:
       - name: Checkout
@@ -88,8 +89,19 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
           . .venv/bin/activate
-          python scripts/ensure_asc_app.py | tee /tmp/neru-mae-okyo-app.log
-          grep '^APP_ID=' /tmp/neru-mae-okyo-app.log >> "$GITHUB_ENV"
+          if [ -n "$NERU_MAE_OKYO_APP_ID" ]; then
+            echo "APP_ID=$NERU_MAE_OKYO_APP_ID" >> "$GITHUB_ENV"
+            python scripts/ensure_asc_app.py
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/neru-mae-okyo-app.log
+            if grep '^APP_ID=' /tmp/neru-mae-okyo-app.log >> "$GITHUB_ENV"; then
+              echo "App Store Connect app resolved."
+            else
+              echo "App Store Connect app is not ready yet."
+              echo "Create an app record for com.tokyonasu.nerumaeokyo, then add GitHub Secret NERU_MAE_OKYO_APP_ID."
+              exit 1
+            fi
+          fi
 
       - name: Resolve app bundle
         env:
