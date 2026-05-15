@@ -29,7 +29,7 @@ $env:OPENAI_API_KEY="sk-..."
 .\scripts\generate_priest_tts.ps1
 ```
 
-生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。声が機械的にならないよう、生成後の速度変更や残響加工はかけません。
+生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。声が機械的にならないよう、生成後の速度変更や残響加工はかけません。人間らしさを優先し、OpenAI TTSの`marin`と`cedar`を住職ごとに使い分けます。
 
 1人だけ作る場合:
 

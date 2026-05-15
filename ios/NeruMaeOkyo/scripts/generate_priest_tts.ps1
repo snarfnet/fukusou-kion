@@ -31,42 +31,42 @@ if ([string]::IsNullOrWhiteSpace($OutputDir)) {
 }
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 
-$heartSutraText = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("44G244Gj44Gb44Gk44G+44O844GL44O844Gv44KT44Gr44KD44O844Gv44O844KJ44O844G/44O844Gf44O844GX44O844KT44GO44KH44GG44O844CCCuOBi+OCk+OBmOODvOOBluOBhOOBvOODvOOBleODvOOAguOBjuOCh+OBhuOBmOOCk+OBr+OCk+OBq+OCg+ODvOOBr+ODvOOCieODvOOBv+ODvOOBn+ODvOOAggrjgZjjg7zjgZfjgofjgYbjgZHjgpPjgZTjg7zjgYbjgpPjgYvjgYTjgY/jg7zjgILjganjg7zjgYTjgaPjgZXjgYTjgY/jg7zjgoTjgY/jgIIK44GX44KD44O844KK44O844GX44O844CC44GX44GN44G144O844GE44O844GP44GG44CC44GP44GG44G144O844GE44O844GX44GN44CC44GX44GN44Gd44GP44Gc44O844GP44GG44CCCuOBj+OBhuOBneOBj+OBnOODvOOBl+OBjeOAguOBmOOCheODvOOBneOBhuOBjuOCh+OBhuOBl+OBjeOAguOChOOBj+OBtuODvOOBq+OCh+ODvOOBnOODvOOAggrjgZfjgoPjg7zjgorjg7zjgZfjg7zjgILjgZzjg7zjgZfjgofjgYbjgbvjgYbjgY/jgYbjgZ3jgYbjgILjgbXjg7zjgZfjgofjgYbjgbXjg7zjgoHjgaTjgILjgbXjg7zjgY/jg7zjgbXjg7zjgZjjgofjgYbjgIIK44G144O844Ge44GG44G144O844GS44KT44CC44Gc44O844GT44O844GP44GG44Gh44KF44GG44CC44KA44O844GX44GN44CC44KA44O844GY44KF44O844Gd44GG44GO44KH44GG44GX44GN44CC44KA44O844GS44KT44Gr44O844CCCuOBs+ODvOOBnOOBo+OBl+OCk+OBhOODvOOAguOCgOODvOOBl+OBjeOBl+OCh+OBhuOBk+OBhuOBv+ODvOOBneOBj+OBu+OBhuOAguOCgOODvOOBkuOCk+OBi+OBhOOAguOBquOBhOOBl+ODvOOAggrjgoDjg7zjgYTjg7zjgZfjgY3jgYvjgYTjgILjgoDjg7zjgoDjg7zjgb/jgofjgYbjgILjgoTjgY/jgoDjg7zjgoDjg7zjgb/jgofjgYbjgZjjgpPjgILjgarjgYTjgZfjg7zjgILjgoDjg7zjgo3jgYbjgZfjg7zjgoTjgY/jgIIK44KA44O844KN44GG44GX44O844GY44KT44CC44KA44O844GP44O844GX44KF44GG44KB44Gk44Gp44GG44CC44KA44O844Gh44O844KE44GP44KA44O844Go44GP44GE44O844CCCuOCgOODvOOBl+OCh+ODvOOBqOOBo+OBk+ODvOOAguOBvOODvOOBoOOBhOOBleOBo+OBn+ODvOOAguOBiOODvOOBr+OCk+OBq+OCg+ODvOOBr+ODvOOCieODvOOBv+ODvOOBn+ODvOOAggrjgZPjg7zjgZfjgpPjgoDjg7zjgZHjg7zjgZLjg7zjgILjgoDjg7zjgZHjg7zjgZLjg7zjgZPjg7zjgILjgoDjg7zjgYbjg7zjgY/jg7zjgbXjg7zjgILjgYrjgpPjgorjg7zjgYTjgaPjgZXjgYTjgabjgpPjganjgYbjgIIK44KA44O844Gd44GG44GP44O844GO44KH44GG44Gt44O844Gv44KT44CC44GV44KT44Gc44O844GX44KH44O844G244Gk44CC44GI44O844Gv44KT44Gr44KD44O844Gv44O844KJ44O844G/44O844Gf44O844CCCuOBk+ODvOOBqOOBj+OBguODvOOBruOBj+OBn+ODvOOCieODvOOBleOCk+OBv+OCg+OBj+OBleOCk+OBvOODvOOBoOOBhOOAguOBk+ODvOOBoeODvOOBr+OCk+OBq+OCg+ODvOOBr+ODvOOCieODvOOBv+ODvOOBn+ODvOOAggrjgZzjg7zjgaDjgYTjgZjjgpPjgZfjgoXjgILjgZzjg7zjgaDjgYTjgb/jgofjgYbjgZfjgoXjgILjgZzjg7zjgoDjg7zjgZjjgofjgYbjg7zjgZfjgoXjgILjgZzjg7zjgoDjg7zjgajjgYbjgajjgYbjgZfjgoXjgIIK44Gu44GG44GY44KH44O844GE44Gj44GV44GE44GP44O844CC44GX44KT44GY44Gk44G144O844GT44O844CC44GT44O844Gb44Gk44Gv44KT44Gr44KD44O844Gv44O844KJ44O844G/44O844Gf44O844CCCuOBl+OCheODvOOBneOBj+OBm+OBpOOBl+OCheODvOOCj+OBpOOAguOBjuOCg+ODvOOBpuODvOOAguOBjuOCg+ODvOOBpuODvOOAguOBr+ODvOOCieODvOOBjuOCg+ODvOOBpuODvOOAguOBr+OCieOBneODvOOBjuOCg+ODvOOBpuODvOOAggrjgbzjg7zjgZjjg7zjgZ3jgo/jgYvjg7zjgILjga/jgpPjgavjgoPjg7zjgZfjg7zjgpPjgY7jgofjgYbjg7zjgII="))
-$commonChant = " Chant the full Heart Sutra in Japanese kana reading exactly as written. Keep the voice natural, human, warm, and non-robotic. Use a slow, heavy temple sutra cadence, hold vowels marked with ー, and pause calmly at punctuation. Do not add synthetic effects."
+$heartSutraText = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("44G244Gj44Gb44Gk44G+44GL44Gv44KT44Gr44KD44Gv44KJ44G/44Gf44GX44KT44GO44KH44GG44CCCuOBi+OCk+OBmOOBluOBhOOBvOOBleOBpOOAguOBjuOCh+OBhuOBmOOCk+OBr+OCk+OBq+OCg+OBr+OCieOBv+OBn+OBmOOAggrjgZfjgofjgYbjgZHjgpPjgZTjgYbjgpPjgYvjgYTjgY/jgYbjgILjganjgYTjgaPjgZXjgYTjgY/jgoTjgY/jgIIK44GX44KD44KK44GX44CC44GX44GN44G144GE44GP44GG44CC44GP44GG44G144GE44GX44GN44CCCuOBl+OBjeOBneOBj+OBnOOBj+OBhuOAguOBj+OBhuOBneOBj+OBnOOBl+OBjeOAggrjgZjjgoXjgZ3jgYbjgY7jgofjgYbjgZfjgY3jgILjgoTjgY/jgbbjgavjgofjgZzjgIIK44GX44KD44KK44GX44CC44Gc44GX44KH44G744GG44GP44GG44Gd44GG44CCCuOBteOBl+OCh+OBhuOBteOCgeOBpOOAguOBteOBj+OBteOBmOOCh+OBhuOAguOBteOBnuOBhuOBteOBkuOCk+OAggrjgZzjgZPjgY/jgYbjgaHjgoXjgYbjgILjgoDjgZfjgY3jgILjgoDjgZjjgoXjgZ3jgYbjgY7jgofjgYbjgZfjgY3jgIIK44KA44GS44KT44Gr44Gz44Gc44Gj44GX44KT44Gr44CC44KA44GX44GN44GX44KH44GG44GT44GG44G/44Gd44GP44G744GG44CCCuOCgOOBkuOCk+OBi+OBhOOAguOBquOBhOOBl+OCgOOBhOOBl+OBjeOBi+OBhOOAggrjgoDjgoDjgb/jgofjgYbjgILjgoTjgY/jgoDjgoDjgb/jgofjgYbjgZjjgpPjgIIK44Gq44GE44GX44KA44KN44GG44GX44CC44KE44GP44KA44KN44GG44GX44GY44KT44CCCuOCgOOBj+OBl+OCheOBhuOCgeOBpOOBqeOBhuOAguOCgOOBoeOChOOBj+OCgOOBqOOBj+OAggrjgYTjgoDjgZfjgofjgajjgY/jgZPjgIIK44G844Gg44GE44GV44Gj44Gf44CC44GI44Gv44KT44Gr44KD44Gv44KJ44G/44Gf44GT44CCCuOBl+OCk+OCgOOBkeOBhOOBkuOAguOCgOOBkeOBhOOBkuOBk+OAggrjgoDjgYbjgY/jgbXjgILjgYrjgpPjgorjgYTjgaPjgZXjgYTjgabjgpPjganjgYbjgoDjgZ3jgYbjgIIK44GP44GN44KH44GG44Gt44Gv44KT44CCCuOBleOCk+OBnOOBl+OCh+OBtuOBpOOAguOBiOOBr+OCk+OBq+OCg+OBr+OCieOBv+OBn+OBk+OAggrjgajjgY/jgYLjga7jgY/jgZ/jgonjgZXjgpPjgb/jgoPjgY/jgZXjgpPjgbzjgaDjgYTjgIIK44GT44Gh44Gv44KT44Gr44KD44Gv44KJ44G/44Gf44CCCuOBnOOBoOOBhOOBmOOCk+OBl+OCheOAguOBnOOBoOOBhOOBv+OCh+OBhuOBl+OCheOAggrjgZzjgoDjgZjjgofjgYbjgZfjgoXjgILjgZzjgoDjgajjgYbjganjgYbjgZfjgoXjgIIK44Gu44GG44GY44KH44GE44Gj44GV44GE44GP44CC44GX44KT44GY44Gk44G144GT44CCCuOBk+OBm+OBpOOBr+OCk+OBq+OCg+OBr+OCieOBv+OBn+OBl+OCheOAggrjgZ3jgY/jgZvjgaTjgZfjgoXjgo/jgaTjgIIK44GO44KD44Gm44GE44CC44GO44KD44Gm44GE44CC44Gv44KJ44GO44KD44Gm44GE44CCCuOBr+OCieOBneOBhuOBjuOCg+OBpuOBhOOAguOBvOOBmOOBneOCj+OBi+OAggrjga/jgpPjgavjgoPjgZfjgpPjgY7jgofjgYbjgII="))
+$commonChant = " Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed."
 $commonAvoid = " Keep it sleep-safe. Avoid whisper noise, harsh breath, loudness, fear, pressure, horror, or comedy."
 $profiles = @(
     @{
-        id = "genkai"; file = "guide_genkai.mp3";
+        id = "genkai"; file = "guide_genkai.mp3"; voice = "cedar";
         instructions = $commonChant + "Speak Japanese in a deep, warm elder voice. Very slow, steady, reassuring, with long quiet pauses. Gentle bedtime meditation tone." + $commonAvoid;
         text = $heartSutraText
     },
     @{
-        id = "toma"; file = "guide_toma.mp3";
+        id = "toma"; file = "guide_toma.mp3"; voice = "marin";
         instructions = $commonChant + "Speak Japanese in a soft young adult male voice. Calm, sincere, clear, and gentle. Keep the pace slow with natural pauses. Make it feel safe and modern." + $commonAvoid;
         text = $heartSutraText
     },
     @{
-        id = "myono"; file = "guide_myono.mp3";
+        id = "myono"; file = "guide_myono.mp3"; voice = "marin";
         instructions = $commonChant + "Speak Japanese in a warm elderly female voice, like a kind grandmother. Low volume, soft smile, slow and reassuring." + $commonAvoid;
         text = $heartSutraText
     },
     @{
-        id = "seigaku"; file = "guide_seigaku.mp3";
+        id = "seigaku"; file = "guide_seigaku.mp3"; voice = "cedar";
         instructions = $commonChant + "Speak Japanese in a calm scholarly middle-aged male voice. Measured, precise, kind, and low. Use spacious pauses. It should feel orderly and reassuring." + $commonAvoid;
         text = $heartSutraText
     },
     @{
-        id = "sangen"; file = "guide_sangen.mp3";
+        id = "sangen"; file = "guide_sangen.mp3"; voice = "cedar";
         instructions = $commonChant + "Speak Japanese in a low rustic mountain-hermit voice. Dry, quiet, slow, and kind. Add long pauses and a grounded feeling." + $commonAvoid;
         text = $heartSutraText
     },
     @{
-        id = "fukusho"; file = "guide_fukusho.mp3";
+        id = "fukusho"; file = "guide_fukusho.mp3"; voice = "marin";
         instructions = $commonChant + "Speak Japanese in a round, warm, slightly cheerful priest voice. Very gentle, slow, and sleepy. Smile in the voice without becoming energetic." + $commonAvoid;
         text = $heartSutraText
     },
     @{
-        id = "shodo"; file = "guide_shodo.mp3";
+        id = "shodo"; file = "guide_shodo.mp3"; voice = "cedar";
         instructions = $commonChant + "Speak Japanese in a solemn but gentle bell-keeper voice. Low, slow, spacious, and safe. Each phrase should fade softly." + $commonAvoid;
         text = $heartSutraText
     }
@@ -86,7 +86,7 @@ foreach ($profile in $selected) {
     $chantText = $profile.text
     $bodyObject = @{
         model = "gpt-4o-mini-tts"
-        voice = "cedar"
+        voice = $profile.voice
         input = $chantText
         instructions = $profile.instructions
         response_format = "mp3"

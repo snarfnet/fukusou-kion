@@ -55,7 +55,7 @@ struct OpenAITTSService {
 
         let body = SpeechRequest(
             model: "gpt-4o-mini-tts",
-            voice: "cedar",
+            voice: guide.ttsVoice,
             input: text ?? guide.speechText,
             instructions: guide.ttsInstructions,
             responseFormat: "mp3"
