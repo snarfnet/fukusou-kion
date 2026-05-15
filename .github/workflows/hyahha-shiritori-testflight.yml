@@ -149,8 +149,15 @@ jobs:
         run: |
           IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
           test -n "$IPA_PATH"
+          set +e
           xcrun altool --upload-app \
             --type ios \
             --file "$IPA_PATH" \
             --apiKey "$ASC_KEY_ID" \
-            --apiIssuer "$ASC_ISSUER_ID"
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/hyahha-altool.log
+          ALTOOL_STATUS=${PIPESTATUS[0]}
+          set -e
+          if grep -E "ERROR:|Cannot determine the Apple ID|No suitable application records" /tmp/hyahha-altool.log; then
+            exit 1
+          fi
+          exit "$ALTOOL_STATUS"
