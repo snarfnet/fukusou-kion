@@ -77,7 +77,8 @@ def ensure_app(bundle):
         except Exception as error:
             last_error = error
 
-    raise RuntimeError(f"App Store Connect app could not be created: {last_error}")
+    print(f"App Store Connect app was not created: {last_error}")
+    print("Continuing. Upload may still work if the app record already exists or is created manually.")
 
 
 def main():
