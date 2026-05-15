@@ -23,7 +23,7 @@ jobs:
       APP_BUNDLE_ID: com.tokyonasu.hyahhashiritori
       APP_NAME: "ヒャッハーしりとり"
       APP_SKU: hyahha-shiritori
-      BUNDLE_NAME: "ヒャッハーしりとり"
+      BUNDLE_NAME: HyahhaShiritori
       PROFILE_NAME: "HyahhaShiritori App Store"
 
     steps:
