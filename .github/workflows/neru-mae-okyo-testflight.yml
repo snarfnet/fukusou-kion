@@ -164,12 +164,19 @@ jobs:
         run: |
           IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
           test -n "$IPA_PATH"
+          set +e
           xcrun altool --upload-app \
             --type ios \
             --file "$IPA_PATH" \
             --apple-id "$APP_ID" \
             --apiKey "$ASC_KEY_ID" \
-            --apiIssuer "$ASC_ISSUER_ID"
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/neru-mae-okyo-altool.log
+          ALTOOL_STATUS=${PIPESTATUS[0]}
+          set -e
+          if grep -E "ERROR:|UPLOAD FAILED|Validation failed|Failed to upload" /tmp/neru-mae-okyo-altool.log; then
+            exit 1
+          fi
+          exit "$ALTOOL_STATUS"
 
       - name: Wait for TestFlight build processing
         env:
