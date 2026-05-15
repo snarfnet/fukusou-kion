@@ -19,8 +19,12 @@ enum OpenAITTSError: LocalizedError {
 
 struct OpenAITTSService {
     static var generatedSpeechURL: URL? {
+        generatedSpeechURL(for: PriestGuide.all[0])
+    }
+
+    static func generatedSpeechURL(for guide: PriestGuide) -> URL? {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("openai_okyo_low.mp3")
+            .appendingPathComponent("openai_\(guide.bundledFileName).mp3")
     }
 
     private struct SpeechRequest: Encodable {
@@ -39,7 +43,7 @@ struct OpenAITTSService {
         }
     }
 
-    func generateChant(apiKey: String, text: String) async throws -> URL {
+    func generateChant(apiKey: String, guide: PriestGuide, text: String? = nil) async throws -> URL {
         let trimmedKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedKey.isEmpty else { throw OpenAITTSError.missingAPIKey }
 
@@ -52,8 +56,8 @@ struct OpenAITTSService {
         let body = SpeechRequest(
             model: "gpt-4o-mini-tts",
             voice: "cedar",
-            input: text,
-            instructions: "Speak in a very low, slow, soft Japanese meditation chant. Keep it calm, non-dramatic, warm, and suitable for bedtime relaxation. Avoid a frightening or theatrical tone.",
+            input: text ?? guide.speechText,
+            instructions: guide.ttsInstructions,
             responseFormat: "mp3"
         )
         request.httpBody = try JSONEncoder().encode(body)
@@ -68,7 +72,7 @@ struct OpenAITTSService {
             throw OpenAITTSError.requestFailed(message)
         }
 
-        guard let outputURL = Self.generatedSpeechURL else {
+        guard let outputURL = Self.generatedSpeechURL(for: guide) else {
             throw OpenAITTSError.invalidResponse
         }
 

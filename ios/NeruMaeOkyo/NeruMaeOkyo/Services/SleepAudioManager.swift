@@ -7,6 +7,8 @@ final class SleepAudioManager: NSObject, ObservableObject {
     @Published private(set) var isPlaying = false
     @Published private(set) var remainingTime: TimeInterval?
     @Published private(set) var currentMode: SleepMode = .three
+    @Published private(set) var currentGuide = PriestGuide.all[0]
+    @Published private(set) var sessionStartedAt: Date?
     @Published var statusMessage = "睡眠前のリラックスをサポートします"
 
     private var players: [SoundLayer: AVAudioPlayer] = [:]
@@ -17,17 +19,19 @@ final class SleepAudioManager: NSObject, ObservableObject {
     private var plannedDuration: TimeInterval?
     private var currentSettings = MixerSettings.standard
 
-    func play(mode: SleepMode, settings: MixerSettings) {
+    func play(mode: SleepMode, settings: MixerSettings, guide: PriestGuide) {
         stop()
         currentMode = mode
+        currentGuide = guide
         currentSettings = settings
         plannedDuration = mode.duration
         remainingTime = mode.duration
         startedAt = Date()
+        sessionStartedAt = startedAt
 
         do {
             try configureAudioSession()
-            try preparePlayers()
+            try preparePlayers(guide: guide)
             applyVolumes(settings: settings)
             players.values.forEach { $0.play() }
             isPlaying = true
@@ -56,6 +60,7 @@ final class SleepAudioManager: NSObject, ObservableObject {
         isPlaying = false
         remainingTime = nil
         startedAt = nil
+        sessionStartedAt = nil
         plannedDuration = nil
         statusMessage = "睡眠前のリラックスをサポートします"
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
@@ -68,7 +73,7 @@ final class SleepAudioManager: NSObject, ObservableObject {
     }
 
     func refreshChantPlayerIfNeeded() {
-        guard isPlaying, let chantPlayer = try? makePlayer(for: .chant) else { return }
+        guard isPlaying, let chantPlayer = try? makePlayer(for: .chant, guide: currentGuide) else { return }
         players[.chant]?.stop()
         players[.chant] = chantPlayer
         chantPlayer.numberOfLoops = -1
@@ -82,11 +87,11 @@ final class SleepAudioManager: NSObject, ObservableObject {
         try session.setActive(true)
     }
 
-    private func preparePlayers() throws {
+    private func preparePlayers(guide: PriestGuide) throws {
         var prepared: [SoundLayer: AVAudioPlayer] = [:]
 
-        for layer in SoundLayer.allCases {
-            let player = try makePlayer(for: layer)
+        for layer in SoundLayer.playableLayers {
+            let player = try makePlayer(for: layer, guide: guide)
             player.numberOfLoops = -1
             player.prepareToPlay()
             prepared[layer] = player
@@ -95,10 +100,12 @@ final class SleepAudioManager: NSObject, ObservableObject {
         players = prepared
     }
 
-    private func makePlayer(for layer: SoundLayer) throws -> AVAudioPlayer {
+    private func makePlayer(for layer: SoundLayer, guide: PriestGuide) throws -> AVAudioPlayer {
         let url: URL
-        if layer == .chant, let generatedURL = OpenAITTSService.generatedSpeechURL, FileManager.default.fileExists(atPath: generatedURL.path) {
+        if layer == .chant, let generatedURL = OpenAITTSService.generatedSpeechURL(for: guide), FileManager.default.fileExists(atPath: generatedURL.path) {
             url = generatedURL
+        } else if layer == .chant, let guideURL = Bundle.main.url(forResource: guide.bundledFileName, withExtension: "mp3", subdirectory: "Audio") {
+            url = guideURL
         } else if let bundleURL = Bundle.main.url(forResource: layer.fileName, withExtension: "mp3", subdirectory: "Audio") {
             url = bundleURL
         } else {
@@ -109,7 +116,7 @@ final class SleepAudioManager: NSObject, ObservableObject {
     }
 
     private func applyVolumes(settings: MixerSettings) {
-        for layer in SoundLayer.allCases {
+        for layer in SoundLayer.playableLayers {
             players[layer]?.volume = settings.volume(for: layer)
         }
     }

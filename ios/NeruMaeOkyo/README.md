@@ -1,15 +1,16 @@
 # 寝る前に聞くお経
 
-睡眠前のリラックスをサポートする、お経ASMR風のiOSアプリです。宗教色を強くせず、真っ暗な画面、低音、雨音、木魚、鐘、ピンクノイズで静かな寝落ち環境を作ります。
+睡眠前のリラックスをサポートする、お経ASMR風のiOSアプリです。宗教色を強くせず、真っ暗な画面、低くやさしい声、木魚、鐘、低音ドローンで静かな寝落ち環境を作ります。
 
 ## 実装済み
 
 - 3分、10分、30分、無限ループ
 - AVFoundation / AVAudioPlayerによる複数音源の同時再生
-- 読経、木魚、鐘、雨音、ピンクノイズ、低音ドローンの音量調整
+- 読経、木魚、鐘、低音ドローンの音量調整
 - 終了30秒前からのフェードアウト
 - バックグラウンド再生
 - 黒基調UI、再生中画面、残り時間、円形アニメーション
+- 7人の住職選択、住職ごとの声質と再生中テキスト表示
 - OpenAI TTSで読経風MP3を生成し、端末内に保存して優先再生
 
 ## OpenAI TTS
@@ -25,20 +26,31 @@ PowerShellで同梱用の読経ボイスを作る場合は、次を実行して�
 ```powershell
 cd "C:\Users\Windows\Documents\New project\ios\NeruMaeOkyo"
 $env:OPENAI_API_KEY="sk-..."
-.\scripts\generate_openai_tts.ps1
+.\scripts\generate_priest_tts.ps1
 ```
 
-生成先は`NeruMaeOkyo/Audio/okyo_low.mp3`です。既存の仮音源を上書きします。
+生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。
+
+1人だけ作る場合:
+
+```powershell
+.\scripts\generate_priest_tts.ps1 -GuideId genkai
+```
 
 ## 音源
 
 MVP用の仮音源を同梱しています。
 
 - `okyo_low.mp3`
+- `guide_genkai.mp3`
+- `guide_toma.mp3`
+- `guide_myono.mp3`
+- `guide_seigaku.mp3`
+- `guide_sangen.mp3`
+- `guide_fukusho.mp3`
+- `guide_shodo.mp3`
 - `mokugyo.mp3`
 - `bell.mp3`
-- `rain.mp3`
-- `pink_noise.mp3`
 - `drone.mp3`
 
 差し替える場合は、同じファイル名で`NeruMaeOkyo/Audio`に入れてください。

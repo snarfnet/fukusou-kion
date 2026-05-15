@@ -4,6 +4,7 @@ struct ContentView: View {
     @EnvironmentObject private var audioManager: SleepAudioManager
 
     @AppStorage("selectedMode") private var selectedModeRaw = SleepMode.three.rawValue
+    @AppStorage("selectedGuideID") private var selectedGuideID = PriestGuide.all[0].id
     @AppStorage("chantVolume") private var chantVolume = Double(SoundLayer.chant.defaultVolume)
     @AppStorage("mokugyoVolume") private var mokugyoVolume = Double(SoundLayer.mokugyo.defaultVolume)
     @AppStorage("bellVolume") private var bellVolume = Double(SoundLayer.bell.defaultVolume)
@@ -12,12 +13,18 @@ struct ContentView: View {
     @AppStorage("droneVolume") private var droneVolume = Double(SoundLayer.drone.defaultVolume)
     @AppStorage("fadeOutEnabled") private var fadeOutEnabled = true
     @AppStorage("extraDarkEnabled") private var extraDarkEnabled = true
+    @AppStorage("audioPresetVersion") private var audioPresetVersion = 0
 
     @State private var showingSettings = false
 
     private var selectedMode: SleepMode {
         get { SleepMode(rawValue: selectedModeRaw) ?? .three }
         nonmutating set { selectedModeRaw = newValue.rawValue }
+    }
+
+    private var selectedGuide: PriestGuide {
+        get { PriestGuide.guide(for: selectedGuideID) }
+        nonmutating set { selectedGuideID = newValue.id }
     }
 
     private var settings: MixerSettings {
@@ -39,26 +46,28 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             if audioManager.isPlaying {
-                PlayingView(settings: settings)
+                PlayingView(settings: settings, guide: audioManager.currentGuide)
             } else {
                 HomeView(
-                    selectedMode: Binding(
-                        get: { selectedMode },
-                        set: { selectedMode = $0 }
-                    ),
+                    selectedMode: Binding(get: { selectedMode }, set: { selectedMode = $0 }),
+                    selectedGuide: Binding(get: { selectedGuide }, set: { selectedGuide = $0 }),
                     playAction: {
-                        audioManager.play(mode: selectedMode, settings: settings)
+                        audioManager.play(mode: selectedMode, settings: settings, guide: selectedGuide)
                     },
                     stopAction: audioManager.stop,
                     settingsAction: { showingSettings = true }
                 )
             }
         }
-        .onChange(of: settings) { newValue in
+        .onAppear {
+            applyQuietPresetIfNeeded()
+        }
+        .onChange(of: settings) { _, newValue in
             audioManager.update(settings: newValue)
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView(
+                selectedGuide: selectedGuide,
                 chantVolume: $chantVolume,
                 mokugyoVolume: $mokugyoVolume,
                 bellVolume: $bellVolume,
@@ -73,117 +82,154 @@ struct ContentView: View {
             .presentationDragIndicator(.visible)
         }
     }
+
+    private func applyQuietPresetIfNeeded() {
+        guard audioPresetVersion < 3 else { return }
+
+        chantVolume = Double(SoundLayer.chant.defaultVolume)
+        mokugyoVolume = Double(SoundLayer.mokugyo.defaultVolume)
+        bellVolume = Double(SoundLayer.bell.defaultVolume)
+        rainVolume = Double(SoundLayer.rain.defaultVolume)
+        noiseVolume = Double(SoundLayer.noise.defaultVolume)
+        droneVolume = Double(SoundLayer.drone.defaultVolume)
+        fadeOutEnabled = true
+        extraDarkEnabled = true
+        audioPresetVersion = 3
+    }
 }
 
 private struct HomeView: View {
     @Binding var selectedMode: SleepMode
+    @Binding var selectedGuide: PriestGuide
     let playAction: () -> Void
     let stopAction: () -> Void
     let settingsAction: () -> Void
 
     var body: some View {
-        VStack(spacing: 26) {
-            HStack {
-                Spacer()
-                Button(action: settingsAction) {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 18, weight: .semibold))
-                        .frame(width: 44, height: 44)
-                        .foregroundStyle(.white.opacity(0.78))
-                        .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 22) {
+                HStack {
+                    Spacer()
+                    Button(action: settingsAction) {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 18, weight: .semibold))
+                            .frame(width: 44, height: 44)
+                            .foregroundStyle(.white.opacity(0.78))
+                            .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+                    }
+                    .accessibilityLabel("設定")
                 }
-                .accessibilityLabel("設定")
-            }
 
-            Spacer(minLength: 12)
+                VStack(spacing: 12) {
+                    Text("寝る前に聞くお経")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.78)
 
-            VStack(spacing: 12) {
-                Text("寝る前に聞くお経")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.78)
-
-                Text("3分で寺に沈む。")
-                    .font(.headline.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.62))
-            }
-
-            ModePicker(selectedMode: $selectedMode)
+                    Text("3分で寺に沈む。")
+                        .font(.headline.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.62))
+                }
                 .padding(.top, 8)
 
-            VStack(spacing: 14) {
-                Button(action: playAction) {
-                    Label("再生", systemImage: "play.fill")
-                        .font(.title2.weight(.bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 64)
-                }
-                .buttonStyle(PrimarySleepButtonStyle())
+                GuidePicker(selectedGuide: $selectedGuide)
 
-                Button(action: stopAction) {
-                    Label("停止", systemImage: "stop.fill")
-                        .font(.headline.weight(.bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 54)
+                ModePicker(selectedMode: $selectedMode)
+
+                VStack(spacing: 14) {
+                    Button(action: playAction) {
+                        Label("再生", systemImage: "play.fill")
+                            .font(.title2.weight(.bold))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 64)
+                    }
+                    .buttonStyle(PrimarySleepButtonStyle())
+
+                    Button(action: stopAction) {
+                        Label("停止", systemImage: "stop.fill")
+                            .font(.headline.weight(.bold))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 54)
+                    }
+                    .buttonStyle(SecondarySleepButtonStyle())
                 }
-                .buttonStyle(SecondarySleepButtonStyle())
+
+                Text("低くやさしい声、木魚、遠い鐘、低音ドローンで、睡眠前のリラックスをサポートします。")
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.42))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                    .padding(.top, 4)
             }
-
-            Text("低音の読経、木魚、鐘、雨音、ピンクノイズで、睡眠前のリラックスをサポートします。")
-                .font(.footnote)
-                .foregroundStyle(.white.opacity(0.42))
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-                .padding(.top, 6)
-
-            Spacer()
+            .padding(.horizontal, 22)
+            .padding(.vertical, 18)
         }
-        .padding(.horizontal, 22)
-        .padding(.vertical, 18)
     }
 }
 
 private struct PlayingView: View {
     @EnvironmentObject private var audioManager: SleepAudioManager
     let settings: MixerSettings
+    let guide: PriestGuide
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        TimelineView(.animation) { timeline in
+            VStack(spacing: 20) {
+                Spacer(minLength: 24)
 
-            BreathingCircle()
-                .frame(width: 210, height: 210)
-                .opacity(settings.extraDarkEnabled ? 0.56 : 0.72)
+                Image(guide.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 132, height: 132)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(.white.opacity(0.16), lineWidth: 1))
+                    .shadow(color: .black.opacity(0.45), radius: 18, y: 10)
 
-            VStack(spacing: 10) {
-                Text("ただいま読経中")
-                    .font(.title2.weight(.semibold))
+                BreathingCircle()
+                    .frame(width: 150, height: 150)
+                    .opacity(settings.extraDarkEnabled ? 0.40 : 0.58)
+                    .overlay(
+                        Text(currentLine(at: timeline.date))
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.86))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(5)
+                            .padding(.horizontal, 18)
+                            .minimumScaleFactor(0.72)
+                            .id(currentLine(at: timeline.date))
+                            .transition(.opacity)
+                    )
 
-                Text(timeText)
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(.white.opacity(0.88))
+                VStack(spacing: 8) {
+                    Text("\(guide.name) ただいま読経中")
+                        .font(.headline.weight(.semibold))
+
+                    Text(timeText)
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.white.opacity(0.88))
+                }
+
+                Text(audioManager.currentMode == .infinite ? "停止するまで静かに流れます" : "終了30秒前から、ゆっくり音を下げます")
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.44))
+                    .multilineTextAlignment(.center)
+
+                Spacer()
+
+                Button {
+                    audioManager.stop()
+                } label: {
+                    Label("停止", systemImage: "stop.fill")
+                        .font(.headline.weight(.bold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 58)
+                }
+                .buttonStyle(SecondarySleepButtonStyle())
+                .padding(.horizontal, 22)
+                .padding(.bottom, 18)
             }
-
-            Text(audioManager.currentMode == .infinite ? "停止するまで静かに流れます" : "終了30秒前から、ゆっくり音を下げます")
-                .font(.footnote.weight(.medium))
-                .foregroundStyle(.white.opacity(0.44))
-                .multilineTextAlignment(.center)
-
-            Spacer()
-
-            Button {
-                audioManager.stop()
-            } label: {
-                Label("停止", systemImage: "stop.fill")
-                    .font(.headline.weight(.bold))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 58)
-            }
-            .buttonStyle(SecondarySleepButtonStyle())
-            .padding(.horizontal, 22)
-            .padding(.bottom, 18)
         }
     }
 
@@ -192,10 +238,18 @@ private struct PlayingView: View {
         let seconds = max(0, Int(remaining.rounded()))
         return String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
+
+    private func currentLine(at date: Date) -> String {
+        guard !guide.displayLines.isEmpty else { return guide.speechText }
+        let elapsed = audioManager.sessionStartedAt.map { date.timeIntervalSince($0) } ?? 0
+        let index = Int(max(0, elapsed) / 7) % guide.displayLines.count
+        return guide.displayLines[index]
+    }
 }
 
 private struct SettingsView: View {
     @EnvironmentObject private var audioManager: SleepAudioManager
+    let selectedGuide: PriestGuide
     @Binding var chantVolume: Double
     @Binding var mokugyoVolume: Double
     @Binding var bellVolume: Double
@@ -206,7 +260,7 @@ private struct SettingsView: View {
     @Binding var extraDarkEnabled: Bool
 
     @State private var apiKey = KeychainStore.loadAPIKey()
-    @State private var ttsText = "摩訶般若波羅蜜多心経。観自在菩薩。深く静かに、息を整えます。"
+    @State private var customText = ""
     @State private var ttsStatus = "AI生成音声を使う場合があります。人の声ではありません。"
     @State private var isGenerating = false
 
@@ -229,11 +283,9 @@ private struct SettingsView: View {
     private var mixerSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionLabel("ミキサー")
-            VolumeSlider(title: "読経音量", value: $chantVolume, icon: "person.wave.2.fill")
+            VolumeSlider(title: "声の音量", value: $chantVolume, icon: "person.wave.2.fill")
             VolumeSlider(title: "木魚音量", value: $mokugyoVolume, icon: "circle.grid.cross.fill")
             VolumeSlider(title: "鐘音量", value: $bellVolume, icon: "bell.fill")
-            VolumeSlider(title: "雨音音量", value: $rainVolume, icon: "cloud.rain.fill")
-            VolumeSlider(title: "ノイズ音量", value: $noiseVolume, icon: "waveform")
             VolumeSlider(title: "低音ドローン", value: $droneVolume, icon: "speaker.wave.2.fill")
         }
         .padding(16)
@@ -243,7 +295,6 @@ private struct SettingsView: View {
     private var behaviorSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionLabel("睡眠設定")
-
             Toggle("フェードアウト", isOn: $fadeOutEnabled)
             Toggle("画面を暗くする", isOn: $extraDarkEnabled)
         }
@@ -257,20 +308,46 @@ private struct SettingsView: View {
         VStack(alignment: .leading, spacing: 14) {
             SectionLabel("OpenAI TTS")
 
+            HStack(spacing: 12) {
+                Image(selectedGuide.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 54, height: 54)
+                    .clipShape(Circle())
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(selectedGuide.name)
+                        .font(.headline.weight(.bold))
+                    Text(selectedGuide.voiceDescription)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.56))
+                }
+                Spacer()
+            }
+
             SecureField("OpenAI APIキー", text: $apiKey)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .padding(12)
                 .background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 8))
-                .onChange(of: apiKey) { newValue in
+                .onChange(of: apiKey) { _, newValue in
                     KeychainStore.saveAPIKey(newValue)
                 }
 
-            TextEditor(text: $ttsText)
+            TextEditor(text: $customText)
                 .frame(minHeight: 92)
                 .scrollContentBackground(.hidden)
                 .padding(10)
                 .background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .topLeading) {
+                    if customText.isEmpty {
+                        Text(selectedGuide.speechText)
+                            .font(.body)
+                            .foregroundStyle(.white.opacity(0.28))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 18)
+                            .allowsHitTesting(false)
+                    }
+                }
 
             Button {
                 generateSpeech()
@@ -282,7 +359,7 @@ private struct SettingsView: View {
                     } else {
                         Image(systemName: "wand.and.stars")
                     }
-                    Text(isGenerating ? "生成中" : "読経ボイスを生成")
+                    Text(isGenerating ? "生成中" : "\(selectedGuide.name)の声を生成")
                 }
                 .font(.headline.weight(.bold))
                 .frame(maxWidth: .infinity)
@@ -302,14 +379,19 @@ private struct SettingsView: View {
 
     private func generateSpeech() {
         isGenerating = true
-        ttsStatus = "生成しています。完了後は読経音として優先再生します。"
+        ttsStatus = "生成しています。完了後は選択中の住職の声として優先再生します。"
 
         Task {
             do {
-                _ = try await OpenAITTSService().generateChant(apiKey: apiKey, text: ttsText)
+                let text = customText.trimmingCharacters(in: .whitespacesAndNewlines)
+                _ = try await OpenAITTSService().generateChant(
+                    apiKey: apiKey,
+                    guide: selectedGuide,
+                    text: text.isEmpty ? nil : text
+                )
                 await MainActor.run {
                     isGenerating = false
-                    ttsStatus = "生成しました。再生時はこのMP3を使います。"
+                    ttsStatus = "生成しました。次の再生からこの声を使います。"
                     audioManager.refreshChantPlayerIfNeeded()
                 }
             } catch {
@@ -317,6 +399,51 @@ private struct SettingsView: View {
                     isGenerating = false
                     ttsStatus = error.localizedDescription
                 }
+            }
+        }
+    }
+}
+
+private struct GuidePicker: View {
+    @Binding var selectedGuide: PriestGuide
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel("住職を選ぶ")
+                .padding(.horizontal, 2)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(PriestGuide.all) { guide in
+                        Button {
+                            selectedGuide = guide
+                        } label: {
+                            VStack(spacing: 8) {
+                                Image(guide.imageName)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 72, height: 72)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(selectedGuide == guide ? .white.opacity(0.82) : .white.opacity(0.12), lineWidth: selectedGuide == guide ? 2 : 1))
+
+                                Text(guide.name)
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(.white.opacity(0.88))
+                                    .lineLimit(1)
+
+                                Text(guide.role)
+                                    .font(.caption2.weight(.medium))
+                                    .foregroundStyle(.white.opacity(0.48))
+                                    .lineLimit(1)
+                            }
+                            .frame(width: 94, height: 128)
+                            .background(selectedGuide == guide ? .white.opacity(0.11) : .white.opacity(0.045), in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(selectedGuide == guide ? .white.opacity(0.22) : .white.opacity(0.08)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.vertical, 2)
             }
         }
     }
