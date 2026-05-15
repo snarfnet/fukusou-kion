@@ -84,7 +84,7 @@ struct ContentView: View {
     }
 
     private func applyQuietPresetIfNeeded() {
-        guard audioPresetVersion < 3 else { return }
+        guard audioPresetVersion < 4 else { return }
 
         chantVolume = Double(SoundLayer.chant.defaultVolume)
         mokugyoVolume = Double(SoundLayer.mokugyo.defaultVolume)
@@ -94,7 +94,7 @@ struct ContentView: View {
         droneVolume = Double(SoundLayer.drone.defaultVolume)
         fadeOutEnabled = true
         extraDarkEnabled = true
-        audioPresetVersion = 3
+        audioPresetVersion = 4
     }
 }
 
@@ -155,7 +155,7 @@ private struct HomeView: View {
                     .buttonStyle(SecondarySleepButtonStyle())
                 }
 
-                Text("低くやさしい声、木魚、遠い鐘、低音ドローンで、睡眠前のリラックスをサポートします。")
+                Text("低く響く読経、遠い鐘、低音ドローンで、睡眠前のリラックスをサポートします。")
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.42))
                     .multilineTextAlignment(.center)
@@ -284,7 +284,6 @@ private struct SettingsView: View {
         VStack(alignment: .leading, spacing: 14) {
             SectionLabel("ミキサー")
             VolumeSlider(title: "声の音量", value: $chantVolume, icon: "person.wave.2.fill")
-            VolumeSlider(title: "木魚音量", value: $mokugyoVolume, icon: "circle.grid.cross.fill")
             VolumeSlider(title: "鐘音量", value: $bellVolume, icon: "bell.fill")
             VolumeSlider(title: "低音ドローン", value: $droneVolume, icon: "speaker.wave.2.fill")
         }
@@ -409,8 +408,15 @@ private struct GuidePicker: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionLabel("住職を選ぶ")
-                .padding(.horizontal, 2)
+            HStack {
+                SectionLabel("住職を選ぶ")
+                Spacer()
+                Label("右へスクロール", systemImage: "chevron.right")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.44))
+                    .labelStyle(.titleAndIcon)
+            }
+            .padding(.horizontal, 2)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {

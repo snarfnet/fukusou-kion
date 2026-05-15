@@ -1,21 +1,21 @@
 # 寝る前に聞くお経
 
-睡眠前のリラックスをサポートする、お経ASMR風のiOSアプリです。宗教色を強くせず、真っ暗な画面、低くやさしい声、木魚、鐘、低音ドローンで静かな寝落ち環境を作ります。
+睡眠前のリラックスをサポートする、お経ASMR風のiOSアプリです。宗教色を強くせず、真っ暗な画面、低く響く読経、遠い鐘、低音ドローンで静かな寝落ち環境を作ります。
 
 ## 実装済み
 
 - 3分、10分、30分、無限ループ
 - AVFoundation / AVAudioPlayerによる複数音源の同時再生
-- 読経、木魚、鐘、低音ドローンの音量調整
+- 読経、鐘、低音ドローンの音量調整
 - 終了30秒前からのフェードアウト
 - バックグラウンド再生
 - 黒基調UI、再生中画面、残り時間、円形アニメーション
 - 7人の住職選択、住職ごとの声質と再生中テキスト表示
-- OpenAI TTSで読経風MP3を生成し、端末内に保存して優先再生
+- OpenAI TTSで般若心経の読経MP3を生成し、端末内に保存して優先再生
 
 ## OpenAI TTS
 
-設定画面にOpenAI APIキーを入れると、`gpt-4o-mini-tts`で読経風ボイスを生成します。生成した音声はアプリのDocumentsに`openai_okyo_low.mp3`として保存され、次回の再生から`okyo_low.mp3`より優先されます。
+設定画面にOpenAI APIキーを入れると、`gpt-4o-mini-tts`で般若心経の読経ボイスを生成します。生成した音声はアプリのDocumentsに住職ごとのMP3として保存され、次回の再生から同梱音源より優先されます。
 
 本番配布では、開発者のAPIキーをアプリに埋め込まないでください。App Store向けには、事前に生成した音声素材を`NeruMaeOkyo/Audio/okyo_low.mp3`として同梱する形が安全です。
 
@@ -29,7 +29,7 @@ $env:OPENAI_API_KEY="sk-..."
 .\scripts\generate_priest_tts.ps1
 ```
 
-生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。
+生成先は`NeruMaeOkyo/Audio/guide_*.mp3`です。7人分をまとめて作ります。`ffmpeg`が入っている場合は、睡眠向けの控えめな残響を自動でかけます。
 
 1人だけ作る場合:
 
@@ -49,7 +49,6 @@ MVP用の仮音源を同梱しています。
 - `guide_sangen.mp3`
 - `guide_fukusho.mp3`
 - `guide_shodo.mp3`
-- `mokugyo.mp3`
 - `bell.mp3`
 - `drone.mp3`
 

@@ -45,7 +45,7 @@ enum SoundLayer: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    static let playableLayers: [SoundLayer] = [.chant, .mokugyo, .bell, .drone]
+    static let playableLayers: [SoundLayer] = [.chant, .bell, .drone]
 
     var title: String {
         switch self {
@@ -84,17 +84,17 @@ enum SoundLayer: String, CaseIterable, Identifiable {
     var defaultVolume: Float {
         switch self {
         case .chant:
-            return 0.68
+            return 0.74
         case .mokugyo:
-            return 0.12
+            return 0.0
         case .bell:
-            return 0.08
+            return 0.06
         case .rain:
             return 0.0
         case .noise:
             return 0.0
         case .drone:
-            return 0.12
+            return 0.10
         }
     }
 }
@@ -138,6 +138,24 @@ struct MixerSettings: Equatable {
     }
 }
 
+private func decodeUTF8(_ base64: String) -> String {
+    guard let data = Data(base64Encoded: base64),
+          let text = String(data: data, encoding: .utf8) else {
+        return ""
+    }
+    return text
+}
+
+private let heartSutraSpeechText = decodeUTF8("44G244Gj44Gb44Gk44G+44GL44Gv44KT44Gr44KD44Gv44KJ44G/44Gf44GX44KT44GO44KH44GG44CCCuOBi+OCk+OBmOOBluOBhOOBvOOBleOBpOOAguOBjuOCh+OBhuOBmOOCk+OBr+OCk+OBq+OCg+OBr+OCieOBv+OBn+OBmOOAggrjgZfjgofjgYbjgZHjgpPjgZTjgYbjgpPjgYvjgYTjgY/jgYbjgILjganjgYTjgaPjgZXjgYTjgY/jgoTjgY/jgIIK44GX44KD44KK44GX44CC44GX44GN44G144GE44GP44GG44CC44GP44GG44G144GE44GX44GN44CCCuOBl+OBjeOBneOBj+OBnOOBj+OBhuOAguOBj+OBhuOBneOBj+OBnOOBl+OBjeOAggrjgZjjgoXjgZ3jgYbjgY7jgofjgYbjgZfjgY3jgILjgoTjgY/jgbbjgavjgofjgZzjgIIK44GX44KD44KK44GX44CC44Gc44GX44KH44G744GG44GP44GG44Gd44GG44CCCuOBteOBl+OCh+OBhuOBteOCgeOBpOOAguOBteOBj+OBteOBmOOCh+OBhuOAguOBteOBnuOBhuOBteOBkuOCk+OAggrjgZzjgZPjgY/jgYbjgaHjgoXjgYbjgILjgoDjgZfjgY3jgILjgoDjgZjjgoXjgZ3jgYbjgY7jgofjgYbjgZfjgY3jgIIK44KA44GS44KT44Gr44Gz44Gc44Gj44GX44KT44Gr44CC44KA44GX44GN44GX44KH44GG44GT44GG44G/44Gd44GP44G744GG44CCCuOCgOOBkuOCk+OBi+OBhOOAguOBquOBhOOBl+OCgOOBhOOBl+OBjeOBi+OBhOOAggrjgoDjgoDjgb/jgofjgYbjgILjgoTjgY/jgoDjgoDjgb/jgofjgYbjgZjjgpPjgIIK44Gq44GE44GX44KA44KN44GG44GX44CC44KE44GP44KA44KN44GG44GX44GY44KT44CCCuOCgOOBj+OBl+OCheOBhuOCgeOBpOOBqeOBhuOAguOCgOOBoeOChOOBj+OCgOOBqOOBj+OAggrjgYTjgoDjgZfjgofjgajjgY/jgZPjgIIK44G844Gg44GE44GV44Gj44Gf44CC44GI44Gv44KT44Gr44KD44Gv44KJ44G/44Gf44GT44CCCuOBl+OCk+OCgOOBkeOBhOOBkuOAguOCgOOBkeOBhOOBkuOBk+OAggrjgoDjgYbjgY/jgbXjgILjgYrjgpPjgorjgYTjgaPjgZXjgYTjgabjgpPjganjgYbjgoDjgZ3jgYbjgIIK44GP44GN44KH44GG44Gt44Gv44KT44CCCuOBleOCk+OBnOOBl+OCh+OBtuOBpOOAguOBiOOBr+OCk+OBq+OCg+OBr+OCieOBv+OBn+OBk+OAggrjgajjgY/jgYLjga7jgY/jgZ/jgonjgZXjgpPjgb/jgoPjgY/jgZXjgpPjgbzjgaDjgYTjgIIK44GT44Gh44Gv44KT44Gr44KD44Gv44KJ44G/44Gf44CCCuOBnOOBoOOBhOOBmOOCk+OBl+OCheOAguOBnOOBoOOBhOOBv+OCh+OBhuOBl+OCheOAggrjgZzjgoDjgZjjgofjgYbjgZfjgoXjgILjgZzjgoDjgajjgYbjganjgYbjgZfjgoXjgIIK44Gu44GG44GY44KH44GE44Gj44GV44GE44GP44CC44GX44KT44GY44Gk44G144GT44CCCuOBk+OBm+OBpOOBr+OCk+OBq+OCg+OBr+OCieOBv+OBn+OBl+OCheOAggrjgZ3jgY/jgZvjgaTjgZfjgoXjgo/jgaTjgIIK44GO44KD44Gm44GE44CC44GO44KD44Gm44GE44CC44Gv44KJ44GO44KD44Gm44GE44CCCuOBr+OCieOBneOBhuOBjuOCg+OBpuOBhOOAguOBvOOBmOOBneOCj+OBi+OAggrjga/jgpPjgavjgoPjgZfjgpPjgY7jgofjgYbjgII=")
+private let heartSutraDisplayLines = heartSutraSpeechText
+    .split(separator: "\n")
+    .map(String.init)
+
+private let heavyHeartSutraSpeechText = decodeUTF8("44G244Gj44Gb44Gk44G+44O844GL44O844Gv44KT44Gr44KD44O844Gv44O844KJ44O844G/44O844Gf44O844GX44O844KT44GO44KH44GG44O844CCCuOBi+OCk+OBmOODvOOBluOBhOOBvOODvOOBleODvOOAguOBjuOCh+OBhuOBmOOCk+OBr+OCk+OBq+OCg+ODvOOBr+ODvOOCieODvOOBv+ODvOOBn+ODvOOAggrjgZjjg7zjgZfjgofjgYbjgZHjgpPjgZTjg7zjgYbjgpPjgYvjgYTjgY/jg7zjgILjganjg7zjgYTjgaPjgZXjgYTjgY/jg7zjgoTjgY/jgIIK44GX44KD44O844KK44O844GX44O844CC44GX44GN44G144O844GE44O844GP44GG44CC44GP44GG44G144O844GE44O844GX44GN44CC44GX44GN44Gd44GP44Gc44O844GP44GG44CCCuOBj+OBhuOBneOBj+OBnOODvOOBl+OBjeOAguOBmOOCheODvOOBneOBhuOBjuOCh+OBhuOBl+OBjeOAguOChOOBj+OBtuODvOOBq+OCh+ODvOOBnOODvOOAggrjgZfjgoPjg7zjgorjg7zjgZfjg7zjgILjgZzjg7zjgZfjgofjgYbjgbvjgYbjgY/jgYbjgZ3jgYbjgILjgbXjg7zjgZfjgofjgYbjgbXjg7zjgoHjgaTjgILjgbXjg7zjgY/jg7zjgbXjg7zjgZjjgofjgYbjgIIK44G144O844Ge44GG44G144O844GS44KT44CC44Gc44O844GT44O844GP44GG44Gh44KF44GG44CC44KA44O844GX44GN44CC44KA44O844GY44KF44O844Gd44GG44GO44KH44GG44GX44GN44CC44KA44O844GS44KT44Gr44O844CCCuOBs+ODvOOBnOOBo+OBl+OCk+OBhOODvOOAguOCgOODvOOBl+OBjeOBl+OCh+OBhuOBk+OBhuOBv+ODvOOBneOBj+OBu+OBhuOAguOCgOODvOOBkuOCk+OBi+OBhOOAguOBquOBhOOBl+ODvOOAggrjgoDjg7zjgYTjg7zjgZfjgY3jgYvjgYTjgILjgoDjg7zjgoDjg7zjgb/jgofjgYbjgILjgoTjgY/jgoDjg7zjgoDjg7zjgb/jgofjgYbjgZjjgpPjgILjgarjgYTjgZfjg7zjgILjgoDjg7zjgo3jgYbjgZfjg7zjgoTjgY/jgIIK44KA44O844KN44GG44GX44O844GY44KT44CC44KA44O844GP44O844GX44KF44GG44KB44Gk44Gp44GG44CC44KA44O844Gh44O844KE44GP44KA44O844Go44GP44GE44O844CCCuOCgOODvOOBl+OCh+ODvOOBqOOBo+OBk+ODvOOAguOBvOODvOOBoOOBhOOBleOBo+OBn+ODvOOAguOBiOODvOOBr+OCk+OBq+OCg+ODvOOBr+ODvOOCieODvOOBv+ODvOOBn+ODvOOAggrjgZPjg7zjgZfjgpPjgoDjg7zjgZHjg7zjgZLjg7zjgILjgoDjg7zjgZHjg7zjgZLjg7zjgZPjg7zjgILjgoDjg7zjgYbjg7zjgY/jg7zjgbXjg7zjgILjgYrjgpPjgorjg7zjgYTjgaPjgZXjgYTjgabjgpPjganjgYbjgIIK44KA44O844Gd44GG44GP44O844GO44KH44GG44Gt44O844Gv44KT44CC44GV44KT44Gc44O844GX44KH44O844G244Gk44CC44GI44O844Gv44KT44Gr44KD44O844Gv44O844KJ44O844G/44O844Gf44O844CCCuOBk+ODvOOBqOOBj+OBguODvOOBruOBj+OBn+ODvOOCieODvOOBleOCk+OBv+OCg+OBj+OBleOCk+OBvOODvOOBoOOBhOOAguOBk+ODvOOBoeODvOOBr+OCk+OBq+OCg+ODvOOBr+ODvOOCieODvOOBv+ODvOOBn+ODvOOAggrjgZzjg7zjgaDjgYTjgZjjgpPjgZfjgoXjgILjgZzjg7zjgaDjgYTjgb/jgofjgYbjgZfjgoXjgILjgZzjg7zjgoDjg7zjgZjjgofjgYbjg7zjgZfjgoXjgILjgZzjg7zjgoDjg7zjgajjgYbjgajjgYbjgZfjgoXjgIIK44Gu44GG44GY44KH44O844GE44Gj44GV44GE44GP44O844CC44GX44KT44GY44Gk44G144O844GT44O844CC44GT44O844Gb44Gk44Gv44KT44Gr44KD44O844Gv44O844KJ44O844G/44O844Gf44O844CCCuOBl+OCheODvOOBneOBj+OBm+OBpOOBl+OCheODvOOCj+OBpOOAguOBjuOCg+ODvOOBpuODvOOAguOBjuOCg+ODvOOBpuODvOOAguOBr+ODvOOCieODvOOBjuOCg+ODvOOBpuODvOOAguOBr+OCieOBneODvOOBjuOCg+ODvOOBpuODvOOAggrjgbzjg7zjgZjjg7zjgZ3jgo/jgYvjg7zjgILjga/jgpPjgavjgoPjg7zjgZfjg7zjgpPjgY7jgofjgYbjg7zjgII=")
+private let heavyHeartSutraDisplayLines = heavyHeartSutraSpeechText
+    .split(separator: "\n")
+    .map(String.init)
+
 struct PriestGuide: Identifiable, Equatable {
     let id: String
     let name: String
@@ -157,9 +175,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_genkai",
             bundledFileName: "guide_genkai",
             voiceDescription: "包み込むような低音の長老",
-            ttsInstructions: "Speak Japanese in a deep, warm elder voice. Very slow, steady, reassuring, with long quiet pauses. Gentle bedtime meditation tone. Avoid scary chanting, harsh breath, pressure, or theatrical drama.",
-            speechText: "今日も一日、おつかれさまでした。ここは静かな夜のお堂です。息をゆっくり吐いて、体の力を少しずつ抜いていきましょう。何も急がなくて大丈夫です。",
-            displayLines: ["今日も一日、おつかれさまでした。", "ここは静かな夜のお堂です。", "息をゆっくり吐いて。", "体の力を少しずつ抜いていきましょう。", "何も急がなくて大丈夫です。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a deep, warm elder voice. Very slow, steady, reassuring, with long quiet pauses. Gentle bedtime meditation tone. Avoid scary chanting, harsh breath, pressure, or theatrical drama. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
         PriestGuide(
             id: "toma",
@@ -168,9 +186,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_toma",
             bundledFileName: "guide_toma",
             voiceDescription: "近すぎない、若く穏やかな声",
-            ttsInstructions: "Speak Japanese in a soft young adult male voice. Calm, sincere, clear, and gentle. Keep the pace slow with natural pauses. Make it feel safe and modern, not religiously intense.",
-            speechText: "もう画面を見なくても大丈夫です。肩を少し下ろして、まぶたを休ませましょう。今夜は、静かな音に身を預けるだけで十分です。",
-            displayLines: ["もう画面を見なくても大丈夫です。", "肩を少し下ろして。", "まぶたを休ませましょう。", "静かな音に身を預けるだけで十分です。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a soft young adult male voice. Calm, sincere, clear, and gentle. Keep the pace slow with natural pauses. Make it feel safe and modern, not religiously intense. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
         PriestGuide(
             id: "myono",
@@ -179,9 +197,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_myono",
             bundledFileName: "guide_myono",
             voiceDescription: "祖母のように安心する声",
-            ttsInstructions: "Speak Japanese in a warm elderly female voice, like a kind grandmother. Low volume, soft smile, slow and reassuring. Avoid whisper noise, sadness, fear, or dramatic chanting.",
-            speechText: "よくここまで来ましたね。今は何かを頑張る時間ではありません。胸のあたりをゆるめて、静かに息をしましょう。夜はちゃんと、あなたを包んでいます。",
-            displayLines: ["よくここまで来ましたね。", "今は頑張る時間ではありません。", "胸のあたりをゆるめて。", "夜はちゃんと、あなたを包んでいます。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a warm elderly female voice, like a kind grandmother. Low volume, soft smile, slow and reassuring. Avoid whisper noise, sadness, fear, or dramatic chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
         PriestGuide(
             id: "seigaku",
@@ -190,9 +208,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_seigaku",
             bundledFileName: "guide_seigaku",
             voiceDescription: "静かな学僧の落ち着いた声",
-            ttsInstructions: "Speak Japanese in a calm scholarly middle-aged male voice. Measured, precise, kind, and low. Use spacious pauses. It should feel orderly and reassuring, not cold or stern.",
-            speechText: "考えごとは、いったん横に置きましょう。答えは今すぐ出さなくてもかまいません。吸う息と、吐く息だけを、静かに数えていきます。",
-            displayLines: ["考えごとは、いったん横に置きましょう。", "答えは今すぐ出さなくてもかまいません。", "吸う息と、吐く息だけを。", "静かに数えていきます。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a calm scholarly middle-aged male voice. Measured, precise, kind, and low. Use spacious pauses. It should feel orderly and reassuring, not cold or stern. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
         PriestGuide(
             id: "sangen",
@@ -201,9 +219,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_sangen",
             bundledFileName: "guide_sangen",
             voiceDescription: "低く乾いた山の声",
-            ttsInstructions: "Speak Japanese in a low rustic mountain-hermit voice. Dry, quiet, slow, and kind. Add long pauses and a grounded feeling. Avoid horror, growling, or severe religious chanting.",
-            speechText: "遠くの山が、夜の中で静かに眠っています。あなたも同じように、少しずつ静かになっていきます。足先から、ゆっくり休めていきましょう。",
-            displayLines: ["遠くの山が、夜の中で眠っています。", "あなたも同じように静かになっていきます。", "足先から。", "ゆっくり休めていきましょう。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a low rustic mountain-hermit voice. Dry, quiet, slow, and kind. Add long pauses and a grounded feeling. Avoid horror, growling, or severe religious chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
         PriestGuide(
             id: "fukusho",
@@ -212,9 +230,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_fukusho",
             bundledFileName: "guide_fukusho",
             voiceDescription: "丸く明るい、やさしい声",
-            ttsInstructions: "Speak Japanese in a round, warm, slightly cheerful priest voice. Very gentle, slow, and sleepy. Smile in the voice without becoming energetic. Avoid comedy, loudness, or theatrical chanting.",
-            speechText: "今日はもう、十分です。小さな心配も、今だけは布団の外に置いておきましょう。ゆっくり吐いて、ふわっと軽くなっていきます。",
-            displayLines: ["今日はもう、十分です。", "小さな心配は、布団の外へ。", "ゆっくり吐いて。", "ふわっと軽くなっていきます。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a round, warm, slightly cheerful priest voice. Very gentle, slow, and sleepy. Smile in the voice without becoming energetic. Avoid comedy, loudness, or theatrical chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
         PriestGuide(
             id: "shodo",
@@ -223,9 +241,9 @@ struct PriestGuide: Identifiable, Equatable {
             imageName: "guide_shodo",
             bundledFileName: "guide_shodo",
             voiceDescription: "遠い鐘のような静かな声",
-            ttsInstructions: "Speak Japanese in a solemn but gentle bell-keeper voice. Low, slow, spacious, and safe. Each phrase should fade softly. Avoid frightening chanting, temple horror, or hard consonants.",
-            speechText: "遠くで鐘が鳴るように、気持ちも静かにほどけていきます。何も追いかけなくて大丈夫です。今は、眠りの入口にいるだけです。",
-            displayLines: ["遠くで鐘が鳴るように。", "気持ちも静かにほどけていきます。", "何も追いかけなくて大丈夫です。", "今は、眠りの入口にいるだけです。"]
+            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading exactly as written. Very slow and heavy temple sutra cadence. Hold vowels marked with ー, make it resonant and cool, with deep calm pauses at punctuation. Speak Japanese in a solemn but gentle bell-keeper voice. Low, slow, spacious, and safe. Each phrase should fade softly. Avoid frightening chanting, temple horror, or hard consonants. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            speechText: heavyHeartSutraSpeechText,
+            displayLines: heavyHeartSutraDisplayLines
         ),
     ]
 
