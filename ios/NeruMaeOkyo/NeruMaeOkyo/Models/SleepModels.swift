@@ -176,7 +176,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_genkai",
             ttsVoice: "cedar",
             voiceDescription: "包み込むような低音の長老",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a deep, warm elder voice. Very slow, steady, reassuring, with long quiet pauses. Gentle bedtime meditation tone. Avoid scary chanting, harsh breath, pressure, or theatrical drama. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a deep, warm elder voice. Very slow, steady, reassuring, with long quiet pauses. Gentle bedtime meditation tone. Avoid scary chanting, harsh breath, pressure, or theatrical drama. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),
@@ -188,7 +188,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_toma",
             ttsVoice: "marin",
             voiceDescription: "近すぎない、若く穏やかな声",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a soft young adult male voice. Calm, sincere, clear, and gentle. Keep the pace slow with natural pauses. Make it feel safe and modern, not religiously intense. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a soft young adult male voice. Calm, sincere, clear, and gentle. Keep the pace slow with natural pauses. Make it feel safe and modern, not religiously intense. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),
@@ -200,7 +200,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_myono",
             ttsVoice: "marin",
             voiceDescription: "祖母のように安心する声",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a warm elderly female voice, like a kind grandmother. Low volume, soft smile, slow and reassuring. Avoid whisper noise, sadness, fear, or dramatic chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a warm elderly female voice, like a kind grandmother. Low volume, soft smile, slow and reassuring. Avoid whisper noise, sadness, fear, or dramatic chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),
@@ -212,7 +212,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_seigaku",
             ttsVoice: "cedar",
             voiceDescription: "静かな学僧の落ち着いた声",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a calm scholarly middle-aged male voice. Measured, precise, kind, and low. Use spacious pauses. It should feel orderly and reassuring, not cold or stern. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a calm scholarly middle-aged male voice. Measured, precise, kind, and low. Use spacious pauses. It should feel orderly and reassuring, not cold or stern. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),
@@ -224,7 +224,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_sangen",
             ttsVoice: "cedar",
             voiceDescription: "低く乾いた山の声",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a low rustic mountain-hermit voice. Dry, quiet, slow, and kind. Add long pauses and a grounded feeling. Avoid horror, growling, or severe religious chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a low rustic mountain-hermit voice. Dry, quiet, slow, and kind. Add long pauses and a grounded feeling. Avoid horror, growling, or severe religious chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),
@@ -236,7 +236,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_fukusho",
             ttsVoice: "marin",
             voiceDescription: "丸く明るい、やさしい声",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a round, warm, slightly cheerful priest voice. Very gentle, slow, and sleepy. Smile in the voice without becoming energetic. Avoid comedy, loudness, or theatrical chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a round, warm, slightly cheerful priest voice. Very gentle, slow, and sleepy. Smile in the voice without becoming energetic. Avoid comedy, loudness, or theatrical chanting. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),
@@ -248,7 +248,7 @@ struct PriestGuide: Identifiable, Equatable {
             bundledFileName: "guide_shodo",
             ttsVoice: "cedar",
             voiceDescription: "遠い鐘のような静かな声",
-            ttsInstructions: "Chant the full Heart Sutra in Japanese kana reading. Sound like a real person quietly chanting beside the listener: natural breath, soft consonants, warm chest resonance, slow and steady tempo, calm pauses at punctuation. Do not sound robotic, synthetic, theatrical, or over-processed. Speak Japanese in a solemn but gentle bell-keeper voice. Low, slow, spacious, and safe. Each phrase should fade softly. Avoid frightening chanting, temple horror, or hard consonants. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
+            ttsInstructions: "Recite the full Heart Sutra in Japanese kana reading, like a real person quietly reading in a small temple room. Prioritize natural human voice over chanting style: relaxed breath, slight organic unevenness, soft consonants, low volume, slow steady tempo, and calm pauses. Do not sing, exaggerate, sound robotic, or sound like a synthetic chanting effect. Speak Japanese in a solemn but gentle bell-keeper voice. Low, slow, spacious, and safe. Each phrase should fade softly. Avoid frightening chanting, temple horror, or hard consonants. Keep it sleep-safe: no horror, no shouting, no harsh breath.",
             speechText: heartSutraSpeechText,
             displayLines: heartSutraKanjiDisplayLines
         ),

@@ -9,6 +9,7 @@ final class SleepAudioManager: NSObject, ObservableObject {
     @Published private(set) var currentMode: SleepMode = .three
     @Published private(set) var currentGuide = PriestGuide.all[0]
     @Published private(set) var sessionStartedAt: Date?
+    @Published private(set) var chantProgress: Double = 0
     @Published var statusMessage = "睡眠前のリラックスをサポートします"
 
     private var players: [SoundLayer: AVAudioPlayer] = [:]
@@ -61,6 +62,7 @@ final class SleepAudioManager: NSObject, ObservableObject {
         remainingTime = nil
         startedAt = nil
         sessionStartedAt = nil
+        chantProgress = 0
         plannedDuration = nil
         statusMessage = "睡眠前のリラックスをサポートします"
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
@@ -78,6 +80,7 @@ final class SleepAudioManager: NSObject, ObservableObject {
         players[.chant] = chantPlayer
         chantPlayer.numberOfLoops = -1
         chantPlayer.volume = currentSettings.chantVolume
+        chantProgress = 0
         chantPlayer.play()
     }
 
@@ -150,6 +153,8 @@ final class SleepAudioManager: NSObject, ObservableObject {
     }
 
     private func tick() {
+        updateChantProgress()
+
         guard let duration = plannedDuration, let startedAt else {
             remainingTime = nil
             return
@@ -157,6 +162,15 @@ final class SleepAudioManager: NSObject, ObservableObject {
 
         let elapsed = Date().timeIntervalSince(startedAt)
         remainingTime = max(0, duration - elapsed)
+    }
+
+    private func updateChantProgress() {
+        guard let chantPlayer = players[.chant], chantPlayer.duration > 0 else {
+            chantProgress = 0
+            return
+        }
+
+        chantProgress = min(max(chantPlayer.currentTime / chantPlayer.duration, 0), 1)
     }
 
     private func fadeOut() {

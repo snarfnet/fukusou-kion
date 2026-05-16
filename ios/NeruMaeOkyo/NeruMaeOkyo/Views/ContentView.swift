@@ -190,14 +190,14 @@ private struct PlayingView: View {
                     .frame(width: 150, height: 150)
                     .opacity(settings.extraDarkEnabled ? 0.40 : 0.58)
                     .overlay(
-                        Text(currentLine(at: timeline.date))
+                        Text(currentLine)
                             .font(.title3.weight(.semibold))
                             .foregroundStyle(.white.opacity(0.86))
                             .multilineTextAlignment(.center)
                             .lineSpacing(5)
                             .padding(.horizontal, 18)
                             .minimumScaleFactor(0.72)
-                            .id(currentLine(at: timeline.date))
+                            .id(currentLine)
                             .transition(.opacity)
                     )
 
@@ -239,11 +239,21 @@ private struct PlayingView: View {
         return String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
 
-    private func currentLine(at date: Date) -> String {
+    private var currentLine: String {
         guard !guide.displayLines.isEmpty else { return guide.speechText }
-        let elapsed = audioManager.sessionStartedAt.map { date.timeIntervalSince($0) } ?? 0
-        let index = Int(max(0, elapsed) / 7) % guide.displayLines.count
-        return guide.displayLines[index]
+        let totalWeight = guide.displayLines.reduce(0) { $0 + max($1.count, 1) }
+        guard totalWeight > 0 else { return guide.displayLines[0] }
+
+        let target = Int((audioManager.chantProgress * Double(totalWeight)).rounded(.down))
+        var runningWeight = 0
+        for line in guide.displayLines {
+            runningWeight += max(line.count, 1)
+            if target < runningWeight {
+                return line
+            }
+        }
+
+        return guide.displayLines.last ?? guide.speechText
     }
 }
 
