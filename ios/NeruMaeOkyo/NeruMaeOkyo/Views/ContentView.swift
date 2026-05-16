@@ -241,15 +241,20 @@ private struct PlayingView: View {
 
     private var currentLine: String {
         guard !guide.displayLines.isEmpty else { return guide.speechText }
-        let totalWeight = guide.displayLines.reduce(0) { $0 + max($1.count, 1) }
+        let spokenLines = guide.speechText
+            .split(separator: "\n")
+            .map(String.init)
+
+        let cueLines = spokenLines.isEmpty ? guide.displayLines : spokenLines
+        let totalWeight = cueLines.reduce(0) { $0 + max($1.count, 1) }
         guard totalWeight > 0 else { return guide.displayLines[0] }
 
         let target = Int((audioManager.chantProgress * Double(totalWeight)).rounded(.down))
         var runningWeight = 0
-        for line in guide.displayLines {
+        for (index, line) in cueLines.enumerated() {
             runningWeight += max(line.count, 1)
             if target < runningWeight {
-                return line
+                return guide.displayLines[min(index, guide.displayLines.count - 1)]
             }
         }
 
