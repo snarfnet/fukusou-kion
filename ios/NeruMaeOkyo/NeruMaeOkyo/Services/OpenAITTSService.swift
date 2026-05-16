@@ -18,13 +18,15 @@ enum OpenAITTSError: LocalizedError {
 }
 
 struct OpenAITTSService {
+    private static let generatedSpeechPrefix = "openai_human_v2"
+
     static var generatedSpeechURL: URL? {
         generatedSpeechURL(for: PriestGuide.all[0])
     }
 
     static func generatedSpeechURL(for guide: PriestGuide) -> URL? {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("openai_\(guide.bundledFileName).mp3")
+            .appendingPathComponent("\(generatedSpeechPrefix)_\(guide.bundledFileName).mp3")
     }
 
     private struct SpeechRequest: Encodable {
