@@ -91,7 +91,10 @@ jobs:
           . .venv/bin/activate
           python scripts/ensure_bundle_id.py
           python scripts/resolve_app_id_by_bundle.py | tee /tmp/seikimatsu-resolve-app.log
-          grep '^APP_ID=' /tmp/seikimatsu-resolve-app.log >> "$GITHUB_ENV"
+          APP_ID_VALUE="$(grep '^APP_ID=' /tmp/seikimatsu-resolve-app.log | cut -d= -f2)"
+          test -n "$APP_ID_VALUE"
+          echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+          export APP_ID="$APP_ID_VALUE"
           python scripts/resolve_app_bundle.py | tee /tmp/seikimatsu-app-bundle.log
           grep '^APP_BUNDLE_ID=' /tmp/seikimatsu-app-bundle.log >> "$GITHUB_ENV"
 
