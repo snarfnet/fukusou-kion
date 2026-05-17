@@ -15,7 +15,6 @@ final class RewardedAdService: NSObject, ObservableObject, GADFullScreenContentD
 
     private override init() {
         super.init()
-        load()
     }
 
     func load() {

@@ -15,6 +15,9 @@ struct SeikimatsuMarubatsuRoyaleApp: App {
             ContentView()
                 .environmentObject(game)
                 .environmentObject(adService)
+                .task {
+                    adService.load()
+                }
         }
     }
 }
