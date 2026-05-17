@@ -2,6 +2,13 @@ name: Register Seikimatsu Marubatsu Bundle ID
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/seikimatsu-marubatsu-testflight
+    paths:
+      - ".github/workflows/seikimatsu-marubatsu-register-bundle-id.yml"
+      - "ios/SeikimatsuMarubatsuRoyale/scripts/asc_helpers.py"
+      - "ios/SeikimatsuMarubatsuRoyale/scripts/ensure_bundle_id.py"
 
 jobs:
   register-bundle-id:
