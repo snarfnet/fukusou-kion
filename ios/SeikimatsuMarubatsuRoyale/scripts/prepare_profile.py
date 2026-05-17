@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import base64
+import hashlib
 import os
 from pathlib import Path
 
@@ -8,25 +10,49 @@ from asc_helpers import api_json, decode_profile, fail
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.seikimatsumarubatsu")
 PROFILE_NAME = os.environ.get("PROFILE_NAME", "SeikimatsuMarubatsuRoyale App Store")
 PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/SeikimatsuMarubatsuRoyale_App_Store.mobileprovision"
+CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").replace(":", "").upper()
+
+
+def cert_sha1(certificate):
+    content = certificate.get("attributes", {}).get("certificateContent")
+    if not content:
+        detail = api_json("GET", f"/certificates/{certificate['id']}").get("data", certificate)
+        content = detail.get("attributes", {}).get("certificateContent")
+    if not content:
+        return ""
+    return hashlib.sha1(base64.b64decode(content)).hexdigest().upper()
 
 
 def find_distribution_certificate():
+    certificates = []
     for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
-        data = api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", [])
-        if data:
-            return data[0]
-    data = api_json("GET", "/certificates?limit=20").get("data", [])
-    if not data:
+        certificates.extend(api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", []))
+    if not certificates:
+        certificates = api_json("GET", "/certificates?limit=20").get("data", [])
+    if not certificates:
         raise RuntimeError("No distribution certificate found.")
-    return data[0]
+    if CERT_SHA1:
+        for certificate in certificates:
+            if cert_sha1(certificate) == CERT_SHA1:
+                return certificate
+        raise RuntimeError(f"No App Store Connect certificate matched installed certificate {CERT_SHA1}.")
+    return certificates[0]
+
+
+def profile_certificate_ids(profile_id):
+    data = api_json("GET", f"/profiles/{profile_id}/relationships/certificates?limit=10").get("data", [])
+    return {item["id"] for item in data}
 
 
 def find_or_create_profile(bundle_id, certificate_id):
     existing = api_json("GET", f"/profiles?filter[name]={PROFILE_NAME}&limit=20").get("data", [])
     for profile in existing:
         attrs = profile.get("attributes", {})
-        if attrs.get("profileState") == "ACTIVE" and attrs.get("profileContent"):
+        if attrs.get("profileState") != "ACTIVE":
+            continue
+        if certificate_id in profile_certificate_ids(profile["id"]) and attrs.get("profileContent"):
             return profile
+        api_json("DELETE", f"/profiles/{profile['id']}")
 
     payload = {
         "data": {
