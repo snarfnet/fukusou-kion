@@ -1,0 +1,52 @@
+name: Register Seikimatsu Marubatsu Bundle ID
+
+on:
+  workflow_dispatch:
+
+jobs:
+  register-bundle-id:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/SeikimatsuMarubatsuRoyale
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.seikimatsumarubatsu
+      BUNDLE_NAME: SeikimatsuMarubatsuRoyale
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Python tools
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+
+      - name: Register Bundle ID
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/ensure_bundle_id.py
