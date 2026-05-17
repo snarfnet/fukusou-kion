@@ -116,6 +116,14 @@ final class GameStore: ObservableObject {
             return
         }
         scraps -= 300
+        grantGachaReward()
+    }
+
+    func pullRewardedGacha() {
+        grantGachaReward()
+    }
+
+    private func grantGachaReward() {
         let pool = [
             GachaReward(name: "ガスマスク女", rarity: "R"),
             GachaReward(name: "モヒカン女王", rarity: "SR"),

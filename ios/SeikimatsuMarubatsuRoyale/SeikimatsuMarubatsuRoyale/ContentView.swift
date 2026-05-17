@@ -1,4 +1,4 @@
-import SwiftUI
+﻿import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var game: GameStore
@@ -346,6 +346,7 @@ private struct ResultView: View {
 
 private struct GachaView: View {
     @EnvironmentObject private var game: GameStore
+    @EnvironmentObject private var rewardedAd: RewardedAdService
 
     var body: some View {
         VStack(spacing: 14) {
@@ -365,6 +366,24 @@ private struct GachaView: View {
                     game.pullGacha()
                 }
                 .primaryButton()
+
+                Button {
+                    rewardedAd.showRewardedAd {
+                        game.pullRewardedGacha()
+                    } onUnavailable: {
+                        game.message = "広告を読み込み中。少し待ってもう一度。"
+                    }
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: rewardedAd.isLoaded ? "play.rectangle.fill" : "hourglass")
+                        Text(rewardedAd.isLoaded ? "広告を見て1回" : "広告を読み込み中")
+                        Spacer()
+                        Image(systemName: "shippingbox.fill")
+                    }
+                }
+                .secondaryButton()
+                .disabled(!rewardedAd.isLoaded)
+                .opacity(rewardedAd.isLoaded ? 1 : 0.58)
 
                 Text(game.message)
                     .font(.headline.weight(.heavy))
@@ -400,7 +419,6 @@ private struct GachaView: View {
         .padding(.vertical, 12)
     }
 }
-
 private struct EconomyBar: View {
     @EnvironmentObject private var game: GameStore
 
@@ -456,3 +474,4 @@ private extension View {
     ContentView()
         .environmentObject(GameStore())
 }
+

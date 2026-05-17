@@ -15,15 +15,23 @@ settings:
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+    INFOPLIST_KEY_GADApplicationIdentifier: "ca-app-pub-9404799280370656~1551321202"
+    INFOPLIST_KEY_NSUserTrackingUsageDescription: "広告の表示と効果測定のために使用します。"
     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: 83VGKGSQUH
+packages:
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
+    exactVersion: 11.13.0
 targets:
   SeikimatsuMarubatsuRoyale:
     type: application
     platform: iOS
     sources:
       - SeikimatsuMarubatsuRoyale
+    dependencies:
+      - package: GoogleMobileAds
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.seikimatsumarubatsu
