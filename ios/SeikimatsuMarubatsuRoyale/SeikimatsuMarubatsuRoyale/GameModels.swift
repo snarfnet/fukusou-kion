@@ -9,6 +9,58 @@ enum AppPhase {
     case gacha
 }
 
+enum CharacterRarity: String, CaseIterable, Comparable {
+    case n = "N"
+    case r = "R"
+    case sr = "SR"
+    case ssr = "SSR"
+    case ur = "UR"
+
+    var rank: Int {
+        switch self {
+        case .n: 0
+        case .r: 1
+        case .sr: 2
+        case .ssr: 3
+        case .ur: 4
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .n: GameTheme.smoke
+        case .r: .cyan
+        case .sr: GameTheme.amber
+        case .ssr: GameTheme.poison
+        case .ur: .red
+        }
+    }
+
+    static func < (lhs: CharacterRarity, rhs: CharacterRarity) -> Bool {
+        lhs.rank < rhs.rank
+    }
+}
+
+enum CharacterAbilityKind: String {
+    case mineScatter
+    case bikeCharge
+    case flameThrower
+    case empBomb
+    case overdrive
+}
+
+struct BattleCharacter: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let title: String
+    let rarity: CharacterRarity
+    let imageName: String
+    let abilityName: String
+    let abilityKind: CharacterAbilityKind
+    let maxUses: Int
+    let line: String
+}
+
 struct Player: Identifiable, Equatable {
     let id: Int
     let name: String
@@ -22,13 +74,16 @@ struct BoardCell: Identifiable, Equatable {
     var owner: Int?
     var hasMine: Bool
     var hasGas: Bool
+    var hasScrapTrap: Bool
+    var hasShield: Bool
+    var shieldOwner: Int?
     var contaminatedTurns: Int
 }
 
 struct GachaReward: Identifiable, Equatable {
     let id = UUID()
-    let name: String
-    let rarity: String
+    let character: BattleCharacter
+    let isNew: Bool
 }
 
 struct AIHandMove: Identifiable, Equatable {

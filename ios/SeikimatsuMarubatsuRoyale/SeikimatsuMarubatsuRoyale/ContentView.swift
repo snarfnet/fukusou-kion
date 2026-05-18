@@ -187,6 +187,8 @@ private struct MainMenuView: View {
             }
             .wastelandPanel()
 
+            CharacterSelectView()
+
             EconomyBar()
         }
     }
@@ -227,6 +229,22 @@ private struct BattleView: View {
             BoardGrid(columns: columns)
 
             HStack(spacing: 10) {
+                Button("\(game.selectedCharacter.abilityName) \(game.abilityUsesLeft)") {
+                    game.useCharacterAbility()
+                }
+                .secondaryButton()
+                .disabled(!game.canUseAbility)
+                .opacity(game.canUseAbility ? 1 : 0.55)
+
+                Button("鉄板防御 \(game.shieldPlates)") {
+                    game.useShieldPlate()
+                }
+                .secondaryButton()
+                .disabled(!game.isHumanTurn || game.shieldPlates <= 0)
+                .opacity(game.isHumanTurn && game.shieldPlates > 0 ? 1 : 0.55)
+            }
+
+            HStack(spacing: 10) {
                 Button("バイク突撃 \(game.gasGauge)/3") {
                     game.bikeCharge()
                 }
@@ -247,6 +265,7 @@ private struct BattleView: View {
 }
 
 private struct PlayerChip: View {
+    @EnvironmentObject private var game: GameStore
     let player: Player
     let active: Bool
 
@@ -271,11 +290,97 @@ private struct PlayerChip: View {
 
     private var characterImage: String {
         switch player.id {
-        case 0: "CharacterGasmask"
+        case 0: game.selectedCharacter.imageName
         case 1: "CharacterMech"
         case 2: "CharacterMohawk"
         default: "CharacterFlame"
         }
+    }
+}
+
+private struct CharacterSelectView: View {
+    @EnvironmentObject private var game: GameStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("主人公")
+                    .font(.headline.weight(.black))
+                    .foregroundStyle(GameTheme.bone)
+                Spacer()
+                Text(game.selectedCharacter.rarity.rawValue)
+                    .font(.caption.weight(.black))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(game.selectedCharacter.rarity.color.opacity(0.95), in: RoundedRectangle(cornerRadius: 6))
+                    .foregroundStyle(.black)
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(game.sortedCharacters) { character in
+                        CharacterCard(
+                            character: character,
+                            unlocked: game.unlockedCharacterIDs.contains(character.id),
+                            selected: character.id == game.selectedCharacterID
+                        )
+                        .onTapGesture {
+                            game.selectCharacter(character)
+                        }
+                    }
+                }
+            }
+        }
+        .wastelandPanel(padding: 12)
+    }
+}
+
+private struct CharacterCard: View {
+    let character: BattleCharacter
+    let unlocked: Bool
+    let selected: Bool
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(character.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 70, height: 70)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay {
+                    if !unlocked {
+                        Color.black.opacity(0.72)
+                        Image(systemName: "lock.fill")
+                            .foregroundStyle(GameTheme.amber)
+                    }
+                }
+
+            Text(unlocked ? character.name : "未解放")
+                .font(.caption.weight(.black))
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+
+            Text(character.abilityName)
+                .font(.caption2.weight(.heavy))
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+                .foregroundStyle(GameTheme.smoke)
+
+            Text(character.rarity.rawValue)
+                .font(.caption2.weight(.black))
+                .foregroundStyle(.black)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 3)
+                .background(character.rarity.color, in: RoundedRectangle(cornerRadius: 5))
+        }
+        .frame(width: 96, height: 132)
+        .padding(8)
+        .background(selected ? GameTheme.amber.opacity(0.28) : Color.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(selected ? GameTheme.amber : GameTheme.amber.opacity(0.18), lineWidth: selected ? 2 : 1)
+        }
+        .foregroundStyle(GameTheme.bone)
     }
 }
 
@@ -430,6 +535,14 @@ private struct CellView: View {
                 Image(systemName: "fuelpump.fill")
                     .font(.caption.weight(.black))
                     .foregroundStyle(GameTheme.amber)
+            } else if cell.hasShield {
+                Image(systemName: "shield.fill")
+                    .font(.caption.weight(.black))
+                    .foregroundStyle(.cyan)
+            } else if cell.hasScrapTrap {
+                Image(systemName: "wrench.and.screwdriver.fill")
+                    .font(.caption2.weight(.black))
+                    .foregroundStyle(GameTheme.smoke)
             } else if cell.hasMine {
                 Circle()
                     .fill(Color.black.opacity(0.7))
@@ -438,6 +551,14 @@ private struct CellView: View {
             }
         }
         .aspectRatio(1, contentMode: .fit)
+        .overlay(alignment: .topTrailing) {
+            if cell.shieldOwner != nil {
+                Image(systemName: "shield.fill")
+                    .font(.system(size: 8, weight: .black))
+                    .foregroundStyle(.cyan)
+                    .padding(3)
+            }
+        }
     }
 
     private var background: Color {
@@ -553,18 +674,24 @@ private struct GachaView: View {
                 VStack(spacing: 8) {
                     ForEach(game.rewards) { reward in
                         HStack {
-                            Image(reward.rarity == "SSR" ? "GachaSSRVisual" : "GachaCrateVisual")
+                            Image(reward.character.rarity >= .ssr ? "GachaSSRVisual" : reward.character.imageName)
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 46, height: 46)
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
-                            Text(reward.rarity)
+                            Text(reward.character.rarity.rawValue)
                                 .font(.caption.weight(.black))
-                                .foregroundStyle(GameTheme.amber)
+                                .foregroundStyle(reward.character.rarity.color)
                                 .frame(width: 44)
-                            Text(reward.name)
-                                .font(.headline.weight(.heavy))
-                                .foregroundStyle(GameTheme.bone)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(reward.character.name)
+                                    .font(.headline.weight(.heavy))
+                                Text(reward.isNew ? "NEW / 選択可能" : "所持済み / スクラップ変換")
+                                    .font(.caption2.weight(.heavy))
+                                    .foregroundStyle(GameTheme.smoke)
+                            }
+                            .font(.headline.weight(.heavy))
+                            .foregroundStyle(GameTheme.bone)
                             Spacer()
                         }
                         .padding(10)
@@ -589,6 +716,8 @@ private struct EconomyBar: View {
             Label("\(game.scraps)", systemImage: "bolt.circle.fill")
             Spacer()
             Label("\(game.gasGauge)/3", systemImage: "fuelpump.fill")
+            Spacer()
+            Label("\(game.shieldPlates)", systemImage: "shield.fill")
         }
         .font(.headline.weight(.black))
         .foregroundStyle(GameTheme.amber)
