@@ -313,6 +313,7 @@ private struct BattleView: View {
                 }
 
                 BoardGrid(columns: columns)
+                    .frame(maxWidth: 430)
 
                 ItemVisualStrip()
 
@@ -546,6 +547,7 @@ private struct BoardGrid: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(GameTheme.amber.opacity(0.25), lineWidth: 1)
         }
+        .aspectRatio(1, contentMode: .fit)
         .animation(.easeInOut(duration: 0.22), value: game.aiHandMove)
     }
 }

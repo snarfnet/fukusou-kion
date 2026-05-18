@@ -198,8 +198,19 @@ final class GameStore: ObservableObject {
     func startBattle() {
         battleSerial += 1
         let serial = battleSerial
-        board = (0..<Self.boardCellCount).map {
+        let character = selectedCharacter
+        var freshBoard = (0..<Self.boardCellCount).map {
             BoardCell(id: $0, owner: nil, hasMine: false, hasGas: false, hasEMP: false, hasScrapTrap: false, hasShield: false, shieldOwner: nil, contaminatedTurns: 0)
+        }
+        func emptyFreshIDs() -> [Int] {
+            freshBoard.indices.filter {
+                freshBoard[$0].owner == nil &&
+                    !freshBoard[$0].hasMine &&
+                    !freshBoard[$0].hasGas &&
+                    !freshBoard[$0].hasEMP &&
+                    !freshBoard[$0].hasScrapTrap &&
+                    !freshBoard[$0].hasShield
+            }
         }
         winner = nil
         currentPlayer = 0
@@ -208,29 +219,30 @@ final class GameStore: ObservableObject {
         turnCount = 0
         aiHandMove = nil
         abilityCutIn = nil
-        abilityUsesLeft = selectedCharacter.maxUses
-        message = "\(selectedCharacter.name)の出番。5つ並べろ。"
+        abilityUsesLeft = character.maxUses
+        message = "\(character.name)の出番。4つ並べろ。"
 
         let mineCount = 4
         let gasCount = 7
         let empCount = 3
         let trapCount = 4
         let shieldCount = 5
-        for id in emptyIDs().shuffled().prefix(mineCount) {
-            board[id].hasMine = true
+        for id in emptyFreshIDs().shuffled().prefix(mineCount) {
+            freshBoard[id].hasMine = true
         }
-        for id in emptyIDs().shuffled().prefix(gasCount) where !board[id].hasMine {
-            board[id].hasGas = true
+        for id in emptyFreshIDs().shuffled().prefix(gasCount) {
+            freshBoard[id].hasGas = true
         }
-        for id in emptyIDs().shuffled().prefix(empCount) where !board[id].hasMine && !board[id].hasGas {
-            board[id].hasEMP = true
+        for id in emptyFreshIDs().shuffled().prefix(empCount) {
+            freshBoard[id].hasEMP = true
         }
-        for id in emptyIDs().shuffled().prefix(trapCount) where !board[id].hasMine && !board[id].hasGas && !board[id].hasEMP {
-            board[id].hasScrapTrap = true
+        for id in emptyFreshIDs().shuffled().prefix(trapCount) {
+            freshBoard[id].hasScrapTrap = true
         }
-        for id in emptyIDs().shuffled().prefix(shieldCount) {
-            board[id].hasShield = true
+        for id in emptyFreshIDs().shuffled().prefix(shieldCount) {
+            freshBoard[id].hasShield = true
         }
+        board = freshBoard
 
         phase = .battle
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
@@ -494,10 +506,10 @@ final class GameStore: ObservableObject {
         }
 
         guard let id = chooseMove(for: playerID) else { return }
-        aiHandMove = AIHandMove(playerID: playerID, targetCell: id)
-        message = "\(players[playerID].name)が手を伸ばした。"
+        aiHandMove = nil
+        message = "\(players[playerID].name)が狙いを定めた。"
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.82) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             Task { @MainActor in
                 guard let self,
                       self.phase == .battle,
