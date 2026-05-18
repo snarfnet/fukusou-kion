@@ -4,6 +4,10 @@ private func liteCharacterImage(_ character: BattleCharacter) -> String {
     "\(character.imageName)Lite"
 }
 
+private func thumbCharacterImage(_ character: BattleCharacter) -> String {
+    "\(character.imageName)Thumb"
+}
+
 struct ContentView: View {
     @EnvironmentObject private var game: GameStore
 
@@ -234,55 +238,94 @@ private struct MainMenuView: View {
     @EnvironmentObject private var game: GameStore
 
     var body: some View {
-        VStack(spacing: 14) {
-            VStack(spacing: 8) {
-                Text("4 WAY ROYALE")
-                    .font(.system(size: 22, weight: .black, design: .rounded))
-                    .foregroundStyle(GameTheme.amber)
-                HStack(spacing: 10) {
-                    ForEach(game.players) { player in
-                        Text(player.symbol)
-                            .font(.system(size: 26, weight: .black, design: .rounded))
-                            .foregroundStyle(.black)
-                            .frame(width: 48, height: 48)
-                            .background(player.color, in: Circle())
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 14) {
+                ZStack(alignment: .bottom) {
+                    Image("ModeSelectVisualLite")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay {
+                            LinearGradient(colors: [.clear, .black.opacity(0.82)], startPoint: .center, endPoint: .bottom)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+
+                    VStack(spacing: 8) {
+                        Text("4 WAY ROYALE")
+                            .font(.system(size: 22, weight: .black, design: .rounded))
+                            .foregroundStyle(GameTheme.amber)
+                        HStack(spacing: 10) {
+                            ForEach(game.players) { player in
+                                Text(player.symbol)
+                                    .font(.system(size: 26, weight: .black, design: .rounded))
+                                    .foregroundStyle(.black)
+                                    .frame(width: 48, height: 48)
+                                    .background(player.color, in: Circle())
+                            }
+                        }
                     }
+                    .padding(.bottom, 14)
                 }
+                .frame(maxWidth: .infinity)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(GameTheme.amber.opacity(0.28), lineWidth: 1)
+                }
+
+                Text("荒野へ出る")
+                    .font(.system(size: 42, weight: .black, design: .rounded))
+                    .foregroundStyle(GameTheme.bone)
+
+                HStack(spacing: 10) {
+                    Image("GachaCrateVisualLite")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 72, height: 72)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(game.selectedCharacter.name)
+                            .font(.headline.weight(.black))
+                            .foregroundStyle(GameTheme.bone)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.65)
+                        Text(game.selectedCharacter.abilityName)
+                            .font(.caption.weight(.heavy))
+                            .foregroundStyle(GameTheme.smoke)
+                    }
+                    Spacer()
+                    Image(liteCharacterImage(game.selectedCharacter))
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 72, height: 72)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .wastelandPanel(padding: 10)
+
+                VStack(spacing: 10) {
+                    Button("CPU対戦を始める") {
+                        game.startBattle()
+                    }
+                    .primaryButton()
+
+                    Button("世紀末補給箱") {
+                        game.openGacha()
+                    }
+                    .secondaryButton()
+
+                    Button("タイトルへ戻る") {
+                        game.backToTitle()
+                    }
+                    .font(.subheadline.weight(.heavy))
+                    .foregroundStyle(GameTheme.smoke)
+                }
+                .wastelandPanel()
+
+                CharacterSelectView()
+
+                EconomyBar()
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 128)
-            .background(GameTheme.panel.opacity(0.86), in: RoundedRectangle(cornerRadius: 8))
-            .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(GameTheme.amber.opacity(0.28), lineWidth: 1)
-            }
-
-            Text("荒野へ出る")
-                .font(.system(size: 42, weight: .black, design: .rounded))
-                .foregroundStyle(GameTheme.bone)
-
-            VStack(spacing: 10) {
-                Button("CPU対戦を始める") {
-                    game.startBattle()
-                }
-                .primaryButton()
-
-                Button("世紀末補給箱") {
-                    game.openGacha()
-                }
-                .secondaryButton()
-
-                Button("タイトルへ戻る") {
-                    game.backToTitle()
-                }
-                .font(.subheadline.weight(.heavy))
-                .foregroundStyle(GameTheme.smoke)
-            }
-            .wastelandPanel()
-
-            CharacterSelectView()
-
-            EconomyBar()
+            .padding(.vertical, 10)
         }
     }
 }
@@ -295,11 +338,24 @@ private struct BattleView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 10) {
-                Text("4 WAY ROYALE")
-                    .font(.system(size: 30, weight: .black, design: .rounded))
-                    .foregroundStyle(GameTheme.amber)
-                    .frame(maxWidth: .infinity)
-                    .wastelandPanel(padding: 10)
+                ZStack(alignment: .bottomLeading) {
+                    Image("BattleIntroVisualLite")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 92)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay {
+                            LinearGradient(colors: [.clear, .black.opacity(0.78)], startPoint: .top, endPoint: .bottom)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+
+                    Text("4 WAY ROYALE")
+                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .foregroundStyle(GameTheme.amber)
+                        .padding(10)
+                        .shadow(color: .black, radius: 5)
+                }
+                .frame(maxWidth: .infinity)
 
                 HStack {
                     ForEach(game.players) { player in
@@ -332,6 +388,23 @@ private struct BattleView: View {
                     .frame(maxWidth: 430)
 
                 ItemVisualStrip()
+
+                ZStack(alignment: .leading) {
+                    Image(game.gasGauge >= 3 ? "BikeSkillVisualLite" : "SkillSelectionVisualLite")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 58)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay {
+                            LinearGradient(colors: [.black.opacity(0.1), .black.opacity(0.78)], startPoint: .trailing, endPoint: .leading)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    Text(game.selectedCharacter.abilityName)
+                        .font(.headline.weight(.black))
+                        .foregroundStyle(GameTheme.amber)
+                        .padding(.leading, 12)
+                        .shadow(color: .black, radius: 4)
+                }
 
                 HStack(spacing: 10) {
                     Button("\(game.selectedCharacter.abilityName) \(game.abilityUsesLeft)") {
@@ -408,6 +481,19 @@ private struct CharacterSelectView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Image("CharacterSelectVisualLite")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 68)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .bottomLeading) {
+                    Text("CHARACTER SELECT")
+                        .font(.caption.weight(.black))
+                        .foregroundStyle(GameTheme.amber)
+                        .padding(8)
+                        .shadow(color: .black, radius: 4)
+                }
+
             HStack {
                 Image(liteCharacterImage(game.selectedCharacter))
                     .resizable()
@@ -485,12 +571,14 @@ private struct CharacterCard: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Text(character.rarity.rawValue)
-                .font(.system(size: 20, weight: .black, design: .rounded))
-                .foregroundStyle(.black)
+            Image(thumbCharacterImage(character))
+                .resizable()
+                .scaledToFill()
                 .frame(width: 70, height: 70)
-                .background(character.rarity.color.opacity(unlocked ? 0.95 : 0.35), in: RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay {
+                    LinearGradient(colors: [.clear, character.rarity.color.opacity(0.42)], startPoint: .top, endPoint: .bottom)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     if !unlocked {
                         Color.black.opacity(0.72)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -801,8 +889,18 @@ private struct GachaView: View {
 
                 EconomyBar()
 
-                Button("300スクラップで開ける") {
+                Button {
                     game.pullGacha()
+                } label: {
+                    HStack(spacing: 10) {
+                        Image("GachaCrateVisualLite")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 28, height: 28)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        Text("300スクラップで開ける")
+                        Spacer()
+                    }
                 }
                 .primaryButton()
 
