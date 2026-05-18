@@ -231,15 +231,27 @@ private struct MainMenuView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Image("ModeSelectVisual")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 230)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay {
-                    LinearGradient(colors: [.clear, .black.opacity(0.72)], startPoint: .center, endPoint: .bottom)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+            VStack(spacing: 8) {
+                Text("4 WAY ROYALE")
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .foregroundStyle(GameTheme.amber)
+                HStack(spacing: 10) {
+                    ForEach(game.players) { player in
+                        Text(player.symbol)
+                            .font(.system(size: 26, weight: .black, design: .rounded))
+                            .foregroundStyle(.black)
+                            .frame(width: 48, height: 48)
+                            .background(player.color, in: Circle())
+                    }
                 }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 128)
+            .background(GameTheme.panel.opacity(0.86), in: RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(GameTheme.amber.opacity(0.28), lineWidth: 1)
+            }
 
             Text("荒野へ出る")
                 .font(.system(size: 42, weight: .black, design: .rounded))
@@ -392,19 +404,6 @@ private struct CharacterSelectView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Image("CharacterSelectVisual")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 86)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(alignment: .bottomLeading) {
-                    Text("CHARACTER SELECT")
-                        .font(.caption.weight(.black))
-                        .foregroundStyle(GameTheme.amber)
-                        .padding(8)
-                        .shadow(color: .black, radius: 4)
-                }
-
             HStack {
                 Text("主人公")
                     .font(.headline.weight(.black))
@@ -476,14 +475,15 @@ private struct CharacterCard: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Image(character.imageName)
-                .resizable()
-                .scaledToFill()
+            Text(character.rarity.rawValue)
+                .font(.system(size: 20, weight: .black, design: .rounded))
+                .foregroundStyle(.black)
                 .frame(width: 70, height: 70)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .background(character.rarity.color.opacity(unlocked ? 0.95 : 0.35), in: RoundedRectangle(cornerRadius: 8))
                 .overlay {
                     if !unlocked {
                         Color.black.opacity(0.72)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         Image(systemName: "lock.fill")
                             .foregroundStyle(GameTheme.amber)
                     }
