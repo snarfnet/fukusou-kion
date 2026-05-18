@@ -1,5 +1,9 @@
 ﻿import SwiftUI
 
+private func liteCharacterImage(_ character: BattleCharacter) -> String {
+    "\(character.imageName)Lite"
+}
+
 struct ContentView: View {
     @EnvironmentObject private var game: GameStore
 
@@ -64,7 +68,7 @@ private struct AbilityCutInView: View {
             Color.black.opacity(0.82)
                 .ignoresSafeArea()
 
-            Image(cutIn.character.imageName)
+            Image(liteCharacterImage(cutIn.character))
                 .resizable()
                 .scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -134,7 +138,7 @@ private struct TitleView: View {
             Spacer(minLength: 14)
 
             ZStack(alignment: .bottom) {
-                Image("TitleVisual")
+                Image("TitleVisualLite")
                     .resizable()
                     .scaledToFill()
                     .frame(height: 440)
@@ -311,7 +315,7 @@ private struct BattleView: View {
                     .wastelandPanel(padding: 10)
 
                 if game.hasHumanReach {
-                    Image("WarningReachVisual")
+                    Image("WarningReachVisualLite")
                         .resizable()
                         .scaledToFill()
                         .frame(height: 52)
@@ -405,6 +409,12 @@ private struct CharacterSelectView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
+                Image(liteCharacterImage(game.selectedCharacter))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 76, height: 76)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
                 Text("主人公")
                     .font(.headline.weight(.black))
                     .foregroundStyle(GameTheme.bone)
@@ -732,7 +742,7 @@ private struct ResultView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Image(game.winner?.id == 0 ? "ResultWinVisual" : "ExplosionVisual")
+            Image(game.winner?.id == 0 ? "ResultWinVisualLite" : "ExplosionVisualLite")
                 .resizable()
                 .scaledToFill()
                 .frame(height: 260)
@@ -782,7 +792,7 @@ private struct GachaView: View {
                 .foregroundStyle(GameTheme.amber)
 
             VStack(spacing: 12) {
-                Image(game.rewards.isEmpty ? "GachaScreenVisual" : "GachaOpeningVisual")
+                Image(game.rewards.isEmpty ? "GachaScreenVisualLite" : "GachaOpeningVisualLite")
                     .resizable()
                     .scaledToFill()
                     .frame(maxHeight: 220)
@@ -825,7 +835,7 @@ private struct GachaView: View {
                 VStack(spacing: 8) {
                     ForEach(game.rewards) { reward in
                         HStack {
-                            Image(reward.character.rarity >= .ssr ? "GachaSSRVisual" : reward.character.imageName)
+                            Image(reward.character.rarity >= .ssr ? "GachaSSRVisualLite" : liteCharacterImage(reward.character))
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 46, height: 46)
