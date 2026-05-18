@@ -31,6 +31,12 @@ struct GachaReward: Identifiable, Equatable {
     let rarity: String
 }
 
+struct AIHandMove: Identifiable, Equatable {
+    let id = UUID()
+    let playerID: Int
+    let targetCell: Int
+}
+
 enum GameTheme {
     static let bg = Color(red: 0.04, green: 0.03, blue: 0.025)
     static let panel = Color(red: 0.12, green: 0.10, blue: 0.085)

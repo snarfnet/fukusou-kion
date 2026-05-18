@@ -12,6 +12,7 @@ final class GameStore: ObservableObject {
     @Published var gasGauge = 0
     @Published var rewards: [GachaReward] = []
     @Published var turnCount = 0
+    @Published var aiHandMove: AIHandMove?
 
     private let storySeenKey = "seikimatsu.storySeen"
 
@@ -75,6 +76,7 @@ final class GameStore: ObservableObject {
         currentPlayer = 0
         gasGauge = 0
         turnCount = 0
+        aiHandMove = nil
         message = "赤の戦士のターン。5つ並べろ。"
 
         for id in Array(0..<100).shuffled().prefix(10) {
@@ -89,6 +91,7 @@ final class GameStore: ObservableObject {
 
     func tapCell(_ id: Int) {
         guard isHumanTurn, board.indices.contains(id), board[id].owner == nil else { return }
+        aiHandMove = nil
         place(playerID: 0, at: id)
     }
 
@@ -208,18 +211,27 @@ final class GameStore: ObservableObject {
     private func cpuMove() {
         guard phase == .battle, currentPlayer != 0, winner == nil else { return }
         let playerID = currentPlayer
-        if let win = winningMove(for: playerID) {
-            place(playerID: playerID, at: win)
-            return
+        guard let id = chooseMove(for: playerID) else { return }
+        aiHandMove = AIHandMove(playerID: playerID, targetCell: id)
+        message = "\(players[playerID].name)縺悟虚縺上・"
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.82) { [weak self] in
+            Task { @MainActor in
+                guard let self,
+                      self.phase == .battle,
+                      self.currentPlayer == playerID,
+                      self.winner == nil else { return }
+                self.aiHandMove = nil
+                self.place(playerID: playerID, at: id)
+            }
         }
-        if let block = winningMove(for: 0) {
-            place(playerID: playerID, at: block)
-            return
-        }
+    }
+
+    private func chooseMove(for playerID: Int) -> Int? {
+        if let win = winningMove(for: playerID) { return win }
+        if let block = winningMove(for: 0) { return block }
         let candidates = board.filter { $0.owner == nil && !$0.hasMine }.map(\.id)
-        if let id = candidates.randomElement() ?? board.filter({ $0.owner == nil }).map(\.id).randomElement() {
-            place(playerID: playerID, at: id)
-        }
+        return candidates.randomElement() ?? board.filter({ $0.owner == nil }).map(\.id).randomElement()
     }
 
     private func winningMove(for playerID: Int) -> Int? {

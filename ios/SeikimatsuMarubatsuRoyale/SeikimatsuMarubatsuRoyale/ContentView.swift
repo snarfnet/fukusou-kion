@@ -224,23 +224,7 @@ private struct BattleView: View {
                 .frame(maxWidth: .infinity, minHeight: 54)
                 .wastelandPanel(padding: 10)
 
-            LazyVGrid(columns: columns, spacing: 3) {
-                ForEach(game.board) { cell in
-                    Button {
-                        game.tapCell(cell.id)
-                    } label: {
-                        CellView(cell: cell)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!game.isHumanTurn || cell.owner != nil)
-                }
-            }
-            .padding(8)
-            .background(.black.opacity(0.42), in: RoundedRectangle(cornerRadius: 8))
-            .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(GameTheme.amber.opacity(0.25), lineWidth: 1)
-            }
+            BoardGrid(columns: columns)
 
             HStack(spacing: 10) {
                 Button("バイク突撃 \(game.gasGauge)/3") {
@@ -291,6 +275,136 @@ private struct PlayerChip: View {
         case 1: "CharacterMech"
         case 2: "CharacterMohawk"
         default: "CharacterFlame"
+        }
+    }
+}
+
+private struct BoardGrid: View {
+    @EnvironmentObject private var game: GameStore
+    let columns: [GridItem]
+
+    var body: some View {
+        ZStack {
+            LazyVGrid(columns: columns, spacing: 3) {
+                ForEach(game.board) { cell in
+                    Button {
+                        game.tapCell(cell.id)
+                    } label: {
+                        CellView(cell: cell)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!game.isHumanTurn || game.aiHandMove != nil || cell.owner != nil)
+                }
+            }
+
+            if let move = game.aiHandMove {
+                AIHandOverlay(move: move)
+                    .transition(.opacity)
+            }
+        }
+        .padding(8)
+        .background(.black.opacity(0.42), in: RoundedRectangle(cornerRadius: 8))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(GameTheme.amber.opacity(0.25), lineWidth: 1)
+        }
+        .animation(.easeInOut(duration: 0.22), value: game.aiHandMove)
+    }
+}
+
+private struct AIHandOverlay: View {
+    let move: AIHandMove
+    @State private var landed = false
+
+    var body: some View {
+        GeometryReader { proxy in
+            let cell = max(12, min(proxy.size.width, proxy.size.height) / 10)
+            let row = move.targetCell / 10
+            let col = move.targetCell % 10
+            let target = CGPoint(x: CGFloat(col) * cell + cell / 2, y: CGFloat(row) * cell + cell / 2)
+            let start = startPoint(in: proxy.size)
+
+            FictionalHandView(playerID: move.playerID, size: cell * 1.55)
+                .position(landed ? target : start)
+                .rotationEffect(.degrees(landed ? -10 : entryAngle))
+                .scaleEffect(landed ? 1.0 : 0.78)
+                .shadow(color: handColor.opacity(0.75), radius: landed ? 18 : 8)
+                .animation(.spring(response: 0.46, dampingFraction: 0.72), value: landed)
+                .onAppear {
+                    landed = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        landed = true
+                    }
+                }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private var handColor: Color {
+        switch move.playerID {
+        case 1: .cyan
+        case 2: .yellow
+        default: .green
+        }
+    }
+
+    private var entryAngle: Double {
+        switch move.playerID {
+        case 1: -34
+        case 2: 22
+        default: -16
+        }
+    }
+
+    private func startPoint(in size: CGSize) -> CGPoint {
+        switch move.playerID {
+        case 1:
+            CGPoint(x: size.width + 56, y: -38)
+        case 2:
+            CGPoint(x: -56, y: size.height * 0.48)
+        default:
+            CGPoint(x: size.width + 54, y: size.height + 42)
+        }
+    }
+}
+
+private struct FictionalHandView: View {
+    let playerID: Int
+    let size: CGFloat
+
+    var body: some View {
+        ZStack {
+            ForEach(0..<4) { index in
+                Capsule()
+                    .fill(color.opacity(0.92))
+                    .frame(width: size * 0.18, height: size * 0.58)
+                    .offset(x: CGFloat(index - 2) * size * 0.13, y: -size * 0.12)
+                    .rotationEffect(.degrees(Double(index - 1) * 4))
+            }
+
+            RoundedRectangle(cornerRadius: size * 0.18)
+                .fill(color)
+                .frame(width: size * 0.72, height: size * 0.56)
+                .offset(y: size * 0.18)
+
+            Text(playerID.isMultiple(of: 2) ? "○" : "×")
+                .font(.system(size: size * 0.42, weight: .black, design: .rounded))
+                .foregroundStyle(.black.opacity(0.75))
+                .offset(y: size * 0.13)
+        }
+        .frame(width: size, height: size)
+        .overlay {
+            Circle()
+                .stroke(.white.opacity(0.25), lineWidth: 2)
+                .frame(width: size * 0.94, height: size * 0.94)
+        }
+    }
+
+    private var color: Color {
+        switch playerID {
+        case 1: .cyan
+        case 2: .yellow
+        default: .green
         }
     }
 }
