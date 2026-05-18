@@ -154,6 +154,16 @@ private struct MainMenuView: View {
 
     var body: some View {
         VStack(spacing: 14) {
+            Image("ModeSelectVisual")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 230)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay {
+                    LinearGradient(colors: [.clear, .black.opacity(0.72)], startPoint: .center, endPoint: .bottom)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+
             Text("荒野へ出る")
                 .font(.system(size: 42, weight: .black, design: .rounded))
                 .foregroundStyle(GameTheme.bone)
@@ -189,6 +199,18 @@ private struct BattleView: View {
 
     var body: some View {
         VStack(spacing: 10) {
+            Image("BattleIntroVisual")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 118)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .bottomLeading) {
+                    Text("4 WAY ROYALE")
+                        .font(.caption.weight(.black))
+                        .foregroundStyle(GameTheme.amber)
+                        .padding(10)
+                }
+
             HStack {
                 ForEach(game.players) { player in
                     PlayerChip(player: player, active: player.id == game.currentPlayer)
@@ -246,8 +268,12 @@ private struct PlayerChip: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            Text(player.symbol)
-                .font(.headline.weight(.black))
+            Image(characterImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 38, height: 38)
+                .clipShape(Circle())
+                .overlay(Circle().stroke(active ? .black.opacity(0.45) : GameTheme.amber.opacity(0.35), lineWidth: 1))
             Text(player.name)
                 .font(.caption2.weight(.black))
                 .lineLimit(1)
@@ -257,6 +283,15 @@ private struct PlayerChip: View {
         .padding(.horizontal, 4)
         .background(active ? player.color.opacity(0.75) : GameTheme.panel.opacity(0.72), in: RoundedRectangle(cornerRadius: 8))
         .foregroundStyle(active ? .black : GameTheme.bone)
+    }
+
+    private var characterImage: String {
+        switch player.id {
+        case 0: "CharacterGasmask"
+        case 1: "CharacterMech"
+        case 2: "CharacterMohawk"
+        default: "CharacterFlame"
+        }
     }
 }
 
@@ -311,6 +346,12 @@ private struct ResultView: View {
 
     var body: some View {
         VStack(spacing: 14) {
+            Image(game.winner?.id == 0 ? "ResultWinVisual" : "ExplosionVisual")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
             Text(game.winner?.id == 0 ? "勝利" : "決着")
                 .font(.system(size: 52, weight: .black, design: .rounded))
                 .foregroundStyle(game.winner?.id == 0 ? GameTheme.amber : GameTheme.rust)
@@ -355,9 +396,11 @@ private struct GachaView: View {
                 .foregroundStyle(GameTheme.amber)
 
             VStack(spacing: 12) {
-                Image(systemName: "shippingbox.fill")
-                    .font(.system(size: 94, weight: .black))
-                    .foregroundStyle(GameTheme.rust)
+                Image("GachaCrateVisual")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .shadow(color: GameTheme.poison.opacity(0.8), radius: 18)
 
                 EconomyBar()
@@ -396,6 +439,11 @@ private struct GachaView: View {
                 VStack(spacing: 8) {
                     ForEach(game.rewards) { reward in
                         HStack {
+                            Image(reward.rarity == "SSR" ? "GachaSSRVisual" : "GachaCrateVisual")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 46, height: 46)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
                             Text(reward.rarity)
                                 .font(.caption.weight(.black))
                                 .foregroundStyle(GameTheme.amber)
