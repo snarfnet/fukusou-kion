@@ -32,7 +32,6 @@ struct ContentView: View {
                     .transition(.asymmetric(insertion: .scale(scale: 1.08).combined(with: .opacity), removal: .opacity))
             }
         }
-        .animation(.spring(response: 0.34, dampingFraction: 0.86), value: game.phase)
         .animation(.spring(response: 0.28, dampingFraction: 0.82), value: game.abilityCutIn)
     }
 }
@@ -280,17 +279,11 @@ private struct BattleView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 10) {
-                Image("BattleIntroVisual")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: 92)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(alignment: .bottomLeading) {
-                        Text("4 WAY ROYALE")
-                            .font(.caption.weight(.black))
-                            .foregroundStyle(GameTheme.amber)
-                            .padding(10)
-                    }
+                Text("4 WAY ROYALE")
+                    .font(.system(size: 30, weight: .black, design: .rounded))
+                    .foregroundStyle(GameTheme.amber)
+                    .frame(maxWidth: .infinity)
+                    .wastelandPanel(padding: 10)
 
                 HStack {
                     ForEach(game.players) { player in
@@ -370,17 +363,16 @@ private struct BattleView: View {
 }
 
 private struct PlayerChip: View {
-    @EnvironmentObject private var game: GameStore
     let player: Player
     let active: Bool
 
     var body: some View {
         VStack(spacing: 4) {
-            Image(characterImage)
-                .resizable()
-                .scaledToFill()
+            Text(player.symbol)
+                .font(.system(size: 22, weight: .black, design: .rounded))
+                .foregroundStyle(active ? .black : player.color)
                 .frame(width: 38, height: 38)
-                .clipShape(Circle())
+                .background(active ? player.color.opacity(0.95) : player.color.opacity(0.18), in: Circle())
                 .overlay(Circle().stroke(active ? .black.opacity(0.45) : GameTheme.amber.opacity(0.35), lineWidth: 1))
             Text(player.name)
                 .font(.caption2.weight(.black))
@@ -391,15 +383,6 @@ private struct PlayerChip: View {
         .padding(.horizontal, 4)
         .background(active ? player.color.opacity(0.75) : GameTheme.panel.opacity(0.72), in: RoundedRectangle(cornerRadius: 8))
         .foregroundStyle(active ? .black : GameTheme.bone)
-    }
-
-    private var characterImage: String {
-        switch player.id {
-        case 0: game.selectedCharacter.imageName
-        case 1: "CharacterMech"
-        case 2: "CharacterMohawk"
-        default: "CharacterFlame"
-        }
     }
 }
 
@@ -735,14 +718,9 @@ private struct BoardItemIcon: View {
     var body: some View {
         Image(image)
             .resizable()
-            .scaledToFill()
-            .frame(width: 34, height: 34)
+            .scaledToFit()
+            .frame(width: 30, height: 30)
             .clipShape(RoundedRectangle(cornerRadius: 5))
-            .overlay {
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(.white.opacity(0.18), lineWidth: 1)
-            }
-            .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
     }
 }
 

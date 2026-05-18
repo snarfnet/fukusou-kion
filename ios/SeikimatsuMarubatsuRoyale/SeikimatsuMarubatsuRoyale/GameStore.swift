@@ -22,6 +22,7 @@ final class GameStore: ObservableObject {
     @Published var abilityUsesLeft = 0
     @Published var shieldPlates = 0
     @Published var abilityCutIn: AbilityCutIn?
+    @Published var battleSerial = 0
 
     private let storySeenKey = "seikimatsu.storySeen"
     private let scrapsKey = "seikimatsu.scraps"
@@ -195,6 +196,8 @@ final class GameStore: ObservableObject {
     }
 
     func startBattle() {
+        battleSerial += 1
+        let serial = battleSerial
         board = (0..<Self.boardCellCount).map {
             BoardCell(id: $0, owner: nil, hasMine: false, hasGas: false, hasScrapTrap: false, hasShield: false, shieldOwner: nil, contaminatedTurns: 0)
         }
@@ -226,6 +229,12 @@ final class GameStore: ObservableObject {
         }
 
         phase = .battle
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            Task { @MainActor in
+                guard let self, self.battleSerial == serial, self.phase == .battle else { return }
+                self.objectWillChange.send()
+            }
+        }
     }
 
     func tapCell(_ id: Int) {
