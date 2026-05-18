@@ -17,6 +17,7 @@ final class GameStore: ObservableObject {
     @Published var unlockedCharacterIDs: Set<String> = ["gasmask"]
     @Published var abilityUsesLeft = 0
     @Published var shieldPlates = 0
+    @Published var abilityCutIn: AbilityCutIn?
 
     private let storySeenKey = "seikimatsu.storySeen"
     private let scrapsKey = "seikimatsu.scraps"
@@ -92,7 +93,7 @@ final class GameStore: ObservableObject {
             name: "地下闘技場チャンプ",
             title: "連打破壊",
             rarity: .sr,
-            imageName: "CharacterMohawk",
+            imageName: "CharacterChampion",
             abilityName: "鉄拳ラッシュ",
             abilityKind: .overdrive,
             maxUses: 1,
@@ -144,11 +145,15 @@ final class GameStore: ObservableObject {
     }
 
     var isHumanTurn: Bool {
-        phase == .battle && currentPlayer == 0 && winner == nil && aiHandMove == nil
+        phase == .battle && currentPlayer == 0 && winner == nil && aiHandMove == nil && abilityCutIn == nil
     }
 
     var canUseAbility: Bool {
         isHumanTurn && abilityUsesLeft > 0
+    }
+
+    var hasHumanReach: Bool {
+        phase == .battle && openLineScore(for: 0) >= 4
     }
 
     func startTapped() {
@@ -195,6 +200,7 @@ final class GameStore: ObservableObject {
         shieldPlates = 0
         turnCount = 0
         aiHandMove = nil
+        abilityCutIn = nil
         abilityUsesLeft = selectedCharacter.maxUses
         message = "\(selectedCharacter.name)の出番。5つ並べろ。"
 
@@ -228,6 +234,13 @@ final class GameStore: ObservableObject {
         guard canUseAbility else { return }
         abilityUsesLeft -= 1
 
+        let cutIn = AbilityCutIn(
+            character: selectedCharacter,
+            title: selectedCharacter.abilityName,
+            subtitle: selectedCharacter.line
+        )
+        abilityCutIn = cutIn
+
         switch selectedCharacter.abilityKind {
         case .mineScatter:
             scatterMinesNearEnemies()
@@ -247,7 +260,13 @@ final class GameStore: ObservableObject {
             message = "\(selectedCharacter.abilityName)。敵陣をまとめて殴り抜いた。"
         }
 
-        advanceTurn()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.18) { [weak self] in
+            Task { @MainActor in
+                guard let self, self.abilityCutIn?.id == cutIn.id else { return }
+                self.abilityCutIn = nil
+                self.advanceTurn()
+            }
+        }
     }
 
     func useShieldPlate() {

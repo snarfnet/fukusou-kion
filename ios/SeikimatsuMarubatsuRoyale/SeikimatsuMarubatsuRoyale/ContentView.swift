@@ -26,7 +26,14 @@ struct ContentView: View {
             .frame(maxWidth: 760)
             .padding(.horizontal, 16)
         }
+        .overlay {
+            if let cutIn = game.abilityCutIn {
+                AbilityCutInView(cutIn: cutIn)
+                    .transition(.asymmetric(insertion: .scale(scale: 1.08).combined(with: .opacity), removal: .opacity))
+            }
+        }
         .animation(.spring(response: 0.34, dampingFraction: 0.86), value: game.phase)
+        .animation(.spring(response: 0.28, dampingFraction: 0.82), value: game.abilityCutIn)
     }
 }
 
@@ -45,6 +52,77 @@ private struct WastelandBackground: View {
         .overlay {
             RadialGradient(colors: [GameTheme.poison.opacity(0.24), .clear], center: .bottomLeading, startRadius: 30, endRadius: 320)
                 .ignoresSafeArea()
+        }
+    }
+}
+
+private struct AbilityCutInView: View {
+    let cutIn: AbilityCutIn
+    @State private var appeared = false
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.82)
+                .ignoresSafeArea()
+
+            Image(cutIn.character.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+                .scaleEffect(appeared ? 1.02 : 1.18)
+                .offset(x: appeared ? 0 : -90)
+                .opacity(appeared ? 1 : 0.45)
+                .overlay {
+                    LinearGradient(
+                        colors: [.black.opacity(0.15), .black.opacity(0.88)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .ignoresSafeArea()
+                }
+
+            VStack(spacing: 10) {
+                Spacer()
+
+                Text(cutIn.character.rarity.rawValue)
+                    .font(.caption.weight(.black))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(cutIn.character.rarity.color, in: RoundedRectangle(cornerRadius: 6))
+                    .foregroundStyle(.black)
+
+                Text(cutIn.title)
+                    .font(.system(size: 58, weight: .black, design: .rounded))
+                    .minimumScaleFactor(0.52)
+                    .lineLimit(1)
+                    .foregroundStyle(GameTheme.amber)
+                    .shadow(color: .red.opacity(0.9), radius: 12)
+
+                Text(cutIn.character.name)
+                    .font(.title2.weight(.black))
+                    .foregroundStyle(GameTheme.bone)
+
+                Text("「\(cutIn.subtitle)」")
+                    .font(.headline.weight(.heavy))
+                    .foregroundStyle(GameTheme.smoke)
+                    .padding(.bottom, 54)
+            }
+            .padding(.horizontal, 18)
+
+            HStack {
+                Rectangle()
+                    .fill(GameTheme.amber)
+                    .frame(width: appeared ? 260 : 0, height: 8)
+                Spacer()
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding(.top, 74)
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.32, dampingFraction: 0.76)) {
+                appeared = true
+            }
         }
     }
 }
@@ -226,7 +304,35 @@ private struct BattleView: View {
                 .frame(maxWidth: .infinity, minHeight: 54)
                 .wastelandPanel(padding: 10)
 
+            if game.hasHumanReach {
+                Image("WarningReachVisual")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 58)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay {
+                        Text("WARNING")
+                            .font(.title.weight(.black))
+                            .foregroundStyle(.red)
+                            .shadow(color: .black, radius: 5)
+                    }
+            }
+
             BoardGrid(columns: columns)
+
+            ItemVisualStrip()
+
+            Image("SkillSelectionVisual")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 54)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .leading) {
+                    Text("SPECIAL")
+                        .font(.caption.weight(.black))
+                        .foregroundStyle(GameTheme.amber)
+                        .padding(8)
+                }
 
             HStack(spacing: 10) {
                 Button("\(game.selectedCharacter.abilityName) \(game.abilityUsesLeft)") {
@@ -303,6 +409,19 @@ private struct CharacterSelectView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Image("CharacterSelectVisual")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 86)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .bottomLeading) {
+                    Text("CHARACTER SELECT")
+                        .font(.caption.weight(.black))
+                        .foregroundStyle(GameTheme.amber)
+                        .padding(8)
+                        .shadow(color: .black, radius: 4)
+                }
+
             HStack {
                 Text("主人公")
                     .font(.headline.weight(.black))
@@ -332,6 +451,27 @@ private struct CharacterSelectView: View {
             }
         }
         .wastelandPanel(padding: 12)
+    }
+}
+
+private struct ItemVisualStrip: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            Image("ItemIconsVisual")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 70, height: 44)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+
+            Label("地雷", systemImage: "burst.fill")
+            Label("汚染", systemImage: "aqi.medium")
+            Label("鉄板", systemImage: "shield.fill")
+        }
+        .font(.caption.weight(.black))
+        .foregroundStyle(GameTheme.bone)
+        .padding(8)
+        .frame(maxWidth: .infinity)
+        .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -526,6 +666,14 @@ private struct CellView: View {
                         .stroke(.white.opacity(0.08), lineWidth: 1)
                 }
 
+            if cell.contaminatedTurns > 0 {
+                Image("ContaminationVisual")
+                    .resizable()
+                    .scaledToFill()
+                    .opacity(0.62)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+
             if let owner = cell.owner {
                 Text(owner.isMultiple(of: 2) ? "○" : "×")
                     .font(.system(size: 22, weight: .black, design: .rounded))
@@ -544,9 +692,11 @@ private struct CellView: View {
                     .font(.caption2.weight(.black))
                     .foregroundStyle(GameTheme.smoke)
             } else if cell.hasMine {
-                Circle()
-                    .fill(Color.black.opacity(0.7))
-                    .frame(width: 9, height: 9)
+                Image("ExplosionVisual")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 28, height: 28)
+                    .clipShape(Circle())
                     .overlay(Circle().stroke(GameTheme.rust, lineWidth: 1))
             }
         }
@@ -631,9 +781,9 @@ private struct GachaView: View {
                 .foregroundStyle(GameTheme.amber)
 
             VStack(spacing: 12) {
-                Image("GachaCrateVisual")
+                Image(game.rewards.isEmpty ? "GachaScreenVisual" : "GachaOpeningVisual")
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(maxHeight: 220)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .shadow(color: GameTheme.poison.opacity(0.8), radius: 18)

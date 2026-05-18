@@ -92,6 +92,13 @@ struct AIHandMove: Identifiable, Equatable {
     let targetCell: Int
 }
 
+struct AbilityCutIn: Identifiable, Equatable {
+    let id = UUID()
+    let character: BattleCharacter
+    let title: String
+    let subtitle: String
+}
+
 enum GameTheme {
     static let bg = Color(red: 0.04, green: 0.03, blue: 0.025)
     static let panel = Color(red: 0.12, green: 0.10, blue: 0.085)
