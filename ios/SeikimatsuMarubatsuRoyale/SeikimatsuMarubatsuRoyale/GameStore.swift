@@ -157,7 +157,7 @@ final class GameStore: ObservableObject {
     }
 
     var hasHumanReach: Bool {
-        phase == .battle && openLineScore(for: 0) >= Self.winLength - 1
+        phase == .battle && board.count == Self.boardCellCount && openLineScore(for: 0) >= Self.winLength - 1
     }
 
     func startTapped() {
@@ -536,6 +536,7 @@ final class GameStore: ObservableObject {
 
     private func openLineScore(for playerID: Int, in board: [BoardCell]? = nil) -> Int {
         let board = board ?? self.board
+        guard board.count == Self.boardCellCount else { return 0 }
         let directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
         var best = 0
         for row in 0..<Self.boardSize {
@@ -617,6 +618,7 @@ final class GameStore: ObservableObject {
     }
 
     private func bestLineTarget(preferHuman: Bool) -> [Int] {
+        guard board.count == Self.boardCellCount else { return [] }
         let targetOwner = preferHuman ? 0 : nil
         let directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
         var bestLine: [Int] = []
@@ -712,6 +714,7 @@ final class GameStore: ObservableObject {
     }
 
     private func checkWin(for playerID: Int, in board: [BoardCell]) -> Bool {
+        guard board.count == Self.boardCellCount else { return false }
         let directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
         for row in 0..<Self.boardSize {
             for col in 0..<Self.boardSize {
@@ -733,6 +736,7 @@ final class GameStore: ObservableObject {
     }
 
     private func neighbors(around center: Int, radius: Int) -> [Int] {
+        guard board.indices.contains(center) else { return [] }
         let row = center / Self.boardSize
         let col = center % Self.boardSize
         var ids: [Int] = []

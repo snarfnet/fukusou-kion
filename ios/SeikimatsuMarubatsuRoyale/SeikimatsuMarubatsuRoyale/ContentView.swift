@@ -278,104 +278,94 @@ private struct BattleView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: GameStore.boardSize)
 
     var body: some View {
-        VStack(spacing: 10) {
-            Image("BattleIntroVisual")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 118)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(alignment: .bottomLeading) {
-                    Text("4 WAY ROYALE")
-                        .font(.caption.weight(.black))
-                        .foregroundStyle(GameTheme.amber)
-                        .padding(10)
-                }
-
-            HStack {
-                ForEach(game.players) { player in
-                    PlayerChip(player: player, active: player.id == game.currentPlayer)
-                }
-            }
-
-            Text(game.message)
-                .font(.headline.weight(.heavy))
-                .foregroundStyle(GameTheme.bone)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, minHeight: 54)
-                .wastelandPanel(padding: 10)
-
-            if game.hasHumanReach {
-                Image("WarningReachVisual")
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 10) {
+                Image("BattleIntroVisual")
                     .resizable()
                     .scaledToFill()
-                    .frame(height: 58)
+                    .frame(height: 92)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay {
-                        Text("WARNING")
-                            .font(.title.weight(.black))
-                            .foregroundStyle(.red)
-                            .shadow(color: .black, radius: 5)
+                    .overlay(alignment: .bottomLeading) {
+                        Text("4 WAY ROYALE")
+                            .font(.caption.weight(.black))
+                            .foregroundStyle(GameTheme.amber)
+                            .padding(10)
                     }
-            }
 
-            BoardGrid(columns: columns)
-
-            ItemVisualStrip()
-
-            Image("SkillSelectionVisual")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 54)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(alignment: .leading) {
-                    Text("SPECIAL")
-                        .font(.caption.weight(.black))
-                        .foregroundStyle(GameTheme.amber)
-                        .padding(8)
-                }
-
-            HStack(spacing: 10) {
-                Button("\(game.selectedCharacter.abilityName) \(game.abilityUsesLeft)") {
-                    game.useCharacterAbility()
-                }
-                .secondaryButton()
-                .disabled(!game.canUseAbility)
-                .opacity(game.canUseAbility ? 1 : 0.55)
-
-                Button("鉄板防御 \(game.shieldPlates)") {
-                    game.useShieldPlate()
-                }
-                .secondaryButton()
-                .disabled(!game.isHumanTurn || game.shieldPlates <= 0)
-                .opacity(game.isHumanTurn && game.shieldPlates > 0 ? 1 : 0.55)
-            }
-
-            HStack(spacing: 10) {
-                Button {
-                    game.bikeCharge()
-                } label: {
-                    HStack(spacing: 8) {
-                        Image("BikeIcon")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 24, height: 24)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                        Text("バイク突撃 \(game.gasGauge)/3")
+                HStack {
+                    ForEach(game.players) { player in
+                        PlayerChip(player: player, active: player.id == game.currentPlayer)
                     }
                 }
-                .secondaryButton()
-                .disabled(!game.isHumanTurn || game.gasGauge < 3)
-                .opacity(game.gasGauge >= 3 ? 1 : 0.55)
 
-                Button("メニュー") {
-                    game.backToMenu()
+                Text(game.message)
+                    .font(.headline.weight(.heavy))
+                    .foregroundStyle(GameTheme.bone)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, minHeight: 50)
+                    .wastelandPanel(padding: 10)
+
+                if game.hasHumanReach {
+                    Image("WarningReachVisual")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 52)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay {
+                            Text("WARNING")
+                                .font(.title.weight(.black))
+                                .foregroundStyle(.red)
+                                .shadow(color: .black, radius: 5)
+                        }
                 }
-                .secondaryButton()
-            }
 
-            EconomyBar()
+                BoardGrid(columns: columns)
+
+                ItemVisualStrip()
+
+                HStack(spacing: 10) {
+                    Button("\(game.selectedCharacter.abilityName) \(game.abilityUsesLeft)") {
+                        game.useCharacterAbility()
+                    }
+                    .secondaryButton()
+                    .disabled(!game.canUseAbility)
+                    .opacity(game.canUseAbility ? 1 : 0.55)
+
+                    Button("鉄板防御 \(game.shieldPlates)") {
+                        game.useShieldPlate()
+                    }
+                    .secondaryButton()
+                    .disabled(!game.isHumanTurn || game.shieldPlates <= 0)
+                    .opacity(game.isHumanTurn && game.shieldPlates > 0 ? 1 : 0.55)
+                }
+
+                HStack(spacing: 10) {
+                    Button {
+                        game.bikeCharge()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image("BikeIcon")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 24, height: 24)
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                            Text("バイク突撃 \(game.gasGauge)/3")
+                        }
+                    }
+                    .secondaryButton()
+                    .disabled(!game.isHumanTurn || game.gasGauge < 3)
+                    .opacity(game.gasGauge >= 3 ? 1 : 0.55)
+
+                    Button("メニュー") {
+                        game.backToMenu()
+                    }
+                    .secondaryButton()
+                }
+
+                EconomyBar()
+            }
+            .padding(.vertical, 10)
         }
-        .padding(.vertical, 10)
     }
 }
 
