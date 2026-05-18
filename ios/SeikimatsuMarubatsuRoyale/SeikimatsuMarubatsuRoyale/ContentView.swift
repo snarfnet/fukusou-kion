@@ -159,7 +159,7 @@ private struct TitleView: View {
             }
 
             VStack(spacing: 12) {
-                Text("5つ並べろ。邪魔される前に。")
+                Text("4つ並べろ。邪魔される前に。")
                     .font(.headline.weight(.heavy))
                     .foregroundStyle(GameTheme.bone)
 
@@ -275,7 +275,7 @@ private struct MainMenuView: View {
 private struct BattleView: View {
     @EnvironmentObject private var game: GameStore
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: 10)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: GameStore.boardSize)
 
     var body: some View {
         VStack(spacing: 10) {
@@ -351,8 +351,17 @@ private struct BattleView: View {
             }
 
             HStack(spacing: 10) {
-                Button("バイク突撃 \(game.gasGauge)/3") {
+                Button {
                     game.bikeCharge()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image("BikeIcon")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 24, height: 24)
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                        Text("バイク突撃 \(game.gasGauge)/3")
+                    }
                 }
                 .secondaryButton()
                 .disabled(!game.isHumanTurn || game.gasGauge < 3)
@@ -457,14 +466,9 @@ private struct CharacterSelectView: View {
 private struct ItemVisualStrip: View {
     var body: some View {
         HStack(spacing: 8) {
-            Image("ItemIconsVisual")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 70, height: 44)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-
-            Label("地雷", systemImage: "burst.fill")
-            Label("汚染", systemImage: "aqi.medium")
+            ItemLegend(image: "MineIcon", text: "地雷")
+            ItemLegend(image: "GasIcon", text: "ガソリン")
+            ItemLegend(image: "ContaminationIcon", text: "汚染")
             Label("鉄板", systemImage: "shield.fill")
         }
         .font(.caption.weight(.black))
@@ -472,6 +476,22 @@ private struct ItemVisualStrip: View {
         .padding(8)
         .frame(maxWidth: .infinity)
         .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct ItemLegend: View {
+    let image: String
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 22, height: 22)
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+            Text(text)
+        }
     }
 }
 
@@ -563,9 +583,9 @@ private struct AIHandOverlay: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let cell = max(12, min(proxy.size.width, proxy.size.height) / 10)
-            let row = move.targetCell / 10
-            let col = move.targetCell % 10
+            let cell = max(16, min(proxy.size.width, proxy.size.height) / CGFloat(GameStore.boardSize))
+            let row = move.targetCell / GameStore.boardSize
+            let col = move.targetCell % GameStore.boardSize
             let target = CGPoint(x: CGFloat(col) * cell + cell / 2, y: CGFloat(row) * cell + cell / 2)
             let start = startPoint(in: proxy.size)
 
@@ -667,10 +687,10 @@ private struct CellView: View {
                 }
 
             if cell.contaminatedTurns > 0 {
-                Image("ContaminationVisual")
+                Image("ContaminationIcon")
                     .resizable()
                     .scaledToFill()
-                    .opacity(0.62)
+                    .opacity(0.78)
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             }
 
@@ -680,9 +700,7 @@ private struct CellView: View {
                     .foregroundStyle(color(for: owner))
                     .shadow(color: color(for: owner).opacity(0.7), radius: 8)
             } else if cell.hasGas {
-                Image(systemName: "fuelpump.fill")
-                    .font(.caption.weight(.black))
-                    .foregroundStyle(GameTheme.amber)
+                BoardItemIcon(image: "GasIcon")
             } else if cell.hasShield {
                 Image(systemName: "shield.fill")
                     .font(.caption.weight(.black))
@@ -692,12 +710,7 @@ private struct CellView: View {
                     .font(.caption2.weight(.black))
                     .foregroundStyle(GameTheme.smoke)
             } else if cell.hasMine {
-                Image("ExplosionVisual")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 28, height: 28)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(GameTheme.rust, lineWidth: 1))
+                BoardItemIcon(image: "MineIcon")
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -723,6 +736,23 @@ private struct CellView: View {
         case 2: .yellow
         default: .green
         }
+    }
+}
+
+private struct BoardItemIcon: View {
+    let image: String
+
+    var body: some View {
+        Image(image)
+            .resizable()
+            .scaledToFill()
+            .frame(width: 34, height: 34)
+            .clipShape(RoundedRectangle(cornerRadius: 5))
+            .overlay {
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(.white.opacity(0.18), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
     }
 }
 

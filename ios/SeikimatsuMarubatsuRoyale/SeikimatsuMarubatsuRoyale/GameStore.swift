@@ -2,6 +2,10 @@ import SwiftUI
 
 @MainActor
 final class GameStore: ObservableObject {
+    static let boardSize = 8
+    static let winLength = 4
+    static let boardCellCount = boardSize * boardSize
+
     @Published var phase: AppPhase = .title
     @Published var storyIndex = 0
     @Published var board: [BoardCell] = []
@@ -153,7 +157,7 @@ final class GameStore: ObservableObject {
     }
 
     var hasHumanReach: Bool {
-        phase == .battle && openLineScore(for: 0) >= 4
+        phase == .battle && openLineScore(for: 0) >= Self.winLength - 1
     }
 
     func startTapped() {
@@ -191,7 +195,7 @@ final class GameStore: ObservableObject {
     }
 
     func startBattle() {
-        board = (0..<100).map {
+        board = (0..<Self.boardCellCount).map {
             BoardCell(id: $0, owner: nil, hasMine: false, hasGas: false, hasScrapTrap: false, hasShield: false, shieldOwner: nil, contaminatedTurns: 0)
         }
         winner = nil
@@ -204,10 +208,10 @@ final class GameStore: ObservableObject {
         abilityUsesLeft = selectedCharacter.maxUses
         message = "\(selectedCharacter.name)の出番。5つ並べろ。"
 
-        let mineCount = 6
-        let gasCount = 10
-        let trapCount = 6
-        let shieldCount = 7
+        let mineCount = 4
+        let gasCount = 7
+        let trapCount = 4
+        let shieldCount = 5
         for id in emptyIDs().shuffled().prefix(mineCount) {
             board[id].hasMine = true
         }
@@ -485,12 +489,12 @@ final class GameStore: ObservableObject {
 
     private func shouldCPUUseSabotage(playerID: Int) -> Bool {
         guard turnCount > 6 else { return false }
-        if openLineScore(for: 0) >= 4 { return true }
+        if openLineScore(for: 0) >= Self.winLength - 1 { return true }
         return Int.random(in: 0..<100) < 12 + playerID * 3
     }
 
     private func cpuSabotage(playerID: Int) {
-        if openLineScore(for: 0) >= 4 {
+        if openLineScore(for: 0) >= Self.winLength - 1 {
             destroyBestHumanLine()
             message = "\(players[playerID].name)が妨害。主人公のリーチを壊した。"
         } else if let target = board.filter({ $0.owner == 0 }).map(\.id).randomElement() {
@@ -534,19 +538,19 @@ final class GameStore: ObservableObject {
         let board = board ?? self.board
         let directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
         var best = 0
-        for row in 0..<10 {
-            for col in 0..<10 {
+        for row in 0..<Self.boardSize {
+            for col in 0..<Self.boardSize {
                 for direction in directions {
                     var score = 0
                     var blocked = false
-                    for step in 0..<5 {
+                    for step in 0..<Self.winLength {
                         let nr = row + direction.0 * step
                         let nc = col + direction.1 * step
-                        guard (0..<10).contains(nr), (0..<10).contains(nc) else {
+                        guard (0..<Self.boardSize).contains(nr), (0..<Self.boardSize).contains(nc) else {
                             blocked = true
                             break
                         }
-                        let owner = board[nr * 10 + nc].owner
+                        let owner = board[nr * Self.boardSize + nc].owner
                         if owner == playerID {
                             score += 1
                         } else if owner != nil {
@@ -592,7 +596,7 @@ final class GameStore: ObservableObject {
     }
 
     private func empBestCluster() {
-        let center = densestEnemyCell() ?? Int.random(in: 0..<100)
+        let center = densestEnemyCell() ?? Int.random(in: 0..<Self.boardCellCount)
         clearAround(center, protectHuman: true)
         for id in neighbors(around: center, radius: 1) {
             board[id].hasMine = false
@@ -617,19 +621,19 @@ final class GameStore: ObservableObject {
         let directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
         var bestLine: [Int] = []
         var bestScore = -1
-        for row in 0..<10 {
-            for col in 0..<10 {
+        for row in 0..<Self.boardSize {
+            for col in 0..<Self.boardSize {
                 for direction in directions {
                     var line: [Int] = []
                     var score = 0
-                    for step in 0..<5 {
+                    for step in 0..<Self.winLength {
                         let nr = row + direction.0 * step
                         let nc = col + direction.1 * step
-                        guard (0..<10).contains(nr), (0..<10).contains(nc) else {
+                        guard (0..<Self.boardSize).contains(nr), (0..<Self.boardSize).contains(nc) else {
                             line.removeAll()
                             break
                         }
-                        let id = nr * 10 + nc
+                        let id = nr * Self.boardSize + nc
                         line.append(id)
                         if preferHuman {
                             if board[id].owner == targetOwner { score += 1 }
@@ -709,14 +713,14 @@ final class GameStore: ObservableObject {
 
     private func checkWin(for playerID: Int, in board: [BoardCell]) -> Bool {
         let directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
-        for row in 0..<10 {
-            for col in 0..<10 {
+        for row in 0..<Self.boardSize {
+            for col in 0..<Self.boardSize {
                 for direction in directions {
                     var matched = true
-                    for step in 0..<5 {
+                    for step in 0..<Self.winLength {
                         let nr = row + direction.0 * step
                         let nc = col + direction.1 * step
-                        if !(0..<10).contains(nr) || !(0..<10).contains(nc) || board[nr * 10 + nc].owner != playerID {
+                        if !(0..<Self.boardSize).contains(nr) || !(0..<Self.boardSize).contains(nc) || board[nr * Self.boardSize + nc].owner != playerID {
                             matched = false
                             break
                         }
@@ -729,15 +733,15 @@ final class GameStore: ObservableObject {
     }
 
     private func neighbors(around center: Int, radius: Int) -> [Int] {
-        let row = center / 10
-        let col = center % 10
+        let row = center / Self.boardSize
+        let col = center % Self.boardSize
         var ids: [Int] = []
         for dr in -radius...radius {
             for dc in -radius...radius {
                 let nr = row + dr
                 let nc = col + dc
-                guard (0..<10).contains(nr), (0..<10).contains(nc) else { continue }
-                ids.append(nr * 10 + nc)
+                guard (0..<Self.boardSize).contains(nr), (0..<Self.boardSize).contains(nc) else { continue }
+                ids.append(nr * Self.boardSize + nc)
             }
         }
         return ids
