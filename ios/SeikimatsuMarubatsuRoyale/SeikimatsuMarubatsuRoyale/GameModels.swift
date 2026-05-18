@@ -74,6 +74,7 @@ struct BoardCell: Identifiable, Equatable {
     var owner: Int?
     var hasMine: Bool
     var hasGas: Bool
+    var hasEMP: Bool
     var hasScrapTrap: Bool
     var hasShield: Bool
     var shieldOwner: Int?

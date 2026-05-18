@@ -439,10 +439,10 @@ private struct CharacterSelectView: View {
 private struct ItemVisualStrip: View {
     var body: some View {
         HStack(spacing: 8) {
-            ItemLegend(image: "MineIcon", text: "地雷")
+            ItemLegend(image: "MineIcon", text: "爆弾")
             ItemLegend(image: "GasIcon", text: "ガソリン")
-            ItemLegend(image: "ContaminationIcon", text: "汚染")
-            Label("鉄板", systemImage: "shield.fill")
+            ItemLegend(image: "EMPIcon", text: "EMP")
+            ItemLegend(image: "ShieldIcon", text: "鉄板")
         }
         .font(.caption.weight(.black))
         .foregroundStyle(GameTheme.bone)
@@ -674,10 +674,10 @@ private struct CellView: View {
                     .shadow(color: color(for: owner).opacity(0.7), radius: 8)
             } else if cell.hasGas {
                 BoardItemIcon(image: "GasIcon")
+            } else if cell.hasEMP {
+                BoardItemIcon(image: "EMPIcon")
             } else if cell.hasShield {
-                Image(systemName: "shield.fill")
-                    .font(.caption.weight(.black))
-                    .foregroundStyle(.cyan)
+                BoardItemIcon(image: "ShieldIcon")
             } else if cell.hasScrapTrap {
                 Image(systemName: "wrench.and.screwdriver.fill")
                     .font(.caption2.weight(.black))
@@ -689,9 +689,10 @@ private struct CellView: View {
         .aspectRatio(1, contentMode: .fit)
         .overlay(alignment: .topTrailing) {
             if cell.shieldOwner != nil {
-                Image(systemName: "shield.fill")
-                    .font(.system(size: 8, weight: .black))
-                    .foregroundStyle(.cyan)
+                Image("ShieldIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
                     .padding(3)
             }
         }

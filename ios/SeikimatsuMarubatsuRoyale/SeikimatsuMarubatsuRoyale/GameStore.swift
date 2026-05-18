@@ -199,7 +199,7 @@ final class GameStore: ObservableObject {
         battleSerial += 1
         let serial = battleSerial
         board = (0..<Self.boardCellCount).map {
-            BoardCell(id: $0, owner: nil, hasMine: false, hasGas: false, hasScrapTrap: false, hasShield: false, shieldOwner: nil, contaminatedTurns: 0)
+            BoardCell(id: $0, owner: nil, hasMine: false, hasGas: false, hasEMP: false, hasScrapTrap: false, hasShield: false, shieldOwner: nil, contaminatedTurns: 0)
         }
         winner = nil
         currentPlayer = 0
@@ -213,6 +213,7 @@ final class GameStore: ObservableObject {
 
         let mineCount = 4
         let gasCount = 7
+        let empCount = 3
         let trapCount = 4
         let shieldCount = 5
         for id in emptyIDs().shuffled().prefix(mineCount) {
@@ -221,7 +222,10 @@ final class GameStore: ObservableObject {
         for id in emptyIDs().shuffled().prefix(gasCount) where !board[id].hasMine {
             board[id].hasGas = true
         }
-        for id in emptyIDs().shuffled().prefix(trapCount) where !board[id].hasMine && !board[id].hasGas {
+        for id in emptyIDs().shuffled().prefix(empCount) where !board[id].hasMine && !board[id].hasGas {
+            board[id].hasEMP = true
+        }
+        for id in emptyIDs().shuffled().prefix(trapCount) where !board[id].hasMine && !board[id].hasGas && !board[id].hasEMP {
             board[id].hasScrapTrap = true
         }
         for id in emptyIDs().shuffled().prefix(shieldCount) {
@@ -409,7 +413,16 @@ final class GameStore: ObservableObject {
         }
 
         board[id].owner = playerID
-        if board[id].hasShield {
+        if board[id].hasEMP {
+            board[id].hasEMP = false
+            if playerID == 0 {
+                empBestCluster()
+                message = "\(player.name)がEMP爆弾を拾った。敵の密集地を止めた。"
+            } else {
+                destroyBestHumanLine()
+                message = "\(player.name)がEMP爆弾を奪った。主人公のラインが乱れた。"
+            }
+        } else if board[id].hasShield {
             board[id].hasShield = false
             if playerID == 0 {
                 shieldPlates += 1
@@ -611,6 +624,7 @@ final class GameStore: ObservableObject {
         for id in neighbors(around: center, radius: 1) {
             board[id].hasMine = false
             board[id].hasGas = false
+            board[id].hasEMP = false
             board[id].hasScrapTrap = false
             board[id].contaminatedTurns = 0
         }
@@ -619,7 +633,7 @@ final class GameStore: ObservableObject {
     private func scatterMinesNearEnemies() {
         let targets = board.filter { ($0.owner ?? 0) != 0 && $0.owner != nil }.map(\.id).shuffled().prefix(3)
         for target in targets {
-            for id in neighbors(around: target, radius: 1).shuffled() where board[id].owner == nil && !board[id].hasGas {
+            for id in neighbors(around: target, radius: 1).shuffled() where board[id].owner == nil && !board[id].hasGas && !board[id].hasEMP {
                 board[id].hasMine = true
                 break
             }
@@ -692,6 +706,7 @@ final class GameStore: ObservableObject {
         board[id].owner = nil
         board[id].hasMine = false
         board[id].hasGas = false
+        board[id].hasEMP = false
         board[id].hasScrapTrap = false
         board[id].hasShield = false
         board[id].shieldOwner = nil
@@ -762,7 +777,7 @@ final class GameStore: ObservableObject {
 
     private func emptyIDs() -> [Int] {
         board.indices.filter {
-            board[$0].owner == nil && !board[$0].hasMine && !board[$0].hasGas && !board[$0].hasScrapTrap && !board[$0].hasShield
+            board[$0].owner == nil && !board[$0].hasMine && !board[$0].hasGas && !board[$0].hasEMP && !board[$0].hasScrapTrap && !board[$0].hasShield
         }
     }
 
