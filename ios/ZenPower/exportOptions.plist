@@ -7,7 +7,12 @@
     <key>method</key>
     <string>app-store-connect</string>
     <key>signingStyle</key>
-    <string>automatic</string>
+    <string>manual</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.tokyonasu.zenpower</key>
+        <string>ZenPower App Store</string>
+    </dict>
     <key>stripSwiftSymbols</key>
     <true/>
     <key>teamID</key>

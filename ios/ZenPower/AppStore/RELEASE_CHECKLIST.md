@@ -2,11 +2,13 @@
 
 ## GitHub Secrets
 
-`ZenPower TestFlight Upload` を動かす前に、リポジトリの GitHub Secrets に入れます。
+`ZenPower TestFlight Upload` は、既存の提出workflowと同じGitHub Secretsを使います。
 
-- `APPSTORE_API_KEY_ID`: App Store Connect APIキーのKey ID
-- `APPSTORE_API_ISSUER_ID`: Issuer ID
-- `APPSTORE_API_PRIVATE_KEY`: `AuthKey_XXXX.p8` の中身
+- `ASC_KEY_ID`: App Store Connect APIキーのKey ID
+- `ASC_ISSUER_ID`: Issuer ID
+- `ASC_PRIVATE_KEY` または `ASC_API_KEY_CONTENT`: `AuthKey_XXXX.p8` の中身
+- `IOS_DISTRIBUTION_P12_BASE64` または `DIST_CERT_BASE64`: 配布証明書
+- `IOS_DISTRIBUTION_P12_PASSWORD` または `DIST_CERT_PASSWORD`: 配布証明書のパスワード
 
 APIキーは App Store Connect の `Users and Access > Integrations > App Store Connect API` で作ります。権限は App Manager 以上を推奨します。
 
@@ -37,13 +39,11 @@ AdMobを使うため、App Storeのプライバシー回答では広告関連の
 
 ## アップロード
 
-1. App Store Connectで新規アプリを作る。
-2. GitHub Secretsを設定する。
-3. GitHub Actionsの `ZenPower TestFlight Upload` を手動実行する。
-4. App Store ConnectのTestFlightで処理完了を待つ。
-5. スクショ、説明文、プライバシー回答、審査メモを入れる。
-6. 内部テストで起動、バナー、坐禅タイマー、記録、日英表示を確認する。
-7. 問題なければ審査へ提出する。
+1. GitHub Actionsの `ZenPower TestFlight Upload` を手動実行する。
+2. App Store ConnectのTestFlightで処理完了を待つ。
+3. スクショ、説明文、プライバシー回答、審査メモを入れる。
+4. 内部テストで起動、バナー、坐禅タイマー、記録、日英表示を確認する。
+5. 問題なければ審査へ提出する。
 
 ## 審査メモ案
 
