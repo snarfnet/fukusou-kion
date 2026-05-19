@@ -35,7 +35,7 @@ targets:
       base:
         PRODUCT_NAME: ZenPower
         PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.zenpower
-        TARGETED_DEVICE_FAMILY: "1,2"
+        TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_FILE: ZenPower/Resources/Info.plist
     info:
       path: ZenPower/Resources/Info.plist

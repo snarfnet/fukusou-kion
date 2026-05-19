@@ -58,3 +58,4 @@ zen,zazen,meditation,breathing,habit,mindfulness,journal,calm
 - スクショ: `MarketingAssets/Screenshots`
 - スクショ生成workflow: `.github/workflows/zenpower-screenshots.yml`
 
+現在のターゲットはiPhoneのみです。iPad対応を有効にする場合は、iPad用スクリーンショットも追加で用意します。

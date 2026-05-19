@@ -34,9 +34,9 @@ SCREENSHOT_PLAN = [
 ]
 
 
-def run(args, check=True):
+def run(args, check=True, timeout=120):
     print("+", " ".join(str(arg) for arg in args), flush=True)
-    return subprocess.run(args, check=check, text=True, capture_output=False)
+    return subprocess.run(args, check=check, text=True, capture_output=False, timeout=timeout)
 
 
 def output(args):
@@ -81,8 +81,8 @@ def screenshot_device(kind, app_path, output_root):
     runtime_id = latest_ios_runtime_identifier()
     udid = create_device(kind, runtime_id)
     try:
-        run(["xcrun", "simctl", "boot", udid])
-        run(["xcrun", "simctl", "bootstatus", udid, "-b"])
+        run(["xcrun", "simctl", "boot", udid], timeout=60)
+        run(["xcrun", "simctl", "bootstatus", udid, "-b"], timeout=180)
         run(["xcrun", "simctl", "install", udid, app_path])
 
         for language, tab, filename in SCREENSHOT_PLAN:
@@ -90,7 +90,7 @@ def screenshot_device(kind, app_path, output_root):
             out_dir.mkdir(parents=True, exist_ok=True)
             out_path = out_dir / f"{filename}.png"
 
-            run(["xcrun", "simctl", "terminate", udid, BUNDLE_ID], check=False)
+            run(["xcrun", "simctl", "terminate", udid, BUNDLE_ID], check=False, timeout=30)
             run([
                 "xcrun", "simctl", "launch", udid, BUNDLE_ID,
                 f"ZEN_SCREENSHOT_TAB={tab}",
@@ -98,10 +98,10 @@ def screenshot_device(kind, app_path, output_root):
                 "ZEN_DISABLE_ADS=1",
             ])
             time.sleep(3)
-            run(["xcrun", "simctl", "io", udid, "screenshot", str(out_path)])
+            run(["xcrun", "simctl", "io", udid, "screenshot", str(out_path)], timeout=60)
     finally:
-        run(["xcrun", "simctl", "shutdown", udid], check=False)
-        run(["xcrun", "simctl", "delete", udid], check=False)
+        run(["xcrun", "simctl", "shutdown", udid], check=False, timeout=60)
+        run(["xcrun", "simctl", "delete", udid], check=False, timeout=60)
 
 
 def main():
@@ -118,10 +118,10 @@ def main():
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True)
 
-    for kind in ("iphone_69", "ipad_13"):
+    kinds = [kind.strip() for kind in os.environ.get("ZEN_SCREENSHOT_KINDS", "iphone_69").split(",") if kind.strip()]
+    for kind in kinds:
         screenshot_device(kind, str(app_path), output_root)
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
