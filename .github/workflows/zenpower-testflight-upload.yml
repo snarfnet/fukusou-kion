@@ -11,6 +11,15 @@ on:
         description: "Build number. Leave blank to use the GitHub run number."
         required: false
         default: ""
+  push:
+    branches:
+      - codex/zenpower-github-build
+    paths:
+      - ".github/workflows/zenpower-testflight-upload.yml"
+      - "ios/ZenPower/project.yml"
+      - "ios/ZenPower/exportOptions.plist"
+      - "ios/ZenPower/ZenPower/**"
+      - "ios/ZenPower/scripts/**"
 
 concurrency:
   group: zenpower-testflight-upload
