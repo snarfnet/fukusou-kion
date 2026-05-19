@@ -90,13 +90,12 @@ def screenshot_device(kind, app_path, output_root):
             out_dir.mkdir(parents=True, exist_ok=True)
             out_path = out_dir / f"{filename}.png"
 
-            run(["xcrun", "simctl", "terminate", udid, BUNDLE_ID], check=False, timeout=30)
             run([
-                "xcrun", "simctl", "launch", udid, BUNDLE_ID,
+                "xcrun", "simctl", "launch", "--terminate-running-process", udid, BUNDLE_ID,
                 f"ZEN_SCREENSHOT_TAB={tab}",
                 f"ZEN_FORCE_LANGUAGE={language}",
                 "ZEN_DISABLE_ADS=1",
-            ])
+            ], timeout=60)
             time.sleep(3)
             run(["xcrun", "simctl", "io", udid, "screenshot", str(out_path)], timeout=60)
     finally:
