@@ -77,6 +77,20 @@ def create_device(kind, runtime_id):
     return udid
 
 
+def take_screenshot(udid, out_path):
+    last_error = None
+    for attempt in range(1, 4):
+        try:
+            run(["xcrun", "simctl", "io", udid, "screenshot", str(out_path)], timeout=180)
+            return
+        except subprocess.TimeoutExpired as error:
+            last_error = error
+            print(f"Screenshot timed out on attempt {attempt}; retrying.", flush=True)
+            time.sleep(5)
+
+    raise last_error
+
+
 def screenshot_device(kind, app_path, output_root):
     runtime_id = latest_ios_runtime_identifier()
     udid = create_device(kind, runtime_id)
@@ -97,7 +111,7 @@ def screenshot_device(kind, app_path, output_root):
                 "ZEN_DISABLE_ADS=1",
             ], timeout=60)
             time.sleep(3)
-            run(["xcrun", "simctl", "io", udid, "screenshot", str(out_path)], timeout=60)
+            take_screenshot(udid, out_path)
     finally:
         run(["xcrun", "simctl", "shutdown", udid], check=False, timeout=60)
         run(["xcrun", "simctl", "delete", udid], check=False, timeout=60)
