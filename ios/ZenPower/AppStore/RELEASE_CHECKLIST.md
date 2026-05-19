@@ -15,6 +15,7 @@ APIキーは App Store Connect の `Users and Access > Integrations > App Store 
 ## App Store Connect
 
 - Bundle ID: `com.tokyonasu.zenpower`
+- App ID: `6771141622`
 - SKU案: `zenpower-ios`
 - Primary language: Japanese
 - 追加言語: English

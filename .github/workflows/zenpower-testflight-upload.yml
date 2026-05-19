@@ -35,6 +35,7 @@ jobs:
       APP_BUNDLE_ID: com.tokyonasu.zenpower
       APP_NAME: "禅パワー"
       APP_SKU: zenpower-ios
+      APP_ID: "6771141622"
       BUNDLE_NAME: ZenPower
       PROFILE_NAME: "ZenPower App Store"
       ZENPOWER_VERSION: ${{ inputs.version || '1.0' }}
@@ -109,12 +110,16 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
           . .venv/bin/activate
-          python scripts/ensure_asc_app.py | tee /tmp/zenpower-ensure-app.log
-          APP_ID_VALUE="$(grep '^APP_ID=' /tmp/zenpower-ensure-app.log | tail -1 | cut -d= -f2)"
-          if [ -z "$APP_ID_VALUE" ]; then
-            echo "App Store Connect app record was not found or created."
-            echo "Create app '禅パワー' with Bundle ID com.tokyonasu.zenpower and SKU zenpower-ios, then rerun this workflow."
-            exit 1
+          if [ -n "$APP_ID" ]; then
+            APP_ID_VALUE="$APP_ID"
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/zenpower-ensure-app.log
+            APP_ID_VALUE="$(grep '^APP_ID=' /tmp/zenpower-ensure-app.log | tail -1 | cut -d= -f2)"
+            if [ -z "$APP_ID_VALUE" ]; then
+              echo "App Store Connect app record was not found or created."
+              echo "Create app '禅パワー' with Bundle ID com.tokyonasu.zenpower and SKU zenpower-ios, then rerun this workflow."
+              exit 1
+            fi
           fi
           echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
           export APP_ID="$APP_ID_VALUE"
