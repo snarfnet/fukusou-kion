@@ -24,6 +24,8 @@ APIキーは App Store Connect の `Users and Access > Integrations > App Store 
 - In-App Purchase: なし
 - Ads: あり、バナーのみ
 
+Bundle IDはGitHub Actionsから作成済みです。APIキーにアプリ作成権限がない場合は、App Store Connect上で新規アプリだけ手動作成します。
+
 ## 素材
 
 - アイコン: `MarketingAssets/AppIcon/ZenPower-AppIcon-1024.png`
