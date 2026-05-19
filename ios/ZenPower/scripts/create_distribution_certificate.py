@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import base64
 import hashlib
 import os
 import subprocess
@@ -37,7 +36,7 @@ def generate_csr():
 
 
 def create_certificate():
-    csr_content = base64.b64encode(CSR_PATH.read_bytes()).decode("ascii")
+    csr_content = CSR_PATH.read_text(encoding="utf-8")
     last_error = None
     for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
         payload = {
@@ -64,6 +63,7 @@ def import_certificate(certificate):
     if not content:
         raise RuntimeError("Created certificate did not include certificateContent.")
 
+    import base64
     CERT_PATH.write_bytes(base64.b64decode(content))
     run(["security", "import", str(KEY_PATH), "-k", KEYCHAIN, "-T", "/usr/bin/codesign", "-T", "/usr/bin/security"])
     run(["security", "import", str(CERT_PATH), "-k", KEYCHAIN, "-T", "/usr/bin/codesign", "-T", "/usr/bin/security"])
