@@ -9,7 +9,7 @@ enum ZenLocale {
         if let forcedLanguage {
             return forcedLanguage.hasPrefix("ja")
         }
-        Locale.preferredLanguages.first?.hasPrefix("ja") ?? false
+        return Locale.preferredLanguages.first?.hasPrefix("ja") ?? false
     }
 
     static func text(ja: String, en: String) -> String {

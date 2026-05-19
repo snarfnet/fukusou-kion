@@ -2,6 +2,12 @@ name: ZenPower App Store Screenshots
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/zenpower-github-build
+    paths:
+      - ".github/workflows/zenpower-screenshots.yml"
+      - "ios/ZenPower/**"
 
 concurrency:
   group: zenpower-screenshots
@@ -50,4 +56,3 @@ jobs:
         with:
           name: zenpower-appstore-screenshots
           path: ios/ZenPower/MarketingAssets/Screenshots
-
