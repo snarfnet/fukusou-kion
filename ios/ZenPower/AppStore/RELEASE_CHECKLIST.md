@@ -7,8 +7,7 @@
 - `ASC_KEY_ID`: App Store Connect APIキーのKey ID
 - `ASC_ISSUER_ID`: Issuer ID
 - `ASC_PRIVATE_KEY` または `ASC_API_KEY_CONTENT`: `AuthKey_XXXX.p8` の中身
-- `IOS_DISTRIBUTION_P12_BASE64` または `DIST_CERT_BASE64`: 配布証明書
-- `IOS_DISTRIBUTION_P12_PASSWORD` または `DIST_CERT_PASSWORD`: 配布証明書のパスワード
+配布証明書はworkflow内でApp Store Connect APIから作成します。
 
 APIキーは App Store Connect の `Users and Access > Integrations > App Store Connect API` で作ります。権限は App Manager 以上を推奨します。
 
