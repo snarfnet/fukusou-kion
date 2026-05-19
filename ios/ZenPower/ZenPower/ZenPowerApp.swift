@@ -1,18 +1,18 @@
 import SwiftUI
-import GoogleMobileAds
 
 @main
 struct ZenPowerApp: App {
     @StateObject private var progressStore = ZenProgressStore()
-
-    init() {
-        MobileAds.shared.start()
-    }
+    @StateObject private var adState = AdState()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(progressStore)
+                .environmentObject(adState)
+                .onAppear {
+                    adState.prepare()
+                }
         }
     }
 }

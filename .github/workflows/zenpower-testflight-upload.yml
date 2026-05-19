@@ -1,0 +1,111 @@
+name: ZenPower TestFlight Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Marketing version, for example 1.0"
+        required: true
+        default: "1.0"
+      build_number:
+        description: "Build number. Leave blank to use the GitHub run number."
+        required: false
+        default: ""
+
+concurrency:
+  group: zenpower-testflight-upload
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ZenPower
+    env:
+      APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+      APPSTORE_API_ISSUER_ID: ${{ secrets.APPSTORE_API_ISSUER_ID }}
+      APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+      ZENPOWER_VERSION: ${{ inputs.version }}
+      ZENPOWER_BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate App Store Connect secrets
+        shell: bash
+        run: |
+          test -n "$APPSTORE_API_KEY_ID"
+          test -n "$APPSTORE_API_ISSUER_ID"
+          test -n "$APPSTORE_API_PRIVATE_KEY"
+
+      - name: Write App Store Connect API key
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8"
+          printf '%s' "$APPSTORE_API_PRIVATE_KEY" | perl -pe 's/\\n/\n/g' > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Resolve packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project ZenPower.xcodeproj \
+            -scheme ZenPower
+
+      - name: Archive
+        shell: bash
+        run: |
+          xcodebuild archive \
+            -project ZenPower.xcodeproj \
+            -scheme ZenPower \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/ZenPower.xcarchive \
+            MARKETING_VERSION="$ZENPOWER_VERSION" \
+            CURRENT_PROJECT_VERSION="$ZENPOWER_BUILD_NUMBER" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8" \
+            -authenticationKeyID "$APPSTORE_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APPSTORE_API_ISSUER_ID"
+
+      - name: Export IPA
+        shell: bash
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/ZenPower.xcarchive \
+            -exportOptionsPlist exportOptions.plist \
+            -exportPath build/export \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8" \
+            -authenticationKeyID "$APPSTORE_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APPSTORE_API_ISSUER_ID"
+
+      - name: Upload to App Store Connect
+        shell: bash
+        run: |
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            -f "$IPA_PATH" \
+            -t ios \
+            --apiKey "$APPSTORE_API_KEY_ID" \
+            --apiIssuer "$APPSTORE_API_ISSUER_ID"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenpower-ipa
+          path: ios/ZenPower/build/export/*.ipa

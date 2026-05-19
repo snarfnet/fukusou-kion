@@ -57,5 +57,16 @@ zen,zazen,meditation,breathing,habit,mindfulness,journal,calm
 - アイコン: `MarketingAssets/AppIcon/ZenPower-AppIcon-1024.png`
 - スクショ: `MarketingAssets/Screenshots`
 - スクショ生成workflow: `.github/workflows/zenpower-screenshots.yml`
+- TestFlightアップロードworkflow: `.github/workflows/zenpower-testflight-upload.yml`
 
 現在のターゲットはiPhoneのみです。iPad対応を有効にする場合は、iPad用スクリーンショットも追加で用意します。
+
+## プライバシー説明
+
+アプリ本体はアカウント登録、連絡先、位置情報を使いません。坐禅ログは端末内に保存します。
+
+広告はAdMobのバナーのみです。必要な地域ではGoogle User Messaging Platformの同意フォームを表示します。
+
+## 審査メモ案
+
+禅パワーは坐禅と呼吸の練習アプリです。ログインは不要です。広告はバナーのみで、全画面広告や報酬広告はありません。

@@ -1,5 +1,78 @@
 import SwiftUI
 import GoogleMobileAds
+import UserMessagingPlatform
+
+@MainActor
+final class AdState: ObservableObject {
+    @Published private(set) var canRequestAds = false
+    @Published private(set) var isPrivacyOptionsRequired = false
+
+    private var hasStartedMobileAds = false
+    private var isPreparing = false
+
+    init() {
+        updateConsentState()
+    }
+
+    func prepare() {
+        guard !ZenRuntime.hidesAdsForScreenshots, !isPreparing else { return }
+        isPreparing = true
+
+        let parameters = RequestParameters()
+        parameters.isTaggedForUnderAgeOfConsent = false
+
+        ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { [weak self] requestConsentError in
+            Task { @MainActor in
+                guard let self else { return }
+
+                if requestConsentError != nil {
+                    self.finishConsentFlow()
+                    return
+                }
+
+                do {
+                    try await ConsentForm.loadAndPresentIfRequired(from: nil)
+                } catch {
+                    // If the form cannot be shown, keep using the previous consent state.
+                }
+
+                self.finishConsentFlow()
+            }
+        }
+    }
+
+    func presentPrivacyOptions() {
+        guard isPrivacyOptionsRequired else { return }
+
+        Task { @MainActor in
+            do {
+                try await ConsentForm.presentPrivacyOptionsForm(from: nil)
+            } catch {
+                return
+            }
+
+            updateConsentState()
+            startMobileAdsIfAllowed()
+        }
+    }
+
+    private func finishConsentFlow() {
+        isPreparing = false
+        updateConsentState()
+        startMobileAdsIfAllowed()
+    }
+
+    private func updateConsentState() {
+        canRequestAds = !ZenRuntime.hidesAdsForScreenshots && ConsentInformation.shared.canRequestAds
+        isPrivacyOptionsRequired = ConsentInformation.shared.privacyOptionsRequirementStatus == .required
+    }
+
+    private func startMobileAdsIfAllowed() {
+        guard canRequestAds, !hasStartedMobileAds else { return }
+        MobileAds.shared.start()
+        hasStartedMobileAds = true
+    }
+}
 
 enum AdIDs {
     static var banner: String {

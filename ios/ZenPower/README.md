@@ -55,7 +55,8 @@ App IDとバナー広告ユニットIDは本番IDを設定済みです。広告�
 
 ## 次にやること
 
-- App Store用の1024pxアイコンを作り込む
-- App Tracking TransparencyとUMP同意フォームを追加する
+- App Store Connectでアプリを作る
+- GitHub SecretsにApp Store Connect APIキーを入れる
+- `ZenPower TestFlight Upload` workflowでTestFlightへ送る
+- App Storeのプライバシー回答を確認する
 - レッスン本文を増やす
-- App Store説明文、プライバシーポリシー、スクリーンショットを用意する

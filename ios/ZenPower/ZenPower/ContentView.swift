@@ -40,6 +40,7 @@ private enum AppTab: String {
 
 private struct HomeView: View {
     @EnvironmentObject private var progress: ZenProgressStore
+    @EnvironmentObject private var adState: AdState
     private let quote = ZenContent.todayQuote
 
     var body: some View {
@@ -84,6 +85,17 @@ private struct HomeView: View {
                         }
 
                         LessonPreview()
+
+                        if adState.isPrivacyOptionsRequired {
+                            Button {
+                                adState.presentPrivacyOptions()
+                            } label: {
+                                Label(ZenLocale.text(ja: "広告のプライバシー設定", en: "Ad Privacy Settings"), systemImage: "slider.horizontal.3")
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                            .buttonStyle(PlainZenButtonStyle())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                     .padding(20)
                 }
@@ -550,9 +562,11 @@ private struct BreathingOrb: View {
 }
 
 private struct AdaptiveBannerSlot: View {
+    @EnvironmentObject private var adState: AdState
+
     var body: some View {
         Group {
-            if ZenRuntime.hidesAdsForScreenshots {
+            if ZenRuntime.hidesAdsForScreenshots || !adState.canRequestAds {
                 EmptyView()
             } else {
                 GeometryReader { proxy in
