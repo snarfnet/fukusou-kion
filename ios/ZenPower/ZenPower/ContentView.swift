@@ -42,7 +42,7 @@ private struct HomeView: View {
                         ImageHeroCard(
                             imageName: "zen-posture",
                             title: ZenLocale.text(ja: "まず、静かに座る", en: "Start by Sitting Quietly"),
-                            body: ZenLocale.text(ja: "姿勢、呼吸、記録までを画像で見ながら進めます。難しい言葉より、今日できる一歩を大切にします。", en: "Learn posture, breathing, and reflection with simple visuals. The goal is one doable step today.")
+                            description: ZenLocale.text(ja: "姿勢、呼吸、記録までを画像で見ながら進めます。難しい言葉より、今日できる一歩を大切にします。", en: "Learn posture, breathing, and reflection with simple visuals. The goal is one doable step today.")
                         )
 
                         HStack(spacing: 12) {
@@ -96,7 +96,7 @@ private struct TimerPracticeView: View {
                         ImageHeroCard(
                             imageName: "zen-breath",
                             title: ZenLocale.text(ja: "息を目印にする", en: "Use Breath as Your Anchor"),
-                            body: ZenLocale.text(ja: "吸う、吐く。考えが出たら、また息に戻ります。", en: "Breathe in and out. When thoughts appear, return to the breath.")
+                            description: ZenLocale.text(ja: "吸う、吐く。考えが出たら、また息に戻ります。", en: "Breathe in and out. When thoughts appear, return to the breath.")
                         )
 
                         VStack(spacing: 8) {
@@ -399,7 +399,7 @@ private struct LessonRow: View {
 private struct ImageHeroCard: View {
     let imageName: String
     let title: String
-    let body: String
+    let description: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -412,7 +412,7 @@ private struct ImageHeroCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.headline)
-                Text(body)
+                Text(description)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
