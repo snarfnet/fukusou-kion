@@ -9,6 +9,12 @@ jobs:
     defaults:
       run:
         working-directory: ios/DailyAngel
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.dailyangel
+      APP_NAME: "天使の手紙"
+      APP_SKU: dailyangel-ios
+      BUNDLE_NAME: DailyAngel
+      PROFILE_NAME: "DailyAngel App Store"
 
     steps:
       - uses: actions/checkout@v4
@@ -30,42 +36,90 @@ jobs:
       - name: Set build number
         run: |
           BUILD_NUM=$(( ${{ github.run_number }} + 1 ))
-          echo "BUILD_NUM=$BUILD_NUM" >> $GITHUB_ENV
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
           sed -i "" "s/CURRENT_PROJECT_VERSION: \"1\"/CURRENT_PROJECT_VERSION: \"$BUILD_NUM\"/" project.yml
 
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Import Distribution Certificate
+      - name: Set up ASC API Key
         env:
-          CERT_BASE64: ${{ secrets.DIST_CERT_BASE64 }}
-          CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p ~/.appstoreconnect/private_keys /tmp/asc
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 -D > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" ~/.appstoreconnect/private_keys/AuthKey_WDXGY9WX55.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+
+      - name: Install Python dependencies
+        run: pip3 install --break-system-packages PyJWT cryptography requests
+
+      - name: Create Distribution Certificate
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
-          security set-keychain-settings -t 3600 -u build.keychain
-          echo "$CERT_BASE64" | base64 -D > cert.p12
-          security import cert.p12 -k build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
-          rm cert.p12
-
-      - name: Set up ASC API Key
-        env:
-          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
-        run: |
-          mkdir -p ~/.appstoreconnect/private_keys
-          echo "$ASC_API_KEY_CONTENT" | base64 -D > ~/.appstoreconnect/private_keys/AuthKey_WDXGY9WX55.p8
-          cp ~/.appstoreconnect/private_keys/AuthKey_WDXGY9WX55.p8 /tmp/asc_key.p8
-
-      - name: Install Python dependencies
-        run: pip3 install --break-system-packages PyJWT requests
+          security set-keychain-settings -lut 21600 build.keychain
+          python3 scripts/create_distribution_certificate.py | tee /tmp/dailyangel-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/dailyangel-cert.log >> "$GITHUB_ENV"
 
       - name: Ensure App Store Connect App
-        run: python3 scripts/ensure_asc_app.py
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          if [ -n "${{ secrets.DAILYANGEL_APP_ID }}" ]; then
+            echo "APP_ID=${{ secrets.DAILYANGEL_APP_ID }}" >> "$GITHUB_ENV"
+          else
+            python3 scripts/ensure_asc_app.py | tee /tmp/dailyangel-ensure-app.log
+            APP_ID_VALUE="$(grep '^APP_ID=' /tmp/dailyangel-ensure-app.log | tail -1 | cut -d= -f2)"
+            if [ -z "$APP_ID_VALUE" ]; then
+              APP_ID_VALUE="$(python3 - <<'PY'
+import os, time, jwt, requests
+p8 = open('/tmp/asc_key.p8').read()
+tok = jwt.encode(
+    {'iss': os.environ['ASC_ISSUER_ID'], 'iat': int(time.time()), 'exp': int(time.time()) + 1200, 'aud': 'appstoreconnect-v1'},
+    p8,
+    algorithm='ES256',
+    headers={'kid': os.environ['ASC_KEY_ID']},
+)
+r = requests.get(
+    'https://api.appstoreconnect.apple.com/v1/apps?filter[bundleId]=com.tokyonasu.dailyangel&limit=1',
+    headers={'Authorization': f'Bearer {tok}'},
+    timeout=120,
+)
+d = r.json().get('data', [])
+print(d[0]['id'] if d else '')
+PY
+)"
+            fi
+            test -n "$APP_ID_VALUE"
+            echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+          fi
+
+      - name: Prepare Provisioning Profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/prepare_profile.py
 
       - name: Build Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
         run: |
           xcodebuild archive \
             -project DailyAngel.xcodeproj \
@@ -73,23 +127,29 @@ jobs:
             -configuration Release \
             -destination "generic/platform=iOS" \
             -archivePath build/DailyAngel.xcarchive \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             DEVELOPMENT_TEAM=83VGKGSQUH \
             -allowProvisioningUpdates \
             -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_WDXGY9WX55.p8 \
-            -authenticationKeyID WDXGY9WX55 \
-            -authenticationKeyIssuerID 2be0734f-943a-4d61-9dc9-5d9045c46fec
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
       - name: Export IPA
         run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" export_options.plist
           xcodebuild -exportArchive \
             -archivePath build/DailyAngel.xcarchive \
             -exportPath build/export \
             -exportOptionsPlist export_options.plist \
             -allowProvisioningUpdates \
             -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_WDXGY9WX55.p8 \
-            -authenticationKeyID WDXGY9WX55 \
-            -authenticationKeyIssuerID 2be0734f-943a-4d61-9dc9-5d9045c46fec
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
       - name: Upload IPA
         run: |
@@ -97,11 +157,11 @@ jobs:
           xcrun altool --upload-app \
             -f "$IPA_PATH" \
             -t ios \
-            --apiKey WDXGY9WX55 \
-            --apiIssuer 2be0734f-943a-4d61-9dc9-5d9045c46fec \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID" \
             --verbose
 
       - name: Submit for Review
         env:
-          APP_ID: ${{ secrets.DAILYANGEL_APP_ID }}
+          APP_ID: ${{ env.APP_ID }}
         run: python3 scripts/submit.py ${{ env.BUILD_NUM }}
