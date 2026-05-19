@@ -4,16 +4,16 @@ struct ContentView: View {
     var body: some View {
         TabView {
             HomeView()
-                .tabItem { Label("今日", systemImage: "circle.lefthalf.filled") }
+                .tabItem { Label(ZenLocale.text(ja: "今日", en: "Today"), systemImage: "circle.lefthalf.filled") }
 
             TimerPracticeView()
-                .tabItem { Label("坐禅", systemImage: "timer") }
+                .tabItem { Label(ZenLocale.text(ja: "坐禅", en: "Zazen"), systemImage: "timer") }
 
             LessonsView()
-                .tabItem { Label("学ぶ", systemImage: "book.closed") }
+                .tabItem { Label(ZenLocale.text(ja: "学ぶ", en: "Learn"), systemImage: "book.closed") }
 
             JournalView()
-                .tabItem { Label("記録", systemImage: "calendar") }
+                .tabItem { Label(ZenLocale.text(ja: "記録", en: "Log"), systemImage: "calendar") }
         }
         .tint(.zenInk)
         .background(Color.zenPaper)
@@ -31,9 +31,9 @@ private struct HomeView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("禅パワー")
+                            Text(ZenLocale.text(ja: "禅パワー", en: "Zen Power"))
                                 .font(.system(size: 42, weight: .semibold, design: .serif))
-                            Text("一日一座。短くても、戻る力を育てる。")
+                            Text(ZenLocale.text(ja: "一日一座。短くても、戻る力を育てる。", en: "One quiet sit a day. Build the power to return."))
                                 .font(.body)
                                 .foregroundStyle(.secondary)
                         }
@@ -41,14 +41,14 @@ private struct HomeView: View {
 
                         ImageHeroCard(
                             imageName: "zen-posture",
-                            title: "まず、静かに座る",
-                            body: "姿勢、呼吸、記録までを画像で見ながら進めます。難しい言葉より、今日できる一歩を大切にします。"
+                            title: ZenLocale.text(ja: "まず、静かに座る", en: "Start by Sitting Quietly"),
+                            body: ZenLocale.text(ja: "姿勢、呼吸、記録までを画像で見ながら進めます。難しい言葉より、今日できる一歩を大切にします。", en: "Learn posture, breathing, and reflection with simple visuals. The goal is one doable step today.")
                         )
 
                         HStack(spacing: 12) {
-                            MetricTile(title: "今日", value: "\(progress.todayMinutes)分")
-                            MetricTile(title: "連続", value: "\(progress.streakDays)日")
-                            MetricTile(title: "合計", value: "\(progress.totalMinutes)分")
+                            MetricTile(title: ZenLocale.text(ja: "今日", en: "Today"), value: ZenLocale.text(ja: "\(progress.todayMinutes)分", en: "\(progress.todayMinutes)m"))
+                            MetricTile(title: ZenLocale.text(ja: "連続", en: "Streak"), value: ZenLocale.text(ja: "\(progress.streakDays)日", en: "\(progress.streakDays)d"))
+                            MetricTile(title: ZenLocale.text(ja: "合計", en: "Total"), value: ZenLocale.text(ja: "\(progress.totalMinutes)分", en: "\(progress.totalMinutes)m"))
                         }
 
                         QuoteCard(quote: quote)
@@ -56,7 +56,7 @@ private struct HomeView: View {
                         NavigationLink {
                             TimerPracticeView()
                         } label: {
-                            Label("今日の一座を始める", systemImage: "play.fill")
+                            Label(ZenLocale.text(ja: "今日の一座を始める", en: "Start Today's Sit"), systemImage: "play.fill")
                                 .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -95,8 +95,8 @@ private struct TimerPracticeView: View {
                     VStack(spacing: 24) {
                         ImageHeroCard(
                             imageName: "zen-breath",
-                            title: "息を目印にする",
-                            body: "吸う、吐く。考えが出たら、また息に戻ります。"
+                            title: ZenLocale.text(ja: "息を目印にする", en: "Use Breath as Your Anchor"),
+                            body: ZenLocale.text(ja: "吸う、吐く。考えが出たら、また息に戻ります。", en: "Breathe in and out. When thoughts appear, return to the breath.")
                         )
 
                         VStack(spacing: 8) {
@@ -111,9 +111,9 @@ private struct TimerPracticeView: View {
                         .background(Color.white.opacity(0.72))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                        Picker("時間", selection: $selectedMinutes) {
+                        Picker(ZenLocale.text(ja: "時間", en: "Time"), selection: $selectedMinutes) {
                             ForEach(minuteChoices, id: \.self) { minute in
-                                Text("\(minute)分").tag(minute)
+                                Text(ZenLocale.text(ja: "\(minute)分", en: "\(minute)m")).tag(minute)
                             }
                         }
                         .pickerStyle(.segmented)
@@ -126,7 +126,7 @@ private struct TimerPracticeView: View {
                                 timer.configure(minutes: selectedMinutes)
                                 timer.start()
                             } label: {
-                                Label(timer.hasStarted ? "再開" : "開始", systemImage: "play.fill")
+                                Label(timer.hasStarted ? ZenLocale.text(ja: "再開", en: "Resume") : ZenLocale.text(ja: "開始", en: "Start"), systemImage: "play.fill")
                             }
                             .buttonStyle(PrimaryZenButtonStyle())
                             .disabled(timer.isRunning)
@@ -134,7 +134,7 @@ private struct TimerPracticeView: View {
                             Button {
                                 timer.pause()
                             } label: {
-                                Label("一時停止", systemImage: "pause.fill")
+                                Label(ZenLocale.text(ja: "一時停止", en: "Pause"), systemImage: "pause.fill")
                             }
                             .buttonStyle(SecondaryZenButtonStyle())
                             .disabled(!timer.isRunning)
@@ -143,14 +143,14 @@ private struct TimerPracticeView: View {
                         Button {
                             timer.reset(minutes: selectedMinutes)
                         } label: {
-                            Label("リセット", systemImage: "arrow.counterclockwise")
+                            Label(ZenLocale.text(ja: "リセット", en: "Reset"), systemImage: "arrow.counterclockwise")
                         }
                         .buttonStyle(PlainZenButtonStyle())
 
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("終えた後の一言")
+                            Text(ZenLocale.text(ja: "終えた後の一言", en: "One Line After Practice"))
                                 .font(.headline)
-                            TextField("例: 少し落ち着いた", text: $note, axis: .vertical)
+                            TextField(ZenLocale.text(ja: "例: 少し落ち着いた", en: "Example: I feel a little calmer"), text: $note, axis: .vertical)
                                 .textFieldStyle(.roundedBorder)
                                 .lineLimit(2...4)
                             Button {
@@ -159,7 +159,7 @@ private struct TimerPracticeView: View {
                                 note = ""
                                 timer.reset(minutes: selectedMinutes)
                             } label: {
-                                Label("記録する", systemImage: "checkmark.circle.fill")
+                                Label(ZenLocale.text(ja: "記録する", en: "Save Log"), systemImage: "checkmark.circle.fill")
                             }
                             .buttonStyle(PrimaryZenButtonStyle())
                         }
@@ -170,7 +170,7 @@ private struct TimerPracticeView: View {
                     .padding(20)
                 }
             }
-            .navigationTitle("坐禅")
+            .navigationTitle(ZenLocale.text(ja: "坐禅", en: "Zazen"))
             .safeAreaInset(edge: .bottom) {
                 AdaptiveBannerSlot()
             }
@@ -183,7 +183,7 @@ private struct TimerPracticeView: View {
             }
             .onChange(of: timer.didComplete) { didComplete in
                 guard didComplete else { return }
-                note = "坐禅を終えた"
+                note = ZenLocale.text(ja: "坐禅を終えた", en: "Finished a zazen session")
             }
         }
     }
@@ -197,7 +197,7 @@ private struct LessonsView: View {
             ZStack {
                 Color.zenPaper.ignoresSafeArea()
                 List {
-                    Section("絵で見る基本") {
+                    Section(ZenLocale.text(ja: "絵で見る基本", en: "Visual Basics")) {
                         ForEach(ZenContent.visualGuides) { guide in
                             VisualGuideCard(guide: guide)
                                 .listRowBackground(Color.clear)
@@ -205,7 +205,7 @@ private struct LessonsView: View {
                         }
                     }
 
-                    Section("初心者コース") {
+                    Section(ZenLocale.text(ja: "初心者コース", en: "Beginner Course")) {
                         ForEach(ZenContent.lessons) { lesson in
                             NavigationLink {
                                 LessonDetailView(lesson: lesson)
@@ -215,7 +215,7 @@ private struct LessonsView: View {
                         }
                     }
 
-                    Section("禅語") {
+                    Section(ZenLocale.text(ja: "禅語", en: "Zen Words")) {
                         ForEach(ZenContent.quotes) { quote in
                             QuoteCard(quote: quote)
                                 .listRowBackground(Color.clear)
@@ -224,7 +224,7 @@ private struct LessonsView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("学ぶ")
+            .navigationTitle(ZenLocale.text(ja: "学ぶ", en: "Learn"))
             .safeAreaInset(edge: .bottom) {
                 AdaptiveBannerSlot()
             }
@@ -266,14 +266,14 @@ private struct LessonDetailView: View {
                     Button {
                         progress.completeLesson(lesson)
                     } label: {
-                        Label("学習を完了", systemImage: "checkmark.seal.fill")
+                        Label(ZenLocale.text(ja: "学習を完了", en: "Mark Complete"), systemImage: "checkmark.seal.fill")
                     }
                     .buttonStyle(PrimaryZenButtonStyle())
                 }
                 .padding(20)
             }
         }
-        .navigationTitle("レッスン")
+        .navigationTitle(ZenLocale.text(ja: "レッスン", en: "Lesson"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -292,9 +292,9 @@ private struct JournalView: View {
                             .scaledToFill()
                             .frame(width: 220, height: 160)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                        Text("まだ記録がありません")
+                        Text(ZenLocale.text(ja: "まだ記録がありません", en: "No logs yet"))
                             .font(.headline)
-                        Text("坐禅を終えたら、短い一言を残しましょう。")
+                        Text(ZenLocale.text(ja: "坐禅を終えたら、短い一言を残しましょう。", en: "After sitting, leave one short note."))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -307,7 +307,7 @@ private struct JournalView: View {
                                 Text(log.date, style: .date)
                                     .font(.headline)
                                 Spacer()
-                                Text("\(log.minutes)分")
+                                Text(ZenLocale.text(ja: "\(log.minutes)分", en: "\(log.minutes)m"))
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(Color.zenInk)
                             }
@@ -322,7 +322,7 @@ private struct JournalView: View {
                     .scrollContentBackground(.hidden)
                 }
             }
-            .navigationTitle("記録")
+            .navigationTitle(ZenLocale.text(ja: "記録", en: "Log"))
             .safeAreaInset(edge: .bottom) {
                 AdaptiveBannerSlot()
             }
@@ -333,7 +333,7 @@ private struct JournalView: View {
 private struct LessonPreview: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("最初の一歩")
+            Text(ZenLocale.text(ja: "最初の一歩", en: "First Steps"))
                 .font(.headline)
             ForEach(ZenContent.lessons.prefix(2)) { lesson in
                 HStack {
@@ -350,7 +350,7 @@ private struct LessonPreview: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Text("\(lesson.minutes)分")
+                    Text(ZenLocale.text(ja: "\(lesson.minutes)分", en: "\(lesson.minutes)m"))
                         .font(.caption.weight(.bold))
                         .foregroundStyle(Color.zenInk)
                 }
@@ -389,7 +389,7 @@ private struct LessonRow: View {
                     .lineLimit(2)
             }
             Spacer()
-            Text("\(lesson.minutes)分")
+            Text(ZenLocale.text(ja: "\(lesson.minutes)分", en: "\(lesson.minutes)m"))
                 .font(.caption.weight(.bold))
         }
         .padding(.vertical, 4)
@@ -516,7 +516,7 @@ private struct BreathingOrb: View {
             Circle()
                 .stroke(Color.zenInk.opacity(0.45), lineWidth: 1)
                 .frame(width: 190, height: 190)
-            Text(isRunning ? "吸って\n吐く" : "呼吸")
+            Text(isRunning ? ZenLocale.text(ja: "吸って\n吐く", en: "Inhale\nExhale") : ZenLocale.text(ja: "呼吸", en: "Breath"))
                 .multilineTextAlignment(.center)
                 .font(.headline)
                 .foregroundStyle(Color.zenInk)
@@ -563,10 +563,10 @@ private final class MeditationTimer: ObservableObject {
     }
 
     var statusText: String {
-        if didComplete { return "おつかれさまです" }
-        if isRunning { return "ただ座る" }
-        if hasStarted { return "静かに再開できます" }
-        return "時間を選んで始める"
+        if didComplete { return ZenLocale.text(ja: "おつかれさまです", en: "Well done") }
+        if isRunning { return ZenLocale.text(ja: "ただ座る", en: "Just sit") }
+        if hasStarted { return ZenLocale.text(ja: "静かに再開できます", en: "Resume when ready") }
+        return ZenLocale.text(ja: "時間を選んで始める", en: "Choose a time to begin")
     }
 
     func configure(minutes: Int) {
