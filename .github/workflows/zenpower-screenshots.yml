@@ -7,7 +7,9 @@ on:
       - codex/zenpower-github-build
     paths:
       - ".github/workflows/zenpower-screenshots.yml"
-      - "ios/ZenPower/**"
+      - "ios/ZenPower/project.yml"
+      - "ios/ZenPower/ZenPower/**"
+      - "ios/ZenPower/scripts/**"
 
 concurrency:
   group: zenpower-screenshots
