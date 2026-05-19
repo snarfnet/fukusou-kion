@@ -1,0 +1,5848 @@
+{
+  "name": "Daily Angel Messages",
+  "version": 1,
+  "note_ja": "angelic はエノク語風の雰囲気フレーズです。厳密な翻訳ではありません。",
+  "note_en": "The angelic field is Enochian-inspired atmosphere, not a strict translation.",
+  "messages": [
+    {
+      "day": 1,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。焦らなくていい。今日の扉は、静かに開きます。",
+      "en": "The angel speaks softly. You do not need to rush. Today's door opens quietly.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 2,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。答えを急ぐより、問いをきれいに整えてください。",
+      "en": "This morning's light says this. Shape the question before you chase the answer.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 3,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP",
+      "ja": "あなたを守る声が届いています。小さな片づけが、心の通り道を作ります。",
+      "en": "A guarding voice reaches you. One small act of clearing makes a path through the heart.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 4,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。言葉を減らすほど、本音が見えやすくなります。",
+      "en": "The unseen letter says this. When words grow fewer, the truth becomes easier to see.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 5,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。今日は勝つ日ではなく、乱れを戻す日です。",
+      "en": "At today's gate, the angel says this. Today is not for winning. It is for restoring your balance.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 6,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL NOCO OD SOBRA",
+      "ja": "天使は静かに告げます。胸の奥で光っているものを、見失わないでください。",
+      "en": "The angel speaks softly. Do not lose sight of what glows deep in your chest.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 7,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA ZONRENSG CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。迷いは敵ではありません。向きを変える合図です。",
+      "en": "This morning's light says this. Uncertainty is not an enemy. It is a sign to change direction.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 8,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO LOHOLO OD LAP",
+      "ja": "あなたを守る声が届いています。誰かの声より、自分の呼吸を先に聞いてください。",
+      "en": "A guarding voice reaches you. Listen to your breath before you listen to anyone else.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 9,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH TORZU CA CICLE ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。今あるものを数えると、足りないものの形が変わります。",
+      "en": "The unseen letter says this. Count what is already here, and lack will change its shape.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 10,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ZACAR OD TOH",
+      "ja": "今日の門の前で、天使は言います。深く考える前に、体を少し動かしてください。",
+      "en": "At today's gate, the angel says this. Move your body a little before thinking too deeply.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 11,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR BALT CA IAIDA",
+      "ja": "天使は静かに告げます。やさしさは、境界線を持っていても消えません。",
+      "en": "The angel speaks softly. Kindness does not disappear when it has boundaries.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 12,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH BITOM OD MAZ",
+      "ja": "今朝の光はこう伝えます。沈黙の中に、次の言葉の種があります。",
+      "en": "This morning's light says this. In silence, the next word is already a seed.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 13,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZACAR ZIR LANSH CA NOCO",
+      "ja": "あなたを守る声が届いています。今日は大きな約束より、小さな実行を選んでください。",
+      "en": "A guarding voice reaches you. Choose a small action over a large promise today.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 14,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG MAD OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。見えない不安には、見える手順を与えてください。",
+      "en": "The unseen letter says this. Give visible steps to invisible worry.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 15,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD MICAOLZ CA BITOM",
+      "ja": "今日の門の前で、天使は言います。完璧に始める必要はありません。始めた形が道になります。",
+      "en": "At today's gate, the angel says this. You do not need a perfect start. The shape of starting becomes the path.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 16,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED ZIR OD MICAOLZ",
+      "ja": "天使は静かに告げます。気になる名前を一つだけ、心の中で呼んでください。",
+      "en": "The angel speaks softly. Call one name in your heart, just one.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 17,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IPAM CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。失くしたと思った力は、休んでいただけです。",
+      "en": "This morning's light says this. The strength you thought was lost was only resting.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 18,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH LOHOLO OD BALT ZAMRAN",
+      "ja": "あなたを守る声が届いています。明るい答えほど、静かな場所で生まれます。",
+      "en": "A guarding voice reaches you. The brightest answers are often born in quiet places.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 19,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID MALPRG CA MAD",
+      "ja": "見えない手紙には、こう書かれています。今日は戻ることも前進です。",
+      "en": "The unseen letter says this. Returning can also be progress today.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 20,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD ORO OD IPAM",
+      "ja": "今日の門の前で、天使は言います。目の前の一つを丁寧に扱うと、流れが戻ります。",
+      "en": "At today's gate, the angel says this. Handle one thing before you with care, and the current will return.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 21,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL BALT CA ORO",
+      "ja": "天使は静かに告げます。心配を全部運ばなくていい。ひとつ置いていきましょう。",
+      "en": "The angel speaks softly. You do not need to carry every worry. Leave one behind.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 22,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO ZOMD OD NIA",
+      "ja": "今朝の光はこう伝えます。閉じた扉を責めず、開いている窓を探してください。",
+      "en": "This morning's light says this. Do not blame the closed door. Look for the open window.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 23,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL NIA CA EXARP",
+      "ja": "あなたを守る声が届いています。今日の光は、派手ではなく確かです。",
+      "en": "A guarding voice reaches you. Today's light is not loud, but it is steady.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 24,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA MAD OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。誰にも見せない努力も、ちゃんと形になっています。",
+      "en": "The unseen letter says this. The effort no one sees is still taking form.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 25,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX ARGED CA PIR",
+      "ja": "今日の門の前で、天使は言います。気持ちが追いつかない時は、予定を小さくしてください。",
+      "en": "At today's gate, the angel says this. When your feelings lag behind, make the plan smaller.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 26,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ZACAR LIL EXARP OD SOBRA",
+      "ja": "天使は静かに告げます。ひとつ断ることで、ひとつ守れるものがあります。",
+      "en": "The angel speaks softly. By refusing one thing, you may protect another.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 27,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA IPAM CA ZIMZ ZAMRAN",
+      "ja": "今朝の光はこう伝えます。夜に残った感情は、明日の地図になります。",
+      "en": "This morning's light says this. The feeling left at night becomes tomorrow's map.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 28,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIEN OD LAP",
+      "ja": "あなたを守る声が届いています。強くなるとは、無理を増やすことではありません。",
+      "en": "A guarding voice reaches you. Growing stronger does not mean adding more strain.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 29,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH GRAA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。自分を責める声を、今日は少し遠くに置いてください。",
+      "en": "The unseen letter says this. Place the voice that blames you a little farther away today.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 30,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ORO OD TOH",
+      "ja": "今日の門の前で、天使は言います。見直す勇気は、やり直す力になります。",
+      "en": "At today's gate, the angel says this. The courage to review becomes the strength to begin again.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 31,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR OBOLEH CA IAIDA",
+      "ja": "天使は静かに告げます。軽くできるものから軽くしてください。",
+      "en": "The angel speaks softly. Lighten what can be lightened first.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 32,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH PIR OD MAZ",
+      "ja": "今朝の光はこう伝えます。今のあなたに必要なのは、証明より回復です。",
+      "en": "This morning's light says this. What you need now is recovery, not proof.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 33,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR NIA CA NOCO",
+      "ja": "あなたを守る声が届いています。手放すものを決めると、受け取る場所が生まれます。",
+      "en": "A guarding voice reaches you. When you choose what to release, a place to receive appears.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 34,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG PAID OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。心の声は、急かすより待つ方がよく聞こえます。",
+      "en": "The unseen letter says this. The heart is heard better by waiting than by rushing.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 35,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD SOBRA CA BITOM",
+      "ja": "今日の門の前で、天使は言います。今日は、古い言葉を新しい意味に変える日です。",
+      "en": "At today's gate, the angel says this. Today, old words can take on a new meaning.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 36,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED EXARP OD MICAOLZ ZAMRAN",
+      "ja": "天使は静かに告げます。まだ形にならない願いにも、居場所をあげてください。",
+      "en": "The angel speaks softly. Give a place to the wish that has not taken shape yet.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 37,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IAOD CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。あなたの中の静かな部分が、もう答えを知っています。",
+      "en": "This morning's light says this. The quiet part of you already knows an answer.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 38,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ZIMZ OD BALT",
+      "ja": "あなたを守る声が届いています。遠くを見すぎたら、手元の光に戻ってください。",
+      "en": "A guarding voice reaches you. If you look too far away, return to the light in your hands.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 39,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "ZACAR PAID GRAA CA MAD",
+      "ja": "見えない手紙には、こう書かれています。今日の合図は、小さく届きます。見逃さないでください。",
+      "en": "The unseen letter says this. Today's sign will arrive softly. Do not miss it.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 40,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD LUMIEL OD IPAM",
+      "ja": "今日の門の前で、天使は言います。決められない時は、整えることから始めてください。",
+      "en": "At today's gate, the angel says this. When you cannot decide, begin by bringing order.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 41,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL LAP CA ORO",
+      "ja": "天使は静かに告げます。心が重い日は、言葉も軽くしていいです。",
+      "en": "The angel speaks softly. On a heavy-hearted day, your words may be light.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 42,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO PIR OD NIA",
+      "ja": "今朝の光はこう伝えます。大切なものほど、急いで結論にしないでください。",
+      "en": "This morning's light says this. Do not turn what matters into a conclusion too quickly.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 43,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL VONPHO CA EXARP",
+      "ja": "あなたを守る声が届いています。あなたを疲れさせる役を、少し降りてもいいです。",
+      "en": "A guarding voice reaches you. You may step down from the role that exhausts you.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 44,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA CICLE OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。小さな安心を先に作ると、勇気は後から来ます。",
+      "en": "The unseen letter says this. Make a small safety first, and courage will follow.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 45,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX SOBRA CA PIR ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。今日は、探すより受け取る日です。",
+      "en": "At today's gate, the angel says this. Today is for receiving more than searching.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 46,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL PAL OD SOBRA",
+      "ja": "天使は静かに告げます。揺れている時ほど、足元を確かめてください。",
+      "en": "The angel speaks softly. When you feel shaken, check the ground beneath you.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 47,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA TOH CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。心の奥の違和感は、無視しないでください。",
+      "en": "This morning's light says this. Do not ignore the unease deep inside.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 48,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIMZ OD LAP",
+      "ja": "あなたを守る声が届いています。やさしい選択は、弱い選択ではありません。",
+      "en": "A guarding voice reaches you. A gentle choice is not a weak choice.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 49,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH NANTA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。今は遠回りに見える道が、あなたを守っています。",
+      "en": "The unseen letter says this. The path that looks indirect may be protecting you now.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 50,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG IAIDA OD TOH",
+      "ja": "今日の門の前で、天使は言います。今日の一歩は、誰かに見せるためでなくていいです。",
+      "en": "At today's gate, the angel says this. Today's step does not need to be seen by anyone.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 51,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR LAP CA IAIDA",
+      "ja": "天使は静かに告げます。光は外から来るだけではありません。内側でも育ちます。",
+      "en": "The angel speaks softly. Light does not only come from outside. It also grows within.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 52,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "ZACAR LANSH OX OD MAZ",
+      "ja": "今朝の光はこう伝えます。夢の中の象徴は、現実の気持ちを映します。",
+      "en": "This morning's light says this. Symbols in dreams reflect feelings in waking life.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 53,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR MAZ CA NOCO",
+      "ja": "あなたを守る声が届いています。名前をつけると、不安は少し小さくなります。",
+      "en": "A guarding voice reaches you. When you name a worry, it becomes a little smaller.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 54,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG CICLE OD TORZU ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。今日のあなたには、余白が必要です。",
+      "en": "The unseen letter says this. Today, you need some open space.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 55,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD LIL CA BITOM",
+      "ja": "今日の門の前で、天使は言います。急に変えず、向きだけ少し変えてください。",
+      "en": "At today's gate, the angel says this. Do not change everything at once. Shift the direction a little.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 56,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED NOCO OD MICAOLZ",
+      "ja": "天使は静かに告げます。誰かの期待より、今日の体力を信じてください。",
+      "en": "The angel speaks softly. Trust today's energy more than someone else's expectation.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 57,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN TOH CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。終わらせることにも、祝福があります。",
+      "en": "This morning's light says this. There can be blessing in ending something.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 58,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ADNA OD BALT",
+      "ja": "あなたを守る声が届いています。残すものを選ぶと、自分の輪郭が戻ります。",
+      "en": "A guarding voice reaches you. Choosing what to keep brings your outline back.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 59,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID TORZU CA MAD",
+      "ja": "見えない手紙には、こう書かれています。心が動いた場所に、次の入口があります。",
+      "en": "The unseen letter says this. Where your heart moved, the next entrance waits.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 60,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD IAIDA OD IPAM",
+      "ja": "今日の門の前で、天使は言います。過去を責めず、今日の扱い方を変えてください。",
+      "en": "At today's gate, the angel says this. Do not blame the past. Change how you hold today.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 61,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。あなたの願いは、静かな手入れを待っています。",
+      "en": "The angel speaks softly. Your wish is waiting for quiet care.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 62,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。見えない守りは、生活の小さな秩序に宿ります。",
+      "en": "This morning's light says this. Unseen protection lives in small order.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 63,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP ZAMRAN",
+      "ja": "あなたを守る声が届いています。今日は、自分に戻るための短い道を選んでください。",
+      "en": "A guarding voice reaches you. Choose a short path back to yourself today.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 64,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。疑いが出たら、事実を三つだけ見てください。",
+      "en": "The unseen letter says this. When doubt appears, look at only three facts.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 65,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZACAR OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。胸が縮む場所から、少し距離を取ってください。",
+      "en": "At today's gate, the angel says this. Take a little distance from what tightens your chest.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 66,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL NOCO OD SOBRA",
+      "ja": "天使は静かに告げます。まだ言えないことは、紙にだけ預けてもいいです。",
+      "en": "The angel speaks softly. What you cannot say yet may be entrusted to paper.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 67,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA ZONRENSG CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。正しさより、今のあなたに効くやさしさを選んでください。",
+      "en": "This morning's light says this. Choose the kindness that helps you now over being right.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 68,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO LOHOLO OD LAP",
+      "ja": "あなたを守る声が届いています。流れが止まった時は、水ではなく石を見てください。",
+      "en": "A guarding voice reaches you. When the flow stops, look not at the water but at the stone.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 69,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH TORZU CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。あなたの中の古い光が、今日また少し目を覚まします。",
+      "en": "The unseen letter says this. An old light within you wakes a little today.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 70,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ZACAR OD TOH",
+      "ja": "今日の門の前で、天使は言います。見守られている感覚を、急いで説明しなくていいです。",
+      "en": "At today's gate, the angel says this. You do not need to explain the feeling of being watched over.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 71,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR BALT CA IAIDA",
+      "ja": "天使は静かに告げます。今夜の夢に、ひとつ質問を渡してください。",
+      "en": "The angel speaks softly. Give one question to tonight's dream.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 72,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH BITOM OD MAZ ZAMRAN",
+      "ja": "今朝の光はこう伝えます。小さな感謝は、心の扉を静かに開けます。",
+      "en": "This morning's light says this. Small gratitude quietly opens the heart's door.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 73,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR LANSH CA NOCO",
+      "ja": "あなたを守る声が届いています。今日は、必要なものだけ持って進んでください。",
+      "en": "A guarding voice reaches you. Today, carry only what is needed.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 74,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG MAD OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。焦らなくていい。今日の扉は、静かに開きます。",
+      "en": "The unseen letter says this. You do not need to rush. Today's door opens quietly.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 75,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD MICAOLZ CA BITOM",
+      "ja": "今日の門の前で、天使は言います。答えを急ぐより、問いをきれいに整えてください。",
+      "en": "At today's gate, the angel says this. Shape the question before you chase the answer.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 76,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED ZIR OD MICAOLZ",
+      "ja": "天使は静かに告げます。小さな片づけが、心の通り道を作ります。",
+      "en": "The angel speaks softly. One small act of clearing makes a path through the heart.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 77,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IPAM CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。言葉を減らすほど、本音が見えやすくなります。",
+      "en": "This morning's light says this. When words grow fewer, the truth becomes easier to see.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 78,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZACAR OBOLEH LOHOLO OD BALT",
+      "ja": "あなたを守る声が届いています。今日は勝つ日ではなく、乱れを戻す日です。",
+      "en": "A guarding voice reaches you. Today is not for winning. It is for restoring your balance.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 79,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID MALPRG CA MAD",
+      "ja": "見えない手紙には、こう書かれています。胸の奥で光っているものを、見失わないでください。",
+      "en": "The unseen letter says this. Do not lose sight of what glows deep in your chest.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 80,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD ORO OD IPAM",
+      "ja": "今日の門の前で、天使は言います。迷いは敵ではありません。向きを変える合図です。",
+      "en": "At today's gate, the angel says this. Uncertainty is not an enemy. It is a sign to change direction.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 81,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL BALT CA ORO ZAMRAN",
+      "ja": "天使は静かに告げます。誰かの声より、自分の呼吸を先に聞いてください。",
+      "en": "The angel speaks softly. Listen to your breath before you listen to anyone else.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 82,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO ZOMD OD NIA",
+      "ja": "今朝の光はこう伝えます。今あるものを数えると、足りないものの形が変わります。",
+      "en": "This morning's light says this. Count what is already here, and lack will change its shape.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 83,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL NIA CA EXARP",
+      "ja": "あなたを守る声が届いています。深く考える前に、体を少し動かしてください。",
+      "en": "A guarding voice reaches you. Move your body a little before thinking too deeply.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 84,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA MAD OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。やさしさは、境界線を持っていても消えません。",
+      "en": "The unseen letter says this. Kindness does not disappear when it has boundaries.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 85,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX ARGED CA PIR",
+      "ja": "今日の門の前で、天使は言います。沈黙の中に、次の言葉の種があります。",
+      "en": "At today's gate, the angel says this. In silence, the next word is already a seed.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 86,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL EXARP OD SOBRA",
+      "ja": "天使は静かに告げます。今日は大きな約束より、小さな実行を選んでください。",
+      "en": "The angel speaks softly. Choose a small action over a large promise today.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 87,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA IPAM CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。見えない不安には、見える手順を与えてください。",
+      "en": "This morning's light says this. Give visible steps to invisible worry.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 88,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIEN OD LAP",
+      "ja": "あなたを守る声が届いています。完璧に始める必要はありません。始めた形が道になります。",
+      "en": "A guarding voice reaches you. You do not need a perfect start. The shape of starting becomes the path.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 89,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH GRAA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。気になる名前を一つだけ、心の中で呼んでください。",
+      "en": "The unseen letter says this. Call one name in your heart, just one.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 90,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ORO OD TOH ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。失くしたと思った力は、休んでいただけです。",
+      "en": "At today's gate, the angel says this. The strength you thought was lost was only resting.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 91,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR ZACAR OBOLEH CA IAIDA",
+      "ja": "天使は静かに告げます。明るい答えほど、静かな場所で生まれます。",
+      "en": "The angel speaks softly. The brightest answers are often born in quiet places.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 92,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH PIR OD MAZ",
+      "ja": "今朝の光はこう伝えます。今日は戻ることも前進です。",
+      "en": "This morning's light says this. Returning can also be progress today.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 93,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR NIA CA NOCO",
+      "ja": "あなたを守る声が届いています。目の前の一つを丁寧に扱うと、流れが戻ります。",
+      "en": "A guarding voice reaches you. Handle one thing before you with care, and the current will return.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 94,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG PAID OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。心配を全部運ばなくていい。ひとつ置いていきましょう。",
+      "en": "The unseen letter says this. You do not need to carry every worry. Leave one behind.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 95,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD SOBRA CA BITOM",
+      "ja": "今日の門の前で、天使は言います。閉じた扉を責めず、開いている窓を探してください。",
+      "en": "At today's gate, the angel says this. Do not blame the closed door. Look for the open window.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 96,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED EXARP OD MICAOLZ",
+      "ja": "天使は静かに告げます。今日の光は、派手ではなく確かです。",
+      "en": "The angel speaks softly. Today's light is not loud, but it is steady.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 97,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IAOD CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。誰にも見せない努力も、ちゃんと形になっています。",
+      "en": "This morning's light says this. The effort no one sees is still taking form.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 98,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ZIMZ OD BALT",
+      "ja": "あなたを守る声が届いています。気持ちが追いつかない時は、予定を小さくしてください。",
+      "en": "A guarding voice reaches you. When your feelings lag behind, make the plan smaller.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 99,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID GRAA CA MAD ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。ひとつ断ることで、ひとつ守れるものがあります。",
+      "en": "The unseen letter says this. By refusing one thing, you may protect another.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 100,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD LUMIEL OD IPAM",
+      "ja": "今日の門の前で、天使は言います。夜に残った感情は、明日の地図になります。",
+      "en": "At today's gate, the angel says this. The feeling left at night becomes tomorrow's map.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 101,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL LAP CA ORO",
+      "ja": "天使は静かに告げます。強くなるとは、無理を増やすことではありません。",
+      "en": "The angel speaks softly. Growing stronger does not mean adding more strain.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 102,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO PIR OD NIA",
+      "ja": "今朝の光はこう伝えます。自分を責める声を、今日は少し遠くに置いてください。",
+      "en": "This morning's light says this. Place the voice that blames you a little farther away today.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 103,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL VONPHO CA EXARP",
+      "ja": "あなたを守る声が届いています。見直す勇気は、やり直す力になります。",
+      "en": "A guarding voice reaches you. The courage to review becomes the strength to begin again.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 104,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "ZACAR NANTA CICLE OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。軽くできるものから軽くしてください。",
+      "en": "The unseen letter says this. Lighten what can be lightened first.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 105,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX SOBRA CA PIR",
+      "ja": "今日の門の前で、天使は言います。今のあなたに必要なのは、証明より回復です。",
+      "en": "At today's gate, the angel says this. What you need now is recovery, not proof.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 106,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL PAL OD SOBRA",
+      "ja": "天使は静かに告げます。手放すものを決めると、受け取る場所が生まれます。",
+      "en": "The angel speaks softly. When you choose what to release, a place to receive appears.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 107,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA TOH CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。心の声は、急かすより待つ方がよく聞こえます。",
+      "en": "This morning's light says this. The heart is heard better by waiting than by rushing.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 108,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIMZ OD LAP ZAMRAN",
+      "ja": "あなたを守る声が届いています。今日は、古い言葉を新しい意味に変える日です。",
+      "en": "A guarding voice reaches you. Today, old words can take on a new meaning.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 109,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH NANTA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。まだ形にならない願いにも、居場所をあげてください。",
+      "en": "The unseen letter says this. Give a place to the wish that has not taken shape yet.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 110,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG IAIDA OD TOH",
+      "ja": "今日の門の前で、天使は言います。あなたの中の静かな部分が、もう答えを知っています。",
+      "en": "At today's gate, the angel says this. The quiet part of you already knows an answer.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 111,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR LAP CA IAIDA",
+      "ja": "天使は静かに告げます。遠くを見すぎたら、手元の光に戻ってください。",
+      "en": "The angel speaks softly. If you look too far away, return to the light in your hands.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 112,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH OX OD MAZ",
+      "ja": "今朝の光はこう伝えます。今日の合図は、小さく届きます。見逃さないでください。",
+      "en": "This morning's light says this. Today's sign will arrive softly. Do not miss it.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 113,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR MAZ CA NOCO",
+      "ja": "あなたを守る声が届いています。決められない時は、整えることから始めてください。",
+      "en": "A guarding voice reaches you. When you cannot decide, begin by bringing order.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 114,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG CICLE OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。心が重い日は、言葉も軽くしていいです。",
+      "en": "The unseen letter says this. On a heavy-hearted day, your words may be light.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 115,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD LIL CA BITOM",
+      "ja": "今日の門の前で、天使は言います。大切なものほど、急いで結論にしないでください。",
+      "en": "At today's gate, the angel says this. Do not turn what matters into a conclusion too quickly.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 116,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED NOCO OD MICAOLZ",
+      "ja": "天使は静かに告げます。あなたを疲れさせる役を、少し降りてもいいです。",
+      "en": "The angel speaks softly. You may step down from the role that exhausts you.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 117,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZACAR ZIEN TOH CA LOHOLO ZAMRAN",
+      "ja": "今朝の光はこう伝えます。小さな安心を先に作ると、勇気は後から来ます。",
+      "en": "This morning's light says this. Make a small safety first, and courage will follow.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 118,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ADNA OD BALT",
+      "ja": "あなたを守る声が届いています。今日は、探すより受け取る日です。",
+      "en": "A guarding voice reaches you. Today is for receiving more than searching.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 119,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID TORZU CA MAD",
+      "ja": "見えない手紙には、こう書かれています。揺れている時ほど、足元を確かめてください。",
+      "en": "The unseen letter says this. When you feel shaken, check the ground beneath you.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 120,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD IAIDA OD IPAM",
+      "ja": "今日の門の前で、天使は言います。心の奥の違和感は、無視しないでください。",
+      "en": "At today's gate, the angel says this. Do not ignore the unease deep inside.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 121,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。やさしい選択は、弱い選択ではありません。",
+      "en": "The angel speaks softly. A gentle choice is not a weak choice.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 122,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。今は遠回りに見える道が、あなたを守っています。",
+      "en": "This morning's light says this. The path that looks indirect may be protecting you now.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 123,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP",
+      "ja": "あなたを守る声が届いています。今日の一歩は、誰かに見せるためでなくていいです。",
+      "en": "A guarding voice reaches you. Today's step does not need to be seen by anyone.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 124,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。光は外から来るだけではありません。内側でも育ちます。",
+      "en": "The unseen letter says this. Light does not only come from outside. It also grows within.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 125,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。夢の中の象徴は、現実の気持ちを映します。",
+      "en": "At today's gate, the angel says this. Symbols in dreams reflect feelings in waking life.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 126,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL NOCO OD SOBRA ZAMRAN",
+      "ja": "天使は静かに告げます。名前をつけると、不安は少し小さくなります。",
+      "en": "The angel speaks softly. When you name a worry, it becomes a little smaller.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 127,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA ZONRENSG CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。今日のあなたには、余白が必要です。",
+      "en": "This morning's light says this. Today, you need some open space.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 128,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO LOHOLO OD LAP",
+      "ja": "あなたを守る声が届いています。急に変えず、向きだけ少し変えてください。",
+      "en": "A guarding voice reaches you. Do not change everything at once. Shift the direction a little.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 129,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH TORZU CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。誰かの期待より、今日の体力を信じてください。",
+      "en": "The unseen letter says this. Trust today's energy more than someone else's expectation.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 130,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZACAR ZONRENSG ZACAR OD TOH",
+      "ja": "今日の門の前で、天使は言います。終わらせることにも、祝福があります。",
+      "en": "At today's gate, the angel says this. There can be blessing in ending something.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 131,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR BALT CA IAIDA",
+      "ja": "天使は静かに告げます。残すものを選ぶと、自分の輪郭が戻ります。",
+      "en": "The angel speaks softly. Choosing what to keep brings your outline back.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 132,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH BITOM OD MAZ",
+      "ja": "今朝の光はこう伝えます。心が動いた場所に、次の入口があります。",
+      "en": "This morning's light says this. Where your heart moved, the next entrance waits.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 133,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR LANSH CA NOCO",
+      "ja": "あなたを守る声が届いています。過去を責めず、今日の扱い方を変えてください。",
+      "en": "A guarding voice reaches you. Do not blame the past. Change how you hold today.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 134,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG MAD OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。あなたの願いは、静かな手入れを待っています。",
+      "en": "The unseen letter says this. Your wish is waiting for quiet care.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 135,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD MICAOLZ CA BITOM ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。見えない守りは、生活の小さな秩序に宿ります。",
+      "en": "At today's gate, the angel says this. Unseen protection lives in small order.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 136,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED ZIR OD MICAOLZ",
+      "ja": "天使は静かに告げます。今日は、自分に戻るための短い道を選んでください。",
+      "en": "The angel speaks softly. Choose a short path back to yourself today.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 137,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IPAM CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。疑いが出たら、事実を三つだけ見てください。",
+      "en": "This morning's light says this. When doubt appears, look at only three facts.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 138,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH LOHOLO OD BALT",
+      "ja": "あなたを守る声が届いています。胸が縮む場所から、少し距離を取ってください。",
+      "en": "A guarding voice reaches you. Take a little distance from what tightens your chest.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 139,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID MALPRG CA MAD",
+      "ja": "見えない手紙には、こう書かれています。まだ言えないことは、紙にだけ預けてもいいです。",
+      "en": "The unseen letter says this. What you cannot say yet may be entrusted to paper.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 140,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD ORO OD IPAM",
+      "ja": "今日の門の前で、天使は言います。正しさより、今のあなたに効くやさしさを選んでください。",
+      "en": "At today's gate, the angel says this. Choose the kindness that helps you now over being right.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 141,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL BALT CA ORO",
+      "ja": "天使は静かに告げます。流れが止まった時は、水ではなく石を見てください。",
+      "en": "The angel speaks softly. When the flow stops, look not at the water but at the stone.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 142,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO ZOMD OD NIA",
+      "ja": "今朝の光はこう伝えます。あなたの中の古い光が、今日また少し目を覚まします。",
+      "en": "This morning's light says this. An old light within you wakes a little today.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 143,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZACAR PAL NIA CA EXARP",
+      "ja": "あなたを守る声が届いています。見守られている感覚を、急いで説明しなくていいです。",
+      "en": "A guarding voice reaches you. You do not need to explain the feeling of being watched over.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 144,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA MAD OD GRAA ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。今夜の夢に、ひとつ質問を渡してください。",
+      "en": "The unseen letter says this. Give one question to tonight's dream.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 145,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX ARGED CA PIR",
+      "ja": "今日の門の前で、天使は言います。小さな感謝は、心の扉を静かに開けます。",
+      "en": "At today's gate, the angel says this. Small gratitude quietly opens the heart's door.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 146,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL EXARP OD SOBRA",
+      "ja": "天使は静かに告げます。今日は、必要なものだけ持って進んでください。",
+      "en": "The angel speaks softly. Today, carry only what is needed.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 147,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA IPAM CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。焦らなくていい。今日の扉は、静かに開きます。",
+      "en": "This morning's light says this. You do not need to rush. Today's door opens quietly.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 148,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIEN OD LAP",
+      "ja": "あなたを守る声が届いています。答えを急ぐより、問いをきれいに整えてください。",
+      "en": "A guarding voice reaches you. Shape the question before you chase the answer.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 149,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH GRAA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。小さな片づけが、心の通り道を作ります。",
+      "en": "The unseen letter says this. One small act of clearing makes a path through the heart.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 150,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ORO OD TOH",
+      "ja": "今日の門の前で、天使は言います。言葉を減らすほど、本音が見えやすくなります。",
+      "en": "At today's gate, the angel says this. When words grow fewer, the truth becomes easier to see.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 151,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR OBOLEH CA IAIDA",
+      "ja": "天使は静かに告げます。今日は勝つ日ではなく、乱れを戻す日です。",
+      "en": "The angel speaks softly. Today is not for winning. It is for restoring your balance.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 152,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH PIR OD MAZ",
+      "ja": "今朝の光はこう伝えます。胸の奥で光っているものを、見失わないでください。",
+      "en": "This morning's light says this. Do not lose sight of what glows deep in your chest.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 153,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR NIA CA NOCO ZAMRAN",
+      "ja": "あなたを守る声が届いています。迷いは敵ではありません。向きを変える合図です。",
+      "en": "A guarding voice reaches you. Uncertainty is not an enemy. It is a sign to change direction.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 154,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG PAID OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。誰かの声より、自分の呼吸を先に聞いてください。",
+      "en": "The unseen letter says this. Listen to your breath before you listen to anyone else.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 155,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD SOBRA CA BITOM",
+      "ja": "今日の門の前で、天使は言います。今あるものを数えると、足りないものの形が変わります。",
+      "en": "At today's gate, the angel says this. Count what is already here, and lack will change its shape.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 156,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ZACAR ARGED EXARP OD MICAOLZ",
+      "ja": "天使は静かに告げます。深く考える前に、体を少し動かしてください。",
+      "en": "The angel speaks softly. Move your body a little before thinking too deeply.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 157,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IAOD CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。やさしさは、境界線を持っていても消えません。",
+      "en": "This morning's light says this. Kindness does not disappear when it has boundaries.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 158,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ZIMZ OD BALT",
+      "ja": "あなたを守る声が届いています。沈黙の中に、次の言葉の種があります。",
+      "en": "A guarding voice reaches you. In silence, the next word is already a seed.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 159,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID GRAA CA MAD",
+      "ja": "見えない手紙には、こう書かれています。今日は大きな約束より、小さな実行を選んでください。",
+      "en": "The unseen letter says this. Choose a small action over a large promise today.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 160,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD LUMIEL OD IPAM",
+      "ja": "今日の門の前で、天使は言います。見えない不安には、見える手順を与えてください。",
+      "en": "At today's gate, the angel says this. Give visible steps to invisible worry.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 161,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL LAP CA ORO",
+      "ja": "天使は静かに告げます。完璧に始める必要はありません。始めた形が道になります。",
+      "en": "The angel speaks softly. You do not need a perfect start. The shape of starting becomes the path.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 162,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO PIR OD NIA ZAMRAN",
+      "ja": "今朝の光はこう伝えます。気になる名前を一つだけ、心の中で呼んでください。",
+      "en": "This morning's light says this. Call one name in your heart, just one.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 163,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL VONPHO CA EXARP",
+      "ja": "あなたを守る声が届いています。失くしたと思った力は、休んでいただけです。",
+      "en": "A guarding voice reaches you. The strength you thought was lost was only resting.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 164,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA CICLE OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。明るい答えほど、静かな場所で生まれます。",
+      "en": "The unseen letter says this. The brightest answers are often born in quiet places.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 165,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX SOBRA CA PIR",
+      "ja": "今日の門の前で、天使は言います。今日は戻ることも前進です。",
+      "en": "At today's gate, the angel says this. Returning can also be progress today.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 166,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL PAL OD SOBRA",
+      "ja": "天使は静かに告げます。目の前の一つを丁寧に扱うと、流れが戻ります。",
+      "en": "The angel speaks softly. Handle one thing before you with care, and the current will return.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 167,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA TOH CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。心配を全部運ばなくていい。ひとつ置いていきましょう。",
+      "en": "This morning's light says this. You do not need to carry every worry. Leave one behind.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 168,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIMZ OD LAP",
+      "ja": "あなたを守る声が届いています。閉じた扉を責めず、開いている窓を探してください。",
+      "en": "A guarding voice reaches you. Do not blame the closed door. Look for the open window.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 169,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "ZACAR HOATH NANTA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。今日の光は、派手ではなく確かです。",
+      "en": "The unseen letter says this. Today's light is not loud, but it is steady.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 170,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG IAIDA OD TOH",
+      "ja": "今日の門の前で、天使は言います。誰にも見せない努力も、ちゃんと形になっています。",
+      "en": "At today's gate, the angel says this. The effort no one sees is still taking form.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 171,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR LAP CA IAIDA ZAMRAN",
+      "ja": "天使は静かに告げます。気持ちが追いつかない時は、予定を小さくしてください。",
+      "en": "The angel speaks softly. When your feelings lag behind, make the plan smaller.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 172,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH OX OD MAZ",
+      "ja": "今朝の光はこう伝えます。ひとつ断ることで、ひとつ守れるものがあります。",
+      "en": "This morning's light says this. By refusing one thing, you may protect another.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 173,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR MAZ CA NOCO",
+      "ja": "あなたを守る声が届いています。夜に残った感情は、明日の地図になります。",
+      "en": "A guarding voice reaches you. The feeling left at night becomes tomorrow's map.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 174,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG CICLE OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。強くなるとは、無理を増やすことではありません。",
+      "en": "The unseen letter says this. Growing stronger does not mean adding more strain.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 175,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD LIL CA BITOM",
+      "ja": "今日の門の前で、天使は言います。自分を責める声を、今日は少し遠くに置いてください。",
+      "en": "At today's gate, the angel says this. Place the voice that blames you a little farther away today.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 176,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED NOCO OD MICAOLZ",
+      "ja": "天使は静かに告げます。見直す勇気は、やり直す力になります。",
+      "en": "The angel speaks softly. The courage to review becomes the strength to begin again.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 177,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN TOH CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。軽くできるものから軽くしてください。",
+      "en": "This morning's light says this. Lighten what can be lightened first.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 178,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ADNA OD BALT",
+      "ja": "あなたを守る声が届いています。今のあなたに必要なのは、証明より回復です。",
+      "en": "A guarding voice reaches you. What you need now is recovery, not proof.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 179,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID TORZU CA MAD",
+      "ja": "見えない手紙には、こう書かれています。手放すものを決めると、受け取る場所が生まれます。",
+      "en": "The unseen letter says this. When you choose what to release, a place to receive appears.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 180,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD IAIDA OD IPAM ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。心の声は、急かすより待つ方がよく聞こえます。",
+      "en": "At today's gate, the angel says this. The heart is heard better by waiting than by rushing.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 181,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。今日は、古い言葉を新しい意味に変える日です。",
+      "en": "The angel speaks softly. Today, old words can take on a new meaning.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 182,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "ZACAR VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。まだ形にならない願いにも、居場所をあげてください。",
+      "en": "This morning's light says this. Give a place to the wish that has not taken shape yet.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 183,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP",
+      "ja": "あなたを守る声が届いています。あなたの中の静かな部分が、もう答えを知っています。",
+      "en": "A guarding voice reaches you. The quiet part of you already knows an answer.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 184,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。遠くを見すぎたら、手元の光に戻ってください。",
+      "en": "The unseen letter says this. If you look too far away, return to the light in your hands.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 185,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。今日の合図は、小さく届きます。見逃さないでください。",
+      "en": "At today's gate, the angel says this. Today's sign will arrive softly. Do not miss it.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 186,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL NOCO OD SOBRA",
+      "ja": "天使は静かに告げます。決められない時は、整えることから始めてください。",
+      "en": "The angel speaks softly. When you cannot decide, begin by bringing order.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 187,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA ZONRENSG CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。心が重い日は、言葉も軽くしていいです。",
+      "en": "This morning's light says this. On a heavy-hearted day, your words may be light.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 188,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO LOHOLO OD LAP",
+      "ja": "あなたを守る声が届いています。大切なものほど、急いで結論にしないでください。",
+      "en": "A guarding voice reaches you. Do not turn what matters into a conclusion too quickly.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 189,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH TORZU CA CICLE ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。あなたを疲れさせる役を、少し降りてもいいです。",
+      "en": "The unseen letter says this. You may step down from the role that exhausts you.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 190,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ZACAR OD TOH",
+      "ja": "今日の門の前で、天使は言います。小さな安心を先に作ると、勇気は後から来ます。",
+      "en": "At today's gate, the angel says this. Make a small safety first, and courage will follow.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 191,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR BALT CA IAIDA",
+      "ja": "天使は静かに告げます。今日は、探すより受け取る日です。",
+      "en": "The angel speaks softly. Today is for receiving more than searching.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 192,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH BITOM OD MAZ",
+      "ja": "今朝の光はこう伝えます。揺れている時ほど、足元を確かめてください。",
+      "en": "This morning's light says this. When you feel shaken, check the ground beneath you.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 193,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR LANSH CA NOCO",
+      "ja": "あなたを守る声が届いています。心の奥の違和感は、無視しないでください。",
+      "en": "A guarding voice reaches you. Do not ignore the unease deep inside.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 194,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG MAD OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。やさしい選択は、弱い選択ではありません。",
+      "en": "The unseen letter says this. A gentle choice is not a weak choice.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 195,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZACAR ZOMD MICAOLZ CA BITOM",
+      "ja": "今日の門の前で、天使は言います。今は遠回りに見える道が、あなたを守っています。",
+      "en": "At today's gate, the angel says this. The path that looks indirect may be protecting you now.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 196,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED ZIR OD MICAOLZ",
+      "ja": "天使は静かに告げます。今日の一歩は、誰かに見せるためでなくていいです。",
+      "en": "The angel speaks softly. Today's step does not need to be seen by anyone.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 197,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IPAM CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。光は外から来るだけではありません。内側でも育ちます。",
+      "en": "This morning's light says this. Light does not only come from outside. It also grows within.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 198,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH LOHOLO OD BALT ZAMRAN",
+      "ja": "あなたを守る声が届いています。夢の中の象徴は、現実の気持ちを映します。",
+      "en": "A guarding voice reaches you. Symbols in dreams reflect feelings in waking life.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 199,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID MALPRG CA MAD",
+      "ja": "見えない手紙には、こう書かれています。名前をつけると、不安は少し小さくなります。",
+      "en": "The unseen letter says this. When you name a worry, it becomes a little smaller.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 200,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD ORO OD IPAM",
+      "ja": "今日の門の前で、天使は言います。今日のあなたには、余白が必要です。",
+      "en": "At today's gate, the angel says this. Today, you need some open space.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 201,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL BALT CA ORO",
+      "ja": "天使は静かに告げます。急に変えず、向きだけ少し変えてください。",
+      "en": "The angel speaks softly. Do not change everything at once. Shift the direction a little.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 202,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO ZOMD OD NIA",
+      "ja": "今朝の光はこう伝えます。誰かの期待より、今日の体力を信じてください。",
+      "en": "This morning's light says this. Trust today's energy more than someone else's expectation.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 203,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL NIA CA EXARP",
+      "ja": "あなたを守る声が届いています。終わらせることにも、祝福があります。",
+      "en": "A guarding voice reaches you. There can be blessing in ending something.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 204,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA MAD OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。残すものを選ぶと、自分の輪郭が戻ります。",
+      "en": "The unseen letter says this. Choosing what to keep brings your outline back.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 205,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX ARGED CA PIR",
+      "ja": "今日の門の前で、天使は言います。心が動いた場所に、次の入口があります。",
+      "en": "At today's gate, the angel says this. Where your heart moved, the next entrance waits.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 206,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL EXARP OD SOBRA",
+      "ja": "天使は静かに告げます。過去を責めず、今日の扱い方を変えてください。",
+      "en": "The angel speaks softly. Do not blame the past. Change how you hold today.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 207,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA IPAM CA ZIMZ ZAMRAN",
+      "ja": "今朝の光はこう伝えます。あなたの願いは、静かな手入れを待っています。",
+      "en": "This morning's light says this. Your wish is waiting for quiet care.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 208,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZACAR ZIRDO ZIEN OD LAP",
+      "ja": "あなたを守る声が届いています。見えない守りは、生活の小さな秩序に宿ります。",
+      "en": "A guarding voice reaches you. Unseen protection lives in small order.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 209,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH GRAA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。今日は、自分に戻るための短い道を選んでください。",
+      "en": "The unseen letter says this. Choose a short path back to yourself today.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 210,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ORO OD TOH",
+      "ja": "今日の門の前で、天使は言います。疑いが出たら、事実を三つだけ見てください。",
+      "en": "At today's gate, the angel says this. When doubt appears, look at only three facts.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 211,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR OBOLEH CA IAIDA",
+      "ja": "天使は静かに告げます。胸が縮む場所から、少し距離を取ってください。",
+      "en": "The angel speaks softly. Take a little distance from what tightens your chest.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 212,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH PIR OD MAZ",
+      "ja": "今朝の光はこう伝えます。まだ言えないことは、紙にだけ預けてもいいです。",
+      "en": "This morning's light says this. What you cannot say yet may be entrusted to paper.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 213,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR NIA CA NOCO",
+      "ja": "あなたを守る声が届いています。正しさより、今のあなたに効くやさしさを選んでください。",
+      "en": "A guarding voice reaches you. Choose the kindness that helps you now over being right.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 214,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG PAID OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。流れが止まった時は、水ではなく石を見てください。",
+      "en": "The unseen letter says this. When the flow stops, look not at the water but at the stone.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 215,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD SOBRA CA BITOM",
+      "ja": "今日の門の前で、天使は言います。あなたの中の古い光が、今日また少し目を覚まします。",
+      "en": "At today's gate, the angel says this. An old light within you wakes a little today.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 216,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED EXARP OD MICAOLZ ZAMRAN",
+      "ja": "天使は静かに告げます。見守られている感覚を、急いで説明しなくていいです。",
+      "en": "The angel speaks softly. You do not need to explain the feeling of being watched over.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 217,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IAOD CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。今夜の夢に、ひとつ質問を渡してください。",
+      "en": "This morning's light says this. Give one question to tonight's dream.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 218,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ZIMZ OD BALT",
+      "ja": "あなたを守る声が届いています。小さな感謝は、心の扉を静かに開けます。",
+      "en": "A guarding voice reaches you. Small gratitude quietly opens the heart's door.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 219,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID GRAA CA MAD",
+      "ja": "見えない手紙には、こう書かれています。今日は、必要なものだけ持って進んでください。",
+      "en": "The unseen letter says this. Today, carry only what is needed.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 220,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD LUMIEL OD IPAM",
+      "ja": "今日の門の前で、天使は言います。焦らなくていい。今日の扉は、静かに開きます。",
+      "en": "At today's gate, the angel says this. You do not need to rush. Today's door opens quietly.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 221,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR LUMIEL LAP CA ORO",
+      "ja": "天使は静かに告げます。答えを急ぐより、問いをきれいに整えてください。",
+      "en": "The angel speaks softly. Shape the question before you chase the answer.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 222,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO PIR OD NIA",
+      "ja": "今朝の光はこう伝えます。小さな片づけが、心の通り道を作ります。",
+      "en": "This morning's light says this. One small act of clearing makes a path through the heart.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 223,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL VONPHO CA EXARP",
+      "ja": "あなたを守る声が届いています。言葉を減らすほど、本音が見えやすくなります。",
+      "en": "A guarding voice reaches you. When words grow fewer, the truth becomes easier to see.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 224,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA CICLE OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。今日は勝つ日ではなく、乱れを戻す日です。",
+      "en": "The unseen letter says this. Today is not for winning. It is for restoring your balance.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 225,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX SOBRA CA PIR ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。胸の奥で光っているものを、見失わないでください。",
+      "en": "At today's gate, the angel says this. Do not lose sight of what glows deep in your chest.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 226,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL PAL OD SOBRA",
+      "ja": "天使は静かに告げます。迷いは敵ではありません。向きを変える合図です。",
+      "en": "The angel speaks softly. Uncertainty is not an enemy. It is a sign to change direction.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 227,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA TOH CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。誰かの声より、自分の呼吸を先に聞いてください。",
+      "en": "This morning's light says this. Listen to your breath before you listen to anyone else.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 228,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIMZ OD LAP",
+      "ja": "あなたを守る声が届いています。今あるものを数えると、足りないものの形が変わります。",
+      "en": "A guarding voice reaches you. Count what is already here, and lack will change its shape.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 229,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH NANTA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。深く考える前に、体を少し動かしてください。",
+      "en": "The unseen letter says this. Move your body a little before thinking too deeply.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 230,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG IAIDA OD TOH",
+      "ja": "今日の門の前で、天使は言います。やさしさは、境界線を持っていても消えません。",
+      "en": "At today's gate, the angel says this. Kindness does not disappear when it has boundaries.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 231,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR LAP CA IAIDA",
+      "ja": "天使は静かに告げます。沈黙の中に、次の言葉の種があります。",
+      "en": "The angel speaks softly. In silence, the next word is already a seed.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 232,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH OX OD MAZ",
+      "ja": "今朝の光はこう伝えます。今日は大きな約束より、小さな実行を選んでください。",
+      "en": "This morning's light says this. Choose a small action over a large promise today.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 233,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR MAZ CA NOCO",
+      "ja": "あなたを守る声が届いています。見えない不安には、見える手順を与えてください。",
+      "en": "A guarding voice reaches you. Give visible steps to invisible worry.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 234,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "ZACAR MALPRG CICLE OD TORZU ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。完璧に始める必要はありません。始めた形が道になります。",
+      "en": "The unseen letter says this. You do not need a perfect start. The shape of starting becomes the path.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 235,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD LIL CA BITOM",
+      "ja": "今日の門の前で、天使は言います。気になる名前を一つだけ、心の中で呼んでください。",
+      "en": "At today's gate, the angel says this. Call one name in your heart, just one.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 236,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED NOCO OD MICAOLZ",
+      "ja": "天使は静かに告げます。失くしたと思った力は、休んでいただけです。",
+      "en": "The angel speaks softly. The strength you thought was lost was only resting.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 237,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN TOH CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。明るい答えほど、静かな場所で生まれます。",
+      "en": "This morning's light says this. The brightest answers are often born in quiet places.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 238,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ADNA OD BALT",
+      "ja": "あなたを守る声が届いています。今日は戻ることも前進です。",
+      "en": "A guarding voice reaches you. Returning can also be progress today.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 239,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID TORZU CA MAD",
+      "ja": "見えない手紙には、こう書かれています。目の前の一つを丁寧に扱うと、流れが戻ります。",
+      "en": "The unseen letter says this. Handle one thing before you with care, and the current will return.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 240,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD IAIDA OD IPAM",
+      "ja": "今日の門の前で、天使は言います。心配を全部運ばなくていい。ひとつ置いていきましょう。",
+      "en": "At today's gate, the angel says this. You do not need to carry every worry. Leave one behind.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 241,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。閉じた扉を責めず、開いている窓を探してください。",
+      "en": "The angel speaks softly. Do not blame the closed door. Look for the open window.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 242,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。今日の光は、派手ではなく確かです。",
+      "en": "This morning's light says this. Today's light is not loud, but it is steady.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 243,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP ZAMRAN",
+      "ja": "あなたを守る声が届いています。誰にも見せない努力も、ちゃんと形になっています。",
+      "en": "A guarding voice reaches you. The effort no one sees is still taking form.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 244,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。気持ちが追いつかない時は、予定を小さくしてください。",
+      "en": "The unseen letter says this. When your feelings lag behind, make the plan smaller.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 245,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。ひとつ断ることで、ひとつ守れるものがあります。",
+      "en": "At today's gate, the angel says this. By refusing one thing, you may protect another.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 246,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL NOCO OD SOBRA",
+      "ja": "天使は静かに告げます。夜に残った感情は、明日の地図になります。",
+      "en": "The angel speaks softly. The feeling left at night becomes tomorrow's map.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 247,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZACAR ADNA ZONRENSG CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。強くなるとは、無理を増やすことではありません。",
+      "en": "This morning's light says this. Growing stronger does not mean adding more strain.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 248,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO LOHOLO OD LAP",
+      "ja": "あなたを守る声が届いています。自分を責める声を、今日は少し遠くに置いてください。",
+      "en": "A guarding voice reaches you. Place the voice that blames you a little farther away today.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 249,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH TORZU CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。見直す勇気は、やり直す力になります。",
+      "en": "The unseen letter says this. The courage to review becomes the strength to begin again.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 250,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ZACAR OD TOH",
+      "ja": "今日の門の前で、天使は言います。軽くできるものから軽くしてください。",
+      "en": "At today's gate, the angel says this. Lighten what can be lightened first.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 251,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR BALT CA IAIDA",
+      "ja": "天使は静かに告げます。今のあなたに必要なのは、証明より回復です。",
+      "en": "The angel speaks softly. What you need now is recovery, not proof.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 252,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH BITOM OD MAZ ZAMRAN",
+      "ja": "今朝の光はこう伝えます。手放すものを決めると、受け取る場所が生まれます。",
+      "en": "This morning's light says this. When you choose what to release, a place to receive appears.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 253,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR LANSH CA NOCO",
+      "ja": "あなたを守る声が届いています。心の声は、急かすより待つ方がよく聞こえます。",
+      "en": "A guarding voice reaches you. The heart is heard better by waiting than by rushing.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 254,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG MAD OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。今日は、古い言葉を新しい意味に変える日です。",
+      "en": "The unseen letter says this. Today, old words can take on a new meaning.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 255,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD MICAOLZ CA BITOM",
+      "ja": "今日の門の前で、天使は言います。まだ形にならない願いにも、居場所をあげてください。",
+      "en": "At today's gate, the angel says this. Give a place to the wish that has not taken shape yet.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 256,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED ZIR OD MICAOLZ",
+      "ja": "天使は静かに告げます。あなたの中の静かな部分が、もう答えを知っています。",
+      "en": "The angel speaks softly. The quiet part of you already knows an answer.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 257,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IPAM CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。遠くを見すぎたら、手元の光に戻ってください。",
+      "en": "This morning's light says this. If you look too far away, return to the light in your hands.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 258,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH LOHOLO OD BALT",
+      "ja": "あなたを守る声が届いています。今日の合図は、小さく届きます。見逃さないでください。",
+      "en": "A guarding voice reaches you. Today's sign will arrive softly. Do not miss it.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 259,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID MALPRG CA MAD",
+      "ja": "見えない手紙には、こう書かれています。決められない時は、整えることから始めてください。",
+      "en": "The unseen letter says this. When you cannot decide, begin by bringing order.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 260,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZACAR IAOD ORO OD IPAM",
+      "ja": "今日の門の前で、天使は言います。心が重い日は、言葉も軽くしていいです。",
+      "en": "At today's gate, the angel says this. On a heavy-hearted day, your words may be light.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 261,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL BALT CA ORO ZAMRAN",
+      "ja": "天使は静かに告げます。大切なものほど、急いで結論にしないでください。",
+      "en": "The angel speaks softly. Do not turn what matters into a conclusion too quickly.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 262,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO ZOMD OD NIA",
+      "ja": "今朝の光はこう伝えます。あなたを疲れさせる役を、少し降りてもいいです。",
+      "en": "This morning's light says this. You may step down from the role that exhausts you.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 263,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL NIA CA EXARP",
+      "ja": "あなたを守る声が届いています。小さな安心を先に作ると、勇気は後から来ます。",
+      "en": "A guarding voice reaches you. Make a small safety first, and courage will follow.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 264,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA MAD OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。今日は、探すより受け取る日です。",
+      "en": "The unseen letter says this. Today is for receiving more than searching.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 265,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX ARGED CA PIR",
+      "ja": "今日の門の前で、天使は言います。揺れている時ほど、足元を確かめてください。",
+      "en": "At today's gate, the angel says this. When you feel shaken, check the ground beneath you.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 266,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL EXARP OD SOBRA",
+      "ja": "天使は静かに告げます。心の奥の違和感は、無視しないでください。",
+      "en": "The angel speaks softly. Do not ignore the unease deep inside.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 267,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA IPAM CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。やさしい選択は、弱い選択ではありません。",
+      "en": "This morning's light says this. A gentle choice is not a weak choice.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 268,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIEN OD LAP",
+      "ja": "あなたを守る声が届いています。今は遠回りに見える道が、あなたを守っています。",
+      "en": "A guarding voice reaches you. The path that looks indirect may be protecting you now.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 269,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH GRAA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。今日の一歩は、誰かに見せるためでなくていいです。",
+      "en": "The unseen letter says this. Today's step does not need to be seen by anyone.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 270,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ORO OD TOH ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。光は外から来るだけではありません。内側でも育ちます。",
+      "en": "At today's gate, the angel says this. Light does not only come from outside. It also grows within.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 271,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR OBOLEH CA IAIDA",
+      "ja": "天使は静かに告げます。夢の中の象徴は、現実の気持ちを映します。",
+      "en": "The angel speaks softly. Symbols in dreams reflect feelings in waking life.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 272,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH PIR OD MAZ",
+      "ja": "今朝の光はこう伝えます。名前をつけると、不安は少し小さくなります。",
+      "en": "This morning's light says this. When you name a worry, it becomes a little smaller.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 273,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZACAR ZIR NIA CA NOCO",
+      "ja": "あなたを守る声が届いています。今日のあなたには、余白が必要です。",
+      "en": "A guarding voice reaches you. Today, you need some open space.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 274,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG PAID OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。急に変えず、向きだけ少し変えてください。",
+      "en": "The unseen letter says this. Do not change everything at once. Shift the direction a little.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 275,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD SOBRA CA BITOM",
+      "ja": "今日の門の前で、天使は言います。誰かの期待より、今日の体力を信じてください。",
+      "en": "At today's gate, the angel says this. Trust today's energy more than someone else's expectation.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 276,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED EXARP OD MICAOLZ",
+      "ja": "天使は静かに告げます。終わらせることにも、祝福があります。",
+      "en": "The angel speaks softly. There can be blessing in ending something.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 277,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IAOD CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。残すものを選ぶと、自分の輪郭が戻ります。",
+      "en": "This morning's light says this. Choosing what to keep brings your outline back.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 278,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ZIMZ OD BALT",
+      "ja": "あなたを守る声が届いています。心が動いた場所に、次の入口があります。",
+      "en": "A guarding voice reaches you. Where your heart moved, the next entrance waits.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 279,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID GRAA CA MAD ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。過去を責めず、今日の扱い方を変えてください。",
+      "en": "The unseen letter says this. Do not blame the past. Change how you hold today.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 280,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD LUMIEL OD IPAM",
+      "ja": "今日の門の前で、天使は言います。あなたの願いは、静かな手入れを待っています。",
+      "en": "At today's gate, the angel says this. Your wish is waiting for quiet care.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 281,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL LAP CA ORO",
+      "ja": "天使は静かに告げます。見えない守りは、生活の小さな秩序に宿ります。",
+      "en": "The angel speaks softly. Unseen protection lives in small order.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 282,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO PIR OD NIA",
+      "ja": "今朝の光はこう伝えます。今日は、自分に戻るための短い道を選んでください。",
+      "en": "This morning's light says this. Choose a short path back to yourself today.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 283,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL VONPHO CA EXARP",
+      "ja": "あなたを守る声が届いています。疑いが出たら、事実を三つだけ見てください。",
+      "en": "A guarding voice reaches you. When doubt appears, look at only three facts.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 284,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA CICLE OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。胸が縮む場所から、少し距離を取ってください。",
+      "en": "The unseen letter says this. Take a little distance from what tightens your chest.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 285,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX SOBRA CA PIR",
+      "ja": "今日の門の前で、天使は言います。まだ言えないことは、紙にだけ預けてもいいです。",
+      "en": "At today's gate, the angel says this. What you cannot say yet may be entrusted to paper.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 286,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ZACAR LIL PAL OD SOBRA",
+      "ja": "天使は静かに告げます。正しさより、今のあなたに効くやさしさを選んでください。",
+      "en": "The angel speaks softly. Choose the kindness that helps you now over being right.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 287,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA TOH CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。流れが止まった時は、水ではなく石を見てください。",
+      "en": "This morning's light says this. When the flow stops, look not at the water but at the stone.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 288,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIMZ OD LAP ZAMRAN",
+      "ja": "あなたを守る声が届いています。あなたの中の古い光が、今日また少し目を覚まします。",
+      "en": "A guarding voice reaches you. An old light within you wakes a little today.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 289,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH NANTA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。見守られている感覚を、急いで説明しなくていいです。",
+      "en": "The unseen letter says this. You do not need to explain the feeling of being watched over.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 290,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG IAIDA OD TOH",
+      "ja": "今日の門の前で、天使は言います。今夜の夢に、ひとつ質問を渡してください。",
+      "en": "At today's gate, the angel says this. Give one question to tonight's dream.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 291,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR LAP CA IAIDA",
+      "ja": "天使は静かに告げます。小さな感謝は、心の扉を静かに開けます。",
+      "en": "The angel speaks softly. Small gratitude quietly opens the heart's door.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 292,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH OX OD MAZ",
+      "ja": "今朝の光はこう伝えます。今日は、必要なものだけ持って進んでください。",
+      "en": "This morning's light says this. Today, carry only what is needed.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 293,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR MAZ CA NOCO",
+      "ja": "あなたを守る声が届いています。焦らなくていい。今日の扉は、静かに開きます。",
+      "en": "A guarding voice reaches you. You do not need to rush. Today's door opens quietly.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 294,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG CICLE OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。答えを急ぐより、問いをきれいに整えてください。",
+      "en": "The unseen letter says this. Shape the question before you chase the answer.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 295,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD LIL CA BITOM",
+      "ja": "今日の門の前で、天使は言います。小さな片づけが、心の通り道を作ります。",
+      "en": "At today's gate, the angel says this. One small act of clearing makes a path through the heart.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 296,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED NOCO OD MICAOLZ",
+      "ja": "天使は静かに告げます。言葉を減らすほど、本音が見えやすくなります。",
+      "en": "The angel speaks softly. When words grow fewer, the truth becomes easier to see.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 297,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN TOH CA LOHOLO ZAMRAN",
+      "ja": "今朝の光はこう伝えます。今日は勝つ日ではなく、乱れを戻す日です。",
+      "en": "This morning's light says this. Today is not for winning. It is for restoring your balance.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 298,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ADNA OD BALT",
+      "ja": "あなたを守る声が届いています。胸の奥で光っているものを、見失わないでください。",
+      "en": "A guarding voice reaches you. Do not lose sight of what glows deep in your chest.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 299,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "ZACAR PAID TORZU CA MAD",
+      "ja": "見えない手紙には、こう書かれています。迷いは敵ではありません。向きを変える合図です。",
+      "en": "The unseen letter says this. Uncertainty is not an enemy. It is a sign to change direction.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 300,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD IAIDA OD IPAM",
+      "ja": "今日の門の前で、天使は言います。誰かの声より、自分の呼吸を先に聞いてください。",
+      "en": "At today's gate, the angel says this. Listen to your breath before you listen to anyone else.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 301,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。今あるものを数えると、足りないものの形が変わります。",
+      "en": "The angel speaks softly. Count what is already here, and lack will change its shape.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 302,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。深く考える前に、体を少し動かしてください。",
+      "en": "This morning's light says this. Move your body a little before thinking too deeply.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 303,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP",
+      "ja": "あなたを守る声が届いています。やさしさは、境界線を持っていても消えません。",
+      "en": "A guarding voice reaches you. Kindness does not disappear when it has boundaries.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 304,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。沈黙の中に、次の言葉の種があります。",
+      "en": "The unseen letter says this. In silence, the next word is already a seed.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 305,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。今日は大きな約束より、小さな実行を選んでください。",
+      "en": "At today's gate, the angel says this. Choose a small action over a large promise today.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 306,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL NOCO OD SOBRA ZAMRAN",
+      "ja": "天使は静かに告げます。見えない不安には、見える手順を与えてください。",
+      "en": "The angel speaks softly. Give visible steps to invisible worry.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 307,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA ZONRENSG CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。完璧に始める必要はありません。始めた形が道になります。",
+      "en": "This morning's light says this. You do not need a perfect start. The shape of starting becomes the path.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 308,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO LOHOLO OD LAP",
+      "ja": "あなたを守る声が届いています。気になる名前を一つだけ、心の中で呼んでください。",
+      "en": "A guarding voice reaches you. Call one name in your heart, just one.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 309,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH TORZU CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。失くしたと思った力は、休んでいただけです。",
+      "en": "The unseen letter says this. The strength you thought was lost was only resting.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 310,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ZACAR OD TOH",
+      "ja": "今日の門の前で、天使は言います。明るい答えほど、静かな場所で生まれます。",
+      "en": "At today's gate, the angel says this. The brightest answers are often born in quiet places.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 311,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR BALT CA IAIDA",
+      "ja": "天使は静かに告げます。今日は戻ることも前進です。",
+      "en": "The angel speaks softly. Returning can also be progress today.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 312,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "ZACAR LANSH BITOM OD MAZ",
+      "ja": "今朝の光はこう伝えます。目の前の一つを丁寧に扱うと、流れが戻ります。",
+      "en": "This morning's light says this. Handle one thing before you with care, and the current will return.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 313,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR LANSH CA NOCO",
+      "ja": "あなたを守る声が届いています。心配を全部運ばなくていい。ひとつ置いていきましょう。",
+      "en": "A guarding voice reaches you. You do not need to carry every worry. Leave one behind.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 314,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG MAD OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。閉じた扉を責めず、開いている窓を探してください。",
+      "en": "The unseen letter says this. Do not blame the closed door. Look for the open window.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 315,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD MICAOLZ CA BITOM ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。今日の光は、派手ではなく確かです。",
+      "en": "At today's gate, the angel says this. Today's light is not loud, but it is steady.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 316,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED ZIR OD MICAOLZ",
+      "ja": "天使は静かに告げます。誰にも見せない努力も、ちゃんと形になっています。",
+      "en": "The angel speaks softly. The effort no one sees is still taking form.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 317,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IPAM CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。気持ちが追いつかない時は、予定を小さくしてください。",
+      "en": "This morning's light says this. When your feelings lag behind, make the plan smaller.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 318,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH LOHOLO OD BALT",
+      "ja": "あなたを守る声が届いています。ひとつ断ることで、ひとつ守れるものがあります。",
+      "en": "A guarding voice reaches you. By refusing one thing, you may protect another.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 319,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID MALPRG CA MAD",
+      "ja": "見えない手紙には、こう書かれています。夜に残った感情は、明日の地図になります。",
+      "en": "The unseen letter says this. The feeling left at night becomes tomorrow's map.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 320,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD ORO OD IPAM",
+      "ja": "今日の門の前で、天使は言います。強くなるとは、無理を増やすことではありません。",
+      "en": "At today's gate, the angel says this. Growing stronger does not mean adding more strain.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 321,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL BALT CA ORO",
+      "ja": "天使は静かに告げます。自分を責める声を、今日は少し遠くに置いてください。",
+      "en": "The angel speaks softly. Place the voice that blames you a little farther away today.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 322,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO ZOMD OD NIA",
+      "ja": "今朝の光はこう伝えます。見直す勇気は、やり直す力になります。",
+      "en": "This morning's light says this. The courage to review becomes the strength to begin again.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 323,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL NIA CA EXARP",
+      "ja": "あなたを守る声が届いています。軽くできるものから軽くしてください。",
+      "en": "A guarding voice reaches you. Lighten what can be lightened first.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 324,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA MAD OD GRAA ZAMRAN",
+      "ja": "見えない手紙には、こう書かれています。今のあなたに必要なのは、証明より回復です。",
+      "en": "The unseen letter says this. What you need now is recovery, not proof.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 325,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZACAR OX ARGED CA PIR",
+      "ja": "今日の門の前で、天使は言います。手放すものを決めると、受け取る場所が生まれます。",
+      "en": "At today's gate, the angel says this. When you choose what to release, a place to receive appears.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 326,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL EXARP OD SOBRA",
+      "ja": "天使は静かに告げます。心の声は、急かすより待つ方がよく聞こえます。",
+      "en": "The angel speaks softly. The heart is heard better by waiting than by rushing.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 327,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA IPAM CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。今日は、古い言葉を新しい意味に変える日です。",
+      "en": "This morning's light says this. Today, old words can take on a new meaning.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 328,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIEN OD LAP",
+      "ja": "あなたを守る声が届いています。まだ形にならない願いにも、居場所をあげてください。",
+      "en": "A guarding voice reaches you. Give a place to the wish that has not taken shape yet.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 329,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH GRAA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。あなたの中の静かな部分が、もう答えを知っています。",
+      "en": "The unseen letter says this. The quiet part of you already knows an answer.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 330,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG ORO OD TOH",
+      "ja": "今日の門の前で、天使は言います。遠くを見すぎたら、手元の光に戻ってください。",
+      "en": "At today's gate, the angel says this. If you look too far away, return to the light in your hands.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 331,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR OBOLEH CA IAIDA",
+      "ja": "天使は静かに告げます。今日の合図は、小さく届きます。見逃さないでください。",
+      "en": "The angel speaks softly. Today's sign will arrive softly. Do not miss it.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 332,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH PIR OD MAZ",
+      "ja": "今朝の光はこう伝えます。決められない時は、整えることから始めてください。",
+      "en": "This morning's light says this. When you cannot decide, begin by bringing order.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 333,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR NIA CA NOCO ZAMRAN",
+      "ja": "あなたを守る声が届いています。心が重い日は、言葉も軽くしていいです。",
+      "en": "A guarding voice reaches you. On a heavy-hearted day, your words may be light.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 334,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG PAID OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。大切なものほど、急いで結論にしないでください。",
+      "en": "The unseen letter says this. Do not turn what matters into a conclusion too quickly.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 335,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD SOBRA CA BITOM",
+      "ja": "今日の門の前で、天使は言います。あなたを疲れさせる役を、少し降りてもいいです。",
+      "en": "At today's gate, the angel says this. You may step down from the role that exhausts you.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 336,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED EXARP OD MICAOLZ",
+      "ja": "天使は静かに告げます。小さな安心を先に作ると、勇気は後から来ます。",
+      "en": "The angel speaks softly. Make a small safety first, and courage will follow.",
+      "action_ja": "夜に今日の気分を一行だけ残す。",
+      "action_en": "Leave one line about your mood tonight.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 337,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN IAOD CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。今日は、探すより受け取る日です。",
+      "en": "This morning's light says this. Today is for receiving more than searching.",
+      "action_ja": "起きたら夢の断片を一つ書く。",
+      "action_en": "When you wake, write one fragment of a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 338,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZACAR OBOLEH ZIMZ OD BALT",
+      "ja": "あなたを守る声が届いています。揺れている時ほど、足元を確かめてください。",
+      "en": "A guarding voice reaches you. When you feel shaken, check the ground beneath you.",
+      "action_ja": "迷っていることを、入口と出口に分けて書く。",
+      "action_en": "Write what troubles you as an entrance and an exit.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 339,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID GRAA CA MAD",
+      "ja": "見えない手紙には、こう書かれています。心の奥の違和感は、無視しないでください。",
+      "en": "The unseen letter says this. Do not ignore the unease deep inside.",
+      "action_ja": "通知を五分だけ止める。",
+      "action_en": "Pause notifications for five minutes.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 340,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD LUMIEL OD IPAM",
+      "ja": "今日の門の前で、天使は言います。やさしい選択は、弱い選択ではありません。",
+      "en": "At today's gate, the angel says this. A gentle choice is not a weak choice.",
+      "action_ja": "自分に短い労いの言葉をかける。",
+      "action_en": "Give yourself one kind sentence.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 341,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL LAP CA ORO",
+      "ja": "天使は静かに告げます。今は遠回りに見える道が、あなたを守っています。",
+      "en": "The angel speaks softly. The path that looks indirect may be protecting you now.",
+      "action_ja": "部屋の暗い場所をひとつ整える。",
+      "action_en": "Clear one dim corner of your room.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 342,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO PIR OD NIA ZAMRAN",
+      "ja": "今朝の光はこう伝えます。今日の一歩は、誰かに見せるためでなくていいです。",
+      "en": "This morning's light says this. Today's step does not need to be seen by anyone.",
+      "action_ja": "手を洗いながら、気持ちを切り替える。",
+      "action_en": "Wash your hands and let your mood reset.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 343,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL VONPHO CA EXARP",
+      "ja": "あなたを守る声が届いています。光は外から来るだけではありません。内側でも育ちます。",
+      "en": "A guarding voice reaches you. Light does not only come from outside. It also grows within.",
+      "action_ja": "短い返事をひとつ送る。",
+      "action_en": "Send one short reply.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 344,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "NANTA CICLE OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。夢の中の象徴は、現実の気持ちを映します。",
+      "en": "The unseen letter says this. Symbols in dreams reflect feelings in waking life.",
+      "action_ja": "机の上から一つだけ物を減らす。",
+      "action_en": "Remove one thing from your desk.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 345,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX SOBRA CA PIR",
+      "ja": "今日の門の前で、天使は言います。名前をつけると、不安は少し小さくなります。",
+      "en": "At today's gate, the angel says this. When you name a worry, it becomes a little smaller.",
+      "action_ja": "不要なメモをひとつ消す。",
+      "action_en": "Delete one note you no longer need.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 346,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "LIL PAL OD SOBRA",
+      "ja": "天使は静かに告げます。今日のあなたには、余白が必要です。",
+      "en": "The angel speaks softly. Today, you need some open space.",
+      "action_ja": "眠る前に、明日聞きたい答えを一つ決める。",
+      "action_en": "Before sleep, choose one answer you want tomorrow.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 347,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ADNA TOH CA ZIMZ",
+      "ja": "今朝の光はこう伝えます。急に変えず、向きだけ少し変えてください。",
+      "en": "This morning's light says this. Do not change everything at once. Shift the direction a little.",
+      "action_ja": "寝る前に、夢で見たい場所を決める。",
+      "action_en": "Before sleep, choose a place you want to see in a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 348,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "ZIRDO ZIMZ OD LAP",
+      "ja": "あなたを守る声が届いています。誰かの期待より、今日の体力を信じてください。",
+      "en": "A guarding voice reaches you. Trust today's energy more than someone else's expectation.",
+      "action_ja": "閉じたいことを一つ、開きたいことを一つ書く。",
+      "action_en": "Write one thing to close and one thing to open.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 349,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "HOATH NANTA CA CICLE",
+      "ja": "見えない手紙には、こう書かれています。終わらせることにも、祝福があります。",
+      "en": "The unseen letter says this. There can be blessing in ending something.",
+      "action_ja": "返事を書く前に一呼吸置く。",
+      "action_en": "Take one breath before you reply.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 350,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "ZONRENSG IAIDA OD TOH",
+      "ja": "今日の門の前で、天使は言います。残すものを選ぶと、自分の輪郭が戻ります。",
+      "en": "At today's gate, the angel says this. Choosing what to keep brings your outline back.",
+      "action_ja": "大切な人の名前を一つ思い出す。",
+      "action_en": "Remember one name that matters to you.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 351,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "ZACAR ZACAR LAP CA IAIDA ZAMRAN",
+      "ja": "天使は静かに告げます。心が動いた場所に、次の入口があります。",
+      "en": "The angel speaks softly. Where your heart moved, the next entrance waits.",
+      "action_ja": "白い紙に今日の願いを一文書く。",
+      "action_en": "Write today's wish on a white sheet of paper.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 352,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "LANSH OX OD MAZ",
+      "ja": "今朝の光はこう伝えます。過去を責めず、今日の扱い方を変えてください。",
+      "en": "This morning's light says this. Do not blame the past. Change how you hold today.",
+      "action_ja": "水の音を少しだけ聞く。",
+      "action_en": "Listen to the sound of water for a moment.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 353,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "ZIR MAZ CA NOCO",
+      "ja": "あなたを守る声が届いています。あなたの願いは、静かな手入れを待っています。",
+      "en": "A guarding voice reaches you. Your wish is waiting for quiet care.",
+      "action_ja": "頭の中の言葉を三つだけ書き出す。",
+      "action_en": "Write down three words from your mind.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 354,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "MALPRG CICLE OD TORZU",
+      "ja": "見えない手紙には、こう書かれています。見えない守りは、生活の小さな秩序に宿ります。",
+      "en": "The unseen letter says this. Unseen protection lives in small order.",
+      "action_ja": "今日やることを一つだけ決める。",
+      "action_en": "Choose one thing to do today.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 355,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "ZOMD LIL CA BITOM",
+      "ja": "今日の門の前で、天使は言います。今日は、自分に戻るための短い道を選んでください。",
+      "en": "At today's gate, the angel says this. Choose a short path back to yourself today.",
+      "action_ja": "心が熱くなる名前を一つ書く。",
+      "action_en": "Write one name that warms your heart.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 356,
+      "theme": "moon",
+      "theme_ja": "月",
+      "theme_en": "Moon",
+      "angelic": "ARGED NOCO OD MICAOLZ",
+      "ja": "天使は静かに告げます。疑いが出たら、事実を三つだけ見てください。",
+      "en": "The angel speaks softly. When doubt appears, look at only three facts.",
+      "action_ja": "部屋の明かりを少し落として深呼吸する。",
+      "action_en": "Dim the light a little and breathe deeply.",
+      "tags": [
+        "moon",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 357,
+      "theme": "dream",
+      "theme_ja": "夢",
+      "theme_en": "Dream",
+      "angelic": "ZIEN TOH CA LOHOLO",
+      "ja": "今朝の光はこう伝えます。胸が縮む場所から、少し距離を取ってください。",
+      "en": "This morning's light says this. Take a little distance from what tightens your chest.",
+      "action_ja": "夢に出た色を一つ思い出す。",
+      "action_en": "Recall one color from a dream.",
+      "tags": [
+        "dream",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 358,
+      "theme": "gate",
+      "theme_ja": "門",
+      "theme_en": "Gate",
+      "angelic": "OBOLEH ADNA OD BALT",
+      "ja": "あなたを守る声が届いています。まだ言えないことは、紙にだけ預けてもいいです。",
+      "en": "A guarding voice reaches you. What you cannot say yet may be entrusted to paper.",
+      "action_ja": "今日は新しいタブを一つだけ開く。",
+      "action_en": "Open only one new tab today.",
+      "tags": [
+        "gate",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 359,
+      "theme": "silence",
+      "theme_ja": "沈黙",
+      "theme_en": "Silence",
+      "angelic": "PAID TORZU CA MAD",
+      "ja": "見えない手紙には、こう書かれています。正しさより、今のあなたに効くやさしさを選んでください。",
+      "en": "The unseen letter says this. Choose the kindness that helps you now over being right.",
+      "action_ja": "何もしない時間を三分作る。",
+      "action_en": "Make three minutes for doing nothing.",
+      "tags": [
+        "silence",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 360,
+      "theme": "heart",
+      "theme_ja": "心",
+      "theme_en": "Heart",
+      "angelic": "IAOD IAIDA OD IPAM ZAMRAN",
+      "ja": "今日の門の前で、天使は言います。流れが止まった時は、水ではなく石を見てください。",
+      "en": "At today's gate, the angel says this. When the flow stops, look not at the water but at the stone.",
+      "action_ja": "胸のあたりに手を置いて、ゆっくり息をする。",
+      "action_en": "Place a hand on your chest and breathe slowly.",
+      "tags": [
+        "heart",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 361,
+      "theme": "light",
+      "theme_ja": "光",
+      "theme_en": "Light",
+      "angelic": "LUMIEL ZIRDO CA ORO",
+      "ja": "天使は静かに告げます。あなたの中の古い光が、今日また少し目を覚まします。",
+      "en": "The angel speaks softly. An old light within you wakes a little today.",
+      "action_ja": "朝の光を一分だけ見る。",
+      "action_en": "Look at the morning light for one minute.",
+      "tags": [
+        "light",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 362,
+      "theme": "water",
+      "theme_ja": "水",
+      "theme_en": "Water",
+      "angelic": "VONPHO BITOM OD NIA",
+      "ja": "今朝の光はこう伝えます。見守られている感覚を、急いで説明しなくていいです。",
+      "en": "This morning's light says this. You do not need to explain the feeling of being watched over.",
+      "action_ja": "水を一杯飲んでから始める。",
+      "action_en": "Drink a glass of water before you begin.",
+      "tags": [
+        "water",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 363,
+      "theme": "air",
+      "theme_ja": "風",
+      "theme_en": "Air",
+      "angelic": "PAL MAZ CA EXARP",
+      "ja": "あなたを守る声が届いています。今夜の夢に、ひとつ質問を渡してください。",
+      "en": "A guarding voice reaches you. Give one question to tonight's dream.",
+      "action_ja": "窓を開けて、三回ゆっくり息をする。",
+      "action_en": "Open a window and take three slow breaths.",
+      "tags": [
+        "air",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 364,
+      "theme": "earth",
+      "theme_ja": "土",
+      "theme_en": "Earth",
+      "angelic": "ZACAR NANTA HOATH OD GRAA",
+      "ja": "見えない手紙には、こう書かれています。小さな感謝は、心の扉を静かに開けます。",
+      "en": "The unseen letter says this. Small gratitude quietly opens the heart's door.",
+      "action_ja": "足の裏を床につけて十秒止まる。",
+      "action_en": "Place your feet on the floor and pause for ten seconds.",
+      "tags": [
+        "earth",
+        "daily",
+        "angel_message"
+      ]
+    },
+    {
+      "day": 365,
+      "theme": "fire",
+      "theme_ja": "火",
+      "theme_en": "Fire",
+      "angelic": "OX MICAOLZ CA PIR",
+      "ja": "今日の門の前で、天使は言います。今日は、必要なものだけ持って進んでください。",
+      "en": "At today's gate, the angel says this. Today, carry only what is needed.",
+      "action_ja": "先延ばしにしたことを五分だけ進める。",
+      "action_en": "Work for five minutes on what you have delayed.",
+      "tags": [
+        "fire",
+        "daily",
+        "angel_message"
+      ]
+    }
+  ]
+}
