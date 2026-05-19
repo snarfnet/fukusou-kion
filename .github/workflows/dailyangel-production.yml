@@ -88,26 +88,6 @@ jobs:
           else
             python3 scripts/ensure_asc_app.py | tee /tmp/dailyangel-ensure-app.log
             APP_ID_VALUE="$(grep '^APP_ID=' /tmp/dailyangel-ensure-app.log | tail -1 | cut -d= -f2)"
-            if [ -z "$APP_ID_VALUE" ]; then
-              APP_ID_VALUE="$(python3 - <<'PY'
-import os, time, jwt, requests
-p8 = open('/tmp/asc_key.p8').read()
-tok = jwt.encode(
-    {'iss': os.environ['ASC_ISSUER_ID'], 'iat': int(time.time()), 'exp': int(time.time()) + 1200, 'aud': 'appstoreconnect-v1'},
-    p8,
-    algorithm='ES256',
-    headers={'kid': os.environ['ASC_KEY_ID']},
-)
-r = requests.get(
-    'https://api.appstoreconnect.apple.com/v1/apps?filter[bundleId]=com.tokyonasu.dailyangel&limit=1',
-    headers={'Authorization': f'Bearer {tok}'},
-    timeout=120,
-)
-d = r.json().get('data', [])
-print(d[0]['id'] if d else '')
-PY
-)"
-            fi
             test -n "$APP_ID_VALUE"
             echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
           fi

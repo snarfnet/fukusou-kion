@@ -75,6 +75,7 @@ def ensure_app(bundle):
     if body.get("data"):
         app = body["data"][0]
         print(f"App already exists: {app['attributes'].get('name')} ({app['id']})")
+        print(f"APP_ID={app['id']}")
         return
 
     attempts = [
@@ -109,6 +110,7 @@ def ensure_app(bundle):
         try:
             app = api("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
             print(f"App created: {app['attributes'].get('name')} ({app['id']})")
+            print(f"APP_ID={app['id']}")
             return
         except Exception as error:
             last_error = error
