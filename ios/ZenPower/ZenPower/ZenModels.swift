@@ -1,12 +1,38 @@
 import Foundation
 
 enum ZenLocale {
+    static var forcedLanguage: String? {
+        ProcessInfo.zenValue(for: "ZEN_FORCE_LANGUAGE")
+    }
+
     static var usesJapanese: Bool {
+        if let forcedLanguage {
+            return forcedLanguage.hasPrefix("ja")
+        }
         Locale.preferredLanguages.first?.hasPrefix("ja") ?? false
     }
 
     static func text(ja: String, en: String) -> String {
         usesJapanese ? ja : en
+    }
+}
+
+enum ZenRuntime {
+    static var hidesAdsForScreenshots: Bool {
+        ProcessInfo.zenValue(for: "ZEN_DISABLE_ADS") == "1"
+    }
+}
+
+extension ProcessInfo {
+    static func zenValue(for key: String) -> String? {
+        if let environmentValue = processInfo.environment[key] {
+            return environmentValue
+        }
+
+        let prefix = "\(key)="
+        return processInfo.arguments
+            .first { $0.hasPrefix(prefix) }
+            .map { String($0.dropFirst(prefix.count)) }
     }
 }
 

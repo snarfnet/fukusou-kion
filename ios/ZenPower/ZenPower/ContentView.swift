@@ -1,22 +1,40 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab = AppTab.initial
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeView()
                 .tabItem { Label(ZenLocale.text(ja: "今日", en: "Today"), systemImage: "circle.lefthalf.filled") }
+                .tag(AppTab.today)
 
             TimerPracticeView()
                 .tabItem { Label(ZenLocale.text(ja: "坐禅", en: "Zazen"), systemImage: "timer") }
+                .tag(AppTab.zazen)
 
             LessonsView()
                 .tabItem { Label(ZenLocale.text(ja: "学ぶ", en: "Learn"), systemImage: "book.closed") }
+                .tag(AppTab.learn)
 
             JournalView()
                 .tabItem { Label(ZenLocale.text(ja: "記録", en: "Log"), systemImage: "calendar") }
+                .tag(AppTab.log)
         }
         .tint(.zenInk)
         .background(Color.zenPaper)
+    }
+}
+
+private enum AppTab: String {
+    case today
+    case zazen
+    case learn
+    case log
+
+    static var initial: AppTab {
+        let rawValue = ProcessInfo.zenValue(for: "ZEN_SCREENSHOT_TAB") ?? ""
+        return AppTab(rawValue: rawValue) ?? .today
     }
 }
 
@@ -533,14 +551,20 @@ private struct BreathingOrb: View {
 
 private struct AdaptiveBannerSlot: View {
     var body: some View {
-        GeometryReader { proxy in
-            let width = max(320, proxy.size.width)
-            BannerAdView(width: width)
-                .frame(width: width, height: 64)
-                .frame(maxWidth: .infinity)
-                .background(Color.zenPaper)
+        Group {
+            if ZenRuntime.hidesAdsForScreenshots {
+                EmptyView()
+            } else {
+                GeometryReader { proxy in
+                    let width = max(320, proxy.size.width)
+                    BannerAdView(width: width)
+                        .frame(width: width, height: 64)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.zenPaper)
+                }
+                .frame(height: 66)
+            }
         }
-        .frame(height: 66)
     }
 }
 

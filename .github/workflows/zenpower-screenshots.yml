@@ -1,0 +1,53 @@
+name: ZenPower App Store Screenshots
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: zenpower-screenshots
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ZenPower
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for screenshots
+        run: |
+          xcodebuild build \
+            -project ZenPower.xcodeproj \
+            -scheme ZenPower \
+            -configuration Debug \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Capture screenshots
+        run: |
+          APP_PATH="$(find build/DerivedData/Build/Products -path '*Debug-iphonesimulator/ZenPower.app' -print -quit)"
+          test -n "$APP_PATH"
+          python3 scripts/capture_screenshots.py "$APP_PATH" MarketingAssets/Screenshots
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenpower-appstore-screenshots
+          path: ios/ZenPower/MarketingAssets/Screenshots
+
