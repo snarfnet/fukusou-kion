@@ -28,7 +28,7 @@ struct PhotoTemplate: Identifiable, Hashable {
 enum TemplateCategory: String {
     case free = "無料"
     case eventPack = "思い出行事パック"
-    case secondPack = "欠席者枠 第2弾"
+    case secondPack = "思い出行事パック2"
 }
 
 enum TemplatePack: String, Identifiable, CaseIterable {
@@ -51,7 +51,7 @@ enum TemplatePack: String, Identifiable, CaseIterable {
         case .eventPack:
             return "思い出行事パック"
         case .secondPack:
-            return "欠席者枠 第2弾"
+            return "思い出行事パック2"
         }
     }
 

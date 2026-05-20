@@ -100,6 +100,8 @@ enum AlbumImageExporter {
     }
 
     private static func drawAbsentPhoto(_ image: UIImage?, template: PhotoTemplate, state: EditorState, in rect: CGRect) {
+        guard let image else { return }
+
         let side = rect.width * state.circleSize
         let frame = CGRect(
             x: rect.width * state.circleCenter.x - side / 2,
@@ -123,26 +125,20 @@ enum AlbumImageExporter {
         context?.saveGState()
         UIBezierPath(ovalIn: inner).addClip()
 
-        if let image {
-            let imageSide = max(inner.width, inner.height) * state.photoScale
-            let drawRect = CGRect(
-                x: inner.midX - imageSide / 2 + state.photoOffset.width * rect.width,
-                y: inner.midY - imageSide / 2 + state.photoOffset.height * rect.height,
-                width: imageSide,
-                height: imageSide
-            )
-            context?.saveGState()
-            context?.translateBy(x: inner.midX, y: inner.midY)
-            context?.rotate(by: CGFloat(state.photoRotation.radians))
-            context?.translateBy(x: -inner.midX, y: -inner.midY)
-            image.draw(in: drawRect)
-            context?.restoreGState()
-            applyPhotoFilter(state.filter, template: template, in: inner)
-        } else {
-            UIColor(red: 0.86, green: 0.88, blue: 0.90, alpha: 1).setFill()
-            UIRectFill(inner)
-            drawCenteredText("写真", in: inner, size: 42, weight: .bold, color: UIColor(white: 0.35, alpha: 1))
-        }
+        let imageSide = max(inner.width, inner.height) * state.photoScale
+        let drawRect = CGRect(
+            x: inner.midX - imageSide / 2 + state.photoOffset.width * rect.width,
+            y: inner.midY - imageSide / 2 + state.photoOffset.height * rect.height,
+            width: imageSide,
+            height: imageSide
+        )
+        context?.saveGState()
+        context?.translateBy(x: inner.midX, y: inner.midY)
+        context?.rotate(by: CGFloat(state.photoRotation.radians))
+        context?.translateBy(x: -inner.midX, y: -inner.midY)
+        image.draw(in: drawRect)
+        context?.restoreGState()
+        applyPhotoFilter(state.filter, template: template, in: inner)
         context?.restoreGState()
 
         if state.showsBorder {
