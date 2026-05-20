@@ -172,6 +172,39 @@ def update_age_rating():
     print(f"Age rating updated: {response.status_code}")
 
 
+def ensure_free_price():
+    _, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1")
+    points = body.get("data", [])
+    if not points:
+        raise RuntimeError("Free price point not found.")
+
+    manual_price_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": manual_price_id}]},
+            },
+        },
+        "included": [
+            {
+                "type": "appPrices",
+                "id": manual_price_id,
+                "attributes": {"startDate": "2026-05-20"},
+                "relationships": {
+                    "appPricePoint": {"data": {"type": "appPricePoints", "id": points[0]["id"]}}
+                },
+            }
+        ],
+    }
+    response = api("POST", "/appPriceSchedules", json=payload)
+    if response.status_code not in (200, 201, 409):
+        raise RuntimeError(f"Free price update failed {response.status_code}: {response.text[:1000]}")
+    print(f"Free price updated: {response.status_code}")
+
+
 def current_review_submissions():
     return list_all(f"/apps/{APP_ID}/reviewSubmissions?limit=50")
 
@@ -240,6 +273,7 @@ def main():
 
     ensure_build_selected(version_id)
     update_age_rating()
+    ensure_free_price()
     ensure_review_detail(version_id)
     if cancel_blocking_submissions():
         return
