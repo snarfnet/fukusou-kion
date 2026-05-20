@@ -7,6 +7,13 @@ on:
         description: "TestFlight build number to submit"
         required: false
         default: "118"
+  push:
+    branches:
+      - codex/sotsual-right-top-maker-build
+    paths:
+      - ".github/workflows/sotsual-right-top-maker-production.yml"
+      - "ios/SotsualRightTopMaker/scripts/submit_production.py"
+      - "ios/SotsualRightTopMaker/MarketingAssets/Screenshots/**"
 
 concurrency:
   group: sotsual-right-top-maker-production
