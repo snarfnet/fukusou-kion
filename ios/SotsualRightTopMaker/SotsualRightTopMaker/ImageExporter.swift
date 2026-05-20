@@ -115,6 +115,10 @@ enum AlbumImageExporter {
 
         let context = UIGraphicsGetCurrentContext()
         context?.saveGState()
+        let coverFrame = frame.insetBy(dx: -max(10, state.borderWidth), dy: -max(10, state.borderWidth))
+        UIColor.white.setFill()
+        UIBezierPath(ovalIn: coverFrame).fill()
+
         if state.showsShadow {
             context?.setShadow(offset: CGSize(width: 0, height: 12), blur: 18, color: UIColor.black.withAlphaComponent(0.32).cgColor)
         }
