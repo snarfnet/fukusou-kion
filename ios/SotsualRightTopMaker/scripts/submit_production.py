@@ -326,7 +326,7 @@ def ensure_free_price():
             price_id = point["id"]
             break
     price_id = price_id or points[0]["id"]
-    local_id = "manualPrice0"
+    local_id = "${manualPrice0}"
     payload = {
         "data": {
             "type": "appPriceSchedules",
