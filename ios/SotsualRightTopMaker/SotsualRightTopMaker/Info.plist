@@ -16,6 +16,8 @@
 	<true/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.photo-video</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>欠席者枠に入れる写真を選ぶために使用します。写真は端末内だけで処理します。</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

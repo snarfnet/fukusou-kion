@@ -33,6 +33,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         LSApplicationCategoryType: public.app-category.photo-video
+        ITSAppUsesNonExemptEncryption: false
         NSPhotoLibraryUsageDescription: "欠席者枠に入れる写真を選ぶために使用します。写真は端末内だけで処理します。"
         NSPhotoLibraryAddUsageDescription: "作成した卒アル風画像を写真アプリに保存するために使用します。"
         UILaunchScreen:
