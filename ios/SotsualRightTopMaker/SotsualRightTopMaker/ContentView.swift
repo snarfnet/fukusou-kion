@@ -292,7 +292,9 @@ private struct EditorView: View {
             }
         }
         .sheet(isPresented: $showsTextEditor) {
-            TextInputView(text: $state.text)
+            TextInputView(text: state.text) { newText in
+                state.text = newText
+            }
         }
         .sheet(isPresented: $showsSave) {
             SaveView(image: renderedImage)
@@ -419,44 +421,52 @@ private struct EditorView: View {
 
 private struct TextInputView: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var text: AlbumText
+    @State private var draft: AlbumText
+
+    let onSave: (AlbumText) -> Void
 
     private let titleOptions = ["卒業記念", "卒業記念写真", "修学旅行記念", "体育祭記念", "文化祭記念", "林間学校", "遠足記念", "集合写真"]
+
+    init(text: AlbumText, onSave: @escaping (AlbumText) -> Void) {
+        _draft = State(initialValue: text)
+        self.onSave = onSave
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("年度とタイトル") {
-                    TextField("年度", text: $text.year)
-                    Picker("タイトル", selection: $text.title) {
+                    TextField("年度", text: $draft.year)
+                    Picker("タイトル", selection: $draft.title) {
                         ForEach(titleOptions, id: \.self) { option in
                             Text(option).tag(option)
                         }
                     }
-                    TextField("タイトルを自由入力", text: $text.title)
+                    TextField("タイトルを自由入力", text: $draft.title)
                 }
 
                 Section("学校情報") {
-                    TextField("学校名", text: $text.schoolName)
-                    TextField("学年", text: $text.grade)
+                    TextField("学校名", text: $draft.schoolName)
+                    TextField("学年", text: $draft.grade)
                         .keyboardType(.numberPad)
-                    TextField("組", text: $text.classroom)
+                    TextField("組", text: $draft.classroom)
                 }
 
                 Section("欠席者") {
-                    TextField("欠席者名", text: $text.absenteeName)
-                    TextField("コメント", text: $text.comment, axis: .vertical)
+                    TextField("欠席者名", text: $draft.absenteeName)
+                    TextField("コメント", text: $draft.comment, axis: .vertical)
                 }
 
                 Section("表示") {
-                    Text(text.titleLine)
-                    Text(text.schoolLine)
+                    Text(draft.titleLine)
+                    Text(draft.schoolLine)
                 }
             }
             .navigationTitle("文字入力")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("完了") {
+                        onSave(draft)
                         dismiss()
                     }
                 }
