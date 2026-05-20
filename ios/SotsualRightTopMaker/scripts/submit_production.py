@@ -289,26 +289,58 @@ def update_app_info_localizations(app_info_id):
 
 
 def ensure_free_price():
-    response, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1")
+    response, body = api_json("GET", f"/apps/{APP_ID}/relationships/appPriceSchedule")
+    if response.status_code == 200 and body.get("data"):
+        schedule_id = body["data"]["id"]
+        response, body = api_json(
+            "GET",
+            f"/appPriceSchedules/{schedule_id}/manualPrices"
+            "?limit=200&include=appPricePoint,territory"
+            "&fields[appPricePoints]=customerPrice"
+            "&filter[territory]=JPN",
+        )
+        if response.status_code == 200:
+            price_points = {
+                item["id"]: item.get("attributes", {}).get("customerPrice")
+                for item in body.get("included", [])
+                if item.get("type") == "appPricePoints"
+            }
+            for item in body.get("data", []):
+                attrs = item.get("attributes", {})
+                point_id = item.get("relationships", {}).get("appPricePoint", {}).get("data", {}).get("id")
+                if attrs.get("endDate") is None and str(price_points.get(point_id)) in ("0", "0.0", "0.00"):
+                    print("Free price: already set")
+                    return
+
+    response, body = api_json(
+        "GET",
+        f"/apps/{APP_ID}/appPricePoints?filter[territory]=JPN&fields[appPricePoints]=customerPrice&limit=200",
+    )
     points = body.get("data", []) if response.status_code == 200 else []
     if not points:
         print("Free price: skipped")
         return
-    price_id = points[0]["id"]
-    local_id = "${manualPrice0}"
+    price_id = None
+    for point in points:
+        if str(point.get("attributes", {}).get("customerPrice")) in ("0", "0.0", "0.00"):
+            price_id = point["id"]
+            break
+    price_id = price_id or points[0]["id"]
+    local_id = "manualPrice0"
     payload = {
         "data": {
             "type": "appPriceSchedules",
+            "attributes": {},
             "relationships": {
                 "app": {"data": {"type": "apps", "id": APP_ID}},
-                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "baseTerritory": {"data": {"type": "territories", "id": "JPN"}},
                 "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
             },
         },
         "included": [{
             "type": "appPrices",
             "id": local_id,
-            "attributes": {"startDate": "2026-05-21"},
+            "attributes": {"startDate": None},
             "relationships": {
                 "appPricePoint": {"data": {"type": "appPricePoints", "id": price_id}}
             },
@@ -316,6 +348,10 @@ def ensure_free_price():
     }
     response = api("POST", "/appPriceSchedules", json=payload)
     print(f"Free price: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        print(response.text[:1000])
+    elif response.status_code == 409:
+        print(response.text[:1000])
 
 
 def ensure_review_detail(version_id):
