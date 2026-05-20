@@ -33,6 +33,31 @@ REVIEW_DETAIL = {
     ),
 }
 
+AGE_RATING = {
+    "alcoholTobaccoOrDrugUseOrReferences": "NONE",
+    "contests": "NONE",
+    "gambling": False,
+    "gamblingSimulated": "NONE",
+    "gunsOrOtherWeapons": "NONE",
+    "horrorOrFearThemes": "NONE",
+    "matureOrSuggestiveThemes": "NONE",
+    "medicalOrTreatmentInformation": "NONE",
+    "profanityOrCrudeHumor": "NONE",
+    "sexualContentGraphicAndNudity": "NONE",
+    "sexualContentOrNudity": "NONE",
+    "violenceCartoonOrFantasy": "NONE",
+    "violenceRealistic": "NONE",
+    "violenceRealisticProlongedGraphicOrSadistic": "NONE",
+    "unrestrictedWebAccess": False,
+    "advertising": True,
+    "messagingAndChat": False,
+    "userGeneratedContent": False,
+    "lootBox": False,
+    "healthOrWellnessTopics": False,
+    "parentalControls": False,
+    "ageAssurance": False,
+}
+
 
 def make_token():
     now = int(time.time())
@@ -128,6 +153,25 @@ def ensure_review_detail(version_id):
     print(f"Review detail created: {response.status_code}")
 
 
+def update_age_rating():
+    app_infos = list_all(f"/apps/{APP_ID}/appInfos?limit=10")
+    if not app_infos:
+        raise RuntimeError("App info not found.")
+
+    app_info_id = app_infos[0]["id"]
+    _, body = api_json("GET", f"/appInfos/{app_info_id}/ageRatingDeclaration")
+    data = body.get("data")
+    if not data:
+        raise RuntimeError("Age rating declaration not found.")
+
+    response = api("PATCH", f"/ageRatingDeclarations/{data['id']}", json={
+        "data": {"type": "ageRatingDeclarations", "id": data["id"], "attributes": AGE_RATING}
+    })
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Age rating update failed {response.status_code}: {response.text[:1000]}")
+    print(f"Age rating updated: {response.status_code}")
+
+
 def current_review_submissions():
     return list_all(f"/apps/{APP_ID}/reviewSubmissions?limit=50")
 
@@ -195,6 +239,7 @@ def main():
         return
 
     ensure_build_selected(version_id)
+    update_age_rating()
     ensure_review_detail(version_id)
     if cancel_blocking_submissions():
         return
