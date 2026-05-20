@@ -1,0 +1,59 @@
+name: ZenPower App Store Metadata
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/zenpower-github-build
+    paths:
+      - ".github/workflows/zenpower-appstore-metadata.yml"
+      - "ios/ZenPower/AppStore/**"
+      - "ios/ZenPower/MarketingAssets/Screenshots/**"
+
+concurrency:
+  group: zenpower-appstore-metadata
+  cancel-in-progress: true
+
+jobs:
+  upload-metadata:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ZenPower
+    env:
+      APP_ID: "6771141622"
+      APP_VERSION: "1.0"
+      BUILD_NUMBER: "6"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+
+      - name: Upload metadata, screenshots, and build selection
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python AppStore/upload_appstore_metadata.py
