@@ -2,6 +2,12 @@ name: SotsualRightTopMaker TestFlight Upload
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/sotsual-right-top-maker-build
+    paths:
+      - ".github/workflows/sotsual-right-top-maker-testflight.yml"
+      - "ios/SotsualRightTopMaker/**"
 
 concurrency:
   group: sotsual-right-top-maker-testflight
