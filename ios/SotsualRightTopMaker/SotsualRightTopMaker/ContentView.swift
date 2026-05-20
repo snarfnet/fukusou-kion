@@ -6,12 +6,13 @@ struct ContentView: View {
     @EnvironmentObject private var purchaseManager: PurchaseManager
     @State private var path: [PhotoTemplate] = []
     @State private var purchasePack: TemplatePack?
+    @State private var showsPackPicker = false
 
     var body: some View {
         NavigationStack(path: $path) {
             HomeView(
-                onChooseTemplate: { path.append(TemplateLibrary.templates[0]) },
-                onPurchase: { purchasePack = .eventPack }
+                onChooseTemplate: { template in path.append(template) },
+                onPurchase: { showsPackPicker = true }
             )
             .navigationDestination(for: PhotoTemplate.self) { template in
                 EditorView(template: template)
@@ -19,12 +20,15 @@ struct ContentView: View {
             .sheet(item: $purchasePack) { pack in
                 PurchaseView(pack: pack)
             }
+            .sheet(isPresented: $showsPackPicker) {
+                PackPickerView()
+            }
         }
     }
 }
 
 private struct HomeView: View {
-    let onChooseTemplate: () -> Void
+    let onChooseTemplate: (PhotoTemplate) -> Void
     let onPurchase: () -> Void
 
     var body: some View {
@@ -32,56 +36,61 @@ private struct HomeView: View {
             LinearGradient(colors: [.white, Color(red: 0.93, green: 0.96, blue: 0.95)], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
-            VStack(spacing: 18) {
-                Spacer(minLength: 30)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 18) {
+                    Spacer(minLength: 30)
 
-                VStack(spacing: 10) {
-                    Text("卒業写真にのれなかった君へ")
-                        .font(.system(size: 32, weight: .black, design: .rounded))
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.78)
+                    VStack(spacing: 10) {
+                        Text("卒アル右上メーカー")
+                            .font(.system(size: 32, weight: .black, design: .rounded))
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.78)
 
-                    Text("集合写真にいなかった人を、あの右上の丸いやつで救うアプリ。")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
+                        Text("集合写真にいなかった人を、あの右上の丸いやつで救うアプリ。")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
 
-                AlbumHeroPreview()
-                    .frame(height: 250)
+                    AlbumHeroPreview()
+                        .frame(height: 250)
+                        .padding(.horizontal, 18)
+
+                    VStack(spacing: 12) {
+                        NavigationLink {
+                            TemplatePickerView { template in
+                                onChooseTemplate(template)
+                            }
+                        } label: {
+                            Label("テンプレートを選ぶ", systemImage: "photo.on.rectangle.angled")
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+
+                        Button {
+                        } label: {
+                            Label("作成履歴", systemImage: "clock.arrow.circlepath")
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                        .disabled(true)
+
+                        Button(action: onPurchase) {
+                            Label("追加テンプレートを購入", systemImage: "lock.open")
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                    }
                     .padding(.horizontal, 18)
 
-                VStack(spacing: 12) {
-                    NavigationLink {
-                        TemplatePickerView()
-                    } label: {
-                        Label("テンプレートを選ぶ", systemImage: "photo.on.rectangle.angled")
-                    }
-                    .buttonStyle(PrimaryButtonStyle())
+                    Text("写真はサーバーへ送らず、端末内で処理します。本人または保護者の許可を得た写真を使ってください。\n使用している写真に登場している人物はすべて作成物です。実際の人物と関係ありません。")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 22)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                    Button {
-                    } label: {
-                        Label("作成履歴", systemImage: "clock.arrow.circlepath")
-                    }
-                    .buttonStyle(SecondaryButtonStyle())
-                    .disabled(true)
-
-                    Button(action: onPurchase) {
-                        Label("追加テンプレートを購入", systemImage: "lock.open")
-                    }
-                    .buttonStyle(SecondaryButtonStyle())
+                    Spacer(minLength: 20)
                 }
-                .padding(.horizontal, 18)
-
-                Text("写真はサーバーへ送らず、端末内で処理します。本人または保護者の許可を得た写真を使ってください。")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 22)
-
-                Spacer(minLength: 20)
             }
         }
         .navigationTitle("")
@@ -89,9 +98,62 @@ private struct HomeView: View {
     }
 }
 
+private struct PackPickerView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(TemplatePack.allCases) { pack in
+                        NavigationLink {
+                            PurchaseView(pack: pack)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(pack.title)
+                                    .font(.headline.weight(.bold))
+                                    .foregroundStyle(.primary)
+                                Text(pack.description)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.leading)
+
+                                HStack(spacing: 6) {
+                                    ForEach(pack.templateNames.prefix(3), id: \.self) { name in
+                                        Text(name)
+                                            .font(.caption.weight(.bold))
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(14)
+                            .background(.white, in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(.black.opacity(0.08)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding()
+            }
+            .background(Color(red: 0.96, green: 0.97, blue: 0.96))
+            .navigationTitle("追加テンプレート")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("閉じる") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
 private struct TemplatePickerView: View {
     @EnvironmentObject private var purchaseManager: PurchaseManager
     @State private var purchasePack: TemplatePack?
+    let onSelect: (PhotoTemplate) -> Void
 
     var body: some View {
         ScrollView {
@@ -105,7 +167,9 @@ private struct TemplatePickerView: View {
                         }
                         .buttonStyle(.plain)
                     } else {
-                        NavigationLink(value: template) {
+                        Button {
+                            onSelect(template)
+                        } label: {
                             TemplateCard(template: template, isLocked: false)
                         }
                         .buttonStyle(.plain)
@@ -206,10 +270,12 @@ private struct EditorView: View {
             .pickerStyle(.segmented)
             .padding([.horizontal, .top], 12)
 
-            toolPanel
-                .frame(minHeight: 178)
-                .padding(12)
-                .background(.white)
+            ScrollView(showsIndicators: false) {
+                toolPanel
+                    .padding(12)
+            }
+            .frame(height: selectedTool == .circle ? 268 : 178)
+            .background(.white)
         }
         .navigationTitle(template.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -327,7 +393,7 @@ private struct EditorView: View {
         )
 
         return Circle()
-            .stroke(.yellow, lineWidth: 3)
+            .fill(.clear)
             .frame(width: side, height: side)
             .position(center)
             .contentShape(Circle())

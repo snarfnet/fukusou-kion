@@ -164,14 +164,14 @@ enum AlbumImageExporter {
             UIColor.black.setFill()
             UIRectFillUsingBlendMode(rect, .saturation)
             if template.mood == .meiji {
-                UIColor(white: 0.18, alpha: 0.10).setFill()
+                UIColor(white: 0.12, alpha: 0.18).setFill()
                 UIRectFillUsingBlendMode(rect, .multiply)
-                UIColor(white: 0.92, alpha: 0.08).setFill()
+                UIColor(white: 0.90, alpha: 0.05).setFill()
                 UIRectFillUsingBlendMode(rect, .sourceAtop)
             } else {
-                UIColor(red: 0.43, green: 0.36, blue: 0.24, alpha: 0.30).setFill()
+                UIColor(red: 0.40, green: 0.34, blue: 0.24, alpha: 0.24).setFill()
                 UIRectFillUsingBlendMode(rect, .sourceAtop)
-                UIColor(white: 0.0, alpha: 0.08).setFill()
+                UIColor(white: 0.0, alpha: 0.12).setFill()
                 UIRectFillUsingBlendMode(rect, .multiply)
             }
         }
@@ -210,14 +210,18 @@ enum AlbumImageExporter {
             UIColor(red: 0.56, green: 0.36, blue: 0.16, alpha: 0.22).setFill()
             UIRectFillUsingBlendMode(rect, .sourceAtop)
         case .monochrome:
-            UIColor(white: 0.0, alpha: 0.18).setFill()
+            UIColor.black.setFill()
             UIRectFillUsingBlendMode(rect, .saturation)
             if template.mood == .meiji {
-                UIColor(white: 0.94, alpha: 0.06).setFill()
+                UIColor(white: 0.12, alpha: 0.16).setFill()
+                UIRectFillUsingBlendMode(rect, .multiply)
+                UIColor(white: 0.92, alpha: 0.05).setFill()
                 UIRectFillUsingBlendMode(rect, .sourceAtop)
             } else {
-                UIColor(red: 0.35, green: 0.29, blue: 0.20, alpha: 0.18).setFill()
+                UIColor(red: 0.40, green: 0.34, blue: 0.24, alpha: 0.20).setFill()
                 UIRectFillUsingBlendMode(rect, .sourceAtop)
+                UIColor(white: 0.0, alpha: 0.10).setFill()
+                UIRectFillUsingBlendMode(rect, .multiply)
             }
         }
     }
