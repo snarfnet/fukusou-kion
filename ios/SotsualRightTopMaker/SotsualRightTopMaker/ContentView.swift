@@ -388,10 +388,11 @@ private struct EditorView: View {
     private func circleHandle(in size: CGSize) -> some View {
         let previewSize = fittedImageSize(container: size, aspect: AlbumImageExporter.outputSize.width / AlbumImageExporter.outputSize.height)
         let origin = CGPoint(x: (size.width - previewSize.width) / 2 + 10, y: (size.height - previewSize.height) / 2 + 10)
+        let photoHeight = previewSize.height * AlbumImageExporter.photoAreaHeightRatio
         let side = previewSize.width * state.circleSize
         let center = CGPoint(
             x: origin.x + previewSize.width * state.circleCenter.x,
-            y: origin.y + previewSize.height * state.circleCenter.y
+            y: origin.y + photoHeight * state.circleCenter.y
         )
 
         return Circle()
@@ -403,7 +404,7 @@ private struct EditorView: View {
                 DragGesture()
                     .onChanged { value in
                         let x = (value.location.x - origin.x) / previewSize.width
-                        let y = (value.location.y - origin.y) / previewSize.height
+                        let y = (value.location.y - origin.y) / photoHeight
                         state.circleCenter = CGPoint(x: min(max(x, 0.08), 0.92), y: min(max(y, 0.06), 0.55))
                     }
             )

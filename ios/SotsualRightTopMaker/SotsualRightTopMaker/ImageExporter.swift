@@ -3,6 +3,7 @@ import UIKit
 
 enum AlbumImageExporter {
     static let outputSize = CGSize(width: 2048, height: 1536)
+    static let photoAreaHeightRatio: CGFloat = 0.80
 
     static func render(template: PhotoTemplate, state: EditorState, absentImage: UIImage?) -> UIImage {
         let format = UIGraphicsImageRendererFormat()
@@ -11,9 +12,11 @@ enum AlbumImageExporter {
 
         return UIGraphicsImageRenderer(size: outputSize, format: format).image { context in
             let rect = CGRect(origin: .zero, size: outputSize)
-            drawTemplate(template, in: rect)
-            applyFilter(state.filter, template: template, in: rect)
-            drawAbsentPhoto(absentImage, template: template, state: state, in: rect)
+            let photoRect = CGRect(x: 0, y: 0, width: rect.width, height: rect.height * photoAreaHeightRatio)
+            drawTemplate(template, in: photoRect)
+            applyFilter(state.filter, template: template, in: photoRect)
+            drawAbsentPhoto(absentImage, template: template, state: state, in: photoRect)
+            drawCaptionBackground(in: rect)
             drawAlbumText(state.text, in: rect, template: template)
         }
     }
@@ -173,26 +176,40 @@ enum AlbumImageExporter {
         }
     }
 
-    private static func drawAlbumText(_ text: AlbumText, in rect: CGRect, template: PhotoTemplate) {
-        let titleRect = CGRect(x: rect.width * 0.08, y: rect.height * 0.85, width: rect.width * 0.84, height: 70)
-        let schoolRect = CGRect(x: rect.width * 0.08, y: rect.height * 0.905, width: rect.width * 0.84, height: 54)
-        let noteRect = CGRect(x: rect.width * 0.08, y: rect.height * 0.945, width: rect.width * 0.84, height: 42)
+    private static func drawCaptionBackground(in rect: CGRect) {
+        let bandY = rect.height * photoAreaHeightRatio
+        UIColor(white: 0.98, alpha: 1).setFill()
+        UIRectFill(CGRect(x: 0, y: bandY, width: rect.width, height: rect.height - bandY))
+        UIColor(white: 0.0, alpha: 0.10).setStroke()
+        let divider = UIBezierPath()
+        divider.move(to: CGPoint(x: 0, y: bandY))
+        divider.addLine(to: CGPoint(x: rect.width, y: bandY))
+        divider.lineWidth = 2
+        divider.stroke()
+    }
 
-        drawCenteredText(text.titleLine, in: titleRect, size: 46, weight: .bold, color: .black)
-        drawCenteredText(text.schoolLine, in: schoolRect, size: 32, weight: .semibold, color: UIColor(white: 0.12, alpha: 1))
+    private static func drawAlbumText(_ text: AlbumText, in rect: CGRect, template: PhotoTemplate) {
+        let titleRect = CGRect(x: rect.width * 0.08, y: rect.height * 0.825, width: rect.width * 0.84, height: 86)
+        let schoolRect = CGRect(x: rect.width * 0.08, y: rect.height * 0.895, width: rect.width * 0.84, height: 64)
+        let noteRect = CGRect(x: rect.width * 0.08, y: rect.height * 0.942, width: rect.width * 0.84, height: 44)
+
+        drawCenteredText(text.titleLine, in: titleRect, size: 64, weight: .bold, color: .black, tracking: 10)
+        drawCenteredText(text.schoolLine, in: schoolRect, size: 50, weight: .semibold, color: UIColor(white: 0.08, alpha: 1), tracking: 8)
 
         let note = [text.absenteeName.isEmpty ? nil : "欠席者: \(text.absenteeName)", text.comment.isEmpty ? nil : text.comment].compactMap { $0 }.joined(separator: "　")
         if !note.isEmpty {
-            drawCenteredText(note, in: noteRect, size: 24, weight: .regular, color: UIColor(white: 0.28, alpha: 1))
+            drawCenteredText(note, in: noteRect, size: 30, weight: .regular, color: UIColor(white: 0.24, alpha: 1), tracking: 2)
         }
     }
 
-    private static func drawCenteredText(_ value: String, in rect: CGRect, size: CGFloat, weight: UIFont.Weight, color: UIColor) {
+    private static func drawCenteredText(_ value: String, in rect: CGRect, size: CGFloat, weight: UIFont.Weight, color: UIColor, tracking: CGFloat = 0) {
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
+        let font = UIFont(name: "Hiragino Mincho ProN W6", size: size) ?? UIFont.systemFont(ofSize: size, weight: weight)
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: size, weight: weight),
+            .font: font,
             .foregroundColor: color,
+            .kern: tracking,
             .paragraphStyle: paragraph
         ]
         NSString(string: value).draw(with: rect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes, context: nil)
