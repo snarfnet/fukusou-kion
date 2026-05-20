@@ -27,7 +27,7 @@ enum AlbumImageExporter {
         defer { context?.restoreGState() }
 
         if let imageName = template.imageName, let image = UIImage(named: imageName) {
-            drawAspectFill(image, in: rect)
+            image.draw(in: rect)
             return
         }
 
