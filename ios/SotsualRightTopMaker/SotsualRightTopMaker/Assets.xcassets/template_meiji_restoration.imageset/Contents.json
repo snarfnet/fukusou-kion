@@ -1,0 +1,13 @@
+﻿{
+    "images":  [
+                   {
+                       "filename":  "template_meiji_restoration.png",
+                       "scale":  "1x",
+                       "idiom":  "universal"
+                   }
+               ],
+    "info":  {
+                 "author":  "xcode",
+                 "version":  1
+             }
+}

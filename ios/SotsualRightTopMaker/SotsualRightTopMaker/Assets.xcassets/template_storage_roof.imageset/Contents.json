@@ -1,0 +1,13 @@
+﻿{
+    "images":  [
+                   {
+                       "filename":  "template_storage_roof.png",
+                       "scale":  "1x",
+                       "idiom":  "universal"
+                   }
+               ],
+    "info":  {
+                 "author":  "xcode",
+                 "version":  1
+             }
+}
