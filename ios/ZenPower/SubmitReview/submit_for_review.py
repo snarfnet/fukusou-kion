@@ -173,9 +173,16 @@ def update_age_rating():
 
 
 def ensure_free_price():
-    _, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1")
+    territory = "JPN"
+    _, body = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]={territory}&limit=200")
     points = body.get("data", [])
-    if not points:
+    free_point = None
+    for point in points:
+        price = str(point.get("attributes", {}).get("customerPrice", ""))
+        if price in {"0", "0.0", "0.00"}:
+            free_point = point
+            break
+    if not free_point:
         raise RuntimeError("Free price point not found.")
 
     manual_price_id = "${manualPrice0}"
@@ -184,7 +191,7 @@ def ensure_free_price():
             "type": "appPriceSchedules",
             "relationships": {
                 "app": {"data": {"type": "apps", "id": APP_ID}},
-                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "baseTerritory": {"data": {"type": "territories", "id": territory}},
                 "manualPrices": {"data": [{"type": "appPrices", "id": manual_price_id}]},
             },
         },
@@ -192,17 +199,17 @@ def ensure_free_price():
             {
                 "type": "appPrices",
                 "id": manual_price_id,
-                "attributes": {"startDate": "2026-05-20"},
+                "attributes": {"startDate": None},
                 "relationships": {
-                    "appPricePoint": {"data": {"type": "appPricePoints", "id": points[0]["id"]}}
+                    "appPricePoint": {"data": {"type": "appPricePoints", "id": free_point["id"]}}
                 },
             }
         ],
     }
     response = api("POST", "/appPriceSchedules", json=payload)
-    if response.status_code not in (200, 201, 409):
+    if response.status_code not in (200, 201):
         raise RuntimeError(f"Free price update failed {response.status_code}: {response.text[:1000]}")
-    print(f"Free price updated: {response.status_code}")
+    print(f"Free price updated: {response.status_code} territory={territory}")
 
 
 def current_review_submissions():
