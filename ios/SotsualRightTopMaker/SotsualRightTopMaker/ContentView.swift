@@ -263,7 +263,7 @@ private struct EditorView: View {
                 }), range: -0.08...0.08)
                 SliderRow(title: "枠の太さ", value: $state.borderWidth, range: 0...24)
                 SliderRow(title: "回転", value: Binding(get: {
-                    state.photoRotation.degrees
+                    state.photoRotation.radians * 180 / .pi
                 }, set: {
                     state.photoRotation = .degrees($0)
                 }), range: -30...30)
