@@ -68,13 +68,6 @@ private struct HomeView: View {
                         }
                         .buttonStyle(PrimaryButtonStyle())
 
-                        Button {
-                        } label: {
-                            Label("作成履歴", systemImage: "clock.arrow.circlepath")
-                        }
-                        .buttonStyle(SecondaryButtonStyle())
-                        .disabled(true)
-
                         Button(action: onPurchase) {
                             Label("追加テンプレートを購入", systemImage: "lock.open")
                         }
