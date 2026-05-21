@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>盛り盛りフォトメーカー</title>
+    <link rel="stylesheet" href="./morimori-photo-maker.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="studio" aria-label="編集エリア">
+        <div class="topbar">
+          <div class="brand-lockup">
+            <p class="eyebrow">MORIMORI PHOTO</p>
+            <h1>盛り盛りフォトメーカー</h1>
+          </div>
+          <div class="top-actions">
+            <label class="file-button">
+              <input id="photoInput" type="file" accept="image/*" />
+              写真
+            </label>
+            <button id="autoMoriButton" type="button">おまかせ盛り</button>
+            <button id="shareButton" type="button">共有</button>
+            <button id="downloadButton" type="button">保存</button>
+          </div>
+        </div>
+
+        <div class="stage-wrap">
+          <div id="stage" class="stage" aria-label="写真キャンバス">
+            <div id="emptyState" class="empty-state">
+              <strong>写真を入れて、盛る。</strong>
+              <button id="emptyPhotoButton" class="empty-photo-button" type="button">
+                <span>＋ 写真を選ぶ</span>
+                <small>盛り盛りスタート!</small>
+              </button>
+              <span>髪・まゆげ・メイク・唇・キラキラ背景を何枚でも重ねられます。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="素材パネル">
+        <section class="controls" aria-label="レイヤー操作">
+          <div class="control-title">
+            <span id="selectedName">未選択</span>
+            <small id="layerCount">0 layers</small>
+          </div>
+
+          <label>
+            大きさ
+            <input id="scaleRange" type="range" min="20" max="260" value="100" />
+          </label>
+          <label>
+            回転
+            <input id="rotateRange" type="range" min="-180" max="180" value="0" />
+          </label>
+          <label>
+            透明度
+            <input id="opacityRange" type="range" min="20" max="100" value="100" />
+          </label>
+
+          <div class="button-row">
+            <button id="backButton" type="button">背面</button>
+            <button id="frontButton" type="button">前面</button>
+            <button id="flipButton" type="button">反転</button>
+          </div>
+          <div class="button-row">
+            <button id="duplicateButton" type="button">複製</button>
+            <button id="deleteButton" class="danger" type="button">削除</button>
+          </div>
+        </section>
+
+        <nav id="categoryTabs" class="tabs" aria-label="カテゴリ"></nav>
+        <div id="assetGrid" class="asset-grid"></div>
+      </aside>
+    </main>
+
+    <script src="./morimori-photo-maker.js"></script>
+  </body>
+</html>

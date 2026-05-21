@@ -1,0 +1,151 @@
+name: MorimoriPhotoMaker TestFlight Upload
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/morimori-photo-maker-ios
+    paths:
+      - ".github/workflows/morimori-photo-maker-testflight.yml"
+      - "ios/MorimoriPhotoMaker/**"
+
+concurrency:
+  group: morimori-photo-maker-testflight
+  cancel-in-progress: true
+
+jobs:
+  upload-testflight:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/MorimoriPhotoMaker
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.morimoriphotomaker
+      APP_NAME: "盛り盛りフォトメーカー"
+      APP_SKU: morimori-photo-maker-ios
+      BUNDLE_NAME: MorimoriPhotoMaker
+      PROFILE_NAME: "MorimoriPhotoMaker App Store"
+      MORIMORI_PHOTO_MAKER_APP_ID: ${{ secrets.MORIMORI_PHOTO_MAKER_APP_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUNDLE_ID: ${{ env.APP_BUNDLE_ID }}
+        run: |
+          . .venv/bin/activate
+          if [ -n "$MORIMORI_PHOTO_MAKER_APP_ID" ]; then
+            echo "APP_ID=$MORIMORI_PHOTO_MAKER_APP_ID" >> "$GITHUB_ENV"
+            python scripts/ensure_asc_app.py
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/morimori-photo-maker-app.log
+            if grep '^APP_ID=' /tmp/morimori-photo-maker-app.log >> "$GITHUB_ENV"; then
+              echo "App Store Connect app resolved."
+            else
+              echo "App Store Connect app is not ready yet."
+              echo "Create an app record for $APP_BUNDLE_ID, then add GitHub Secret MORIMORI_PHOTO_MAKER_APP_ID."
+              exit 1
+            fi
+          fi
+
+      - name: Resolve app bundle
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/resolve_app_bundle.py | tee /tmp/morimori-photo-maker-bundle.log
+          grep '^APP_BUNDLE_ID=' /tmp/morimori-photo-maker-bundle.log >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Set build number
+        run: |
+          BUILD_NUM=$(( GITHUB_RUN_NUMBER + 100 ))
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
+
+      - name: Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive \
+            -project MorimoriPhotoMaker.xcodeproj \
+            -scheme MorimoriPhotoMaker \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/MorimoriPhotoMaker.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUM"
+
+      - name: Export IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/MorimoriPhotoMaker.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Wait for TestFlight build processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_testflight_build.py
