@@ -317,7 +317,7 @@ def attach_iaps_to_open_review(iap_ids):
                 "type": "reviewSubmissionItems",
                 "relationships": {
                     "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                    "inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap_id}},
+                    "inAppPurchase": {"data": {"type": "inAppPurchases", "id": iap_id}},
                 },
             }
         })
