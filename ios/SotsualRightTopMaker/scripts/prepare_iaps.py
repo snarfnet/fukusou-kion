@@ -51,10 +51,15 @@ def headers():
 
 
 def api(method, path, **kwargs):
+    url = (
+        f"https://api.appstoreconnect.apple.com{path}"
+        if path.startswith("/v")
+        else f"https://api.appstoreconnect.apple.com/v1{path}"
+    )
     for _ in range(6):
         response = requests.request(
             method,
-            f"https://api.appstoreconnect.apple.com/v1{path}",
+            url,
             headers=headers(),
             timeout=120,
             **kwargs,
@@ -83,7 +88,10 @@ def list_all(path):
             raise RuntimeError(f"List failed {response.status_code}: {response.text[:1200]}")
         rows.extend(body.get("data", []))
         next_url = body.get("links", {}).get("next")
-        next_path = next_url.split("/v1", 1)[1] if next_url else None
+        if next_url:
+            next_path = next_url.split("appstoreconnect.apple.com", 1)[1]
+        else:
+            next_path = None
     return rows
 
 
@@ -105,7 +113,7 @@ def create_or_update_iap(config):
     }
     if existing:
         iap_id = existing["id"]
-        response = api("PATCH", f"/inAppPurchasesV2/{iap_id}", json={
+        response = api("PATCH", f"/v2/inAppPurchases/{iap_id}", json={
             "data": {
                 "type": "inAppPurchases",
                 "id": iap_id,
@@ -119,7 +127,7 @@ def create_or_update_iap(config):
         print(f"IAP update {config['product_id']}: {response.status_code}")
         return iap_id
 
-    response, body = api_json("POST", "/inAppPurchasesV2", json={
+    response, body = api_json("POST", "/v2/inAppPurchases", json={
         "data": {
             "type": "inAppPurchases",
             "attributes": attrs,
@@ -162,7 +170,7 @@ def upsert_localization(iap_id, locale, name, description):
 def ensure_price(iap_id):
     response, body = api_json(
         "GET",
-        f"/inAppPurchasesV2/{iap_id}/pricePoints"
+        f"/v2/inAppPurchases/{iap_id}/pricePoints"
         "?filter[territory]=JPN&fields[inAppPurchasePricePoints]=customerPrice&limit=200",
     )
     if response.status_code != 200:
