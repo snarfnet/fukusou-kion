@@ -4,7 +4,7 @@ import hashlib
 import os
 from pathlib import Path
 
-from asc_helpers import api_json, decode_profile, fail
+from asc_helpers import api, api_json, decode_profile, fail, query
 
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.sotsualrighttopmaker")
@@ -46,14 +46,19 @@ def profile_certificate_ids(profile_id):
 
 
 def find_or_create_profile(bundle_id, certificate_id):
-    existing = api_json("GET", f"/profiles?filter[name]={PROFILE_NAME}&limit=20").get("data", [])
+    existing = api_json("GET", f"/profiles?{query({'filter[name]': PROFILE_NAME, 'limit': '200'})}").get("data", [])
     for profile in existing:
         attrs = profile.get("attributes", {})
         if attrs.get("profileState") != "ACTIVE":
             continue
-        if certificate_id in profile_certificate_ids(profile["id"]) and attrs.get("profileContent"):
-            return profile
-        api_json("DELETE", f"/profiles/{profile['id']}")
+        if certificate_id in profile_certificate_ids(profile["id"]):
+            detail = api_json("GET", f"/profiles/{profile['id']}").get("data", profile)
+            if detail.get("attributes", {}).get("profileContent"):
+                return detail
+
+    for profile in existing:
+        response = api("DELETE", f"/profiles/{profile['id']}")
+        print(f"Deleted duplicate profile {profile['id']}: {response.status_code}")
 
     payload = {
         "data": {
