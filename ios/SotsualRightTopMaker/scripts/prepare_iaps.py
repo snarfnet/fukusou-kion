@@ -142,7 +142,7 @@ def create_or_update_iap(config):
 
 
 def upsert_localization(iap_id, locale, name, description):
-    localizations = list_all(f"/inAppPurchasesV2/{iap_id}/inAppPurchaseLocalizations?limit=200")
+    localizations = list_all(f"/v2/inAppPurchases/{iap_id}/inAppPurchaseLocalizations?limit=200")
     existing = next((loc for loc in localizations if loc.get("attributes", {}).get("locale") == locale), None)
     payload = {"locale": locale, "name": name, "description": description}
     if existing:
@@ -215,7 +215,7 @@ def upload_review_screenshot(iap_id, filename):
     path = os.path.join(REVIEW_SCREENSHOT_DIR, filename)
     if not os.path.exists(path):
         raise RuntimeError(f"Missing IAP review screenshot: {path}")
-    existing_response, existing_body = api_json("GET", f"/inAppPurchasesV2/{iap_id}/appStoreReviewScreenshot")
+    existing_response, existing_body = api_json("GET", f"/v2/inAppPurchases/{iap_id}/appStoreReviewScreenshot")
     existing = existing_body.get("data") if existing_response.status_code == 200 else None
     if existing:
         api("DELETE", f"/inAppPurchaseAppStoreReviewScreenshots/{existing['id']}")
