@@ -60,7 +60,7 @@ def ensure_app(bundle):
         return app
     except Exception as error:
         print(f"App Store Connect app was not created: {error}")
-        print("Create the app manually in App Store Connect, then set GitHub Secret NERU_MAE_OKYO_APP_ID.")
+        print("Create the app manually in App Store Connect, then set GitHub Secret MORIMORI_PHOTO_MAKER_APP_ID.")
         return None
 
 
