@@ -2,12 +2,6 @@ name: MorimoriPhotoMaker TestFlight Upload
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/morimori-photo-maker-ios
-    paths:
-      - ".github/workflows/morimori-photo-maker-testflight.yml"
-      - "ios/MorimoriPhotoMaker/**"
 
 concurrency:
   group: morimori-photo-maker-testflight
