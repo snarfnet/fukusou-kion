@@ -293,15 +293,53 @@ def submit_iap(iap_id):
         print(response.text[:1200])
 
 
+def open_review_submission_id():
+    response, body = api_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    if response.status_code != 200:
+        print(f"Review submission lookup: {response.status_code}")
+        return None
+    for submission in body.get("data", []):
+        state = submission.get("attributes", {}).get("state")
+        if state in ("READY_FOR_REVIEW", "WAITING_FOR_REVIEW"):
+            print(f"Open review submission: {submission['id']} {state}")
+            return submission["id"]
+    return None
+
+
+def attach_iaps_to_open_review(iap_ids):
+    submission_id = open_review_submission_id()
+    if not submission_id:
+        print("Open review submission: none")
+        return
+    for iap_id in iap_ids:
+        response = api("POST", "/reviewSubmissionItems", json={
+            "data": {
+                "type": "reviewSubmissionItems",
+                "relationships": {
+                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                    "inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap_id}},
+                },
+            }
+        })
+        print(f"Attach IAP to review {iap_id}: {response.status_code}")
+        if response.status_code not in (200, 201, 409):
+            print(response.text[:1600])
+        elif response.status_code == 409:
+            print(response.text[:1200])
+
+
 def main():
+    iap_ids = []
     for config in IAPS:
         iap_id = create_or_update_iap(config)
+        iap_ids.append(iap_id)
         upsert_localization(iap_id, "ja", config["name_ja"], config["description_ja"])
         upsert_localization(iap_id, "en-US", config["name_en"], config["description_en"])
         ensure_price(iap_id)
         ensure_availability(iap_id)
         upload_review_screenshot(iap_id, config["screenshot"])
         submit_iap(iap_id)
+    attach_iaps_to_open_review(iap_ids)
 
 
 if __name__ == "__main__":
