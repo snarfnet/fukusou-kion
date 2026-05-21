@@ -7,6 +7,10 @@ on:
         description: "TestFlight build number to submit"
         required: false
         default: "118"
+      iap_only:
+        description: "Only prepare In-App Purchases"
+        required: false
+        default: "false"
 
 concurrency:
   group: sotsual-right-top-maker-production
@@ -62,6 +66,7 @@ jobs:
           python scripts/prepare_iaps.py
 
       - name: Submit to App Review
+        if: ${{ inputs.iap_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |

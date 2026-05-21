@@ -211,6 +211,34 @@ def ensure_price(iap_id):
         print(response.text[:1600])
 
 
+def ensure_availability(iap_id):
+    response, body = api_json(
+        "GET",
+        f"/v2/inAppPurchases/{iap_id}/inAppPurchaseAvailability"
+        "?fields[inAppPurchaseAvailabilities]=availableInNewTerritories",
+    )
+    if response.status_code == 200 and body.get("data"):
+        print("IAP availability: already set")
+        return
+
+    territories = list_all("/territories?limit=200")
+    territory_data = [{"type": "territories", "id": territory["id"]} for territory in territories]
+    payload = {
+        "data": {
+            "type": "inAppPurchaseAvailabilities",
+            "attributes": {"availableInNewTerritories": True},
+            "relationships": {
+                "availableTerritories": {"data": territory_data},
+                "inAppPurchase": {"data": {"type": "inAppPurchases", "id": iap_id}},
+            },
+        }
+    }
+    response = api("POST", "/inAppPurchaseAvailabilities", json=payload)
+    print(f"IAP availability: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        print(response.text[:1600])
+
+
 def upload_review_screenshot(iap_id, filename):
     path = os.path.join(REVIEW_SCREENSHOT_DIR, filename)
     if not os.path.exists(path):
@@ -271,6 +299,7 @@ def main():
         upsert_localization(iap_id, "ja", config["name_ja"], config["description_ja"])
         upsert_localization(iap_id, "en-US", config["name_en"], config["description_en"])
         ensure_price(iap_id)
+        ensure_availability(iap_id)
         upload_review_screenshot(iap_id, config["screenshot"])
         submit_iap(iap_id)
 
