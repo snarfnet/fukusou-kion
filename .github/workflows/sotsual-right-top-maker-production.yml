@@ -7,13 +7,6 @@ on:
         description: "TestFlight build number to submit"
         required: false
         default: "118"
-  push:
-    branches:
-      - codex/sotsual-right-top-maker-build
-    paths:
-      - ".github/workflows/sotsual-right-top-maker-production.yml"
-      - "ios/SotsualRightTopMaker/scripts/submit_production.py"
-      - "ios/SotsualRightTopMaker/MarketingAssets/Screenshots/**"
 
 concurrency:
   group: sotsual-right-top-maker-production
@@ -60,6 +53,13 @@ jobs:
             printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
           fi
           cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+
+      - name: Prepare In-App Purchases
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_iaps.py
 
       - name: Submit to App Review
         env:

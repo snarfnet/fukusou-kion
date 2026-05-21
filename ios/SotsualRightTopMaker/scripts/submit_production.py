@@ -16,8 +16,8 @@ P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 SCREENSHOT_DIR = "MarketingAssets/Screenshots"
 
 SCREENSHOT_GROUPS = [
-    ("APP_IPHONE_67", ["iphone67_01_home.png", "iphone67_02_editor.png", "iphone67_03_templates.png"]),
-    ("APP_IPAD_PRO_3GEN_129", ["ipad129_01_home.png", "ipad129_02_editor.png", "ipad129_03_templates.png"]),
+    ("APP_IPHONE_67", ["iphone67_01_home.png", "iphone67_02_templates.png", "iphone67_03_editor.png"]),
+    ("APP_IPAD_PRO_3GEN_129", ["ipad129_01_home.png", "ipad129_02_templates.png", "ipad129_03_editor.png"]),
 ]
 
 JA_DESCRIPTION = """卒アル右上メーカーは、集合写真の右上にある「あの丸い欠席者枠」をかんたんに作れる画像作成アプリです。
