@@ -36,8 +36,8 @@ targets:
         LSRequiresIPhoneOS: true
         LSApplicationCategoryType: public.app-category.photo-video
         ITSAppUsesNonExemptEncryption: false
-        NSPhotoLibraryUsageDescription: "盛り写真を作るために写真を選択します。写真は端末内だけで処理します。"
-        NSPhotoLibraryAddUsageDescription: "作成した盛り写真を写真アプリに保存するために使用します。"
+        NSPhotoLibraryUsageDescription: "写真を選んで盛り写真を作るために使います。写真は端末内だけで処理します。"
+        NSPhotoLibraryAddUsageDescription: "作成した盛り写真を写真アプリに保存するために使います。"
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:

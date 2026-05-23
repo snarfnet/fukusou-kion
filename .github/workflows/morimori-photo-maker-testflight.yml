@@ -19,7 +19,7 @@ jobs:
       APP_SKU: morimori-photo-maker-ios
       BUNDLE_NAME: MorimoriPhotoMaker
       PROFILE_NAME: "MorimoriPhotoMaker App Store"
-      MORIMORI_PHOTO_MAKER_APP_ID: ${{ secrets.MORIMORI_PHOTO_MAKER_APP_ID }}
+      MORIMORI_PHOTO_MAKER_APP_ID: "6772533057"
 
     steps:
       - name: Checkout
