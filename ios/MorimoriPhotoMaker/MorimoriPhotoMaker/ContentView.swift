@@ -29,8 +29,8 @@ struct ContentView: View {
             let isCompact = proxy.size.height < 720
             let pagePadding: CGFloat = isCompact ? 8 : 12
             let stageWidth = proxy.size.width - pagePadding * 2
-            let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.56)
-            let compactToolsHeight = max(170, proxy.size.height - compactStageHeight - 96)
+            let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.52)
+            let compactAssetHeight = max(72, proxy.size.height - compactStageHeight - 246)
 
             ZStack {
                 LinearGradient(
@@ -63,21 +63,21 @@ struct ContentView: View {
                     .layoutPriority(1)
 
                     if isCompact {
+                        ControlPanel(
+                            compact: true,
+                            layer: selectedLayer,
+                            onScale: { value in updateSelected { layer in layer.widthRatio = value } },
+                            onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
+                            onOpacity: { value in updateSelected { layer in layer.opacity = value } },
+                            onBack: sendBack,
+                            onFront: bringFront,
+                            onFlip: { updateSelected { $0.isFlipped.toggle() } },
+                            onDuplicate: duplicateSelected,
+                            onDelete: deleteSelected
+                        )
+
                         ScrollView(.vertical, showsIndicators: true) {
                             VStack(spacing: 6) {
-                                ControlPanel(
-                                    compact: true,
-                                    layer: selectedLayer,
-                                    onScale: { value in updateSelected { layer in layer.widthRatio = value } },
-                                    onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
-                                    onOpacity: { value in updateSelected { layer in layer.opacity = value } },
-                                    onBack: sendBack,
-                                    onFront: bringFront,
-                                    onFlip: { updateSelected { $0.isFlipped.toggle() } },
-                                    onDuplicate: duplicateSelected,
-                                    onDelete: deleteSelected
-                                )
-
                                 CategoryStrip(selectedCategory: $selectedCategory)
                                 AssetGrid(
                                     compact: true,
@@ -87,7 +87,7 @@ struct ContentView: View {
                             }
                             .padding(.bottom, 8)
                         }
-                        .frame(height: compactToolsHeight)
+                        .frame(height: compactAssetHeight)
                     } else {
                         ControlPanel(
                             compact: false,
@@ -186,7 +186,7 @@ struct ContentView: View {
     }
 
     private func autoMori() {
-        ["kirakira", "hair", "brows", "eyes", "blush-candy-sparkle", "lips", "glasses-heart-rhinestone", "earrings-heart-chandelier", "halo"]
+        ["kirakira-max-bg", "hair-glam", "brows-arch", "eyes-cat-glitter", "blush-candy-sparkle", "lips-gloss", "glasses-heart-rhinestone", "earrings-heart-chandelier", "halo-sparkle"]
             .compactMap { id in MoriLibrary.assets.first { $0.id == id } }
             .forEach(addAsset)
     }
@@ -273,11 +273,14 @@ private struct StageView<PhotoPicker: View>: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
+                                    guard let index = layers.firstIndex(where: { $0.id == layer.id }) else { return }
                                     if selectedLayerID != layer.id {
                                         selectedLayerID = layer.id
-                                        dragStart = layer.position
+                                        dragStart = layers[index].position
                                     }
-                                    guard let index = layers.firstIndex(where: { $0.id == layer.id }) else { return }
+                                    if dragStart == nil {
+                                        dragStart = layers[index].position
+                                    }
                                     let start = dragStart ?? layers[index].position
                                     layers[index].position = CGPoint(
                                         x: min(1.2, max(-0.2, start.x + value.translation.width / max(1, size.width))),
@@ -429,8 +432,11 @@ private struct AssetGrid: View {
     let onSelect: (MoriAsset) -> Void
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+        let columns = [
+            GridItem(.adaptive(minimum: compact ? 70 : 78), spacing: 8)
+        ]
+
+        LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(assets) { asset in
                     Button {
                         onSelect(asset)
@@ -463,9 +469,7 @@ private struct AssetGrid: View {
                     }
                     .buttonStyle(.plain)
                 }
-            }
         }
-        .frame(height: compact ? 88 : 104)
     }
 }
 
