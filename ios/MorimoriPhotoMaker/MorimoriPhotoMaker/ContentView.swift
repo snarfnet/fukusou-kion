@@ -27,6 +27,10 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { proxy in
             let isCompact = proxy.size.height < 720
+            let pagePadding: CGFloat = isCompact ? 8 : 12
+            let stageWidth = proxy.size.width - pagePadding * 2
+            let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.56)
+            let compactToolsHeight = max(170, proxy.size.height - compactStageHeight - 96)
 
             ZStack {
                 LinearGradient(
@@ -54,30 +58,59 @@ struct ContentView: View {
                         dragStart: $dragStart,
                         photoPicker: photoPicker
                     )
-                    .frame(maxHeight: isCompact ? 300 : .infinity)
+                    .frame(height: isCompact ? compactStageHeight : nil)
+                    .frame(maxHeight: isCompact ? nil : .infinity)
                     .layoutPriority(1)
 
-                    ControlPanel(
-                        compact: isCompact,
-                        layer: selectedLayer,
-                        onScale: { value in updateSelected { layer in layer.widthRatio = value } },
-                        onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
-                        onOpacity: { value in updateSelected { layer in layer.opacity = value } },
-                        onBack: sendBack,
-                        onFront: bringFront,
-                        onFlip: { updateSelected { $0.isFlipped.toggle() } },
-                        onDuplicate: duplicateSelected,
-                        onDelete: deleteSelected
-                    )
+                    if isCompact {
+                        ScrollView(.vertical, showsIndicators: true) {
+                            VStack(spacing: 6) {
+                                ControlPanel(
+                                    compact: true,
+                                    layer: selectedLayer,
+                                    onScale: { value in updateSelected { layer in layer.widthRatio = value } },
+                                    onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
+                                    onOpacity: { value in updateSelected { layer in layer.opacity = value } },
+                                    onBack: sendBack,
+                                    onFront: bringFront,
+                                    onFlip: { updateSelected { $0.isFlipped.toggle() } },
+                                    onDuplicate: duplicateSelected,
+                                    onDelete: deleteSelected
+                                )
 
-                    CategoryStrip(selectedCategory: $selectedCategory)
-                    AssetGrid(
-                        compact: isCompact,
-                        assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
-                        onSelect: addAsset
-                    )
+                                CategoryStrip(selectedCategory: $selectedCategory)
+                                AssetGrid(
+                                    compact: true,
+                                    assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
+                                    onSelect: addAsset
+                                )
+                            }
+                            .padding(.bottom, 8)
+                        }
+                        .frame(height: compactToolsHeight)
+                    } else {
+                        ControlPanel(
+                            compact: false,
+                            layer: selectedLayer,
+                            onScale: { value in updateSelected { layer in layer.widthRatio = value } },
+                            onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
+                            onOpacity: { value in updateSelected { layer in layer.opacity = value } },
+                            onBack: sendBack,
+                            onFront: bringFront,
+                            onFlip: { updateSelected { $0.isFlipped.toggle() } },
+                            onDuplicate: duplicateSelected,
+                            onDelete: deleteSelected
+                        )
+
+                        CategoryStrip(selectedCategory: $selectedCategory)
+                        AssetGrid(
+                            compact: false,
+                            assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
+                            onSelect: addAsset
+                        )
+                    }
                 }
-                .padding(isCompact ? 8 : 12)
+                .padding(pagePadding)
             }
         }
         .task(id: selectedPhotoItem) {
