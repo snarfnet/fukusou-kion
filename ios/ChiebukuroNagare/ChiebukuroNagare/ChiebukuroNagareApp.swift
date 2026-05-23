@@ -5,7 +5,7 @@ import SwiftUI
 @main
 struct ChiebukuroNagareApp: App {
     init() {
-        MobileAds.shared.start()
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
     }
 
     var body: some Scene {

@@ -17,8 +17,8 @@ enum AdMobConfig {
 
 struct BannerAdView: View {
     var body: some View {
-        BannerViewContainer(adSize: AdSizeBanner, adUnitID: AdMobConfig.bannerUnitID)
-            .frame(width: AdSizeBanner.size.width, height: AdSizeBanner.size.height)
+        BannerViewContainer(adSize: GADAdSizeBanner, adUnitID: AdMobConfig.bannerUnitID)
+            .frame(width: GADAdSizeBanner.size.width, height: GADAdSizeBanner.size.height)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
             .background(.black.opacity(0.3))
@@ -27,21 +27,21 @@ struct BannerAdView: View {
 }
 
 private struct BannerViewContainer: UIViewRepresentable {
-    let adSize: AdSize
+    let adSize: GADAdSize
     let adUnitID: String
 
-    func makeUIView(context: Context) -> BannerView {
-        let banner = BannerView(adSize: adSize)
+    func makeUIView(context: Context) -> GADBannerView {
+        let banner = GADBannerView(adSize: adSize)
         banner.adUnitID = adUnitID
         banner.rootViewController = UIApplication.shared.adRootViewController
-        banner.load(Request())
+        banner.load(GADRequest())
         return banner
     }
 
-    func updateUIView(_ banner: BannerView, context: Context) {
+    func updateUIView(_ banner: GADBannerView, context: Context) {
         if banner.adUnitID != adUnitID {
             banner.adUnitID = adUnitID
-            banner.load(Request())
+            banner.load(GADRequest())
         }
     }
 }
