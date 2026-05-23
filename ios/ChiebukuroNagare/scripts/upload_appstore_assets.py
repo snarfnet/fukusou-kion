@@ -26,6 +26,17 @@ LOCALES = {
     "ja": ROOT / "AppStore" / "metadata_ja.md",
     "en-US": ROOT / "AppStore" / "metadata_en.md",
 }
+APP_INFO = {
+    "ja": {
+        "name": "煙草屋のおばぁちゃん",
+        "subtitle": "昔ながらの知恵袋が流れる",
+    },
+    "en-US": {
+        "name": "Grandma Tobacco Shop",
+        "subtitle": "Old-fashioned daily wisdom",
+    },
+}
+PRIVACY_POLICY_URL = "https://snarfnet.github.io/"
 
 
 def list_all(path):
@@ -125,6 +136,138 @@ def ensure_localizations(version_id):
     return result
 
 
+def ensure_app_info_localizations():
+    infos = api_json("GET", f"/apps/{APP_ID}/appInfos?limit=10").get("data", [])
+    if not infos:
+        return
+
+    info_id = infos[0]["id"]
+    api_json(
+        "PATCH",
+        f"/apps/{APP_ID}",
+        data=json_body({
+            "data": {
+                "type": "apps",
+                "id": APP_ID,
+                "attributes": {
+                    "contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+                },
+            }
+        }),
+    )
+    api_json(
+        "PATCH",
+        f"/appInfos/{info_id}",
+        data=json_body({
+            "data": {
+                "type": "appInfos",
+                "id": info_id,
+                "relationships": {
+                    "primaryCategory": {
+                        "data": {"type": "appCategories", "id": "LIFESTYLE"}
+                    }
+                },
+            }
+        }),
+    )
+
+    string_keys = [
+        "contests",
+        "gamblingSimulated",
+        "gunsOrOtherWeapons",
+        "medicalOrTreatmentInformation",
+        "profanityOrCrudeHumor",
+        "sexualContentGraphicAndNudity",
+        "sexualContentOrNudity",
+        "horrorOrFearThemes",
+        "matureOrSuggestiveThemes",
+        "violenceCartoonOrFantasy",
+        "violenceRealisticProlongedGraphicOrSadistic",
+        "violenceRealistic",
+    ]
+    rating_attrs = {key: "NONE" for key in string_keys}
+    rating_attrs["alcoholTobaccoOrDrugUseOrReferences"] = "INFREQUENT_OR_MILD"
+    rating_attrs.update({
+        "messagingAndChat": False,
+        "gambling": False,
+        "parentalControls": False,
+        "ageAssurance": False,
+        "userGeneratedContent": False,
+        "healthOrWellnessTopics": False,
+        "unrestrictedWebAccess": False,
+        "lootBox": False,
+        "advertising": True,
+    })
+    api_json(
+        "PATCH",
+        f"/ageRatingDeclarations/{info_id}",
+        data=json_body({
+            "data": {
+                "type": "ageRatingDeclarations",
+                "id": info_id,
+                "attributes": rating_attrs,
+            }
+        }),
+    )
+
+    localizations = api_json("GET", f"/appInfos/{info_id}/appInfoLocalizations?limit=50").get("data", [])
+    existing = {item["attributes"]["locale"]: item for item in localizations}
+
+    for locale, attrs in APP_INFO.items():
+        if locale not in existing:
+            payload = {
+                "data": {
+                    "type": "appInfoLocalizations",
+                    "attributes": {"locale": locale, **attrs, "privacyPolicyUrl": PRIVACY_POLICY_URL},
+                    "relationships": {"appInfo": {"data": {"type": "appInfos", "id": info_id}}},
+                }
+            }
+            api_json("POST", "/appInfoLocalizations", data=json_body(payload))
+            print(f"App info created: {locale}")
+            continue
+
+        loc_id = existing[locale]["id"]
+        payload = {
+            "data": {
+                "type": "appInfoLocalizations",
+                "id": loc_id,
+                "attributes": {**attrs, "privacyPolicyUrl": PRIVACY_POLICY_URL},
+            }
+        }
+        api_json("PATCH", f"/appInfoLocalizations/{loc_id}", data=json_body(payload))
+        print(f"App info updated: {locale}")
+
+
+def ensure_free_price():
+    points = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1").get("data", [])
+    if not points:
+        return
+
+    local_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [{
+            "type": "appPrices",
+            "id": local_id,
+            "attributes": {"startDate": "2026-05-23"},
+            "relationships": {
+                "appPricePoint": {
+                    "data": {"type": "appPricePoints", "id": points[0]["id"]}
+                }
+            },
+        }],
+    }
+    api_json("POST", "/appPriceSchedules", data=json_body(payload))
+    print("Free price updated")
+
+
 def upload_screenshot(set_id, path):
     data = path.read_bytes()
     checksum = hashlib.md5(data).hexdigest()
@@ -195,6 +338,8 @@ def upload_screenshots(localization_ids):
 
 def main():
     version = find_or_create_version()
+    ensure_app_info_localizations()
+    ensure_free_price()
     localization_ids = ensure_localizations(version["id"])
     upload_screenshots(localization_ids)
     print(f"ASC assets uploaded for app {APP_ID}, version {APP_VERSION}.")
