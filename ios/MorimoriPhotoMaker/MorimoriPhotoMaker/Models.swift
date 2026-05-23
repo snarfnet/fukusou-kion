@@ -27,6 +27,7 @@ enum MoriPack: String, CaseIterable, Identifiable {
 
 enum MoriCategory: String, CaseIterable, Identifiable {
     case hair = "髪型"
+    case hairAccessory = "髪飾り"
     case brows = "まゆげ"
     case shadow = "アイシャドウ"
     case blush = "チーク"
@@ -82,6 +83,9 @@ enum MoriLibrary {
         MoriAsset(id: "hair-fire-lion", name: "炎ライオン", category: .hair, filename: "hair-fire-lion.png", defaultWidth: 0.68, defaultPosition: CGPoint(x: 0.50, y: 0.25), defaultZ: 30, isBackground: false, pack: .free),
         MoriAsset(id: "hair-gothic-drill", name: "ゴシックドリル", category: .hair, filename: "hair-gothic-drill.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .free),
         MoriAsset(id: "hair-rainbow-puffs", name: "虹ふわパフ", category: .hair, filename: "hair-rainbow-puffs.png", defaultWidth: 0.68, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .free),
+        MoriAsset(id: "hair-accessory-sparkle", name: "キラ髪飾り", category: .hairAccessory, filename: "halo-sparkle.png", defaultWidth: 0.58, defaultPosition: CGPoint(x: 0.50, y: 0.28), defaultZ: 61, isBackground: false, pack: .free),
+        MoriAsset(id: "hair-accessory-heart", name: "ハート髪ピン", category: .hairAccessory, filename: "earrings-heart-chandelier.png", defaultWidth: 0.35, defaultPosition: CGPoint(x: 0.35, y: 0.32), defaultZ: 61, isBackground: false, pack: .free),
+        MoriAsset(id: "hair-accessory-star", name: "星ヘア飾り", category: .hairAccessory, filename: "glasses-star-holo.png", defaultWidth: 0.30, defaultPosition: CGPoint(x: 0.65, y: 0.31), defaultZ: 61, isBackground: false, pack: .free),
         MoriAsset(id: "brows", name: "強めまゆ", category: .brows, filename: "brows-arch.png", defaultWidth: 0.33, defaultPosition: CGPoint(x: 0.50, y: 0.37), defaultZ: 45, isBackground: false, pack: .free),
         MoriAsset(id: "brows-villain-arch", name: "悪役アーチ", category: .brows, filename: "brows-villain-arch.png", defaultWidth: 0.33, defaultPosition: CGPoint(x: 0.50, y: 0.37), defaultZ: 45, isBackground: false, pack: .free),
         MoriAsset(id: "brows-caramel-fluffy", name: "キャラメル太まゆ", category: .brows, filename: "brows-caramel-fluffy.png", defaultWidth: 0.34, defaultPosition: CGPoint(x: 0.50, y: 0.37), defaultZ: 45, isBackground: false, pack: .free),
@@ -123,12 +127,14 @@ enum MoriLibrary {
 
     private static let paidPreviewAssets: [MoriAsset] = [
         MoriAsset(id: "pack1-hair-glam", name: "P1 盛り髪", category: .hair, filename: "hair-glam.png", defaultWidth: 0.64, defaultPosition: CGPoint(x: 0.50, y: 0.23), defaultZ: 30, isBackground: false, pack: .morimoriPack1),
+        MoriAsset(id: "pack1-hair-accessory", name: "P1 髪飾り", category: .hairAccessory, filename: "halo-sparkle.png", defaultWidth: 0.62, defaultPosition: CGPoint(x: 0.50, y: 0.27), defaultZ: 61, isBackground: false, pack: .morimoriPack1),
         MoriAsset(id: "pack1-brows-gold", name: "P1 金まゆ", category: .brows, filename: "brows-gold-lightning.png", defaultWidth: 0.35, defaultPosition: CGPoint(x: 0.50, y: 0.37), defaultZ: 45, isBackground: false, pack: .morimoriPack1),
         MoriAsset(id: "pack1-shadow-prism", name: "P1 虹アイ", category: .shadow, filename: "shadow-rainbow-prism.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 46, isBackground: false, pack: .morimoriPack1),
         MoriAsset(id: "pack1-lip-gold", name: "P1 金リップ", category: .lipstick, filename: "lipstick-gold-foil.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.59), defaultZ: 47, isBackground: false, pack: .morimoriPack1),
         MoriAsset(id: "pack1-frame", name: "P1 フレーム", category: .background, filename: "burst-frame.png", defaultWidth: 1.0, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 12, isBackground: false, pack: .morimoriPack1),
         MoriAsset(id: "pack1-kirakira", name: "P1 アニメ背景", category: .animatedBackground, filename: "kirakira-max-bg.gif", defaultWidth: 1.0, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 1, isBackground: true, pack: .morimoriPack1),
         MoriAsset(id: "pack2-hair-neon", name: "P2 ネオン髪", category: .hair, filename: "hair-neon-twintails.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .morimoriPack2),
+        MoriAsset(id: "pack2-hair-accessory", name: "P2 星髪飾り", category: .hairAccessory, filename: "glasses-star-holo.png", defaultWidth: 0.34, defaultPosition: CGPoint(x: 0.62, y: 0.31), defaultZ: 61, isBackground: false, pack: .morimoriPack2),
         MoriAsset(id: "pack2-brows-heart", name: "P2 ハートまゆ", category: .brows, filename: "brows-pink-heart.png", defaultWidth: 0.35, defaultPosition: CGPoint(x: 0.50, y: 0.37), defaultZ: 45, isBackground: false, pack: .morimoriPack2),
         MoriAsset(id: "pack2-cheek-heart", name: "P2 ハートチーク", category: .blush, filename: "blush-heart-stamp.png", defaultWidth: 0.42, defaultPosition: CGPoint(x: 0.50, y: 0.55), defaultZ: 44, isBackground: false, pack: .morimoriPack2),
         MoriAsset(id: "pack2-glasses", name: "P2 星メガネ", category: .glasses, filename: "glasses-star-holo.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 58, isBackground: false, pack: .morimoriPack2),

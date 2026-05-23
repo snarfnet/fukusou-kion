@@ -397,24 +397,29 @@ private struct CategoryStrip: View {
     @Binding var selectedCategory: MoriCategory
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(MoriCategory.allCases) { category in
-                    Button {
-                        selectedCategory = category
-                    } label: {
-                        Text(category.rawValue)
-                            .font(.caption.weight(.black))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .foregroundStyle(selectedCategory == category ? .white : Color(red: 0.33, green: 0.18, blue: 0.25))
-                            .background(selectedCategory == category ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.74), in: Capsule())
-                    }
-                    .buttonStyle(.plain)
+        let columns = [
+            GridItem(.adaptive(minimum: 72), spacing: 6)
+        ]
+
+        LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
+            ForEach(MoriCategory.allCases) { category in
+                Button {
+                    selectedCategory = category
+                } label: {
+                    Text(category.rawValue)
+                        .font(.caption.weight(.black))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .foregroundStyle(selectedCategory == category ? .white : Color(red: 0.33, green: 0.18, blue: 0.25))
+                        .background(selectedCategory == category ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.74), in: Capsule())
                 }
+                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 2)
         }
+        .padding(.horizontal, 2)
     }
 }
 
@@ -441,6 +446,15 @@ private struct AssetGrid: View {
                                 .font(.caption2.weight(.black))
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.7)
+                            if asset.pack != .free {
+                                Text(asset.pack.title)
+                                    .font(.system(size: 9, weight: .black, design: .rounded))
+                                    .lineLimit(1)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 1)
+                                    .foregroundStyle(.white)
+                                    .background(Color(red: 0.86, green: 0.18, blue: 0.52), in: Capsule())
+                            }
                         }
                         .frame(width: compact ? 70 : 78, height: compact ? 78 : 92)
                         .padding(4)
