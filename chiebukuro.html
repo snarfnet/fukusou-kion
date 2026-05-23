@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>煙草屋のおばぁちゃん</title>
+  <link rel="stylesheet" href="chiebukuro.css">
+</head>
+<body>
+  <main class="wisdom-stage" aria-label="煙草屋のおばぁちゃん">
+    <div class="photo-backdrop" aria-hidden="true"></div>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="paper-grain" aria-hidden="true"></div>
+
+    <header class="app-mark">
+      <p>煙草屋の</p>
+      <h1>おばぁちゃん</h1>
+    </header>
+
+    <section class="typewriter" aria-live="polite">
+      <p class="category" id="categoryLabel">くらし</p>
+      <p class="wisdom-text" id="wisdomText"></p>
+      <span class="cursor" id="cursor" aria-hidden="true"></span>
+    </section>
+
+    <aside class="flow-log" id="flowLog" aria-label="流れた知恵袋"></aside>
+
+    <nav class="controls" aria-label="操作">
+      <button class="control-button" id="prevButton" type="button" aria-label="前の知恵袋">‹</button>
+      <button class="control-button main" id="pauseButton" type="button" aria-label="一時停止">Ⅱ</button>
+      <button class="control-button" id="nextButton" type="button" aria-label="次の知恵袋">›</button>
+      <button class="control-button wide" id="randomButton" type="button">おまかせ</button>
+    </nav>
+
+  </main>
+
+  <script src="chiebukuro-data.js"></script>
+  <script src="chiebukuro.js"></script>
+</body>
+</html>
