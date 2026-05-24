@@ -47,15 +47,15 @@
           </div>
 
           <label>
-            大きさ
+            <span class="slider-head"><span>大きさ</span><output id="scaleValue">100%</output></span>
             <input id="scaleRange" type="range" min="20" max="260" value="100" />
           </label>
           <label>
-            回転
+            <span class="slider-head"><span>回転</span><output id="rotateValue">0°</output></span>
             <input id="rotateRange" type="range" min="-180" max="180" value="0" />
           </label>
           <label>
-            透明度
+            <span class="slider-head"><span>透明度</span><output id="opacityValue">100%</output></span>
             <input id="opacityRange" type="range" min="20" max="100" value="100" />
           </label>
 
@@ -70,7 +70,7 @@
           </div>
         </section>
 
-        <nav id="categoryTabs" class="tabs" aria-label="カテゴリ"></nav>
+        <nav id="categoryTabs" class="tabs" aria-label="カテゴリー"></nav>
         <div id="assetGrid" class="asset-grid"></div>
       </aside>
     </main>

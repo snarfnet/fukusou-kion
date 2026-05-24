@@ -155,6 +155,16 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
+      - name: Upload to TestFlight
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcrun altool --upload-app \
+            --type ios \
+            --file build/export/MorimoriPhotoMaker.ipa \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
+
       - name: Wait for TestFlight build processing
         env:
           ASC_P8_PATH: /tmp/asc_key.p8

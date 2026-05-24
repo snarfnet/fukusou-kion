@@ -8,8 +8,7 @@ WebプロトタイプをもとにしたSwiftUI版です。
 - 生成済み盛り素材の同梱
 - カテゴリ別素材一覧
 - レイヤー追加
-- ドラッグ移動
-- 大きさ、回転、透明度
+- ドラッグ移動、大きさ、回転、透明度
 - 背面、前面、反転、複製、削除
 - おまかせ盛り
 - 共有
@@ -30,7 +29,7 @@ Bundle ID:
 
 - `com.tokyonasu.morimoriphotomaker`
 
-Workflowは App Store Connect のアプリレコードとBundle IDを確認し、ビルド番号は `GITHUB_RUN_NUMBER + 100` を使います。
+WorkflowはApp Store ConnectのアプリレコードとBundle IDを確認し、ビルド番号は `GITHUB_RUN_NUMBER + 100` を使います。
 
 ## ローカルMacビルド
 
@@ -40,4 +39,4 @@ xcodegen generate
 xcodebuild -project MorimoriPhotoMaker.xcodeproj -scheme MorimoriPhotoMaker -destination "generic/platform=iOS" build
 ```
 
-このWindows環境ではXcodeビルドは実行できません。GitHub ActionsまたはMacで確認してください。
+このWindows環境ではXcodeビルドを実行できません。GitHub ActionsまたはMacで確認してください。
