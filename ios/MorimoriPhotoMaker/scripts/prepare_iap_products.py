@@ -326,6 +326,22 @@ def ensure_subscription_localization(subscription_id, subscription):
             print(response.text[:1000])
 
 
+def ensure_subscription_availability(subscription_id):
+    response = api("POST", "/subscriptionAvailabilities", data=json_body({
+        "data": {
+            "type": "subscriptionAvailabilities",
+            "attributes": {"availableInNewTerritories": False},
+            "relationships": {
+                "availableTerritories": {"data": [{"type": "territories", "id": "JPN"}]},
+                "subscription": {"data": {"type": "subscriptions", "id": subscription_id}},
+            },
+        }
+    }))
+    print(f"Subscription availability JPN: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        print(response.text[:1200])
+
+
 def price_point_for_subscription(subscription_id, yen):
     body = api_json(
         "GET",
@@ -351,7 +367,7 @@ def ensure_subscription_price(subscription_id, subscription):
         }
     }))
     print(f"Subscription price {subscription['priceYen']} JPY: {response.status_code}")
-    if response.status_code not in (200, 201, 409):
+    if response.status_code not in (200, 201):
         print(response.text[:1200])
 
 
@@ -415,6 +431,7 @@ def main():
     for subscription in config.get("subscriptions", []):
         subscription_id = ensure_subscription(app_id, group_id, subscription)
         ensure_subscription_localization(subscription_id, subscription)
+        ensure_subscription_availability(subscription_id)
         ensure_subscription_price(subscription_id, subscription)
         ensure_subscription_review_screenshot(subscription_id)
         if os.environ.get("SUBMIT_PURCHASES_FOR_REVIEW") == "1":
