@@ -473,6 +473,20 @@ def cancel_open_review_submissions(app_id):
             print(f"Canceled review submission {submission['id']}: {response.status_code}")
 
 
+def cancel_waiting_review_and_wait(app_id, version_id):
+    cancel_open_review_submissions(app_id)
+    for attempt in range(1, 21):
+        response, body = api_json("GET", f"/appStoreVersions/{version_id}")
+        if response.status_code != 200:
+            raise RuntimeError(f"Version lookup failed after cancel {response.status_code}: {response.text[:500]}")
+        state = body["data"]["attributes"].get("appStoreState")
+        print(f"Waiting for review cancellation... {attempt}/20 state={state}")
+        if state not in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
+            return state
+        time.sleep(30)
+    raise RuntimeError("Review submission cancellation did not finish in time.")
+
+
 def ready_review_submission_id(app_id):
     response, body = api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=20")
     if response.status_code != 200:
@@ -547,8 +561,10 @@ def main():
     print(f"App: {attrs.get('name')} / {attrs.get('bundleId')}")
 
     version_id, state = find_or_create_version(app_id)
-    if state in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
-        print(f"Already submitted: {state}")
+    if state == "WAITING_FOR_REVIEW":
+        state = cancel_waiting_review_and_wait(app_id, version_id)
+    if state == "IN_REVIEW":
+        print("Already in review. App Store screenshots cannot be changed without manual Apple-side action.")
         return
 
     ensure_release_prerequisites(app_id, version_id)
