@@ -438,12 +438,14 @@ private struct LayerView: View {
     let isSelected: Bool
 
     var body: some View {
-        if layer.asset.isAnimated, let url = BundleImage.url(layer.asset.filename, folder: "Overlays") {
-            LayerImageContainer(layer: layer, stageSize: stageSize, isSelected: isSelected) {
+        if layer.asset.isAnimated,
+           let url = BundleImage.url(layer.asset.filename, folder: "Overlays"),
+           let image = BundleImage.load(layer.asset.filename, folder: "Overlays", cropSide: layer.cropSide) {
+            LayerImageContainer(layer: layer, stageSize: stageSize, isSelected: isSelected, imageSize: image.size) {
                 AnimatedImage(url: url)
             }
         } else if let image = BundleImage.load(layer.asset.filename, folder: "Overlays", cropSide: layer.cropSide) {
-            LayerImageContainer(layer: layer, stageSize: stageSize, isSelected: isSelected) {
+            LayerImageContainer(layer: layer, stageSize: stageSize, isSelected: isSelected, imageSize: image.size) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
@@ -456,12 +458,13 @@ private struct LayerImageContainer<Content: View>: View {
     let layer: MoriLayer
     let stageSize: CGSize
     let isSelected: Bool
+    let imageSize: CGSize
     let content: () -> Content
 
     var body: some View {
+        let displaySize = layer.displaySize(in: stageSize, imageSize: imageSize)
         content()
-            .frame(width: layer.displayWidth(in: stageSize))
-            .frame(width: layer.isBackground ? stageSize.width : nil, height: layer.isBackground ? stageSize.height : nil)
+            .frame(width: displaySize.width, height: displaySize.height)
             .opacity(layer.opacity)
             .rotationEffect(.degrees(layer.rotation.degrees))
             .scaleEffect(x: layer.isFlipped ? -1 : 1, y: 1)
@@ -519,12 +522,14 @@ private extension MoriAsset {
 }
 
 private extension MoriLayer {
-    func displayWidth(in stageSize: CGSize) -> CGFloat {
+    func displaySize(in stageSize: CGSize, imageSize: CGSize) -> CGSize {
         if isBackground {
-            return stageSize.width
+            return stageSize
         }
         let baseWidth = stageSize.width * widthRatio
-        return cropSide == nil ? baseWidth : baseWidth * 0.52
+        let width = cropSide == nil ? baseWidth : baseWidth * 0.52
+        let ratio = imageSize.height / max(1, imageSize.width)
+        return CGSize(width: width, height: width * ratio)
     }
 }
 
@@ -549,7 +554,7 @@ private struct ControlPanel: View {
             }
 
             if let layer {
-                SliderRow(title: "大きさ", displayValue: "\(Int(layer.widthRatio * 100))%", value: Double(layer.widthRatio), range: 0.08...2.6) { onScale(CGFloat($0)) }
+                SliderRow(title: "大きさ", displayValue: "\(Int(layer.widthRatio * 100))%", value: Double(layer.widthRatio), range: 0.08...6.0) { onScale(CGFloat($0)) }
                 SliderRow(title: "回転", displayValue: "\(Int(layer.rotation.degrees))°", value: layer.rotation.degrees, range: -180...180, onChange: onRotate)
                 SliderRow(title: "透明度", displayValue: "\(Int(layer.opacity * 100))%", value: Double(layer.opacity), range: 0.2...1.0) { onOpacity(CGFloat($0)) }
             }
@@ -579,7 +584,7 @@ private struct CompactControlPanel: View {
             if let layer, let activeTool {
                 switch activeTool {
                 case .scale:
-                    SliderRow(title: activeTool.title, displayValue: "\(Int(layer.widthRatio * 100))%", value: Double(layer.widthRatio), range: 0.08...2.6) { onScale(CGFloat($0)) }
+                    SliderRow(title: activeTool.title, displayValue: "\(Int(layer.widthRatio * 100))%", value: Double(layer.widthRatio), range: 0.08...6.0) { onScale(CGFloat($0)) }
                 case .rotate:
                     SliderRow(title: activeTool.title, displayValue: "\(Int(layer.rotation.degrees))°", value: layer.rotation.degrees, range: -180...180, onChange: onRotate)
                 case .opacity:
