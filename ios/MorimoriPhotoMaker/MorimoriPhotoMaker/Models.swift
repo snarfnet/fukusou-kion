@@ -1,6 +1,10 @@
 import CoreGraphics
 import Foundation
 
+enum MorimoriBuildConfig {
+    static let unlockPaidPacksForTestFlight = false
+}
+
 enum MoriPack: String, CaseIterable, Identifiable {
     case free
     case morimoriPack1
@@ -72,6 +76,65 @@ enum MoriPack: String, CaseIterable, Identifiable {
         case .moriHiraganaPack1: "com.tokyonasu.morimoriphotomaker.mori.hiragana1"
         case .moriHiraganaPack2: "com.tokyonasu.morimoriphotomaker.mori.hiragana2"
         case .moriKatakanaPack: "com.tokyonasu.morimoriphotomaker.mori.katakana"
+        }
+    }
+
+    var itemCount: Int? {
+        switch self {
+        case .free: nil
+        case .morimoriPack1: 32
+        case .morimoriPack2: 30
+        case .seriousPack: 52
+        case .yankeeDecoPack: 32
+        case .bubbleDecoPack: 32
+        case .kyunNekoPack: 10
+        case .mofuUsaPack: 10
+        case .koreanHairPack: 15
+        case .koreanFashionPack: 20
+        case .himeMoriPack: 32
+        case .hairArrangeGotsumoriPack: 17
+        case .hairArrangeGotsumoriPack2: 17
+        case .vividReptilePack: 10
+        case .varietyPack: 12
+        case .cabaretNailPack: 50
+        case .emotionPack: 25
+        case .moriHiraganaPack1: 28
+        case .moriHiraganaPack2: 28
+        case .moriKatakanaPack: 56
+        }
+    }
+
+    var priceYen: Int? {
+        switch self {
+        case .free: nil
+        case .kyunNekoPack, .mofuUsaPack, .vividReptilePack, .varietyPack: 100
+        case .morimoriPack1, .morimoriPack2, .yankeeDecoPack, .bubbleDecoPack, .koreanHairPack, .koreanFashionPack, .himeMoriPack, .emotionPack: 200
+        case .seriousPack, .hairArrangeGotsumoriPack, .hairArrangeGotsumoriPack2, .cabaretNailPack: 300
+        case .moriHiraganaPack1, .moriHiraganaPack2, .moriKatakanaPack: nil
+        }
+    }
+}
+
+enum MoriSubscription: String, Identifiable {
+    case allAccessMonthly
+
+    var id: String { rawValue }
+
+    var productID: String {
+        switch self {
+        case .allAccessMonthly: "com.tokyonasu.morimoriphotomaker.subscription.monthly"
+        }
+    }
+
+    var priceYen: Int {
+        switch self {
+        case .allAccessMonthly: 680
+        }
+    }
+
+    var unlocksAllPaidPacks: Bool {
+        switch self {
+        case .allAccessMonthly: true
         }
     }
 }

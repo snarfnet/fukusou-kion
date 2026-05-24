@@ -1,10 +1,7 @@
 import PhotosUI
+import StoreKit
 import SwiftUI
 import UIKit
-
-enum MorimoriBuildConfig {
-    static let unlockPaidPacksForTestFlight = true
-}
 
 struct ContentView: View {
     @State private var selectedCategory: MoriCategory = .hair
@@ -16,6 +13,9 @@ struct ContentView: View {
     @State private var dragStart: CGPoint?
     @State private var sharePayload: SharePayload?
     @State private var showSaveAlert = false
+    @State private var purchasePromptPack: MoriPack?
+    @State private var showStore = false
+    @StateObject private var purchaseStore = PurchaseStore()
 
     private var selectedLayerIndex: Int? {
         layers.firstIndex { $0.id == selectedLayerID }
@@ -51,6 +51,7 @@ struct ContentView: View {
                     HeaderView(
                         compact: isCompact,
                         onAutoMori: autoMori,
+                        onStore: { showStore = true },
                         onShare: share,
                         onSave: saveToPhotoLibrary,
                         photoPicker: photoPicker
@@ -98,6 +99,8 @@ struct ContentView: View {
                                 AssetGrid(
                                     compact: true,
                                     assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
+                                    isUnlocked: isAssetUnlocked,
+                                    onLocked: showPurchasePrompt,
                                     onSelect: addAsset
                                 )
                             }
@@ -122,6 +125,8 @@ struct ContentView: View {
                         AssetGrid(
                             compact: false,
                             assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
+                            isUnlocked: isAssetUnlocked,
+                            onLocked: showPurchasePrompt,
                             onSelect: addAsset
                         )
                     }
@@ -133,8 +138,14 @@ struct ContentView: View {
         .task(id: selectedPhotoItem) {
             await loadPhoto()
         }
+        .task {
+            await purchaseStore.load()
+        }
         .sheet(item: $sharePayload) { payload in
             ActivityView(items: [payload.image])
+        }
+        .sheet(isPresented: $showStore) {
+            StoreSheet(promptPack: purchasePromptPack, purchaseStore: purchaseStore)
         }
         .alert("保存しました。", isPresented: $showSaveAlert) {
             Button("OK", role: .cancel) {}
@@ -162,7 +173,7 @@ struct ContentView: View {
     }
 
     private func addAsset(_ asset: MoriAsset) {
-        guard MorimoriBuildConfig.unlockPaidPacksForTestFlight || asset.pack == .free else { return }
+        guard isAssetUnlocked(asset) else { return }
         let maxZ = layers.map(\.zIndex).max() ?? asset.defaultZ
         if asset.shouldSplitOnAdd {
             let pairZ = max(maxZ + 1, asset.defaultZ)
@@ -231,9 +242,7 @@ struct ContentView: View {
     }
 
     private func autoMori() {
-        let accessibleAssets = MoriLibrary.assets.filter {
-            MorimoriBuildConfig.unlockPaidPacksForTestFlight || $0.pack == .free
-        }
+        let accessibleAssets = MoriLibrary.assets.filter(isAssetUnlocked)
         let requiredCategories: [MoriCategory] = [
             .animatedBackground, .hair, .brows, .shadow, .blush, .lipstick, .glasses, .earrings, .background
         ]
@@ -257,6 +266,18 @@ struct ContentView: View {
 
     private func share() {
         sharePayload = SharePayload(image: MoriImageExporter.render(basePhoto: basePhoto, layers: layers))
+    }
+
+    private func isAssetUnlocked(_ asset: MoriAsset) -> Bool {
+        MorimoriBuildConfig.unlockPaidPacksForTestFlight
+            || asset.pack == .free
+            || purchaseStore.hasAllAccessSubscription
+            || purchaseStore.purchasedPacks.contains(asset.pack)
+    }
+
+    private func showPurchasePrompt(_ asset: MoriAsset) {
+        purchasePromptPack = asset.pack
+        showStore = true
     }
 
     private func saveToPhotoLibrary() {
@@ -295,9 +316,100 @@ private struct SharePayload: Identifiable {
     let image: UIImage
 }
 
+private struct StoreSheet: View {
+    let promptPack: MoriPack?
+    @ObservedObject var purchaseStore: PurchaseStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if let product = purchaseStore.subscriptionProduct {
+                    Section("サブスク") {
+                        productRow(
+                            title: "全ロック素材使い放題",
+                            detail: "すべての課金パックを月額で解放",
+                            price: product.displayPrice,
+                            action: { Task { await purchaseStore.purchase(product) } }
+                        )
+                    }
+                }
+
+                Section("単品パック") {
+                    ForEach(MoriPack.allCases.filter { $0.productID != nil }) { pack in
+                        let product = purchaseStore.product(for: pack)
+                        productRow(
+                            title: pack.title,
+                            detail: pack.itemCount.map { "\($0)点" } ?? "追加素材",
+                            price: product?.displayPrice ?? pack.priceYen.map { "\($0)円" } ?? "",
+                            highlighted: pack == promptPack,
+                            purchased: purchaseStore.purchasedPacks.contains(pack),
+                            action: {
+                                guard let product else { return }
+                                Task { await purchaseStore.purchase(product) }
+                            }
+                        )
+                    }
+                }
+
+                Section {
+                    Button("購入を復元") {
+                        Task { await purchaseStore.restore() }
+                    }
+                }
+            }
+            .navigationTitle("ショップ")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("閉じる") { dismiss() }
+                }
+            }
+            .task {
+                await purchaseStore.load()
+            }
+            .alert("お知らせ", isPresented: Binding(get: { purchaseStore.errorMessage != nil }, set: { if !$0 { purchaseStore.errorMessage = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(purchaseStore.errorMessage ?? "")
+            }
+        }
+    }
+
+    private func productRow(
+        title: String,
+        detail: String,
+        price: String,
+        highlighted: Bool = false,
+        purchased: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            if purchased {
+                Text("購入済み")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+            } else {
+                Button(price.isEmpty ? "読み込み中" : price, action: action)
+                    .disabled(price.isEmpty)
+                    .buttonStyle(.borderedProminent)
+            }
+        }
+        .listRowBackground(highlighted ? Color(red: 1.0, green: 0.90, blue: 0.96) : nil)
+    }
+}
+
 private struct HeaderView<PhotoPicker: View>: View {
     let compact: Bool
     let onAutoMori: () -> Void
+    let onStore: () -> Void
     let onShare: () -> Void
     let onSave: () -> Void
     let photoPicker: PhotoPicker
@@ -306,6 +418,7 @@ private struct HeaderView<PhotoPicker: View>: View {
         VStack(spacing: compact ? 6 : 10) {
             HStack(spacing: compact ? 5 : 8) {
                 photoPicker
+                Button("ショップ", action: onStore)
                 Button("おまかせ盛り", action: onAutoMori)
                 Button("共有", action: onShare)
                 Button("保存", action: onSave)
@@ -708,6 +821,8 @@ private struct CategoryStrip: View {
 private struct AssetGrid: View {
     let compact: Bool
     let assets: [MoriAsset]
+    let isUnlocked: (MoriAsset) -> Bool
+    let onLocked: (MoriAsset) -> Void
     let onSelect: (MoriAsset) -> Void
 
     var body: some View {
@@ -717,7 +832,12 @@ private struct AssetGrid: View {
 
         LazyVGrid(columns: columns, spacing: compact ? 6 : 8) {
                 ForEach(assets) { asset in
+                    let unlocked = isUnlocked(asset)
                     Button {
+                        guard unlocked else {
+                            onLocked(asset)
+                            return
+                        }
                         onSelect(asset)
                     } label: {
                         VStack(spacing: 4) {
@@ -732,7 +852,7 @@ private struct AssetGrid: View {
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.7)
                             if asset.pack != .free {
-                                Text(asset.pack.title)
+                                Text(unlocked ? asset.pack.title : "LOCK")
                                     .font(.system(size: 9, weight: .black, design: .rounded))
                                     .lineLimit(1)
                                     .padding(.horizontal, 5)
@@ -743,8 +863,9 @@ private struct AssetGrid: View {
                         }
                         .frame(width: compact ? 64 : 78, height: compact ? 70 : 92)
                         .padding(4)
+                        .opacity(unlocked ? 1 : 0.55)
                         .background(.white.opacity(0.78), in: RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(red: 0.96, green: 0.72, blue: 0.84), lineWidth: 1))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(unlocked ? Color(red: 0.96, green: 0.72, blue: 0.84) : .gray.opacity(0.45), lineWidth: 1))
                     }
                     .buttonStyle(.plain)
                 }

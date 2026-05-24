@@ -1,0 +1,2122 @@
+{
+  "packs": [
+    {
+      "id": "morimoriPack1",
+      "name": "盛り盛りパック1",
+      "productId": "com.tokyonasu.morimoriphotomaker.pack1",
+      "theme": "派手かわいい平成ギャル・プリクラ系アソート",
+      "items": [
+        {
+          "id": "pack1_hair_rose_wave",
+          "category": "髪型",
+          "name": "ローズウェーブ"
+        },
+        {
+          "id": "pack1_hair_caramel_halfup",
+          "category": "髪型",
+          "name": "キャラメルハーフアップ"
+        },
+        {
+          "id": "pack1_hair_black_ribbon_twin",
+          "category": "髪型",
+          "name": "黒リボンツイン"
+        },
+        {
+          "id": "pack1_hair_milk_tea_bob",
+          "category": "髪型",
+          "name": "ミルクティーボブ"
+        },
+        {
+          "id": "pack1_hair_party_up",
+          "category": "髪型",
+          "name": "夜会アップ"
+        },
+        {
+          "id": "pack1_brows_soft_arch",
+          "category": "まゆげ",
+          "name": "ふんわりアーチ"
+        },
+        {
+          "id": "pack1_brows_glitter_gold",
+          "category": "まゆげ",
+          "name": "金ラメ眉"
+        },
+        {
+          "id": "pack1_shadow_sakura_lame",
+          "category": "アイシャドウ",
+          "name": "桜ラメシャドウ"
+        },
+        {
+          "id": "pack1_shadow_brown_smoky",
+          "category": "アイシャドウ",
+          "name": "ブラウン盛り"
+        },
+        {
+          "id": "pack1_shadow_purple_cat",
+          "category": "アイシャドウ",
+          "name": "紫キャット"
+        },
+        {
+          "id": "pack1_blush_peach_heart",
+          "category": "チーク",
+          "name": "桃ハート頬"
+        },
+        {
+          "id": "pack1_blush_rhinestone",
+          "category": "チーク",
+          "name": "ラインストーン頬"
+        },
+        {
+          "id": "pack1_lip_coral_gloss",
+          "category": "口紅",
+          "name": "コーラルぷるん"
+        },
+        {
+          "id": "pack1_lip_berry_gloss",
+          "category": "口紅",
+          "name": "ベリーグロス"
+        },
+        {
+          "id": "pack1_glasses_pink_rim",
+          "category": "メガネ",
+          "name": "ピンク細フレーム"
+        },
+        {
+          "id": "pack1_glasses_clear_heart",
+          "category": "メガネ",
+          "name": "透明ハートメガネ"
+        },
+        {
+          "id": "pack1_earring_pearl_drop",
+          "category": "イヤリング",
+          "name": "パールドロップ"
+        },
+        {
+          "id": "pack1_earring_heart_chain",
+          "category": "イヤリング",
+          "name": "ハートチェーン"
+        },
+        {
+          "id": "pack1_nose_pink_gem",
+          "category": "鼻ピアス",
+          "name": "ピンク宝石鼻ピ"
+        },
+        {
+          "id": "pack1_frame_rose_pearl",
+          "category": "フレーム",
+          "name": "ローズパール枠"
+        },
+        {
+          "id": "pack1_frame_lace_heart",
+          "category": "フレーム",
+          "name": "レースハート枠"
+        },
+        {
+          "id": "pack1_anim_pink_sparkle",
+          "category": "アニメ背景",
+          "name": "ピンク流れ星"
+        },
+        {
+          "id": "pack1_anim_heart_bokeh",
+          "category": "アニメ背景",
+          "name": "ハートぼかし"
+        },
+        {
+          "id": "pack1_part_tiara",
+          "category": "髪飾り",
+          "name": "姫ティアラ"
+        },
+        {
+          "id": "pack1_part_ribbon_clip",
+          "category": "髪飾り",
+          "name": "リボンクリップ"
+        },
+        {
+          "id": "pack1_part_perfume",
+          "category": "アイテム",
+          "name": "香水きらめき"
+        },
+        {
+          "id": "pack1_part_heart_balloon",
+          "category": "アイテム",
+          "name": "ハートバルーン"
+        },
+        {
+          "id": "pack1_part_pearl_chain",
+          "category": "髪飾り",
+          "name": "パールチェーン"
+        },
+        {
+          "id": "pack1_part_glitter_tears",
+          "category": "アイテム",
+          "name": "きら涙"
+        },
+        {
+          "id": "pack1_part_star_sticker",
+          "category": "アイテム",
+          "name": "星ステッカー"
+        },
+        {
+          "id": "pack1_lashes_doll_volume",
+          "category": "つけまつげ",
+          "name": "盛りドールつけま"
+        },
+        {
+          "id": "pack1_lashes_pink_rhinestone",
+          "category": "つけまつげ",
+          "name": "ピンクきらつけま"
+        }
+      ]
+    },
+    {
+      "id": "morimoriPack2",
+      "name": "盛り盛りパック2",
+      "productId": "com.tokyonasu.morimoriphotomaker.pack2",
+      "theme": "ネオン・韓国アイドル・小悪魔系アソート",
+      "items": [
+        {
+          "id": "pack2_hair_ash_layer",
+          "category": "髪型",
+          "name": "アッシュレイヤー"
+        },
+        {
+          "id": "pack2_hair_blue_black_long",
+          "category": "髪型",
+          "name": "ブルーブラックロング"
+        },
+        {
+          "id": "pack2_hair_hime_wolf",
+          "category": "髪型",
+          "name": "姫ウルフ"
+        },
+        {
+          "id": "pack2_hair_platinum_bob",
+          "category": "髪型",
+          "name": "プラチナボブ"
+        },
+        {
+          "id": "pack2_hair_high_pony",
+          "category": "髪型",
+          "name": "高めポニー"
+        },
+        {
+          "id": "pack2_brows_straight_k",
+          "category": "まゆげ",
+          "name": "韓国ストレート眉"
+        },
+        {
+          "id": "pack2_brows_dark_mode",
+          "category": "まゆげ",
+          "name": "黒強め眉"
+        },
+        {
+          "id": "pack2_shadow_neon_blue",
+          "category": "アイシャドウ",
+          "name": "ネオンブルー"
+        },
+        {
+          "id": "pack2_shadow_silver_cut",
+          "category": "アイシャドウ",
+          "name": "シルバー切開"
+        },
+        {
+          "id": "pack2_shadow_devil_red",
+          "category": "アイシャドウ",
+          "name": "小悪魔レッド"
+        },
+        {
+          "id": "pack2_blush_under_eye",
+          "category": "チーク",
+          "name": "目下チーク"
+        },
+        {
+          "id": "pack2_blush_cool_pink",
+          "category": "チーク",
+          "name": "青みピンク頬"
+        },
+        {
+          "id": "pack2_lip_mauve",
+          "category": "口紅",
+          "name": "モーヴリップ"
+        },
+        {
+          "id": "pack2_lip_cherry_tint",
+          "category": "口紅",
+          "name": "チェリーティント"
+        },
+        {
+          "id": "pack2_glasses_silver_thin",
+          "category": "メガネ",
+          "name": "銀細メガネ"
+        },
+        {
+          "id": "pack2_glasses_y2k_shield",
+          "category": "メガネ",
+          "name": "Y2Kシールド"
+        },
+        {
+          "id": "pack2_earring_chrome_hoop",
+          "category": "イヤリング",
+          "name": "クロームフープ"
+        },
+        {
+          "id": "pack2_earring_black_heart",
+          "category": "イヤリング",
+          "name": "黒ハートピアス"
+        },
+        {
+          "id": "pack2_nose_chain",
+          "category": "鼻ピアス",
+          "name": "鼻チェーン"
+        },
+        {
+          "id": "pack2_frame_neon_city",
+          "category": "フレーム",
+          "name": "ネオンシティ枠"
+        },
+        {
+          "id": "pack2_frame_chrome_stars",
+          "category": "フレーム",
+          "name": "クロームスター枠"
+        },
+        {
+          "id": "pack2_anim_neon_rain",
+          "category": "アニメ背景",
+          "name": "ネオン雨"
+        },
+        {
+          "id": "pack2_anim_chrome_flash",
+          "category": "アニメ背景",
+          "name": "クローム閃光"
+        },
+        {
+          "id": "pack2_part_cat_ears",
+          "category": "髪飾り",
+          "name": "小悪魔猫耳"
+        },
+        {
+          "id": "pack2_part_black_ribbon",
+          "category": "髪飾り",
+          "name": "黒リボン"
+        },
+        {
+          "id": "pack2_part_chrome_crown",
+          "category": "髪飾り",
+          "name": "クローム王冠"
+        },
+        {
+          "id": "pack2_part_music_note",
+          "category": "アイテム",
+          "name": "音符きらめき"
+        },
+        {
+          "id": "pack2_part_moon_charm",
+          "category": "アイテム",
+          "name": "月チャーム"
+        },
+        {
+          "id": "pack2_part_glossy_stars",
+          "category": "アイテム",
+          "name": "ぷっくり星"
+        },
+        {
+          "id": "pack2_part_light_streak",
+          "category": "アイテム",
+          "name": "光ライン"
+        }
+      ]
+    },
+    {
+      "id": "seriousPack",
+      "name": "真面目パック",
+      "productId": "com.tokyonasu.morimoriphotomaker.serious",
+      "theme": "清潔感・証明写真・自然に盛れる実用系",
+      "items": [
+        {
+          "id": "serious_hair_straight_long",
+          "category": "髪型",
+          "name": "清楚ストレート"
+        },
+        {
+          "id": "serious_hair_one_curl",
+          "category": "髪型",
+          "name": "内巻きワンカール"
+        },
+        {
+          "id": "serious_hair_layer_medium",
+          "category": "髪型",
+          "name": "レイヤーミディアム"
+        },
+        {
+          "id": "serious_hair_short_bob",
+          "category": "髪型",
+          "name": "ショートボブ"
+        },
+        {
+          "id": "serious_hair_center_part",
+          "category": "髪型",
+          "name": "センターパート"
+        },
+        {
+          "id": "serious_hair_low_pony",
+          "category": "髪型",
+          "name": "低めポニー"
+        },
+        {
+          "id": "serious_hair_halfup",
+          "category": "髪型",
+          "name": "控えめハーフアップ"
+        },
+        {
+          "id": "serious_hair_natural_wolf",
+          "category": "髪型",
+          "name": "ナチュラルウルフ"
+        },
+        {
+          "id": "serious_hair_bang_sheer",
+          "category": "髪型",
+          "name": "シースルーバング"
+        },
+        {
+          "id": "serious_hair_no_bang",
+          "category": "髪型",
+          "name": "前髪なしロング"
+        },
+        {
+          "id": "serious_brows_natural",
+          "category": "まゆげ",
+          "name": "自然眉"
+        },
+        {
+          "id": "serious_brows_straight",
+          "category": "まゆげ",
+          "name": "きちんと眉"
+        },
+        {
+          "id": "serious_brows_soft",
+          "category": "まゆげ",
+          "name": "やわらか眉"
+        },
+        {
+          "id": "serious_shadow_beige",
+          "category": "アイシャドウ",
+          "name": "ベージュシャドウ"
+        },
+        {
+          "id": "serious_shadow_brown",
+          "category": "アイシャドウ",
+          "name": "ブラウンシャドウ"
+        },
+        {
+          "id": "serious_shadow_pink_brown",
+          "category": "アイシャドウ",
+          "name": "ピンクブラウン"
+        },
+        {
+          "id": "serious_blush_natural",
+          "category": "チーク",
+          "name": "自然チーク"
+        },
+        {
+          "id": "serious_blush_soft_peach",
+          "category": "チーク",
+          "name": "薄桃チーク"
+        },
+        {
+          "id": "serious_lip_nude_pink",
+          "category": "口紅",
+          "name": "ヌードピンク"
+        },
+        {
+          "id": "serious_lip_calm_red",
+          "category": "口紅",
+          "name": "落ち着きレッド"
+        },
+        {
+          "id": "serious_glasses_round",
+          "category": "メガネ",
+          "name": "丸メガネ"
+        },
+        {
+          "id": "serious_glasses_square",
+          "category": "メガネ",
+          "name": "スクエアメガネ"
+        },
+        {
+          "id": "serious_glasses_brown",
+          "category": "メガネ",
+          "name": "ブラウン細メガネ"
+        },
+        {
+          "id": "serious_background_library",
+          "category": "フレーム",
+          "name": "図書館背景"
+        },
+        {
+          "id": "serious_background_greenery",
+          "category": "フレーム",
+          "name": "自然光グリーン背景"
+        },
+        {
+          "id": "serious_background_office",
+          "category": "フレーム",
+          "name": "明るいオフィス"
+        },
+        {
+          "id": "serious_background_white",
+          "category": "フレーム",
+          "name": "白背景"
+        },
+        {
+          "id": "serious_background_beige",
+          "category": "フレーム",
+          "name": "ベージュ背景"
+        },
+        {
+          "id": "serious_background_school",
+          "category": "フレーム",
+          "name": "教室背景"
+        },
+        {
+          "id": "serious_background_cafe",
+          "category": "フレーム",
+          "name": "カフェ背景"
+        },
+        {
+          "id": "serious_frame_simple_white",
+          "category": "フレーム",
+          "name": "白シンプル枠"
+        },
+        {
+          "id": "serious_frame_soft_pink",
+          "category": "フレーム",
+          "name": "薄桃シンプル枠"
+        },
+        {
+          "id": "serious_part_hairpin",
+          "category": "髪飾り",
+          "name": "細ヘアピン"
+        },
+        {
+          "id": "serious_part_small_ribbon",
+          "category": "髪飾り",
+          "name": "小リボン"
+        },
+        {
+          "id": "serious_part_light",
+          "category": "アイテム",
+          "name": "自然光"
+        },
+        {
+          "id": "serious_part_soft_sparkle",
+          "category": "アイテム",
+          "name": "控えめきらめき"
+        },
+        {
+          "id": "serious_part_name_plate",
+          "category": "アイテム",
+          "name": "名札風プレート"
+        },
+        {
+          "id": "serious_part_flower",
+          "category": "アイテム",
+          "name": "小花"
+        },
+        {
+          "id": "serious_part_book",
+          "category": "アイテム",
+          "name": "本アイコン"
+        },
+        {
+          "id": "serious_part_laptop",
+          "category": "アイテム",
+          "name": "PCアイコン"
+        },
+        {
+          "id": "serious_part_pencil",
+          "category": "アイテム",
+          "name": "ペンアイコン"
+        },
+        {
+          "id": "serious_part_cardigan",
+          "category": "アイテム",
+          "name": "肩掛け風"
+        },
+        {
+          "id": "serious_part_soft_shadow",
+          "category": "アイテム",
+          "name": "自然影"
+        },
+        {
+          "id": "serious_part_eye_light",
+          "category": "アイテム",
+          "name": "瞳ハイライト"
+        },
+        {
+          "id": "serious_part_skin_glow",
+          "category": "アイテム",
+          "name": "肌つや"
+        },
+        {
+          "id": "serious_part_clean_filter",
+          "category": "アイテム",
+          "name": "清潔感フィルター"
+        },
+        {
+          "id": "serious_part_resume_frame",
+          "category": "フレーム",
+          "name": "証明写真風枠"
+        },
+        {
+          "id": "serious_part_school_ribbon",
+          "category": "髪飾り",
+          "name": "制服リボン"
+        },
+        {
+          "id": "serious_part_simple_tiara",
+          "category": "髪飾り",
+          "name": "控えめティアラ"
+        },
+        {
+          "id": "serious_part_glass_reflection",
+          "category": "アイテム",
+          "name": "メガネ反射"
+        },
+        {
+          "id": "serious_lashes_natural_office",
+          "category": "つけまつげ",
+          "name": "自然オフィスつけま"
+        },
+        {
+          "id": "serious_lashes_brown_half",
+          "category": "つけまつげ",
+          "name": "ブラウン半つけま"
+        }
+      ]
+    },
+    {
+      "id": "yankeeDecoPack",
+      "name": "ヤンキーデコパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.yankee.deco",
+      "theme": "強め平成ヤンキー・ギャル男・デコトラ風アソート",
+      "items": [
+        {
+          "id": "yankee_hair_blonde_suji",
+          "category": "髪型",
+          "name": "金髪スジ盛り"
+        },
+        {
+          "id": "yankee_hair_black_pompadour",
+          "category": "髪型",
+          "name": "黒髪リーゼント"
+        },
+        {
+          "id": "yankee_hair_mesha_long",
+          "category": "髪型",
+          "name": "メッシュロング"
+        },
+        {
+          "id": "yankee_hair_high_side_pony",
+          "category": "髪型",
+          "name": "高めサイドポニー"
+        },
+        {
+          "id": "yankee_hair_short_wolf",
+          "category": "髪型",
+          "name": "強めウルフ"
+        },
+        {
+          "id": "yankee_hair_accessory_sunglass_head",
+          "category": "髪飾り",
+          "name": "頭サングラス"
+        },
+        {
+          "id": "yankee_hair_accessory_gold_pin",
+          "category": "髪飾り",
+          "name": "金ピンセット"
+        },
+        {
+          "id": "yankee_brows_sharp",
+          "category": "まゆげ",
+          "name": "剃り込み眉"
+        },
+        {
+          "id": "yankee_brows_thin_arch",
+          "category": "まゆげ",
+          "name": "細つり眉"
+        },
+        {
+          "id": "yankee_shadow_black_gold",
+          "category": "アイシャドウ",
+          "name": "黒金シャドウ"
+        },
+        {
+          "id": "yankee_shadow_red_flame",
+          "category": "アイシャドウ",
+          "name": "赤炎シャドウ"
+        },
+        {
+          "id": "yankee_blush_tan",
+          "category": "チーク",
+          "name": "日焼けチーク"
+        },
+        {
+          "id": "yankee_blush_star_stamp",
+          "category": "チーク",
+          "name": "星スタンプ頬"
+        },
+        {
+          "id": "yankee_lip_deep_red",
+          "category": "口紅",
+          "name": "深紅リップ"
+        },
+        {
+          "id": "yankee_lip_nude_gloss",
+          "category": "口紅",
+          "name": "ヌーディグロス"
+        },
+        {
+          "id": "yankee_glasses_gold_sunglasses",
+          "category": "メガネ",
+          "name": "金縁サングラス"
+        },
+        {
+          "id": "yankee_glasses_clear_yellow",
+          "category": "メガネ",
+          "name": "黄クリアメガネ"
+        },
+        {
+          "id": "yankee_earring_gold_hoop",
+          "category": "イヤリング",
+          "name": "金フープ"
+        },
+        {
+          "id": "yankee_earring_chain_cross",
+          "category": "イヤリング",
+          "name": "十字チェーン"
+        },
+        {
+          "id": "yankee_nose_gold_stud",
+          "category": "鼻ピアス",
+          "name": "金鼻ピ"
+        },
+        {
+          "id": "yankee_frame_leopard_gold",
+          "category": "フレーム",
+          "name": "豹柄ゴールド枠"
+        },
+        {
+          "id": "yankee_frame_deco_truck",
+          "category": "フレーム",
+          "name": "デコトラ枠"
+        },
+        {
+          "id": "yankee_anim_neon_fire",
+          "category": "アニメ背景",
+          "name": "ネオン炎"
+        },
+        {
+          "id": "yankee_anim_gold_flash",
+          "category": "アニメ背景",
+          "name": "金フラッシュ"
+        },
+        {
+          "id": "yankee_part_gold_chain",
+          "category": "アイテム",
+          "name": "金チェーン"
+        },
+        {
+          "id": "yankee_part_smoke",
+          "category": "アイテム",
+          "name": "スモーク"
+        },
+        {
+          "id": "yankee_part_flame_sticker",
+          "category": "アイテム",
+          "name": "炎ステッカー"
+        },
+        {
+          "id": "yankee_part_kira_text",
+          "category": "アイテム",
+          "name": "夜露死苦プレート"
+        },
+        {
+          "id": "yankee_part_tiger",
+          "category": "アイテム",
+          "name": "虎ステッカー"
+        },
+        {
+          "id": "yankee_part_chrome_heart",
+          "category": "アイテム",
+          "name": "クロームハート"
+        },
+        {
+          "id": "yankee_lashes_spiky_wing",
+          "category": "つけまつげ",
+          "name": "強めハネつけま"
+        },
+        {
+          "id": "yankee_lashes_black_gold",
+          "category": "つけまつげ",
+          "name": "黒金つけま"
+        }
+      ]
+    },
+    {
+      "id": "bubbleDecoPack",
+      "name": "昭和バブルデコパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.bubble.deco",
+      "theme": "昭和バブル・ディスコ・ゴージャス夜景アソート",
+      "items": [
+        {
+          "id": "bubble_hair_sotohane_long",
+          "category": "髪型",
+          "name": "外ハネロング"
+        },
+        {
+          "id": "bubble_hair_volume_perm",
+          "category": "髪型",
+          "name": "ボリュームパーマ"
+        },
+        {
+          "id": "bubble_hair_one_length",
+          "category": "髪型",
+          "name": "ワンレンロング"
+        },
+        {
+          "id": "bubble_hair_feather_bob",
+          "category": "髪型",
+          "name": "フェザーボブ"
+        },
+        {
+          "id": "bubble_hair_party_up",
+          "category": "髪型",
+          "name": "バブル夜会巻き"
+        },
+        {
+          "id": "bubble_hair_accessory_big_bow",
+          "category": "髪飾り",
+          "name": "大きめサテンリボン"
+        },
+        {
+          "id": "bubble_hair_accessory_pearl_barrette",
+          "category": "髪飾り",
+          "name": "真珠バレッタ"
+        },
+        {
+          "id": "bubble_brows_bold_arch",
+          "category": "まゆげ",
+          "name": "太アーチ眉"
+        },
+        {
+          "id": "bubble_brows_soft_brown",
+          "category": "まゆげ",
+          "name": "茶色ふと眉"
+        },
+        {
+          "id": "bubble_shadow_blue_pearl",
+          "category": "アイシャドウ",
+          "name": "ブルーパールシャドウ"
+        },
+        {
+          "id": "bubble_shadow_gold_brown",
+          "category": "アイシャドウ",
+          "name": "金ブラウンシャドウ"
+        },
+        {
+          "id": "bubble_blush_diagonal",
+          "category": "チーク",
+          "name": "斜めチーク"
+        },
+        {
+          "id": "bubble_blush_rose",
+          "category": "チーク",
+          "name": "ローズ頬"
+        },
+        {
+          "id": "bubble_lip_fuchsia",
+          "category": "口紅",
+          "name": "フューシャリップ"
+        },
+        {
+          "id": "bubble_lip_red_gloss",
+          "category": "口紅",
+          "name": "赤グロス"
+        },
+        {
+          "id": "bubble_glasses_gold_frame",
+          "category": "メガネ",
+          "name": "金縁メガネ"
+        },
+        {
+          "id": "bubble_glasses_smoke_sunglasses",
+          "category": "メガネ",
+          "name": "スモークサングラス"
+        },
+        {
+          "id": "bubble_earring_big_pearl",
+          "category": "イヤリング",
+          "name": "大粒パール"
+        },
+        {
+          "id": "bubble_earring_gold_disc",
+          "category": "イヤリング",
+          "name": "ゴールドディスク"
+        },
+        {
+          "id": "bubble_nose_tiny_diamond",
+          "category": "鼻ピアス",
+          "name": "小粒ダイヤ鼻ピ"
+        },
+        {
+          "id": "bubble_frame_gold_city",
+          "category": "フレーム",
+          "name": "金夜景フレーム"
+        },
+        {
+          "id": "bubble_frame_disco_mirror",
+          "category": "フレーム",
+          "name": "ディスコミラー枠"
+        },
+        {
+          "id": "bubble_anim_mirror_ball",
+          "category": "アニメ背景",
+          "name": "ミラーボール"
+        },
+        {
+          "id": "bubble_anim_city_sparkle",
+          "category": "アニメ背景",
+          "name": "夜景きらめき"
+        },
+        {
+          "id": "bubble_part_fan",
+          "category": "アイテム",
+          "name": "扇子"
+        },
+        {
+          "id": "bubble_part_champagne",
+          "category": "アイテム",
+          "name": "シャンパン"
+        },
+        {
+          "id": "bubble_part_gold_chain",
+          "category": "アイテム",
+          "name": "太ゴールドチェーン"
+        },
+        {
+          "id": "bubble_part_pearl_necklace",
+          "category": "アイテム",
+          "name": "パールネックレス"
+        },
+        {
+          "id": "bubble_part_money_confetti",
+          "category": "アイテム",
+          "name": "札束コンフェティ"
+        },
+        {
+          "id": "bubble_part_neon_lip",
+          "category": "アイテム",
+          "name": "ネオンリップ"
+        },
+        {
+          "id": "bubble_lashes_fan_glam",
+          "category": "つけまつげ",
+          "name": "バブル扇つけま"
+        },
+        {
+          "id": "bubble_lashes_pearl_glam",
+          "category": "つけまつげ",
+          "name": "パール盛りつけま"
+        }
+      ]
+    },
+    {
+      "id": "kyunNekoPack",
+      "name": "キュンネコパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.kyun.neko",
+      "theme": "ねこのぬいぐるみ風・ふわふわ癒やしアソート",
+      "items": [
+        {
+          "id": "kyun_neko_plush_milk",
+          "category": "ぬいぐるみ",
+          "name": "ミルクねこ"
+        },
+        {
+          "id": "kyun_neko_plush_sakura",
+          "category": "ぬいぐるみ",
+          "name": "さくらねこ"
+        },
+        {
+          "id": "kyun_neko_plush_calico",
+          "category": "ぬいぐるみ",
+          "name": "みけねこ"
+        },
+        {
+          "id": "kyun_neko_plush_black",
+          "category": "ぬいぐるみ",
+          "name": "くろねこ"
+        },
+        {
+          "id": "kyun_neko_plush_ribbon",
+          "category": "ぬいぐるみ",
+          "name": "リボンねこ"
+        },
+        {
+          "id": "kyun_neko_plush_sleepy",
+          "category": "ぬいぐるみ",
+          "name": "ねむねこ"
+        },
+        {
+          "id": "kyun_neko_plush_angel",
+          "category": "ぬいぐるみ",
+          "name": "天使ねこ"
+        },
+        {
+          "id": "kyun_neko_plush_strawberry",
+          "category": "ぬいぐるみ",
+          "name": "いちごねこ"
+        },
+        {
+          "id": "kyun_neko_plush_star",
+          "category": "ぬいぐるみ",
+          "name": "星ねこ"
+        },
+        {
+          "id": "kyun_neko_plush_tiny",
+          "category": "ぬいぐるみ",
+          "name": "ちびねこ"
+        }
+      ]
+    },
+    {
+      "id": "mofuUsaPack",
+      "name": "モフモフうさちゃんパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.mofu.usa",
+      "theme": "うさぎのぬいぐるみ風・もふもふ癒やしアソート",
+      "items": [
+        {
+          "id": "mofu_usa_plush_white",
+          "category": "ぬいぐるみ",
+          "name": "しろうさ"
+        },
+        {
+          "id": "mofu_usa_plush_pink",
+          "category": "ぬいぐるみ",
+          "name": "ももいろうさ"
+        },
+        {
+          "id": "mofu_usa_plush_lop",
+          "category": "ぬいぐるみ",
+          "name": "たれ耳うさ"
+        },
+        {
+          "id": "mofu_usa_plush_gray",
+          "category": "ぬいぐるみ",
+          "name": "グレーうさ"
+        },
+        {
+          "id": "mofu_usa_plush_ribbon",
+          "category": "ぬいぐるみ",
+          "name": "リボンうさ"
+        },
+        {
+          "id": "mofu_usa_plush_strawberry",
+          "category": "ぬいぐるみ",
+          "name": "いちごうさ"
+        },
+        {
+          "id": "mofu_usa_plush_sleepy",
+          "category": "ぬいぐるみ",
+          "name": "ねむうさ"
+        },
+        {
+          "id": "mofu_usa_plush_angel",
+          "category": "ぬいぐるみ",
+          "name": "天使うさ"
+        },
+        {
+          "id": "mofu_usa_plush_star",
+          "category": "ぬいぐるみ",
+          "name": "星うさ"
+        },
+        {
+          "id": "mofu_usa_plush_tiny",
+          "category": "ぬいぐるみ",
+          "name": "ちびうさ"
+        }
+      ]
+    },
+    {
+      "id": "koreanHairPack",
+      "name": "韓国ヘアパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.korean.hair",
+      "theme": "韓国サロン風の髪型だけを集めた課金パック",
+      "items": [
+        {
+          "id": "korean_hair_c_curl_long",
+          "category": "髪型",
+          "name": "韓国Cカールロング"
+        },
+        {
+          "id": "korean_hair_tassel_bob",
+          "category": "髪型",
+          "name": "韓国タッセルボブ"
+        },
+        {
+          "id": "korean_hair_glass_long",
+          "category": "髪型",
+          "name": "韓国グラスロング"
+        },
+        {
+          "id": "korean_hair_milktea_wave",
+          "category": "髪型",
+          "name": "韓国ミルクティーウェーブ"
+        },
+        {
+          "id": "korean_hair_ash_short_bob",
+          "category": "髪型",
+          "name": "韓国アッシュショート"
+        },
+        {
+          "id": "korean_hair_hush_wolf",
+          "category": "髪型",
+          "name": "韓国ハッシュウルフ"
+        },
+        {
+          "id": "korean_hair_high_pony",
+          "category": "髪型",
+          "name": "韓国ハイポニー"
+        },
+        {
+          "id": "korean_hair_low_bun",
+          "category": "髪型",
+          "name": "韓国ロウバン"
+        },
+        {
+          "id": "korean_hair_halfup_wave",
+          "category": "髪型",
+          "name": "韓国ハーフアップ"
+        },
+        {
+          "id": "korean_hair_low_twintail",
+          "category": "髪型",
+          "name": "韓国ローツイン"
+        },
+        {
+          "id": "korean_lashes_idol_natural",
+          "category": "つけまつげ",
+          "name": "韓国アイドルつけま"
+        },
+        {
+          "id": "korean_lashes_soft_cat",
+          "category": "つけまつげ",
+          "name": "韓国キャットつけま"
+        },
+        {
+          "id": "korean_hair_air_bangs_long",
+          "category": "髪型",
+          "name": "韓国エアバングロング"
+        },
+        {
+          "id": "korean_hair_matte_black_layer",
+          "category": "髪型",
+          "name": "韓国マット黒レイヤー"
+        },
+        {
+          "id": "korean_hair_choco_s_curve",
+          "category": "髪型",
+          "name": "韓国チョコSカール"
+        }
+      ]
+    },
+    {
+      "id": "koreanFashionPack",
+      "name": "韓国ファッションパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.korean.fashion",
+      "theme": "韓国風のメガネ、ピアス、ヘアアクセ、メイク小物を集めた課金パック",
+      "items": [
+        {
+          "id": "kfashion_glasses_clear_round",
+          "category": "メガネ",
+          "name": "韓国クリア丸メガネ"
+        },
+        {
+          "id": "kfashion_glasses_metal_square",
+          "category": "メガネ",
+          "name": "韓国メタル四角メガネ"
+        },
+        {
+          "id": "kfashion_glasses_gray_tint",
+          "category": "メガネ",
+          "name": "韓国グレーティントメガネ"
+        },
+        {
+          "id": "kfashion_glasses_pearl_chain",
+          "category": "メガネ",
+          "name": "韓国パール丸メガネ"
+        },
+        {
+          "id": "kfashion_earring_pearl_line",
+          "category": "イヤリング",
+          "name": "韓国パールラインピアス"
+        },
+        {
+          "id": "kfashion_earring_silver_heart",
+          "category": "イヤリング",
+          "name": "韓国シルバーハートピアス"
+        },
+        {
+          "id": "kfashion_earring_mini_hoop",
+          "category": "イヤリング",
+          "name": "韓国ミニフープピアス"
+        },
+        {
+          "id": "kfashion_earring_ribbon_drop",
+          "category": "イヤリング",
+          "name": "韓国リボンドロップピアス"
+        },
+        {
+          "id": "kfashion_hair_accessory_satin_clip",
+          "category": "髪飾り",
+          "name": "韓国サテンヘアクリップ"
+        },
+        {
+          "id": "kfashion_hair_accessory_pearl_pins",
+          "category": "髪飾り",
+          "name": "韓国パールピンセット"
+        },
+        {
+          "id": "kfashion_hair_accessory_flower_claw",
+          "category": "髪飾り",
+          "name": "韓国フラワーバンス"
+        },
+        {
+          "id": "kfashion_shadow_aegyo_glitter",
+          "category": "アイシャドウ",
+          "name": "韓国涙袋グリッター"
+        },
+        {
+          "id": "kfashion_shadow_rose_smoky",
+          "category": "アイシャドウ",
+          "name": "韓国ローズスモーキー"
+        },
+        {
+          "id": "kfashion_shadow_under_silver",
+          "category": "アイシャドウ",
+          "name": "韓国下まぶたシルバー"
+        },
+        {
+          "id": "kfashion_blush_milk_peach",
+          "category": "チーク",
+          "name": "韓国ミルクピーチチーク"
+        },
+        {
+          "id": "kfashion_blush_lavender_cool",
+          "category": "チーク",
+          "name": "韓国ラベンダーチーク"
+        },
+        {
+          "id": "kfashion_lip_gradient_rose",
+          "category": "リップ",
+          "name": "韓国ローズグラデリップ"
+        },
+        {
+          "id": "kfashion_lip_glossy_tint",
+          "category": "リップ",
+          "name": "韓国つやティントリップ"
+        },
+        {
+          "id": "kfashion_part_phone_charm",
+          "category": "アイテム",
+          "name": "韓国スマホチャーム"
+        },
+        {
+          "id": "kfashion_part_pearl_chain_sticker",
+          "category": "アイテム",
+          "name": "韓国パールチェーン"
+        }
+      ]
+    },
+    {
+      "id": "himeMoriPack",
+      "name": "姫盛りパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.hime.mori",
+      "theme": "姫ギャル風の髪型、髪飾り、メイク、フレーム、きらめき小物を集めた課金パック",
+      "items": [
+        {
+          "id": "hime_hair_blonde_curl",
+          "category": "髪型",
+          "name": "姫ブロンド盛り"
+        },
+        {
+          "id": "hime_hair_rose_halfup",
+          "category": "髪型",
+          "name": "姫ローズハーフ"
+        },
+        {
+          "id": "hime_hair_black_himecut",
+          "category": "髪型",
+          "name": "黒髪姫カット"
+        },
+        {
+          "id": "hime_hair_pink_high_pony",
+          "category": "髪型",
+          "name": "姫ピンクポニー"
+        },
+        {
+          "id": "hime_hair_milktea_bob",
+          "category": "髪型",
+          "name": "姫ミルクティーボブ"
+        },
+        {
+          "id": "hime_hair_tiara_heart",
+          "category": "髪飾り",
+          "name": "ハートティアラ"
+        },
+        {
+          "id": "hime_hair_gold_crown",
+          "category": "髪飾り",
+          "name": "小さな王冠"
+        },
+        {
+          "id": "hime_hair_satin_bow",
+          "category": "髪飾り",
+          "name": "姫サテンリボン"
+        },
+        {
+          "id": "hime_hair_lace_headband",
+          "category": "髪飾り",
+          "name": "レースカチューシャ"
+        },
+        {
+          "id": "hime_hair_chain_heart",
+          "category": "髪飾り",
+          "name": "ハート髪チェーン"
+        },
+        {
+          "id": "hime_brows_princess_arch",
+          "category": "まゆげ",
+          "name": "姫アーチ眉"
+        },
+        {
+          "id": "hime_brows_doll_soft",
+          "category": "まゆげ",
+          "name": "姫ドール眉"
+        },
+        {
+          "id": "hime_shadow_pink_pearl",
+          "category": "アイシャドウ",
+          "name": "ピンクパール姫シャドウ"
+        },
+        {
+          "id": "hime_shadow_lavender_royal",
+          "category": "アイシャドウ",
+          "name": "ラベンダー姫シャドウ"
+        },
+        {
+          "id": "hime_shadow_champagne_gold",
+          "category": "アイシャドウ",
+          "name": "シャンパン姫シャドウ"
+        },
+        {
+          "id": "hime_blush_heart_pearl",
+          "category": "チーク",
+          "name": "姫ハートチーク"
+        },
+        {
+          "id": "hime_blush_rose_round",
+          "category": "チーク",
+          "name": "姫ローズチーク"
+        },
+        {
+          "id": "hime_lip_princess_pink",
+          "category": "口紅",
+          "name": "姫ピンクリップ"
+        },
+        {
+          "id": "hime_lip_rose_red",
+          "category": "口紅",
+          "name": "姫ローズリップ"
+        },
+        {
+          "id": "hime_glasses_heart_jewel",
+          "category": "メガネ",
+          "name": "姫ハートメガネ"
+        },
+        {
+          "id": "hime_frame_lace_pearl",
+          "category": "フレーム",
+          "name": "姫レースフレーム"
+        },
+        {
+          "id": "hime_frame_royal_gold",
+          "category": "フレーム",
+          "name": "王宮ゴールドフレーム"
+        },
+        {
+          "id": "hime_frame_castle_window",
+          "category": "フレーム",
+          "name": "お城窓フレーム"
+        },
+        {
+          "id": "hime_frame_lavender_moon",
+          "category": "フレーム",
+          "name": "月夜の姫フレーム"
+        },
+        {
+          "id": "hime_part_sparkle_veil",
+          "category": "アイテム",
+          "name": "姫きらめきヴェール"
+        },
+        {
+          "id": "hime_part_magic_wand",
+          "category": "アイテム",
+          "name": "姫ステッキ"
+        },
+        {
+          "id": "hime_part_perfume_bottle",
+          "category": "アイテム",
+          "name": "姫香水ボトル"
+        },
+        {
+          "id": "hime_part_heart_charm",
+          "category": "アイテム",
+          "name": "姫ハートチャーム"
+        },
+        {
+          "id": "hime_part_rose_petals",
+          "category": "アイテム",
+          "name": "姫ローズ花びら"
+        },
+        {
+          "id": "hime_part_pearl_choker",
+          "category": "アイテム",
+          "name": "姫パールチョーカー"
+        },
+        {
+          "id": "hime_lashes_pearl_doll",
+          "category": "つけまつげ",
+          "name": "姫パールドールつけま"
+        },
+        {
+          "id": "hime_lashes_royal_wing",
+          "category": "つけまつげ",
+          "name": "姫ロイヤルつけま"
+        }
+      ]
+    },
+    {
+      "id": "hairArrangeGotsumoriPack",
+      "name": "ヘアアレごつ盛りパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.hairarrange.gotsumori",
+      "theme": "体育祭やイベント向けの、ごつ盛りヘアアレンジと髪飾りの課金パック",
+      "items": [
+        {
+          "id": "hairarrange_hair_ribbon_pearl_twins",
+          "category": "髪型",
+          "name": "リボンパールツイン"
+        },
+        {
+          "id": "hairarrange_hair_red_black_bow_twins",
+          "category": "髪型",
+          "name": "赤黒リボンツイン"
+        },
+        {
+          "id": "hairarrange_hair_gold_black_rose_twins",
+          "category": "髪型",
+          "name": "金黒ローズツイン"
+        },
+        {
+          "id": "hairarrange_hair_blue_blonde_twins",
+          "category": "髪型",
+          "name": "青ブロンドツイン"
+        },
+        {
+          "id": "hairarrange_hair_rose_bow_twins",
+          "category": "髪型",
+          "name": "ローズリボンツイン"
+        },
+        {
+          "id": "hairarrange_hair_black_bow_sidepony",
+          "category": "髪型",
+          "name": "黒リボンサイドポニー"
+        },
+        {
+          "id": "hairarrange_hair_lace_veil_twins",
+          "category": "髪型",
+          "name": "レースヴェールツイン"
+        },
+        {
+          "id": "hairarrange_hair_rainbow_pearl_twins",
+          "category": "髪型",
+          "name": "虹リボンパールツイン"
+        },
+        {
+          "id": "hairarrange_hair_heart_balloon_buns",
+          "category": "髪型",
+          "name": "ハートバルーンお団子"
+        },
+        {
+          "id": "hairarrange_hair_silver_twin_drills",
+          "category": "髪型",
+          "name": "シルバードリルツイン"
+        },
+        {
+          "id": "hairarrange_accessory_glitter_pink_bow",
+          "category": "髪飾り",
+          "name": "ごつピンクリボン"
+        },
+        {
+          "id": "hairarrange_accessory_pearl_ribbon_chain",
+          "category": "髪飾り",
+          "name": "リボンパールチェーン"
+        },
+        {
+          "id": "hairarrange_accessory_red_black_bows",
+          "category": "髪飾り",
+          "name": "赤黒リボン連なり"
+        },
+        {
+          "id": "hairarrange_accessory_rose_crown",
+          "category": "髪飾り",
+          "name": "ごつローズ冠"
+        },
+        {
+          "id": "hairarrange_accessory_lace_plush_veil",
+          "category": "髪飾り",
+          "name": "レースぬいチャーム"
+        },
+        {
+          "id": "hairarrange_hair_side_pony_pearl",
+          "category": "髪型",
+          "name": "片側パール盛り"
+        },
+        {
+          "id": "hairarrange_hair_lace_side_updo",
+          "category": "髪型",
+          "name": "レース片寄せアップ"
+        }
+      ]
+    },
+    {
+      "id": "hairArrangeGotsumoriPack2",
+      "name": "ヘアアレごつ盛りパック2",
+      "productId": "com.tokyonasu.morimoriphotomaker.hairarrange.gotsumori2",
+      "itemCount": 17,
+      "categories": [
+        "髪型",
+        "髪飾り"
+      ],
+      "items": [
+        {
+          "id": "hairarrange2_hair_01",
+          "category": "髪型",
+          "name": "編み込みクラウン"
+        },
+        {
+          "id": "hairarrange2_hair_02",
+          "category": "髪型",
+          "name": "スター盛りポニー"
+        },
+        {
+          "id": "hairarrange2_hair_03",
+          "category": "髪型",
+          "name": "レースサイドお団子"
+        },
+        {
+          "id": "hairarrange2_hair_04",
+          "category": "髪型",
+          "name": "ふわリボンボブ"
+        },
+        {
+          "id": "hairarrange2_hair_05",
+          "category": "髪型",
+          "name": "宝石サイド三つ編み"
+        },
+        {
+          "id": "hairarrange2_hair_06",
+          "category": "髪型",
+          "name": "黒リボンヴェール"
+        },
+        {
+          "id": "hairarrange2_hair_07",
+          "category": "髪型",
+          "name": "ゴールドトップアップ"
+        },
+        {
+          "id": "hairarrange2_hair_08",
+          "category": "髪型",
+          "name": "ピンクストレート盛り"
+        },
+        {
+          "id": "hairarrange2_hair_09",
+          "category": "髪型",
+          "name": "フェザーウルフ"
+        },
+        {
+          "id": "hairarrange2_hair_10",
+          "category": "髪型",
+          "name": "ローズ低めお団子"
+        },
+        {
+          "id": "hairarrange2_hair_11",
+          "category": "髪型",
+          "name": "ロック盛りポニー"
+        },
+        {
+          "id": "hairarrange2_hair_12",
+          "category": "髪型",
+          "name": "クリスタル編みハーフ"
+        },
+        {
+          "id": "hairarrange2_accessory_01",
+          "category": "髪飾り",
+          "name": "星パールヘッドチェーン"
+        },
+        {
+          "id": "hairarrange2_accessory_02",
+          "category": "髪飾り",
+          "name": "黒レースローズリボン"
+        },
+        {
+          "id": "hairarrange2_accessory_03",
+          "category": "髪飾り",
+          "name": "ゼリーバタフライピン"
+        },
+        {
+          "id": "hairarrange2_accessory_04",
+          "category": "髪飾り",
+          "name": "ゴールド王冠コーム"
+        },
+        {
+          "id": "hairarrange2_accessory_05",
+          "category": "髪飾り",
+          "name": "カラフルリボンガーランド"
+        }
+      ]
+    },
+    {
+      "id": "vividReptilePack",
+      "name": "鮮やか爬虫類パック",
+      "productId": "com.tokyonasu.morimoriphotomaker.vivid.reptile",
+      "theme": "鮮やかな色の爬虫類ぬいぐるみを集めた課金パック",
+      "items": [
+        {
+          "id": "vivid_reptile_plush_chameleon",
+          "category": "ぬいぐるみ",
+          "name": "ビビッドカメレオン"
+        },
+        {
+          "id": "vivid_reptile_plush_gecko",
+          "category": "ぬいぐるみ",
+          "name": "ターコイズヤモリ"
+        },
+        {
+          "id": "vivid_reptile_plush_bearded_dragon",
+          "category": "ぬいぐるみ",
+          "name": "ピンクフトアゴ"
+        },
+        {
+          "id": "vivid_reptile_plush_snake",
+          "category": "ぬいぐるみ",
+          "name": "むらさきヘビ"
+        },
+        {
+          "id": "vivid_reptile_plush_turtle",
+          "category": "ぬいぐるみ",
+          "name": "レインボーかめ"
+        },
+        {
+          "id": "vivid_reptile_plush_iguana",
+          "category": "ぬいぐるみ",
+          "name": "コーラルイグアナ"
+        },
+        {
+          "id": "vivid_reptile_plush_rainbow_skink",
+          "category": "ぬいぐるみ",
+          "name": "虹色スキンク"
+        },
+        {
+          "id": "vivid_reptile_plush_crocodile",
+          "category": "ぬいぐるみ",
+          "name": "むらさきワニ"
+        },
+        {
+          "id": "vivid_reptile_plush_crested_gecko",
+          "category": "ぬいぐるみ",
+          "name": "オレンジクレス"
+        },
+        {
+          "id": "vivid_reptile_plush_leopard_gecko",
+          "category": "ぬいぐるみ",
+          "name": "レモンレオパ"
+        }
+      ]
+    },
+    {
+      "id": "varietyPack",
+      "name": "?????????",
+      "productId": "com.tokyonasu.morimoriphotomaker.variety",
+      "theme": "??????????????????????????????????????????",
+      "items": [
+        {
+          "id": "variety_glowing_eyes_blue",
+          "category": "??????",
+          "name": "???"
+        },
+        {
+          "id": "variety_glowing_eyes_pink",
+          "category": "??????",
+          "name": "???2"
+        },
+        {
+          "id": "variety_glowing_eyes_vampire",
+          "category": "??????",
+          "name": "???3"
+        },
+        {
+          "id": "variety_pop_glasses",
+          "category": "???",
+          "name": "???????"
+        },
+        {
+          "id": "variety_rainbow_brows",
+          "category": "???",
+          "name": "????????"
+        },
+        {
+          "id": "variety_open_mouth",
+          "category": "??",
+          "name": "???"
+        },
+        {
+          "id": "variety_drool",
+          "category": "??",
+          "name": "?????"
+        },
+        {
+          "id": "variety_vampire_fangs",
+          "category": "??",
+          "name": "???"
+        },
+        {
+          "id": "variety_milk_bottle_glasses",
+          "category": "???",
+          "name": "??????"
+        },
+        {
+          "id": "variety_nose_bandage",
+          "category": "????",
+          "name": "???????"
+        },
+        {
+          "id": "variety_manga_meat",
+          "category": "????",
+          "name": "???????"
+        },
+        {
+          "id": "variety_big_rice",
+          "category": "????",
+          "name": "???????"
+        }
+      ]
+    },
+    {
+      "id": "cabaretNailPack",
+      "name": "キャバ嬢ネイルパック",
+      "productId": "com.tokyonasu.morimoriphotomaker.cabaret.nail",
+      "itemCount": 50,
+      "categories": [
+        "ネイル"
+      ],
+      "items": [
+        {
+          "id": "cabaret_nail_01",
+          "category": "ネイル",
+          "name": "黒金ハートネイル"
+        },
+        {
+          "id": "cabaret_nail_02",
+          "category": "ネイル",
+          "name": "クリスタル姫ネイル"
+        },
+        {
+          "id": "cabaret_nail_03",
+          "category": "ネイル",
+          "name": "赤バラ女王ネイル"
+        },
+        {
+          "id": "cabaret_nail_04",
+          "category": "ネイル",
+          "name": "ピンクリボンネイル"
+        },
+        {
+          "id": "cabaret_nail_05",
+          "category": "ネイル",
+          "name": "紫ジュエルネイル"
+        },
+        {
+          "id": "cabaret_nail_06",
+          "category": "ネイル",
+          "name": "マリンブルーネイル"
+        },
+        {
+          "id": "cabaret_nail_07",
+          "category": "ネイル",
+          "name": "白花パールネイル"
+        },
+        {
+          "id": "cabaret_nail_08",
+          "category": "ネイル",
+          "name": "オレンジ宝石ネイル"
+        },
+        {
+          "id": "cabaret_nail_09",
+          "category": "ネイル",
+          "name": "透明シルバーネイル"
+        },
+        {
+          "id": "cabaret_nail_10",
+          "category": "ネイル",
+          "name": "深紅ゴールドネイル"
+        },
+        {
+          "id": "cabaret_nail_11",
+          "category": "ネイル",
+          "name": "ワインビジューネイル"
+        },
+        {
+          "id": "cabaret_nail_12",
+          "category": "ネイル",
+          "name": "黒レースネイル"
+        },
+        {
+          "id": "cabaret_nail_13",
+          "category": "ネイル",
+          "name": "ローズゴールドネイル"
+        },
+        {
+          "id": "cabaret_nail_14",
+          "category": "ネイル",
+          "name": "ピンクレオパネイル"
+        },
+        {
+          "id": "cabaret_nail_15",
+          "category": "ネイル",
+          "name": "白レースネイル"
+        },
+        {
+          "id": "cabaret_nail_16",
+          "category": "ネイル",
+          "name": "ブルーサファイアネイル"
+        },
+        {
+          "id": "cabaret_nail_17",
+          "category": "ネイル",
+          "name": "エメラルドネイル"
+        },
+        {
+          "id": "cabaret_nail_18",
+          "category": "ネイル",
+          "name": "紫オーロラネイル"
+        },
+        {
+          "id": "cabaret_nail_19",
+          "category": "ネイル",
+          "name": "金チェーンネイル"
+        },
+        {
+          "id": "cabaret_nail_20",
+          "category": "ネイル",
+          "name": "クリスタルロングネイル"
+        },
+        {
+          "id": "cabaret_nail_21",
+          "category": "ネイル",
+          "name": "ネオンピンクネイル"
+        },
+        {
+          "id": "cabaret_nail_22",
+          "category": "ネイル",
+          "name": "赤黒ヴァンパイアネイル"
+        },
+        {
+          "id": "cabaret_nail_23",
+          "category": "ネイル",
+          "name": "ミルキーパールネイル"
+        },
+        {
+          "id": "cabaret_nail_24",
+          "category": "ネイル",
+          "name": "マーメイドネイル"
+        },
+        {
+          "id": "cabaret_nail_25",
+          "category": "ネイル",
+          "name": "シャンパン四角ネイル"
+        },
+        {
+          "id": "cabaret_nail_26",
+          "category": "ネイル",
+          "name": "フューシャリボンネイル"
+        },
+        {
+          "id": "cabaret_nail_27",
+          "category": "ネイル",
+          "name": "紫ギャラクシーネイル"
+        },
+        {
+          "id": "cabaret_nail_28",
+          "category": "ネイル",
+          "name": "金レオパネイル"
+        },
+        {
+          "id": "cabaret_nail_29",
+          "category": "ネイル",
+          "name": "氷ブルーネイル"
+        },
+        {
+          "id": "cabaret_nail_30",
+          "category": "ネイル",
+          "name": "大粒ピンクネイル"
+        },
+        {
+          "id": "cabaret_nail_31",
+          "category": "ネイル",
+          "name": "桜クリスタルネイル"
+        },
+        {
+          "id": "cabaret_nail_32",
+          "category": "ネイル",
+          "name": "黒ダイヤネイル"
+        },
+        {
+          "id": "cabaret_nail_33",
+          "category": "ネイル",
+          "name": "白オパールネイル"
+        },
+        {
+          "id": "cabaret_nail_34",
+          "category": "ネイル",
+          "name": "ルビークロムネイル"
+        },
+        {
+          "id": "cabaret_nail_35",
+          "category": "ネイル",
+          "name": "虹オーロラネイル"
+        },
+        {
+          "id": "cabaret_nail_36",
+          "category": "ネイル",
+          "name": "ベージュパールチェーンネイル"
+        },
+        {
+          "id": "cabaret_nail_37",
+          "category": "ネイル",
+          "name": "ネオンイエローネイル"
+        },
+        {
+          "id": "cabaret_nail_38",
+          "category": "ネイル",
+          "name": "深緑エメラルドネイル"
+        },
+        {
+          "id": "cabaret_nail_39",
+          "category": "ネイル",
+          "name": "銀蝶ネイル"
+        },
+        {
+          "id": "cabaret_nail_40",
+          "category": "ネイル",
+          "name": "ホットピンクゼブラネイル"
+        },
+        {
+          "id": "cabaret_nail_41",
+          "category": "ネイル",
+          "name": "黒金ハートクイーンネイル"
+        },
+        {
+          "id": "cabaret_nail_42",
+          "category": "ネイル",
+          "name": "シャンパンヌードネイル"
+        },
+        {
+          "id": "cabaret_nail_43",
+          "category": "ネイル",
+          "name": "赤ローズチャームネイル"
+        },
+        {
+          "id": "cabaret_nail_44",
+          "category": "ネイル",
+          "name": "ピンク姫ストーンネイル"
+        },
+        {
+          "id": "cabaret_nail_45",
+          "category": "ネイル",
+          "name": "紫クロムジュエルネイル"
+        },
+        {
+          "id": "cabaret_nail_46",
+          "category": "ネイル",
+          "name": "青オーシャンネイル"
+        },
+        {
+          "id": "cabaret_nail_47",
+          "category": "ネイル",
+          "name": "白パールレースネイル"
+        },
+        {
+          "id": "cabaret_nail_48",
+          "category": "ネイル",
+          "name": "夕焼けグリッターネイル"
+        },
+        {
+          "id": "cabaret_nail_49",
+          "category": "ネイル",
+          "name": "ガラスクリスタルネイル"
+        },
+        {
+          "id": "cabaret_nail_50",
+          "category": "ネイル",
+          "name": "バーガンディ女王ネイル"
+        }
+      ]
+    },
+    {
+      "id": "emotionPack",
+      "name": "?????",
+      "productId": "com.tokyonasu.morimoriphotomaker.emotion",
+      "itemCount": 25,
+      "categories": [
+        "??"
+      ],
+      "items": [
+        {
+          "id": "emotion_pack_anim_01",
+          "category": "感情",
+          "name": "動く怒りポップ"
+        },
+        {
+          "id": "emotion_pack_anim_02",
+          "category": "感情",
+          "name": "動く涙だばだば"
+        },
+        {
+          "id": "emotion_pack_anim_03",
+          "category": "感情",
+          "name": "動くショック爆発"
+        },
+        {
+          "id": "emotion_pack_anim_04",
+          "category": "感情",
+          "name": "動く鼓動ハート"
+        },
+        {
+          "id": "emotion_pack_anim_05",
+          "category": "感情",
+          "name": "動く汗ぽたぽた"
+        },
+        {
+          "id": "emotion_pack_anim_06",
+          "category": "感情",
+          "name": "動くぐるぐる混乱"
+        },
+        {
+          "id": "emotion_pack_anim_07",
+          "category": "感情",
+          "name": "動く燃えるイライラ"
+        },
+        {
+          "id": "emotion_pack_anim_08",
+          "category": "感情",
+          "name": "動くブルブル震え"
+        },
+        {
+          "id": "emotion_pack_anim_09",
+          "category": "感情",
+          "name": "動くきらめき興奮"
+        },
+        {
+          "id": "emotion_pack_anim_10",
+          "category": "感情",
+          "name": "動く危険ビリビリ"
+        },
+        {
+          "id": "emotion_pack_static_01",
+          "category": "感情",
+          "name": "もくもく考え中"
+        },
+        {
+          "id": "emotion_pack_static_02",
+          "category": "感情",
+          "name": "失恋ハート"
+        },
+        {
+          "id": "emotion_pack_static_03",
+          "category": "感情",
+          "name": "照れライン"
+        },
+        {
+          "id": "emotion_pack_static_04",
+          "category": "感情",
+          "name": "ふきだし雲"
+        },
+        {
+          "id": "emotion_pack_static_05",
+          "category": "感情",
+          "name": "びっくり爆発"
+        },
+        {
+          "id": "emotion_pack_static_06",
+          "category": "感情",
+          "name": "ハッピー花"
+        },
+        {
+          "id": "emotion_pack_static_07",
+          "category": "感情",
+          "name": "しょんぼり雨雲"
+        },
+        {
+          "id": "emotion_pack_static_08",
+          "category": "感情",
+          "name": "嫉妬オーラ"
+        },
+        {
+          "id": "emotion_pack_static_09",
+          "category": "感情",
+          "name": "緊張の汗"
+        },
+        {
+          "id": "emotion_pack_static_10",
+          "category": "感情",
+          "name": "王冠よろこび"
+        },
+        {
+          "id": "emotion_pack_static_11",
+          "category": "感情",
+          "name": "星ぐるぐる"
+        },
+        {
+          "id": "emotion_pack_static_12",
+          "category": "感情",
+          "name": "照れ雲"
+        },
+        {
+          "id": "emotion_pack_static_13",
+          "category": "感情",
+          "name": "ラブ矢ハート"
+        },
+        {
+          "id": "emotion_pack_static_14",
+          "category": "感情",
+          "name": "漫画インパクト"
+        },
+        {
+          "id": "emotion_pack_static_15",
+          "category": "感情",
+          "name": "ため息ふう"
+        }
+      ]
+    }
+  ]
+}
