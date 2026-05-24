@@ -89,7 +89,6 @@ def create_iap(app_id, product):
                 "name": product["name"],
                 "productId": product["productId"],
                 "inAppPurchaseType": "NON_CONSUMABLE",
-                "availableInAllTerritories": True,
                 "familySharable": False,
                 "reviewNote": "This purchase unlocks the listed decoration pack inside the app.",
             },
