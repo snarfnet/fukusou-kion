@@ -11,6 +11,14 @@ on:
         options:
           - "false"
           - "true"
+      cancelReviewOnly:
+        description: "Only cancel open App Review submissions"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
       submitPurchases:
         description: "Try to submit purchases for review"
         required: false
@@ -85,7 +93,7 @@ jobs:
           cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
 
       - name: Create distribution certificate
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
@@ -102,7 +110,7 @@ jobs:
           grep '^ASC_CERTIFICATE_ID=' /tmp/morimori-photo-maker-cert.log >> "$GITHUB_ENV"
 
       - name: Ensure App Store Connect app
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUNDLE_ID: ${{ env.APP_BUNDLE_ID }}
@@ -112,7 +120,7 @@ jobs:
           python scripts/ensure_asc_app.py
 
       - name: Resolve app bundle
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -121,7 +129,7 @@ jobs:
           grep '^APP_BUNDLE_ID=' /tmp/morimori-photo-maker-bundle.log >> "$GITHUB_ENV"
 
       - name: Prepare provisioning profile
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -129,6 +137,7 @@ jobs:
           python scripts/prepare_profile.py
 
       - name: Prepare in-app purchases and subscription
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.cancelReviewOnly != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           SUBMIT_PURCHASES_FOR_REVIEW: ${{ inputs.submitPurchases == 'true' && '1' || '0' }}
@@ -136,25 +145,33 @@ jobs:
           . .venv/bin/activate
           python scripts/prepare_iap_products.py
 
+      - name: Cancel App Review submission
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.cancelReviewOnly == 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/cancel_review_submission.py
+
       - name: Generate App Store screenshots
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         run: |
           . .venv/bin/activate
           python scripts/generate_app_store_screenshots.py
 
       - name: Generate Xcode project
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         run: xcodegen generate
 
       - name: Set build number
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         run: |
           BUILD_NUM=$(( GITHUB_RUN_NUMBER + 100 ))
           echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=$BUILD_NUM" >> "$GITHUB_ENV"
 
       - name: Prepare App Store Connect metadata
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_NUMBER: ${{ env.BUILD_NUM }}
@@ -164,7 +181,7 @@ jobs:
           python scripts/submit_production.py
 
       - name: Archive iOS
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -186,7 +203,7 @@ jobs:
             CURRENT_PROJECT_VERSION="$BUILD_NUM"
 
       - name: Export and upload iOS build
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -203,7 +220,7 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
       - name: Submit iOS production review
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.iapOnly != 'true' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || (inputs.iapOnly != 'true' && inputs.cancelReviewOnly != 'true') }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_NUMBER: ${{ env.BUILD_NUM }}
