@@ -12,6 +12,7 @@ WORK_DIR = Path("/tmp/bibletypewriter-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
 CERT_PATH = WORK_DIR / "distribution.cer"
+REVOKE_EXISTING = os.environ.get("REVOKE_EXISTING_DISTRIBUTION_CERTS") == "1"
 
 
 def run(args):
@@ -33,6 +34,20 @@ def generate_csr():
         "-subj",
         "/CN=BibleTypewriter CI Distribution/O=TokyoNasu/C=JP",
     ])
+
+
+def revoke_existing_certificates():
+    certificates = []
+    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
+        certificates.extend(api_json("GET", f"/certificates?filter[certificateType]={certificate_type}&limit=100").get("data", []))
+    seen_ids = set()
+    for certificate in certificates:
+        certificate_id = certificate["id"]
+        if certificate_id in seen_ids:
+            continue
+        seen_ids.add(certificate_id)
+        print(f"Revoking existing distribution certificate: {certificate_id}")
+        api_json("DELETE", f"/certificates/{certificate_id}")
 
 
 def create_certificate():
@@ -75,6 +90,8 @@ def import_certificate(certificate):
 
 
 def main():
+    if REVOKE_EXISTING:
+        revoke_existing_certificates()
     generate_csr()
     certificate = create_certificate()
     import_certificate(certificate)
