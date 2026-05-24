@@ -108,7 +108,9 @@ jobs:
           python scripts/prepare_profile.py
 
       - name: Generate App Store screenshots
-        run: python3 scripts/generate_app_store_screenshots.py
+        run: |
+          . .venv/bin/activate
+          python scripts/generate_app_store_screenshots.py
 
       - name: Generate Xcode project
         run: xcodegen generate
