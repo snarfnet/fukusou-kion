@@ -108,9 +108,16 @@ def create_certificate_once(certificate_type):
     return api_json("POST", "/certificates", data=json_body(payload))["data"]
 
 
-def is_limit_error(error):
+def should_clear_stale_certificates(error):
     text = str(error).lower()
-    return "maximum" in text or "max" in text or "limit" in text or "reached" in text
+    return (
+        "maximum" in text
+        or "max" in text
+        or "limit" in text
+        or "reached" in text
+        or "already have a current" in text
+        or "pending certificate request" in text
+    )
 
 
 def create_certificate():
@@ -125,7 +132,7 @@ def create_certificate():
             except Exception as error:
                 last_error = error
                 print(f"Certificate create failed for {certificate_type}: {error}")
-        if not cleaned and last_error and is_limit_error(last_error):
+        if not cleaned and last_error and should_clear_stale_certificates(last_error):
             cleaned = True
             deleted = delete_known_invalid_certificates()
             if deleted:
