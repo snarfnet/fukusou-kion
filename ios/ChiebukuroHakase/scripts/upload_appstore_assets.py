@@ -11,7 +11,7 @@ from asc_helpers import api, api_json, fail, json_body, query
 
 
 ROOT = Path(__file__).resolve().parents[1]
-APP_ID = os.environ.get("APP_ID", "6772516610")
+APP_ID = os.environ["APP_ID"]
 APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 SCREENSHOT_ROOT = ROOT / "MarketingAssets" / "Screenshots"
 
@@ -339,7 +339,6 @@ def upload_screenshots(localization_ids):
 def main():
     version = find_or_create_version()
     ensure_app_info_localizations()
-    ensure_free_price()
     localization_ids = ensure_localizations(version["id"])
     upload_screenshots(localization_ids)
     print(f"ASC assets uploaded for app {APP_ID}, version {APP_VERSION}.")

@@ -12,6 +12,8 @@ The words appear slowly in a typewriter style over a nostalgic illustration of a
 
 There are only simple controls: previous, next, random, pause, and play. Open it during a short break, before sleep, or while resting between chores.
 
+This is a paid app and does not show ads.
+
 Japanese and English data are stored separately. If your device language is English, the app shows the English wisdom set.
 
 This app is for general reading and everyday inspiration. It is not medical, legal, or professional advice.

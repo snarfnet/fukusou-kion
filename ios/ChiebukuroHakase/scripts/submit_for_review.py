@@ -15,14 +15,14 @@ REVIEW_CONTACT = {
     "contactPhone": "+81 80-2368-9194",
     "demoAccountRequired": False,
     "demoAccountName": "",
-    "demoAccountPassword": "",
-    "notes": (
-        "This is a quiet reading app. No login is required. "
-        "The app shows household wisdom text over a nostalgic shop illustration. "
-        "The tobacco shop setting is used as retro scenery and does not promote smoking. "
-        "Google Mobile Ads is used for banner advertising."
-    ),
-}
+        "demoAccountPassword": "",
+        "notes": (
+            "This is a quiet reading app. No login is required. "
+            "The app shows household wisdom text over a nostalgic shop illustration. "
+            "The tobacco shop setting is used as retro scenery and does not promote smoking. "
+            "This is a paid app and does not show ads."
+        ),
+    }
 
 
 def list_all(path):

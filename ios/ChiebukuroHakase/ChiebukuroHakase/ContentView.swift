@@ -23,7 +23,6 @@ struct ContentView: View {
                 Spacer(minLength: 0)
                 typewriterArea
                 controls
-                BannerAdView()
             }
             .ignoresSafeArea(.keyboard)
         }
