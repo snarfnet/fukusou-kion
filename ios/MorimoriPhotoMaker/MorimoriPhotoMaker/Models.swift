@@ -11,6 +11,7 @@ enum MoriPack: String, CaseIterable, Identifiable {
     case kyunNekoPack
     case mofuUsaPack
     case koreanHairPack
+    case koreanFashionPack
     case himeMoriPack
     case hairArrangeGotsumoriPack
     case hairArrangeGotsumoriPack2
@@ -32,6 +33,7 @@ enum MoriPack: String, CaseIterable, Identifiable {
         case .kyunNekoPack: "キュンネコパック"
         case .mofuUsaPack: "モフモフうさちゃんパック"
         case .koreanHairPack: "韓国ヘアパック"
+        case .koreanFashionPack: "韓国ファッションパック"
         case .himeMoriPack: "姫盛りパック"
         case .hairArrangeGotsumoriPack: "ヘアアレごつ盛りパック"
         case .hairArrangeGotsumoriPack2: "ヘアアレごつ盛りパック2"
@@ -53,6 +55,7 @@ enum MoriPack: String, CaseIterable, Identifiable {
         case .kyunNekoPack: "com.tokyonasu.morimoriphotomaker.kyun.neko"
         case .mofuUsaPack: "com.tokyonasu.morimoriphotomaker.mofu.usa"
         case .koreanHairPack: "com.tokyonasu.morimoriphotomaker.korean.hair"
+        case .koreanFashionPack: "com.tokyonasu.morimoriphotomaker.korean.fashion"
         case .himeMoriPack: "com.tokyonasu.morimoriphotomaker.hime.mori"
         case .hairArrangeGotsumoriPack: "com.tokyonasu.morimoriphotomaker.hairarrange.gotsumori"
         case .hairArrangeGotsumoriPack2: "com.tokyonasu.morimoriphotomaker.hairarrange.gotsumori2"
@@ -70,7 +73,7 @@ enum MoriCategory: String, CaseIterable, Identifiable {
     case brows = "まゆげ"
     case shadow = "アイシャドウ"
     case blush = "チーク"
-    case lipstick = "口紅"
+    case lipstick = "リップ"
     case lashes = "つけまつげ"
     case glasses = "メガネ"
     case earrings = "イヤリング"
@@ -394,6 +397,29 @@ enum MoriLibrary {
         MoriAsset(id: "korean_hair_low_twintail", name: "韓国ローツイン", category: .hair, filename: "korean_hair_low_twintail.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .koreanHairPack),
         MoriAsset(id: "korean_lashes_idol_natural", name: "韓国アイドルつけま", category: .lashes, filename: "korean_lashes_idol_natural.png", defaultWidth: 0.40, defaultPosition: CGPoint(x: 0.50, y: 0.42), defaultZ: 48, isBackground: false, pack: .koreanHairPack),
         MoriAsset(id: "korean_lashes_soft_cat", name: "韓国キャットつけま", category: .lashes, filename: "korean_lashes_soft_cat.png", defaultWidth: 0.40, defaultPosition: CGPoint(x: 0.50, y: 0.42), defaultZ: 48, isBackground: false, pack: .koreanHairPack),
+        MoriAsset(id: "korean_hair_air_bangs_long", name: "韓国エアバングロング", category: .hair, filename: "korean_hair_air_bangs_long.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .koreanHairPack),
+        MoriAsset(id: "korean_hair_matte_black_layer", name: "韓国マット黒レイヤー", category: .hair, filename: "korean_hair_matte_black_layer.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .koreanHairPack),
+        MoriAsset(id: "korean_hair_choco_s_curve", name: "韓国チョコSカール", category: .hair, filename: "korean_hair_choco_s_curve.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .koreanHairPack),
+        MoriAsset(id: "kfashion_glasses_clear_round", name: "韓国クリア丸メガネ", category: .glasses, filename: "kfashion_glasses_clear_round.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 58, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_glasses_metal_square", name: "韓国メタル四角メガネ", category: .glasses, filename: "kfashion_glasses_metal_square.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 58, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_glasses_gray_tint", name: "韓国グレーティントメガネ", category: .glasses, filename: "kfashion_glasses_gray_tint.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 58, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_glasses_pearl_chain", name: "韓国パール丸メガネ", category: .glasses, filename: "kfashion_glasses_pearl_chain.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 58, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_earring_pearl_line", name: "韓国パールラインピアス", category: .earrings, filename: "kfashion_earring_pearl_line.png", defaultWidth: 0.54, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 42, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_earring_silver_heart", name: "韓国シルバーハートピアス", category: .earrings, filename: "kfashion_earring_silver_heart.png", defaultWidth: 0.54, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 42, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_earring_mini_hoop", name: "韓国ミニフープピアス", category: .earrings, filename: "kfashion_earring_mini_hoop.png", defaultWidth: 0.54, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 42, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_earring_ribbon_drop", name: "韓国リボンドロップピアス", category: .earrings, filename: "kfashion_earring_ribbon_drop.png", defaultWidth: 0.54, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 42, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_hair_accessory_satin_clip", name: "韓国サテンヘアクリップ", category: .hairAccessory, filename: "kfashion_hair_accessory_satin_clip.png", defaultWidth: 0.44, defaultPosition: CGPoint(x: 0.50, y: 0.27), defaultZ: 61, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_hair_accessory_pearl_pins", name: "韓国パールピンセット", category: .hairAccessory, filename: "kfashion_hair_accessory_pearl_pins.png", defaultWidth: 0.44, defaultPosition: CGPoint(x: 0.50, y: 0.27), defaultZ: 61, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_hair_accessory_flower_claw", name: "韓国フラワーバンス", category: .hairAccessory, filename: "kfashion_hair_accessory_flower_claw.png", defaultWidth: 0.44, defaultPosition: CGPoint(x: 0.50, y: 0.27), defaultZ: 61, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_shadow_aegyo_glitter", name: "韓国涙袋グリッター", category: .shadow, filename: "kfashion_shadow_aegyo_glitter.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 46, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_shadow_rose_smoky", name: "韓国ローズスモーキー", category: .shadow, filename: "kfashion_shadow_rose_smoky.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 46, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_shadow_under_silver", name: "韓国下まぶたシルバー", category: .shadow, filename: "kfashion_shadow_under_silver.png", defaultWidth: 0.43, defaultPosition: CGPoint(x: 0.50, y: 0.43), defaultZ: 46, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_blush_milk_peach", name: "韓国ミルクピーチチーク", category: .blush, filename: "kfashion_blush_milk_peach.png", defaultWidth: 0.42, defaultPosition: CGPoint(x: 0.50, y: 0.55), defaultZ: 44, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_blush_lavender_cool", name: "韓国ラベンダーチーク", category: .blush, filename: "kfashion_blush_lavender_cool.png", defaultWidth: 0.42, defaultPosition: CGPoint(x: 0.50, y: 0.55), defaultZ: 44, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_lip_gradient_rose", name: "韓国ローズグラデリップ", category: .lipstick, filename: "kfashion_lip_gradient_rose.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.59), defaultZ: 47, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_lip_glossy_tint", name: "韓国つやティントリップ", category: .lipstick, filename: "kfashion_lip_glossy_tint.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.59), defaultZ: 47, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_part_phone_charm", name: "韓国スマホチャーム", category: .parts, filename: "kfashion_part_phone_charm.png", defaultWidth: 0.34, defaultPosition: CGPoint(x: 0.72, y: 0.72), defaultZ: 60, isBackground: false, pack: .koreanFashionPack),
+        MoriAsset(id: "kfashion_part_pearl_chain_sticker", name: "韓国パールチェーン", category: .parts, filename: "kfashion_part_pearl_chain_sticker.png", defaultWidth: 0.34, defaultPosition: CGPoint(x: 0.72, y: 0.72), defaultZ: 60, isBackground: false, pack: .koreanFashionPack),
         MoriAsset(id: "hime_hair_blonde_curl", name: "姫ブロンド盛り", category: .hair, filename: "hime_hair_blonde_curl.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .himeMoriPack),
         MoriAsset(id: "hime_hair_rose_halfup", name: "姫ローズハーフ", category: .hair, filename: "hime_hair_rose_halfup.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .himeMoriPack),
         MoriAsset(id: "hime_hair_black_himecut", name: "黒髪姫カット", category: .hair, filename: "hime_hair_black_himecut.png", defaultWidth: 0.66, defaultPosition: CGPoint(x: 0.50, y: 0.24), defaultZ: 30, isBackground: false, pack: .himeMoriPack),
