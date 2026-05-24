@@ -16,6 +16,11 @@ on:
         type: boolean
         required: true
         default: true
+  push:
+    branches:
+      - codex/chiebukuro-hakase-deluxe
+    paths:
+      - ".github/workflows/chiebukuro-hakase-production.yml"
 
 concurrency:
   group: chiebukuro-hakase-production
@@ -23,6 +28,7 @@ concurrency:
 
 jobs:
   production-submit:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: macos-26
     defaults:
       run:
