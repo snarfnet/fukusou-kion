@@ -55,13 +55,15 @@ def existing_iaps(app_id):
 
 
 def find_iap(app_id, product_id):
-    body = api_json(
-        "GET",
-        f"/apps/{app_id}/inAppPurchasesV2?"
-        f"{query({'filter[productId]': product_id, 'limit': '1'})}",
-    )
-    data = body.get("data", [])
-    return data[0] if data else None
+    for path in ("inAppPurchasesV2", "inAppPurchases"):
+        body = api_json(
+            "GET",
+            f"/apps/{app_id}/{path}?{query({'filter[productId]': product_id, 'limit': '1'})}",
+        )
+        data = body.get("data", [])
+        if data:
+            return data[0]
+    return None
 
 
 def create_iap(app_id, product):
@@ -395,7 +397,8 @@ def main():
         if row is None:
             row = find_iap(app_id, product["productId"])
             if row is None:
-                raise RuntimeError(f"IAP exists but could not be read by product ID: {product['productId']}")
+                print(f"IAP exists but could not be read by product ID; skipped: {product['productId']}")
+                continue
         iap_id = row["id"]
         print(f"IAP state {product['productId']}: {row.get('attributes', {}).get('state')}")
         ensure_iap_localization(iap_id, product)
