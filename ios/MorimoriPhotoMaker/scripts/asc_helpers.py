@@ -32,11 +32,15 @@ def headers():
 
 
 def api(method, path, **kwargs):
+    if path.startswith("/v1/") or path.startswith("/v2/") or path.startswith("/v3/"):
+        url = f"https://api.appstoreconnect.apple.com{path}"
+    else:
+        url = f"{BASE_URL}{path}"
     last_response = None
     for _ in range(6):
         last_response = requests.request(
             method,
-            f"{BASE_URL}{path}",
+            url,
             headers=headers(),
             timeout=120,
             **kwargs,

@@ -1,0 +1,66 @@
+name: MorimoriPhotoMaker IAP Setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      submitPurchases:
+        description: "Try to submit purchases for review after setup"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+concurrency:
+  group: morimori-photo-maker-iap-setup
+  cancel-in-progress: true
+
+jobs:
+  setup-iap:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/MorimoriPhotoMaker
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.morimoriphotomaker
+      MORIMORI_PHOTO_MAKER_APP_ID: "6772533057"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+
+      - name: Prepare in-app purchases and subscription
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          SUBMIT_PURCHASES_FOR_REVIEW: ${{ inputs.submitPurchases == 'true' && '1' || '0' }}
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_iap_products.py

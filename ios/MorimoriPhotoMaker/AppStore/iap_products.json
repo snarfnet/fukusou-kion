@@ -3,6 +3,7 @@
     {
       "id": "morimoriPack1",
       "name": "盛り盛りパック1",
+      "enName": "Morimori Pack 1",
       "productId": "com.tokyonasu.morimoriphotomaker.pack1",
       "itemCount": 32,
       "priceYen": 200
@@ -10,6 +11,7 @@
     {
       "id": "morimoriPack2",
       "name": "盛り盛りパック2",
+      "enName": "Morimori Pack 2",
       "productId": "com.tokyonasu.morimoriphotomaker.pack2",
       "itemCount": 30,
       "priceYen": 200
@@ -17,6 +19,7 @@
     {
       "id": "seriousPack",
       "name": "真面目パック",
+      "enName": "Serious Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.serious",
       "itemCount": 52,
       "priceYen": 300
@@ -24,6 +27,7 @@
     {
       "id": "yankeeDecoPack",
       "name": "ヤンキーデコパック",
+      "enName": "Yankee Deco Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.yankee.deco",
       "itemCount": 32,
       "priceYen": 200
@@ -31,6 +35,7 @@
     {
       "id": "bubbleDecoPack",
       "name": "昭和バブルデコパック",
+      "enName": "Showa Bubble Deco Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.bubble.deco",
       "itemCount": 32,
       "priceYen": 200
@@ -38,6 +43,7 @@
     {
       "id": "kyunNekoPack",
       "name": "キュンネコパック",
+      "enName": "Kyun Neko Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.kyun.neko",
       "itemCount": 10,
       "priceYen": 100
@@ -45,6 +51,7 @@
     {
       "id": "mofuUsaPack",
       "name": "モフモフうさちゃんパック",
+      "enName": "Fluffy Bunny Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.mofu.usa",
       "itemCount": 10,
       "priceYen": 100
@@ -52,6 +59,7 @@
     {
       "id": "koreanHairPack",
       "name": "韓国ヘアパック",
+      "enName": "Korean Hair Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.korean.hair",
       "itemCount": 15,
       "priceYen": 200
@@ -59,6 +67,7 @@
     {
       "id": "koreanFashionPack",
       "name": "韓国ファッションパック",
+      "enName": "Korean Fashion Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.korean.fashion",
       "itemCount": 20,
       "priceYen": 200
@@ -66,6 +75,7 @@
     {
       "id": "himeMoriPack",
       "name": "姫盛りパック",
+      "enName": "Hime Mori Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.hime.mori",
       "itemCount": 32,
       "priceYen": 200
@@ -73,6 +83,7 @@
     {
       "id": "hairArrangeGotsumoriPack",
       "name": "ヘアアレごつ盛りパック",
+      "enName": "Gotsumori Hair Arrange Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.hairarrange.gotsumori",
       "itemCount": 17,
       "priceYen": 300
@@ -80,6 +91,7 @@
     {
       "id": "hairArrangeGotsumoriPack2",
       "name": "ヘアアレごつ盛りパック2",
+      "enName": "Gotsumori Hair Arrange Pack 2",
       "productId": "com.tokyonasu.morimoriphotomaker.hairarrange.gotsumori2",
       "itemCount": 17,
       "priceYen": 300
@@ -87,6 +99,7 @@
     {
       "id": "vividReptilePack",
       "name": "鮮やか爬虫類パック",
+      "enName": "Vivid Reptile Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.vivid.reptile",
       "itemCount": 10,
       "priceYen": 100
@@ -94,6 +107,7 @@
     {
       "id": "varietyPack",
       "name": "バラエティーパック",
+      "enName": "Variety Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.variety",
       "itemCount": 12,
       "priceYen": 100
@@ -101,6 +115,7 @@
     {
       "id": "cabaretNailPack",
       "name": "キャバ嬢ネイルパック",
+      "enName": "Cabaret Nail Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.cabaret.nail",
       "itemCount": 50,
       "priceYen": 300
@@ -108,6 +123,7 @@
     {
       "id": "emotionPack",
       "name": "感情パック",
+      "enName": "Emotion Pack",
       "productId": "com.tokyonasu.morimoriphotomaker.emotion",
       "itemCount": 25,
       "priceYen": 200
@@ -117,6 +133,7 @@
     {
       "id": "allAccessMonthly",
       "name": "全ロックアイテム使い放題",
+      "enName": "All Access Monthly",
       "productId": "com.tokyonasu.morimoriphotomaker.subscription.monthly",
       "period": "P1M",
       "priceYen": 680,
