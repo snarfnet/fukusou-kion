@@ -7,13 +7,14 @@ from pathlib import Path
 
 import requests
 
-from asc_helpers import api, api_json, fail, json_body, query
+from asc_helpers import api_json, fail, json_body, query
 
 
 ROOT = Path(__file__).resolve().parents[1]
 APP_ID = os.environ["APP_ID"]
 APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 SCREENSHOT_ROOT = ROOT / "MarketingAssets" / "Screenshots"
+PRIVACY_POLICY_URL = "https://snarfnet.github.io/"
 
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", "iphone67"),
@@ -26,17 +27,17 @@ LOCALES = {
     "ja": ROOT / "AppStore" / "metadata_ja.md",
     "en-US": ROOT / "AppStore" / "metadata_en.md",
 }
+
 APP_INFO = {
     "ja": {
-        "name": "煙草屋のおばぁちゃん",
-        "subtitle": "昔ながらの知恵袋が流れる",
+        "name": "煙草屋のおばぁちゃん博士",
+        "subtitle": "50,000件の暮らしの知恵袋",
     },
     "en-US": {
-        "name": "Grandma Tobacco Shop",
-        "subtitle": "Old-fashioned daily wisdom",
+        "name": "Grandma Scholar",
+        "subtitle": "50,000 quiet wisdom notes",
     },
 }
-PRIVACY_POLICY_URL = "https://snarfnet.github.io/"
 
 
 def list_all(path):
@@ -55,21 +56,26 @@ def section(markdown, heading):
     return match.group(1).strip() if match else ""
 
 
+def page_title(markdown):
+    match = re.search(r"^#\s+(.+)$", markdown, flags=re.M)
+    return match.group(1).strip() if match else ""
+
+
 def read_meta(locale):
     text = LOCALES[locale].read_text(encoding="utf-8")
     if locale == "ja":
         return {
-            "name": section(text, "アプリ名")[:30],
+            "name": page_title(text)[:30] or APP_INFO["ja"]["name"],
             "subtitle": section(text, "サブタイトル")[:30],
-            "promotionalText": section(text, "プロモーションテキスト")[:170],
+            "promotionalText": "50,000件の暮らしの知恵が、白い文字でゆっくり流れます。"[:170],
             "keywords": section(text, "キーワード")[:100],
-            "description": section(text, "説明文")[:4000],
+            "description": section(text, "説明")[:4000],
             "whatsNew": "初回リリースです。",
         }
     return {
-        "name": section(text, "App Name")[:30],
+        "name": page_title(text)[:30] or APP_INFO["en-US"]["name"],
         "subtitle": section(text, "Subtitle")[:30],
-        "promotionalText": section(text, "Promotional Text")[:170],
+        "promotionalText": "50,000 quiet pieces of household wisdom, shown slowly in typewriter style."[:170],
         "keywords": section(text, "Keywords")[:100],
         "description": section(text, "Description")[:4000],
         "whatsNew": "Initial release.",
@@ -123,9 +129,10 @@ def ensure_localizations(version_id):
                 "attributes": {
                     "description": meta["description"],
                     "keywords": meta["keywords"],
-                    "marketingUrl": "https://snarfnet.github.io/",
+                    "marketingUrl": PRIVACY_POLICY_URL,
                     "promotionalText": meta["promotionalText"],
-                    "supportUrl": "https://snarfnet.github.io/",
+                    "supportUrl": PRIVACY_POLICY_URL,
+                    "whatsNew": meta["whatsNew"],
                 },
             }
         }
@@ -149,9 +156,7 @@ def ensure_app_info_localizations():
             "data": {
                 "type": "apps",
                 "id": APP_ID,
-                "attributes": {
-                    "contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
-                },
+                "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"},
             }
         }),
     )
@@ -163,9 +168,7 @@ def ensure_app_info_localizations():
                 "type": "appInfos",
                 "id": info_id,
                 "relationships": {
-                    "primaryCategory": {
-                        "data": {"type": "appCategories", "id": "LIFESTYLE"}
-                    }
+                    "primaryCategory": {"data": {"type": "appCategories", "id": "LIFESTYLE"}}
                 },
             }
         }),
@@ -196,7 +199,7 @@ def ensure_app_info_localizations():
         "healthOrWellnessTopics": False,
         "unrestrictedWebAccess": False,
         "lootBox": False,
-        "advertising": True,
+        "advertising": False,
     })
     api_json(
         "PATCH",
@@ -212,7 +215,6 @@ def ensure_app_info_localizations():
 
     localizations = api_json("GET", f"/appInfos/{info_id}/appInfoLocalizations?limit=50").get("data", [])
     existing = {item["attributes"]["locale"]: item for item in localizations}
-
     for locale, attrs in APP_INFO.items():
         if locale not in existing:
             payload = {
@@ -236,36 +238,6 @@ def ensure_app_info_localizations():
         }
         api_json("PATCH", f"/appInfoLocalizations/{loc_id}", data=json_body(payload))
         print(f"App info updated: {locale}")
-
-
-def ensure_free_price():
-    points = api_json("GET", f"/apps/{APP_ID}/appPricePoints?filter[territory]=USA&limit=1").get("data", [])
-    if not points:
-        return
-
-    local_id = "${manualPrice0}"
-    payload = {
-        "data": {
-            "type": "appPriceSchedules",
-            "relationships": {
-                "app": {"data": {"type": "apps", "id": APP_ID}},
-                "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
-                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
-            },
-        },
-        "included": [{
-            "type": "appPrices",
-            "id": local_id,
-            "attributes": {"startDate": "2026-05-23"},
-            "relationships": {
-                "appPricePoint": {
-                    "data": {"type": "appPricePoints", "id": points[0]["id"]}
-                }
-            },
-        }],
-    }
-    api_json("POST", "/appPriceSchedules", data=json_body(payload))
-    print("Free price updated")
 
 
 def upload_screenshot(set_id, path):
