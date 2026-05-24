@@ -25,7 +25,7 @@ META = {
 
 写真を選んだら、好きなカテゴリーから素材をタップするだけ。位置、大きさ、回転、透明度を調整して、自分だけの盛り盛り画像を作れます。
 
-無料素材に加えて、韓国風、姫盛り、昭和バブル、ヤンキー、ネイル、感情素材などのパックも用意しています。単品パックで必要な素材だけ追加したり、月額サブスクで全ロック素材をまとめて使ったりできます。
+無料素材に加えて、韓国風、姫盛り、昭和バブル、ヤンキー、ネイル、感情素材などのパックも用意しています。単品パックで必要な素材だけ追加したり、月額サブスクでロック素材をまとめて使ったりできます。
 
 作った画像は写真アプリに保存できます。SNS用のプロフィール画像、友だちへのネタ画像、イベント前の盛り加工にどうぞ。""",
         "keywords": "写真加工,デコ,盛り,メイク,髪型,メガネ,ネイル,スタンプ,かわいい,サブスク",
@@ -143,7 +143,7 @@ def ensure_release_prerequisites(app_id, version_id):
                 "type": "appInfos",
                 "id": app_info_id,
                 "relationships": {
-                    "primaryCategory": {"data": {"type": "appCategories", "id": "PHOTO_VIDEO"}}
+                    "primaryCategory": {"data": {"type": "appCategories", "id": "PHOTO_AND_VIDEO"}}
                 },
             }
         }))
@@ -159,6 +159,7 @@ def ensure_release_prerequisites(app_id, version_id):
         }
     }))
     print(f"Version attributes: {response.status_code}")
+    ensure_free_price(app_id)
     ensure_review_detail(version_id)
 
 
@@ -213,6 +214,71 @@ def update_app_info_localizations(app_info_id):
             }
         }))
         print(f"App info {locale}: {response.status_code}")
+
+
+def ensure_free_price(app_id):
+    response = api("GET", f"/apps/{app_id}/relationships/appPriceSchedule")
+    body = response.json() if response.text else {}
+    if response.status_code == 200 and body.get("data"):
+        schedule_id = body["data"]["id"]
+        response = api(
+            "GET",
+            f"/appPriceSchedules/{schedule_id}/manualPrices"
+            "?limit=200&include=appPricePoint,territory"
+            "&fields[appPricePoints]=customerPrice"
+            "&filter[territory]=JPN",
+        )
+        body = response.json() if response.text else {}
+        if response.status_code == 200:
+            price_points = {
+                item["id"]: item.get("attributes", {}).get("customerPrice")
+                for item in body.get("included", [])
+                if item.get("type") == "appPricePoints"
+            }
+            for item in body.get("data", []):
+                attrs = item.get("attributes", {})
+                point_id = item.get("relationships", {}).get("appPricePoint", {}).get("data", {}).get("id")
+                if attrs.get("endDate") is None and str(price_points.get(point_id)) in ("0", "0.0", "0.00"):
+                    print("Free price: already set")
+                    return
+
+    body = api_json(
+        "GET",
+        f"/apps/{app_id}/appPricePoints?filter[territory]=JPN&fields[appPricePoints]=customerPrice&limit=200",
+    )
+    price_id = None
+    for point in body.get("data", []):
+        if str(point.get("attributes", {}).get("customerPrice")) in ("0", "0.0", "0.00"):
+            price_id = point["id"]
+            break
+    if not price_id:
+        print("Free price: skipped")
+        return
+
+    local_id = "${manualPrice0}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "attributes": {},
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": app_id}},
+                "baseTerritory": {"data": {"type": "territories", "id": "JPN"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [{
+            "type": "appPrices",
+            "id": local_id,
+            "attributes": {"startDate": None},
+            "relationships": {
+                "appPricePoint": {"data": {"type": "appPricePoints", "id": price_id}}
+            },
+        }],
+    }
+    response = api("POST", "/appPriceSchedules", data=json_body(payload))
+    print(f"Free price: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        print(response.text[:1000])
 
 
 def ensure_review_detail(version_id):
