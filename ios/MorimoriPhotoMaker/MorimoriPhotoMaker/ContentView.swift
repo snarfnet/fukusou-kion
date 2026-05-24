@@ -425,35 +425,61 @@ private struct StageView<PhotoPicker: View>: View {
                 ForEach(layers.sorted { $0.zIndex < $1.zIndex }) { layer in
                     LayerView(layer: layer, stageSize: size, isSelected: layer.id == selectedLayerID)
                         .zIndex(layer.zIndex)
-                        .gesture(
-                            DragGesture()
-                                .onChanged { value in
-                                    guard let index = layers.firstIndex(where: { $0.id == layer.id }) else { return }
-                                    if selectedLayerID != layer.id {
-                                        selectedLayerID = layer.id
-                                        dragStart = layers[index].position
-                                    }
-                                    if dragStart == nil {
-                                        dragStart = layers[index].position
-                                    }
-                                    let start = dragStart ?? layers[index].position
-                                    layers[index].position = CGPoint(
-                                        x: min(1.2, max(-0.2, start.x + value.translation.width / max(1, size.width))),
-                                        y: min(1.2, max(-0.2, start.y + value.translation.height / max(1, size.height)))
-                                    )
-                                }
-                                .onEnded { _ in dragStart = nil }
-                        )
-                        .onTapGesture {
-                            selectedLayerID = layer.id
-                        }
+                        .allowsHitTesting(false)
                 }
             }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        if dragStart == nil {
+                            guard let hitLayer = hitTestLayer(at: value.startLocation, in: size),
+                                  let index = layers.firstIndex(where: { $0.id == hitLayer.id }) else { return }
+                            selectedLayerID = hitLayer.id
+                            dragStart = layers[index].position
+                        }
+                        guard let selectedLayerID,
+                              let index = layers.firstIndex(where: { $0.id == selectedLayerID }),
+                              let start = dragStart else { return }
+                        layers[index].position = CGPoint(
+                            x: min(1.2, max(-0.2, start.x + value.translation.width / max(1, size.width))),
+                            y: min(1.2, max(-0.2, start.y + value.translation.height / max(1, size.height)))
+                        )
+                    }
+                    .onEnded { _ in dragStart = nil }
+            )
             .clipShape(RoundedRectangle(cornerRadius: 22))
             .overlay(RoundedRectangle(cornerRadius: 22).stroke(.white.opacity(0.9), lineWidth: 8))
             .shadow(color: Color(red: 0.55, green: 0.18, blue: 0.36).opacity(0.18), radius: 18, y: 8)
         }
         .aspectRatio(3 / 4, contentMode: .fit)
+    }
+
+    private func hitTestLayer(at point: CGPoint, in stageSize: CGSize) -> MoriLayer? {
+        layers
+            .filter { !$0.isBackground }
+            .sorted { $0.zIndex > $1.zIndex }
+            .first { layer in
+                guard let image = BundleImage.load(layer.asset.filename, folder: "Overlays", cropSide: layer.cropSide) else {
+                    return false
+                }
+                let displaySize = layer.displaySize(in: stageSize, imageSize: image.size)
+                let center = CGPoint(x: stageSize.width * layer.position.x, y: stageSize.height * layer.position.y)
+                let radians = -layer.rotation.degrees * .pi / 180
+                let translated = CGPoint(x: point.x - center.x, y: point.y - center.y)
+                var local = CGPoint(
+                    x: translated.x * cos(radians) - translated.y * sin(radians),
+                    y: translated.x * sin(radians) + translated.y * cos(radians)
+                )
+                if layer.isFlipped {
+                    local.x *= -1
+                }
+                let normalized = CGPoint(
+                    x: (local.x + displaySize.width / 2) / max(1, displaySize.width),
+                    y: (local.y + displaySize.height / 2) / max(1, displaySize.height)
+                )
+                return image.hasVisiblePixel(at: normalized)
+            }
     }
 }
 

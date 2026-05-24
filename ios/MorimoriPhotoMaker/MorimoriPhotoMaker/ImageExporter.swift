@@ -132,7 +132,46 @@ enum BundleImage {
     }
 }
 
-private extension UIImage {
+extension UIImage {
+    func hasVisiblePixel(at normalizedPoint: CGPoint) -> Bool {
+        guard
+            normalizedPoint.x >= 0,
+            normalizedPoint.x <= 1,
+            normalizedPoint.y >= 0,
+            normalizedPoint.y <= 1,
+            let cgImage,
+            let dataProvider = cgImage.dataProvider,
+            let data = dataProvider.data,
+            let bytes = CFDataGetBytePtr(data)
+        else {
+            return false
+        }
+
+        let x = min(cgImage.width - 1, max(0, Int(normalizedPoint.x * CGFloat(cgImage.width))))
+        let y = min(cgImage.height - 1, max(0, Int(normalizedPoint.y * CGFloat(cgImage.height))))
+        let bitsPerPixel = cgImage.bitsPerPixel
+        let bytesPerPixel = max(1, bitsPerPixel / 8)
+        let offset = y * cgImage.bytesPerRow + x * bytesPerPixel
+
+        guard bitsPerPixel >= 32 else {
+            return true
+        }
+
+        let alphaInfo = cgImage.alphaInfo
+        let alpha: UInt8
+        switch alphaInfo {
+        case .premultipliedLast, .last:
+            alpha = bytes[offset + 3]
+        case .premultipliedFirst, .first:
+            alpha = bytes[offset]
+        case .none, .noneSkipLast, .noneSkipFirst:
+            alpha = 255
+        @unknown default:
+            alpha = bytes[offset + min(3, bytesPerPixel - 1)]
+        }
+        return alpha > 24
+    }
+
     func cropped(to side: MoriCropSide) -> UIImage {
         guard let cgImage else { return self }
         let halfWidth = cgImage.width / 2
