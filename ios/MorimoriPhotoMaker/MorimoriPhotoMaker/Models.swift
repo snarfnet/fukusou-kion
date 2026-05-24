@@ -19,6 +19,9 @@ enum MoriPack: String, CaseIterable, Identifiable {
     case varietyPack
     case cabaretNailPack
     case emotionPack
+    case moriHiraganaPack1
+    case moriHiraganaPack2
+    case moriKatakanaPack
 
     var id: String { rawValue }
 
@@ -41,6 +44,9 @@ enum MoriPack: String, CaseIterable, Identifiable {
         case .varietyPack: "バラエティーパック"
         case .cabaretNailPack: "キャバ嬢ネイルパック"
         case .emotionPack: "感情パック"
+        case .moriHiraganaPack1: "盛りひらがなパック1"
+        case .moriHiraganaPack2: "盛りひらがなパック2"
+        case .moriKatakanaPack: "盛りカタカナパック"
         }
     }
 
@@ -63,6 +69,9 @@ enum MoriPack: String, CaseIterable, Identifiable {
         case .varietyPack: "com.tokyonasu.morimoriphotomaker.variety"
         case .cabaretNailPack: "com.tokyonasu.morimoriphotomaker.cabaret.nail"
         case .emotionPack: "com.tokyonasu.morimoriphotomaker.emotion"
+        case .moriHiraganaPack1: "com.tokyonasu.morimoriphotomaker.mori.hiragana1"
+        case .moriHiraganaPack2: "com.tokyonasu.morimoriphotomaker.mori.hiragana2"
+        case .moriKatakanaPack: "com.tokyonasu.morimoriphotomaker.mori.katakana"
         }
     }
 }
@@ -84,6 +93,7 @@ enum MoriCategory: String, CaseIterable, Identifiable {
     case parts = "アイテム"
     case plush = "ぬいぐるみ"
     case emotion = "感情"
+    case text = "文字"
 
     var id: String { rawValue }
 }
@@ -582,6 +592,140 @@ enum MoriLibrary {
         MoriAsset(id: "emotion_pack_static_12", name: "照れ雲", category: .emotion, filename: "emotion_pack_static_12.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
         MoriAsset(id: "emotion_pack_static_13", name: "ラブ矢ハート", category: .emotion, filename: "emotion_pack_static_13.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
         MoriAsset(id: "emotion_pack_static_14", name: "漫画インパクト", category: .emotion, filename: "emotion_pack_static_14.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_static_15", name: "ため息ふう", category: .emotion, filename: "emotion_pack_static_15.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack)
+        MoriAsset(id: "emotion_pack_static_15", name: "ため息ふう", category: .emotion, filename: "emotion_pack_static_15.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "text-free-01", name: "文字 0", category: .text, filename: "text_free_01.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-02", name: "文字 1", category: .text, filename: "text_free_02.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-03", name: "文字 2", category: .text, filename: "text_free_03.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-04", name: "文字 3", category: .text, filename: "text_free_04.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-05", name: "文字 4", category: .text, filename: "text_free_05.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-06", name: "文字 5", category: .text, filename: "text_free_06.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-07", name: "文字 6", category: .text, filename: "text_free_07.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-08", name: "文字 7", category: .text, filename: "text_free_08.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-09", name: "文字 8", category: .text, filename: "text_free_09.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-10", name: "文字 9", category: .text, filename: "text_free_10.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-11", name: "文字 @", category: .text, filename: "text_free_11.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-12", name: "文字 #", category: .text, filename: "text_free_12.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-13", name: "文字 &", category: .text, filename: "text_free_13.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-14", name: "文字 !", category: .text, filename: "text_free_14.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-15", name: "文字 ?", category: .text, filename: "text_free_15.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-16", name: "文字 +", category: .text, filename: "text_free_16.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-17", name: "文字 -", category: .text, filename: "text_free_17.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-18", name: "文字 ♡", category: .text, filename: "text_free_18.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-19", name: "文字 ☆", category: .text, filename: "text_free_19.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-20", name: "文字 ♪", category: .text, filename: "text_free_20.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-21", name: "文字 ％", category: .text, filename: "text_free_21.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-free-22", name: "文字 ￥", category: .text, filename: "text_free_22.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .free),
+        MoriAsset(id: "text-hira1-01", name: "盛りひらがな あ", category: .text, filename: "text_hira1_01.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-02", name: "盛りひらがな い", category: .text, filename: "text_hira1_02.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-03", name: "盛りひらがな う", category: .text, filename: "text_hira1_03.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-04", name: "盛りひらがな え", category: .text, filename: "text_hira1_04.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-05", name: "盛りひらがな お", category: .text, filename: "text_hira1_05.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-06", name: "盛りひらがな か", category: .text, filename: "text_hira1_06.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-07", name: "盛りひらがな き", category: .text, filename: "text_hira1_07.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-08", name: "盛りひらがな く", category: .text, filename: "text_hira1_08.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-09", name: "盛りひらがな け", category: .text, filename: "text_hira1_09.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-10", name: "盛りひらがな こ", category: .text, filename: "text_hira1_10.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-11", name: "盛りひらがな さ", category: .text, filename: "text_hira1_11.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-12", name: "盛りひらがな し", category: .text, filename: "text_hira1_12.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-13", name: "盛りひらがな す", category: .text, filename: "text_hira1_13.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-14", name: "盛りひらがな せ", category: .text, filename: "text_hira1_14.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-15", name: "盛りひらがな そ", category: .text, filename: "text_hira1_15.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-16", name: "盛りひらがな た", category: .text, filename: "text_hira1_16.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-17", name: "盛りひらがな ち", category: .text, filename: "text_hira1_17.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-18", name: "盛りひらがな つ", category: .text, filename: "text_hira1_18.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-19", name: "盛りひらがな て", category: .text, filename: "text_hira1_19.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-20", name: "盛りひらがな と", category: .text, filename: "text_hira1_20.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-21", name: "盛りひらがな な", category: .text, filename: "text_hira1_21.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-22", name: "盛りひらがな に", category: .text, filename: "text_hira1_22.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-23", name: "盛りひらがな ぬ", category: .text, filename: "text_hira1_23.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-24", name: "盛りひらがな ね", category: .text, filename: "text_hira1_24.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-25", name: "盛りひらがな の", category: .text, filename: "text_hira1_25.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-26", name: "盛りひらがな は", category: .text, filename: "text_hira1_26.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-27", name: "盛りひらがな ひ", category: .text, filename: "text_hira1_27.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira1-28", name: "盛りひらがな ふ", category: .text, filename: "text_hira1_28.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack1),
+        MoriAsset(id: "text-hira2-29", name: "盛りひらがな へ", category: .text, filename: "text_hira2_29.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-30", name: "盛りひらがな ほ", category: .text, filename: "text_hira2_30.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-31", name: "盛りひらがな ま", category: .text, filename: "text_hira2_31.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-32", name: "盛りひらがな み", category: .text, filename: "text_hira2_32.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-33", name: "盛りひらがな む", category: .text, filename: "text_hira2_33.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-34", name: "盛りひらがな め", category: .text, filename: "text_hira2_34.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-35", name: "盛りひらがな も", category: .text, filename: "text_hira2_35.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-36", name: "盛りひらがな や", category: .text, filename: "text_hira2_36.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-37", name: "盛りひらがな ゆ", category: .text, filename: "text_hira2_37.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-38", name: "盛りひらがな よ", category: .text, filename: "text_hira2_38.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-39", name: "盛りひらがな ら", category: .text, filename: "text_hira2_39.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-40", name: "盛りひらがな り", category: .text, filename: "text_hira2_40.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-41", name: "盛りひらがな る", category: .text, filename: "text_hira2_41.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-42", name: "盛りひらがな れ", category: .text, filename: "text_hira2_42.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-43", name: "盛りひらがな ろ", category: .text, filename: "text_hira2_43.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-44", name: "盛りひらがな わ", category: .text, filename: "text_hira2_44.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-45", name: "盛りひらがな を", category: .text, filename: "text_hira2_45.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-46", name: "盛りひらがな ん", category: .text, filename: "text_hira2_46.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-47", name: "盛りひらがな ぁ", category: .text, filename: "text_hira2_47.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-48", name: "盛りひらがな ぃ", category: .text, filename: "text_hira2_48.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-49", name: "盛りひらがな ぅ", category: .text, filename: "text_hira2_49.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-50", name: "盛りひらがな ぇ", category: .text, filename: "text_hira2_50.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-51", name: "盛りひらがな ぉ", category: .text, filename: "text_hira2_51.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-52", name: "盛りひらがな っ", category: .text, filename: "text_hira2_52.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-53", name: "盛りひらがな ゃ", category: .text, filename: "text_hira2_53.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-54", name: "盛りひらがな ゅ", category: .text, filename: "text_hira2_54.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-55", name: "盛りひらがな ょ", category: .text, filename: "text_hira2_55.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-hira2-56", name: "盛りひらがな ゎ", category: .text, filename: "text_hira2_56.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriHiraganaPack2),
+        MoriAsset(id: "text-kata-01", name: "盛りカタカナ ア", category: .text, filename: "text_kata_01.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-02", name: "盛りカタカナ イ", category: .text, filename: "text_kata_02.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-03", name: "盛りカタカナ ウ", category: .text, filename: "text_kata_03.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-04", name: "盛りカタカナ エ", category: .text, filename: "text_kata_04.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-05", name: "盛りカタカナ オ", category: .text, filename: "text_kata_05.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-06", name: "盛りカタカナ カ", category: .text, filename: "text_kata_06.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-07", name: "盛りカタカナ キ", category: .text, filename: "text_kata_07.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-08", name: "盛りカタカナ ク", category: .text, filename: "text_kata_08.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-09", name: "盛りカタカナ ケ", category: .text, filename: "text_kata_09.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-10", name: "盛りカタカナ コ", category: .text, filename: "text_kata_10.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-11", name: "盛りカタカナ サ", category: .text, filename: "text_kata_11.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-12", name: "盛りカタカナ シ", category: .text, filename: "text_kata_12.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-13", name: "盛りカタカナ ス", category: .text, filename: "text_kata_13.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-14", name: "盛りカタカナ セ", category: .text, filename: "text_kata_14.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-15", name: "盛りカタカナ ソ", category: .text, filename: "text_kata_15.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-16", name: "盛りカタカナ タ", category: .text, filename: "text_kata_16.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-17", name: "盛りカタカナ チ", category: .text, filename: "text_kata_17.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-18", name: "盛りカタカナ ツ", category: .text, filename: "text_kata_18.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-19", name: "盛りカタカナ テ", category: .text, filename: "text_kata_19.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-20", name: "盛りカタカナ ト", category: .text, filename: "text_kata_20.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-21", name: "盛りカタカナ ナ", category: .text, filename: "text_kata_21.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-22", name: "盛りカタカナ ニ", category: .text, filename: "text_kata_22.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-23", name: "盛りカタカナ ヌ", category: .text, filename: "text_kata_23.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-24", name: "盛りカタカナ ネ", category: .text, filename: "text_kata_24.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-25", name: "盛りカタカナ ノ", category: .text, filename: "text_kata_25.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-26", name: "盛りカタカナ ハ", category: .text, filename: "text_kata_26.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-27", name: "盛りカタカナ ヒ", category: .text, filename: "text_kata_27.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-28", name: "盛りカタカナ フ", category: .text, filename: "text_kata_28.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-29", name: "盛りカタカナ ヘ", category: .text, filename: "text_kata_29.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-30", name: "盛りカタカナ ホ", category: .text, filename: "text_kata_30.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-31", name: "盛りカタカナ マ", category: .text, filename: "text_kata_31.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-32", name: "盛りカタカナ ミ", category: .text, filename: "text_kata_32.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-33", name: "盛りカタカナ ム", category: .text, filename: "text_kata_33.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-34", name: "盛りカタカナ メ", category: .text, filename: "text_kata_34.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-35", name: "盛りカタカナ モ", category: .text, filename: "text_kata_35.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-36", name: "盛りカタカナ ヤ", category: .text, filename: "text_kata_36.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-37", name: "盛りカタカナ ユ", category: .text, filename: "text_kata_37.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-38", name: "盛りカタカナ ヨ", category: .text, filename: "text_kata_38.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-39", name: "盛りカタカナ ラ", category: .text, filename: "text_kata_39.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-40", name: "盛りカタカナ リ", category: .text, filename: "text_kata_40.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-41", name: "盛りカタカナ ル", category: .text, filename: "text_kata_41.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-42", name: "盛りカタカナ レ", category: .text, filename: "text_kata_42.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-43", name: "盛りカタカナ ロ", category: .text, filename: "text_kata_43.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-44", name: "盛りカタカナ ワ", category: .text, filename: "text_kata_44.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-45", name: "盛りカタカナ ヲ", category: .text, filename: "text_kata_45.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-46", name: "盛りカタカナ ン", category: .text, filename: "text_kata_46.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-47", name: "盛りカタカナ ァ", category: .text, filename: "text_kata_47.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-48", name: "盛りカタカナ ィ", category: .text, filename: "text_kata_48.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-49", name: "盛りカタカナ ゥ", category: .text, filename: "text_kata_49.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-50", name: "盛りカタカナ ェ", category: .text, filename: "text_kata_50.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-51", name: "盛りカタカナ ォ", category: .text, filename: "text_kata_51.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-52", name: "盛りカタカナ ッ", category: .text, filename: "text_kata_52.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-53", name: "盛りカタカナ ャ", category: .text, filename: "text_kata_53.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-54", name: "盛りカタカナ ュ", category: .text, filename: "text_kata_54.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-55", name: "盛りカタカナ ョ", category: .text, filename: "text_kata_55.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack),
+        MoriAsset(id: "text-kata-56", name: "盛りカタカナ ヮ", category: .text, filename: "text_kata_56.png", defaultWidth: 0.24, defaultPosition: CGPoint(x: 0.50, y: 0.50), defaultZ: 74, isBackground: false, pack: .moriKatakanaPack)
     ]
 }
