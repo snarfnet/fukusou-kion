@@ -80,8 +80,8 @@ jobs:
           ASC_ISSUER_ID: ${{ env.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
-          CERT_BASE64: ${{ secrets.DIST_CERT_BASE64 }}
-          CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
+          CERT_BASE64: ${{ secrets.DIST_CERT_BASE64 || secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD || secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'temporary-keychain-password' }}
         run: |
           if [ -n "$CERT_BASE64" ]; then
