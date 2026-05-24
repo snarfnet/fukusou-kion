@@ -51,6 +51,15 @@ def load_config():
 
 def existing_iaps(app_id):
     rows = list_all(f"/apps/{app_id}/inAppPurchasesV2?limit=200")
+    response = api("GET", f"/apps/{app_id}/inAppPurchases?limit=200")
+    if response.status_code == 200:
+        rows.extend(response.json().get("data", []))
+    else:
+        print(f"Legacy IAP list skipped: {response.status_code}")
+    print(f"IAP list count: {len(rows)}")
+    for row in rows:
+        attrs = row.get("attributes", {})
+        print(f"IAP listed: {row.get('id')} {attrs.get('productId')} {attrs.get('state')}")
     return {row.get("attributes", {}).get("productId"): row for row in rows}
 
 
