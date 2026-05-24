@@ -77,21 +77,6 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
-      - name: Ensure App Store Connect app record
-        env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_P8_PATH: /tmp/asc_key.p8
-          APP_BUNDLE_ID: com.tokyonasu.seisonokokoroe
-          APP_NAME: "\u6e05\u6383\u306e\u5fc3\u5f97"
-          APP_SKU: seisonokokoroe
-          APP_VERSION: "1.0"
-          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
-          PREPARE_APP_ONLY: "1"
-        run: |
-          . .venv/bin/activate
-          python scripts/submit_production.py
-
       - name: Export IPA
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
@@ -105,6 +90,13 @@ jobs:
             -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SeisoNoKokoroe-IPA
+          path: ios/SeisoNoKokoroe/build/export/*.ipa
 
       - name: Upload to App Store Connect
         env:
