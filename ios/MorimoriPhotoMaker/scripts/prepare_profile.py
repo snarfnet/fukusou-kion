@@ -1,32 +1,68 @@
 #!/usr/bin/env python3
+import base64
+import hashlib
 import os
 from pathlib import Path
 
-from asc_helpers import api_json, decode_profile, fail
+from asc_helpers import api, api_json, decode_profile, fail, query
 
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.morimoriphotomaker")
 PROFILE_NAME = os.environ.get("PROFILE_NAME", "MorimoriPhotoMaker App Store")
 PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/MorimoriPhotoMaker_App_Store.mobileprovision"
+CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").replace(":", "").upper()
+CERTIFICATE_ID = os.environ.get("ASC_CERTIFICATE_ID", "")
+
+
+def cert_sha1(certificate):
+    content = certificate.get("attributes", {}).get("certificateContent")
+    if not content:
+        detail = api_json("GET", f"/certificates/{certificate['id']}").get("data", certificate)
+        content = detail.get("attributes", {}).get("certificateContent")
+    if not content:
+        return ""
+    return hashlib.sha1(base64.b64decode(content)).hexdigest().upper()
 
 
 def find_distribution_certificate():
+    if CERTIFICATE_ID:
+        return api_json("GET", f"/certificates/{CERTIFICATE_ID}")["data"]
+
+    certificates = []
     for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
-        data = api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", [])
-        if data:
-            return data[0]
-    data = api_json("GET", "/certificates?limit=20").get("data", [])
-    if not data:
+        certificates.extend(api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", []))
+    if not certificates:
+        certificates = api_json("GET", "/certificates?limit=20").get("data", [])
+    if not certificates:
         raise RuntimeError("No distribution certificate found.")
-    return data[0]
+    if CERT_SHA1:
+        for certificate in certificates:
+            if cert_sha1(certificate) == CERT_SHA1:
+                return certificate
+        print(f"Warning: no App Store Connect certificate matched installed certificate {CERT_SHA1}.")
+        print("Using the first available distribution certificate.")
+    return certificates[0]
+
+
+def profile_certificate_ids(profile_id):
+    data = api_json("GET", f"/profiles/{profile_id}/relationships/certificates?limit=10").get("data", [])
+    return {item["id"] for item in data}
 
 
 def find_or_create_profile(bundle_id, certificate_id):
-    existing = api_json("GET", f"/profiles?filter[name]={PROFILE_NAME}&limit=20").get("data", [])
+    existing = api_json("GET", f"/profiles?{query({'filter[name]': PROFILE_NAME, 'limit': '200'})}").get("data", [])
     for profile in existing:
         attrs = profile.get("attributes", {})
-        if attrs.get("profileState") == "ACTIVE" and attrs.get("profileContent"):
-            return profile
+        if attrs.get("profileState") != "ACTIVE":
+            continue
+        if certificate_id in profile_certificate_ids(profile["id"]):
+            detail = api_json("GET", f"/profiles/{profile['id']}").get("data", profile)
+            if detail.get("attributes", {}).get("profileContent"):
+                return detail
+
+    for profile in existing:
+        response = api("DELETE", f"/profiles/{profile['id']}")
+        print(f"Deleted stale profile {profile['id']}: {response.status_code}")
 
     payload = {
         "data": {
