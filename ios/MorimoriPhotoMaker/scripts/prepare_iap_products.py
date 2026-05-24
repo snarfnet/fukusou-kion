@@ -56,10 +56,13 @@ def existing_iaps(app_id):
 
 def find_iap(app_id, product_id):
     for path in ("inAppPurchasesV2", "inAppPurchases"):
-        body = api_json(
+        response = api(
             "GET",
             f"/apps/{app_id}/{path}?{query({'filter[productId]': product_id, 'limit': '1'})}",
         )
+        if response.status_code != 200:
+            continue
+        body = response.json()
         data = body.get("data", [])
         if data:
             return data[0]
