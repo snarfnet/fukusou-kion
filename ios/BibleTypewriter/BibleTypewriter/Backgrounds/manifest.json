@@ -1,0 +1,722 @@
+﻿[
+  {
+    "file": "genesis/chapter_bg_001.jpg",
+    "number": 1,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "creation",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_002.jpg",
+    "number": 2,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "stars",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_003.jpg",
+    "number": 3,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "eden",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_004.jpg",
+    "number": 4,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "desert",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_005.jpg",
+    "number": 5,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "journey",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_006.jpg",
+    "number": 6,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "creation",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_007.jpg",
+    "number": 7,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "stars",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_008.jpg",
+    "number": 8,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "eden",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_009.jpg",
+    "number": 9,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "desert",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "genesis/chapter_bg_010.jpg",
+    "number": 10,
+    "category": "genesis",
+    "categoryJa": "創世記",
+    "theme": "journey",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_011.jpg",
+    "number": 11,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "red_sea",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_012.jpg",
+    "number": 12,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "wilderness",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_013.jpg",
+    "number": 13,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "sinai",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_014.jpg",
+    "number": 14,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "tablets",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_015.jpg",
+    "number": 15,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "tabernacle",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_016.jpg",
+    "number": 16,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "red_sea",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_017.jpg",
+    "number": 17,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "wilderness",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_018.jpg",
+    "number": 18,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "sinai",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "exodus/chapter_bg_019.jpg",
+    "number": 19,
+    "category": "exodus",
+    "categoryJa": "出エジプト記",
+    "theme": "tablets",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_020.jpg",
+    "number": 20,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "prayer",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_021.jpg",
+    "number": 21,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "mountain",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_022.jpg",
+    "number": 22,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "night_sky",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_023.jpg",
+    "number": 23,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "water",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_024.jpg",
+    "number": 24,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "hope",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_025.jpg",
+    "number": 25,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "prayer",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_026.jpg",
+    "number": 26,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "mountain",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_027.jpg",
+    "number": 27,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "night_sky",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "psalms/chapter_bg_028.jpg",
+    "number": 28,
+    "category": "psalms",
+    "categoryJa": "詩篇",
+    "theme": "water",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_029.jpg",
+    "number": 29,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "wisdom",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_030.jpg",
+    "number": 30,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "parchment",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_031.jpg",
+    "number": 31,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "lamp",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_032.jpg",
+    "number": 32,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "ancient_books",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_033.jpg",
+    "number": 33,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "wisdom",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_034.jpg",
+    "number": 34,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "parchment",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_035.jpg",
+    "number": 35,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "lamp",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_036.jpg",
+    "number": 36,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "ancient_books",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "proverbs/chapter_bg_037.jpg",
+    "number": 37,
+    "category": "proverbs",
+    "categoryJa": "箴言",
+    "theme": "wisdom",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_038.jpg",
+    "number": 38,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "wilderness",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_039.jpg",
+    "number": 39,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "storm",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_040.jpg",
+    "number": 40,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "temple",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_041.jpg",
+    "number": 41,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "light",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_042.jpg",
+    "number": 42,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "wilderness",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_043.jpg",
+    "number": 43,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "storm",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_044.jpg",
+    "number": 44,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "temple",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_045.jpg",
+    "number": 45,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "light",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "prophets/chapter_bg_046.jpg",
+    "number": 46,
+    "category": "prophets",
+    "categoryJa": "預言書",
+    "theme": "wilderness",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_047.jpg",
+    "number": 47,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "galilee",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_048.jpg",
+    "number": 48,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "hill",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_049.jpg",
+    "number": 49,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "olive_mount",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_050.jpg",
+    "number": 50,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "sunrise",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_051.jpg",
+    "number": 51,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "galilee",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_052.jpg",
+    "number": 52,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "hill",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_053.jpg",
+    "number": 53,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "olive_mount",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_054.jpg",
+    "number": 54,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "sunrise",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "gospels/chapter_bg_055.jpg",
+    "number": 55,
+    "category": "gospels",
+    "categoryJa": "福音書",
+    "theme": "galilee",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_056.jpg",
+    "number": 56,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "journey",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_057.jpg",
+    "number": 57,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "harbor",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_058.jpg",
+    "number": 58,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "ancient_city",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_059.jpg",
+    "number": 59,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "flame",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_060.jpg",
+    "number": 60,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "journey",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_061.jpg",
+    "number": 61,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "harbor",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_062.jpg",
+    "number": 62,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "ancient_city",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "acts/chapter_bg_063.jpg",
+    "number": 63,
+    "category": "acts",
+    "categoryJa": "使徒言行録",
+    "theme": "flame",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_064.jpg",
+    "number": 64,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "desk",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_065.jpg",
+    "number": 65,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "parchment",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_066.jpg",
+    "number": 66,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "lamp",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_067.jpg",
+    "number": 67,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "church_window",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_068.jpg",
+    "number": 68,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "desk",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_069.jpg",
+    "number": 69,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "parchment",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_070.jpg",
+    "number": 70,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "lamp",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "letters/chapter_bg_071.jpg",
+    "number": 71,
+    "category": "letters",
+    "categoryJa": "手紙",
+    "theme": "church_window",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_072.jpg",
+    "number": 72,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "heavenly_city",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_073.jpg",
+    "number": 73,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "clouds",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_074.jpg",
+    "number": 74,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "gold_light",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_075.jpg",
+    "number": 75,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "mystic_gate",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_076.jpg",
+    "number": 76,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "heavenly_city",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_077.jpg",
+    "number": 77,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "clouds",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_078.jpg",
+    "number": 78,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "gold_light",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_079.jpg",
+    "number": 79,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "mystic_gate",
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "file": "revelation/chapter_bg_080.jpg",
+    "number": 80,
+    "category": "revelation",
+    "categoryJa": "黙示録",
+    "theme": "heavenly_city",
+    "width": 1440,
+    "height": 2560
+  }
+]
