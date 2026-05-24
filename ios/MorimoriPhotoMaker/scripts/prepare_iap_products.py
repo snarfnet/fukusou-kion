@@ -53,7 +53,11 @@ def existing_iaps(app_id):
     rows = list_all(f"/apps/{app_id}/inAppPurchasesV2?limit=200")
     response = api("GET", f"/apps/{app_id}/inAppPurchases?limit=200")
     if response.status_code == 200:
-        rows.extend(response.json().get("data", []))
+        legacy_rows = response.json().get("data", [])
+        print(f"Legacy IAP list count: {len(legacy_rows)}")
+        for row in legacy_rows:
+            attrs = row.get("attributes", {})
+            print(f"Legacy IAP listed: {row.get('id')} {attrs.get('productId')} {attrs.get('state')}")
     else:
         print(f"Legacy IAP list skipped: {response.status_code}")
     print(f"IAP list count: {len(rows)}")
@@ -64,17 +68,16 @@ def existing_iaps(app_id):
 
 
 def find_iap(app_id, product_id):
-    for path in ("inAppPurchasesV2", "inAppPurchases"):
-        response = api(
-            "GET",
-            f"/apps/{app_id}/{path}?{query({'filter[productId]': product_id, 'limit': '1'})}",
-        )
-        if response.status_code != 200:
-            continue
-        body = response.json()
-        data = body.get("data", [])
-        if data:
-            return data[0]
+    response = api(
+        "GET",
+        f"/apps/{app_id}/inAppPurchasesV2?{query({'filter[productId]': product_id, 'limit': '1'})}",
+    )
+    if response.status_code != 200:
+        return None
+    body = response.json()
+    data = body.get("data", [])
+    if data:
+        return data[0]
     return None
 
 
@@ -102,6 +105,7 @@ def create_iap(app_id, product):
         return row
     if response.status_code == 409:
         print(f"IAP exists/conflict: {product['productId']}")
+        print(response.text[:1200])
         return None
     raise RuntimeError(f"IAP create failed {product['productId']}: {response.status_code} {response.text[:1200]}")
 
