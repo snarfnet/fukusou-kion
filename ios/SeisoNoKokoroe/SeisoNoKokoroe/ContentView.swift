@@ -68,9 +68,9 @@ struct ContentView: View {
     private var fengShuiCards: some View {
         let advice = viewModel.fengShui
         return HStack(spacing: 12) {
-            FengCard(title: "今日はここが吉", main: advice.spot, body: advice.advice)
+            FengCard(title: "今日はここが吉", main: advice.spot, message: advice.advice)
                 .frame(maxWidth: .infinity)
-            FengCard(title: "吉方角", main: advice.direction, body: "ラッキーカラー: \(advice.color)")
+            FengCard(title: "吉方角", main: advice.direction, message: "ラッキーカラー: \(advice.color)")
                 .frame(width: 124)
         }
     }
@@ -542,7 +542,7 @@ private enum AppColors {
 private struct FengCard: View {
     let title: String
     let main: String
-    let body: String
+    let message: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -552,7 +552,7 @@ private struct FengCard: View {
             Text(main)
                 .font(.system(size: 30, weight: .black, design: .serif))
                 .foregroundStyle(AppColors.ink)
-            Text(body)
+            Text(message)
                 .font(.subheadline)
                 .foregroundStyle(AppColors.muted)
                 .lineLimit(3)
