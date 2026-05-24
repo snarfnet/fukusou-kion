@@ -2,6 +2,9 @@ name: Bible Typewriter Production
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/bible-typewriter-production
 
 concurrency:
   group: bible-typewriter-production
