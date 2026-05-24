@@ -31,7 +31,7 @@ struct ContentView: View {
             let pagePadding: CGFloat = isCompact ? 8 : 12
             let stageWidth = proxy.size.width - pagePadding * 2
             let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.58)
-            let compactAssetHeight = max(96, proxy.size.height - compactStageHeight - 156 - (activeAdjustment == nil ? 0 : 42))
+            let compactAssetHeight = max(96, proxy.size.height - compactStageHeight - 88 - (activeAdjustment == nil ? 0 : 42))
 
             ZStack {
                 LinearGradient(
@@ -49,6 +49,7 @@ struct ContentView: View {
                         compact: isCompact,
                         onAutoMori: autoMori,
                         onShare: share,
+                        onSave: saveToPhotoLibrary,
                         photoPicker: photoPicker
                     )
 
@@ -65,7 +66,12 @@ struct ContentView: View {
                         .layoutPriority(1)
 
                         if selectedLayer != nil {
-                            AdjustmentRail(activeTool: $activeAdjustment)
+                            AdjustmentRail(
+                                activeTool: $activeAdjustment,
+                                onBack: sendBack,
+                                onFront: bringFront,
+                                onDelete: deleteSelected
+                            )
                                 .padding(.leading, 8)
                         }
                     }
@@ -76,12 +82,7 @@ struct ContentView: View {
                             activeTool: activeAdjustment,
                             onScale: { value in updateSelected { layer in layer.widthRatio = value } },
                             onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
-                            onOpacity: { value in updateSelected { layer in layer.opacity = value } },
-                            onBack: sendBack,
-                            onFront: bringFront,
-                            onFlip: { updateSelected { $0.isFlipped.toggle() } },
-                            onDuplicate: duplicateSelected,
-                            onDelete: deleteSelected
+                            onOpacity: { value in updateSelected { layer in layer.opacity = value } }
                         )
 
                         ScrollView(.vertical, showsIndicators: true) {
@@ -206,6 +207,11 @@ struct ContentView: View {
     private func share() {
         sharePayload = SharePayload(image: MoriImageExporter.render(basePhoto: basePhoto, layers: layers))
     }
+
+    private func saveToPhotoLibrary() {
+        let image = MoriImageExporter.render(basePhoto: basePhoto, layers: layers)
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+    }
 }
 
 private enum AdjustmentTool: CaseIterable, Identifiable {
@@ -241,14 +247,16 @@ private struct HeaderView<PhotoPicker: View>: View {
     let compact: Bool
     let onAutoMori: () -> Void
     let onShare: () -> Void
+    let onSave: () -> Void
     let photoPicker: PhotoPicker
 
     var body: some View {
         VStack(spacing: compact ? 6 : 10) {
-            HStack(spacing: 8) {
+            HStack(spacing: compact ? 5 : 8) {
                 photoPicker
                 Button("おまかせ盛り", action: onAutoMori)
                 Button("共有", action: onShare)
+                Button("保存", action: onSave)
             }
             .buttonStyle(CandyButtonStyle(compact: compact))
         }
@@ -257,6 +265,9 @@ private struct HeaderView<PhotoPicker: View>: View {
 
 private struct AdjustmentRail: View {
     @Binding var activeTool: AdjustmentTool?
+    let onBack: () -> Void
+    let onFront: () -> Void
+    let onDelete: () -> Void
 
     var body: some View {
         VStack(spacing: 8) {
@@ -275,7 +286,35 @@ private struct AdjustmentRail: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(tool.title)
             }
+
+            Spacer()
+                .frame(height: 12)
+
+            RailActionButton(iconName: "arrow.down", title: "背面", tint: Color(red: 0.58, green: 0.14, blue: 0.38), action: onBack)
+            RailActionButton(iconName: "arrow.up", title: "前面", tint: Color(red: 0.58, green: 0.14, blue: 0.38), action: onFront)
+            RailActionButton(iconName: "trash", title: "削除", tint: Color(red: 0.82, green: 0.13, blue: 0.28), action: onDelete)
         }
+    }
+}
+
+private struct RailActionButton: View {
+    let iconName: String
+    let title: String
+    let tint: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: iconName)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundStyle(tint)
+                .frame(width: 38, height: 38)
+                .background(.white.opacity(0.86), in: Circle())
+                .overlay(Circle().stroke(.white.opacity(0.95), lineWidth: 1))
+                .shadow(color: Color(red: 0.54, green: 0.18, blue: 0.35).opacity(0.18), radius: 5, y: 2)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 }
 
@@ -420,11 +459,6 @@ private struct CompactControlPanel: View {
     let onScale: (CGFloat) -> Void
     let onRotate: (Double) -> Void
     let onOpacity: (CGFloat) -> Void
-    let onBack: () -> Void
-    let onFront: () -> Void
-    let onFlip: () -> Void
-    let onDuplicate: () -> Void
-    let onDelete: () -> Void
 
     var body: some View {
         VStack(spacing: 5) {
@@ -438,13 +472,6 @@ private struct CompactControlPanel: View {
                     SliderRow(title: activeTool.title, displayValue: "\(Int(layer.opacity * 100))%", value: Double(layer.opacity), range: 0.2...1.0) { onOpacity(CGFloat($0)) }
                 }
             }
-
-            HStack(spacing: 5) {
-                Button("背面", action: onBack)
-                Button("前面", action: onFront)
-                Button("削除", action: onDelete)
-            }
-            .disabled(layer == nil)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
@@ -576,8 +603,10 @@ private struct CandyButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.caption.weight(.black))
+            .lineLimit(1)
+            .minimumScaleFactor(0.72)
             .foregroundStyle(Color(red: 0.28, green: 0.13, blue: 0.21))
-            .padding(.horizontal, compact ? 8 : 12)
+            .padding(.horizontal, compact ? 5 : 12)
             .frame(minHeight: compact ? 28 : 38)
             .frame(maxWidth: .infinity)
             .background(
