@@ -113,8 +113,22 @@ def find_app_id():
     data = body.get("data", [])
     if data:
         return data[0]["id"]
+    payload = {
+        "data": {
+            "type": "apps",
+            "attributes": {
+                "bundleId": BUNDLE_ID,
+                "name": APP_NAME,
+                "primaryLocale": "ja",
+                "sku": APP_SKU,
+            },
+        }
+    }
+    response, body = api_json("POST", "/apps", json=payload)
+    if response.status_code in (200, 201):
+        return body["data"]["id"]
     raise RuntimeError(
-        f"App not found for {BUNDLE_ID}. Register the bundle ID and create the app in App Store Connect first."
+        f"App not found and could not create for {BUNDLE_ID}: {response.status_code} {response.text[:300]}"
     )
 
 
