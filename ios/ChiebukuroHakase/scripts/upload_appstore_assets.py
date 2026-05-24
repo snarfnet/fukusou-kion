@@ -70,7 +70,6 @@ def read_meta(locale):
             "promotionalText": "50,000件の暮らしの知恵が、白い文字でゆっくり流れます。"[:170],
             "keywords": section(text, "キーワード")[:100],
             "description": section(text, "説明")[:4000],
-            "whatsNew": "初回リリースです。",
         }
     return {
         "name": page_title(text)[:30] or APP_INFO["en-US"]["name"],
@@ -78,7 +77,6 @@ def read_meta(locale):
         "promotionalText": "50,000 quiet pieces of household wisdom, shown slowly in typewriter style."[:170],
         "keywords": section(text, "Keywords")[:100],
         "description": section(text, "Description")[:4000],
-        "whatsNew": "Initial release.",
     }
 
 
@@ -132,7 +130,6 @@ def ensure_localizations(version_id):
                     "marketingUrl": PRIVACY_POLICY_URL,
                     "promotionalText": meta["promotionalText"],
                     "supportUrl": PRIVACY_POLICY_URL,
-                    "whatsNew": meta["whatsNew"],
                 },
             }
         }
