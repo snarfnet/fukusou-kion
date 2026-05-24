@@ -30,7 +30,9 @@ struct ContentView: View {
         GeometryReader { proxy in
             let isCompact = proxy.size.height < 720
             let pagePadding: CGFloat = isCompact ? 8 : 12
-            let stageWidth = proxy.size.width - pagePadding * 2
+            let railColumnWidth: CGFloat = isCompact ? 48 : 54
+            let railGap: CGFloat = isCompact ? 4 : 8
+            let stageWidth = proxy.size.width - pagePadding * 2 - railColumnWidth - railGap
             let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.58)
             let compactAssetHeight = max(96, proxy.size.height - compactStageHeight - 88 - (activeAdjustment == nil ? 0 : 42))
 
@@ -54,7 +56,21 @@ struct ContentView: View {
                         photoPicker: photoPicker
                     )
 
-                    ZStack(alignment: .leading) {
+                    HStack(alignment: .center, spacing: railGap) {
+                        Group {
+                            if selectedLayer != nil {
+                                AdjustmentRail(
+                                    activeTool: $activeAdjustment,
+                                    onBack: sendBack,
+                                    onFront: bringFront,
+                                    onDelete: deleteSelected
+                                )
+                            } else {
+                                Color.clear
+                            }
+                        }
+                        .frame(width: railColumnWidth)
+
                         StageView(
                             basePhoto: basePhoto,
                             layers: $layers,
@@ -65,16 +81,6 @@ struct ContentView: View {
                         .frame(height: isCompact ? compactStageHeight : nil)
                         .frame(maxHeight: isCompact ? nil : .infinity)
                         .layoutPriority(1)
-
-                        if selectedLayer != nil {
-                            AdjustmentRail(
-                                activeTool: $activeAdjustment,
-                                onBack: sendBack,
-                                onFront: bringFront,
-                                onDelete: deleteSelected
-                            )
-                                .padding(.leading, 8)
-                        }
                     }
 
                     if isCompact {
@@ -225,9 +231,28 @@ struct ContentView: View {
     }
 
     private func autoMori() {
-        ["kirakira-max-bg", "hair-glam", "brows-arch", "eyes-cat-glitter", "blush-candy-sparkle", "lips-gloss", "glasses-heart-rhinestone", "earrings-heart-chandelier", "halo-sparkle"]
-            .compactMap { id in MoriLibrary.assets.first { $0.id == id } }
-            .forEach(addAsset)
+        let accessibleAssets = MoriLibrary.assets.filter {
+            MorimoriBuildConfig.unlockPaidPacksForTestFlight || $0.pack == .free
+        }
+        let requiredCategories: [MoriCategory] = [
+            .animatedBackground, .hair, .brows, .shadow, .blush, .lipstick, .glasses, .earrings, .background
+        ]
+        let optionalCategories: [MoriCategory] = [
+            .hairAccessory, .lashes, .nosePierce, .parts, .plush, .emotion
+        ]
+
+        for category in requiredCategories {
+            if let asset = accessibleAssets.filter({ $0.category == category }).randomElement() {
+                addAsset(asset)
+            }
+        }
+
+        let extraCount = Int.random(in: 2...4)
+        for category in optionalCategories.shuffled().prefix(extraCount) {
+            if let asset = accessibleAssets.filter({ $0.category == category }).randomElement() {
+                addAsset(asset)
+            }
+        }
     }
 
     private func share() {
