@@ -1,3 +1,4 @@
+import ImageIO
 import SwiftUI
 import UIKit
 
@@ -34,7 +35,7 @@ enum MoriImageExporter {
     }
 
     private static func drawLayer(_ layer: MoriLayer, in rect: CGRect, context: CGContext) {
-        guard let image = BundleImage.load(layer.asset.filename, folder: "Overlays") else { return }
+        guard let image = BundleImage.load(layer.asset.filename, folder: "Overlays", cropSide: layer.cropSide) else { return }
 
         context.saveGState()
         context.setAlpha(layer.opacity)
@@ -45,7 +46,8 @@ enum MoriImageExporter {
             return
         }
 
-        let width = rect.width * layer.widthRatio
+        let baseWidth = rect.width * layer.widthRatio
+        let width = layer.cropSide == nil ? baseWidth : baseWidth * 0.52
         let imageRatio = image.size.height / max(1, image.size.width)
         let height = width * imageRatio
         let center = CGPoint(x: rect.width * layer.position.x, y: rect.height * layer.position.y)
@@ -71,17 +73,77 @@ enum MoriImageExporter {
 }
 
 enum BundleImage {
-    static func load(_ filename: String, folder: String) -> UIImage? {
+    static func url(_ filename: String, folder: String) -> URL? {
         let nsName = filename as NSString
         let name = nsName.deletingPathExtension
         let ext = nsName.pathExtension
         let subdirectories: [String?] = ["Resources/\(folder)", folder, nil]
         for subdirectory in subdirectories {
             if let url = Bundle.main.url(forResource: name, withExtension: ext, subdirectory: subdirectory) {
-                return UIImage(contentsOfFile: url.path)
+                return url
             }
         }
-        return UIImage(named: name)
+        return nil
+    }
+
+    static func load(_ filename: String, folder: String, cropSide: MoriCropSide? = nil) -> UIImage? {
+        let nsName = filename as NSString
+        let name = nsName.deletingPathExtension
+        let image: UIImage?
+        if let url = url(filename, folder: folder) {
+            image = UIImage(contentsOfFile: url.path)
+        } else {
+            image = UIImage(named: name)
+        }
+        guard let image else { return nil }
+        return cropSide.map { image.cropped(to: $0) } ?? image
+    }
+
+    static func animatedImage(url: URL) -> UIImage? {
+        guard
+            let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+            CGImageSourceGetCount(source) > 1
+        else {
+            return UIImage(contentsOfFile: url.path)
+        }
+
+        var frames: [UIImage] = []
+        var duration: TimeInterval = 0
+        let count = CGImageSourceGetCount(source)
+        for index in 0..<count {
+            guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else { continue }
+            frames.append(UIImage(cgImage: cgImage))
+            duration += frameDuration(at: index, source: source)
+        }
+        return UIImage.animatedImage(with: frames, duration: max(duration, 0.1))
+    }
+
+    private static func frameDuration(at index: Int, source: CGImageSource) -> TimeInterval {
+        guard
+            let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any],
+            let gif = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any]
+        else {
+            return 0.08
+        }
+        let unclamped = gif[kCGImagePropertyGIFUnclampedDelayTime] as? Double
+        let clamped = gif[kCGImagePropertyGIFDelayTime] as? Double
+        let value = unclamped ?? clamped ?? 0.08
+        return value < 0.02 ? 0.08 : value
+    }
+}
+
+private extension UIImage {
+    func cropped(to side: MoriCropSide) -> UIImage {
+        guard let cgImage else { return self }
+        let halfWidth = cgImage.width / 2
+        let rect = CGRect(
+            x: side == .left ? 0 : halfWidth,
+            y: 0,
+            width: halfWidth,
+            height: cgImage.height
+        )
+        guard let cropped = cgImage.cropping(to: rect) else { return self }
+        return UIImage(cgImage: cropped, scale: scale, orientation: imageOrientation)
     }
 }
 

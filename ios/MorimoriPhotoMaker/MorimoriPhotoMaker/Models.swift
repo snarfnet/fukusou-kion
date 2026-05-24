@@ -106,8 +106,14 @@ struct MoriLayer: Identifiable, Hashable {
     var opacity: CGFloat = 1
     var isFlipped = false
     var zIndex: Double
+    var cropSide: MoriCropSide? = nil
 
     var isBackground: Bool { asset.isBackground }
+}
+
+enum MoriCropSide: Hashable {
+    case left
+    case right
 }
 
 struct AngleValue: Hashable {
@@ -526,16 +532,16 @@ enum MoriLibrary {
         MoriAsset(id: "cabaret_nail_48", name: "夕焼けグリッターネイル", category: .nail, filename: "cabaret_nail_48.png", defaultWidth: 0.88, defaultPosition: CGPoint(x: 0.50, y: 0.82), defaultZ: 70, isBackground: false, pack: .cabaretNailPack),
         MoriAsset(id: "cabaret_nail_49", name: "ガラスクリスタルネイル", category: .nail, filename: "cabaret_nail_49.png", defaultWidth: 0.88, defaultPosition: CGPoint(x: 0.50, y: 0.82), defaultZ: 70, isBackground: false, pack: .cabaretNailPack),
         MoriAsset(id: "cabaret_nail_50", name: "バーガンディ女王ネイル", category: .nail, filename: "cabaret_nail_50.png", defaultWidth: 0.88, defaultPosition: CGPoint(x: 0.50, y: 0.82), defaultZ: 70, isBackground: false, pack: .cabaretNailPack),
-        MoriAsset(id: "emotion_pack_anim_01", name: "動く怒りポップ", category: .emotion, filename: "emotion_pack_anim_01.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_02", name: "動く涙だばだば", category: .emotion, filename: "emotion_pack_anim_02.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_03", name: "動くショック爆発", category: .emotion, filename: "emotion_pack_anim_03.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_04", name: "動く鼓動ハート", category: .emotion, filename: "emotion_pack_anim_04.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_05", name: "動く汗ぽたぽた", category: .emotion, filename: "emotion_pack_anim_05.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_06", name: "動くぐるぐる混乱", category: .emotion, filename: "emotion_pack_anim_06.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_07", name: "動く燃えるイライラ", category: .emotion, filename: "emotion_pack_anim_07.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_08", name: "動くブルブル震え", category: .emotion, filename: "emotion_pack_anim_08.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_09", name: "動くきらめき興奮", category: .emotion, filename: "emotion_pack_anim_09.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
-        MoriAsset(id: "emotion_pack_anim_10", name: "動く危険ビリビリ", category: .emotion, filename: "emotion_pack_anim_10.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_01", name: "動く怒りポップ", category: .emotion, filename: "emotion_pack_anim_01.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_02", name: "動く涙だばだば", category: .emotion, filename: "emotion_pack_anim_02.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_03", name: "動くショック爆発", category: .emotion, filename: "emotion_pack_anim_03.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_04", name: "動く鼓動ハート", category: .emotion, filename: "emotion_pack_anim_04.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_05", name: "動く汗ぽたぽた", category: .emotion, filename: "emotion_pack_anim_05.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_06", name: "動くぐるぐる混乱", category: .emotion, filename: "emotion_pack_anim_06.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_07", name: "動く燃えるイライラ", category: .emotion, filename: "emotion_pack_anim_07.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_08", name: "動くブルブル震え", category: .emotion, filename: "emotion_pack_anim_08.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_09", name: "動くきらめき興奮", category: .emotion, filename: "emotion_pack_anim_09.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
+        MoriAsset(id: "emotion_pack_anim_10", name: "動く危険ビリビリ", category: .emotion, filename: "emotion_pack_anim_10.gif", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
         MoriAsset(id: "emotion_pack_static_01", name: "もくもく考え中", category: .emotion, filename: "emotion_pack_static_01.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
         MoriAsset(id: "emotion_pack_static_02", name: "失恋ハート", category: .emotion, filename: "emotion_pack_static_02.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),
         MoriAsset(id: "emotion_pack_static_03", name: "照れライン", category: .emotion, filename: "emotion_pack_static_03.png", defaultWidth: 0.26, defaultPosition: CGPoint(x: 0.30, y: 0.25), defaultZ: 70, isBackground: false, pack: .emotionPack),

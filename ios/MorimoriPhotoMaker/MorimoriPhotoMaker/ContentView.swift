@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var selectedLayerID: UUID?
     @State private var dragStart: CGPoint?
     @State private var sharePayload: SharePayload?
+    @State private var showSaveAlert = false
 
     private var selectedLayerIndex: Int? {
         layers.firstIndex { $0.id == selectedLayerID }
@@ -120,6 +121,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(pagePadding)
+                .padding(.top, isCompact ? 4 : 8)
             }
         }
         .task(id: selectedPhotoItem) {
@@ -127,6 +129,9 @@ struct ContentView: View {
         }
         .sheet(item: $sharePayload) { payload in
             ActivityView(items: [payload.image])
+        }
+        .alert("保存しました。", isPresented: $showSaveAlert) {
+            Button("OK", role: .cancel) {}
         }
     }
 
@@ -153,6 +158,27 @@ struct ContentView: View {
     private func addAsset(_ asset: MoriAsset) {
         guard MorimoriBuildConfig.unlockPaidPacksForTestFlight || asset.pack == .free else { return }
         let maxZ = layers.map(\.zIndex).max() ?? asset.defaultZ
+        if asset.shouldSplitOnAdd {
+            let pairZ = max(maxZ + 1, asset.defaultZ)
+            let left = MoriLayer(
+                asset: asset,
+                position: CGPoint(x: max(-0.2, asset.defaultPosition.x - asset.splitOffsetX), y: asset.defaultPosition.y),
+                widthRatio: asset.defaultWidth,
+                zIndex: pairZ,
+                cropSide: .left
+            )
+            let right = MoriLayer(
+                asset: asset,
+                position: CGPoint(x: min(1.2, asset.defaultPosition.x + asset.splitOffsetX), y: asset.defaultPosition.y),
+                widthRatio: asset.defaultWidth,
+                zIndex: pairZ + 0.01,
+                cropSide: .right
+            )
+            layers.append(contentsOf: [left, right])
+            selectedLayerID = right.id
+            activeAdjustment = nil
+            return
+        }
         let layer = MoriLayer(
             asset: asset,
             position: asset.defaultPosition,
@@ -211,6 +237,7 @@ struct ContentView: View {
     private func saveToPhotoLibrary() {
         let image = MoriImageExporter.render(basePhoto: basePhoto, layers: layers)
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        showSaveAlert = true
     }
 }
 
@@ -270,18 +297,17 @@ private struct AdjustmentRail: View {
     let onDelete: () -> Void
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 7) {
             ForEach(AdjustmentTool.allCases) { tool in
                 Button {
                     activeTool = activeTool == tool ? nil : tool
                 } label: {
-                    Image(systemName: tool.iconName)
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundStyle(activeTool == tool ? .white : Color(red: 0.58, green: 0.14, blue: 0.38))
-                        .frame(width: 38, height: 38)
-                        .background(activeTool == tool ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.86), in: Circle())
-                        .overlay(Circle().stroke(.white.opacity(0.95), lineWidth: 1))
-                        .shadow(color: Color(red: 0.54, green: 0.18, blue: 0.35).opacity(0.18), radius: 5, y: 2)
+                    RailIconLabel(
+                        iconName: tool.iconName,
+                        title: tool.title,
+                        tint: Color(red: 0.58, green: 0.14, blue: 0.38),
+                        isActive: activeTool == tool
+                    )
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(tool.title)
@@ -305,16 +331,35 @@ private struct RailActionButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: iconName)
-                .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(tint)
-                .frame(width: 38, height: 38)
-                .background(.white.opacity(0.86), in: Circle())
-                .overlay(Circle().stroke(.white.opacity(0.95), lineWidth: 1))
-                .shadow(color: Color(red: 0.54, green: 0.18, blue: 0.35).opacity(0.18), radius: 5, y: 2)
+            RailIconLabel(iconName: iconName, title: title, tint: tint, isActive: false)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
+    }
+}
+
+private struct RailIconLabel: View {
+    let iconName: String
+    let title: String
+    let tint: Color
+    let isActive: Bool
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: iconName)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(isActive ? .white : tint)
+                .frame(width: 34, height: 34)
+                .background(isActive ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.88), in: Circle())
+                .overlay(Circle().stroke(.white.opacity(0.95), lineWidth: 1))
+                .shadow(color: Color(red: 0.54, green: 0.18, blue: 0.35).opacity(0.18), radius: 5, y: 2)
+            Text(title)
+                .font(.system(size: 9, weight: .black, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .foregroundStyle(tint)
+                .frame(width: 42)
+        }
     }
 }
 
@@ -393,24 +438,93 @@ private struct LayerView: View {
     let isSelected: Bool
 
     var body: some View {
-        if let image = BundleImage.load(layer.asset.filename, folder: "Overlays") {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(width: layer.isBackground ? stageSize.width : stageSize.width * layer.widthRatio)
-                .frame(width: layer.isBackground ? stageSize.width : nil, height: layer.isBackground ? stageSize.height : nil)
-                .opacity(layer.opacity)
-                .rotationEffect(.degrees(layer.rotation.degrees))
-                .scaleEffect(x: layer.isFlipped ? -1 : 1, y: 1)
-                .position(x: stageSize.width * layer.position.x, y: stageSize.height * layer.position.y)
-                .overlay {
-                    if isSelected && !layer.isBackground {
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(.white, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
-                            .shadow(color: .cyan, radius: 4)
-                    }
-                }
+        if layer.asset.isAnimated, let url = BundleImage.url(layer.asset.filename, folder: "Overlays") {
+            LayerImageContainer(layer: layer, stageSize: stageSize, isSelected: isSelected) {
+                AnimatedImage(url: url)
+            }
+        } else if let image = BundleImage.load(layer.asset.filename, folder: "Overlays", cropSide: layer.cropSide) {
+            LayerImageContainer(layer: layer, stageSize: stageSize, isSelected: isSelected) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            }
         }
+    }
+}
+
+private struct LayerImageContainer<Content: View>: View {
+    let layer: MoriLayer
+    let stageSize: CGSize
+    let isSelected: Bool
+    let content: () -> Content
+
+    var body: some View {
+        content()
+            .frame(width: layer.displayWidth(in: stageSize))
+            .frame(width: layer.isBackground ? stageSize.width : nil, height: layer.isBackground ? stageSize.height : nil)
+            .opacity(layer.opacity)
+            .rotationEffect(.degrees(layer.rotation.degrees))
+            .scaleEffect(x: layer.isFlipped ? -1 : 1, y: 1)
+            .position(x: stageSize.width * layer.position.x, y: stageSize.height * layer.position.y)
+            .overlay {
+                if isSelected && !layer.isBackground {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(.white, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                        .shadow(color: .cyan, radius: 4)
+                }
+            }
+    }
+}
+
+private struct AnimatedImage: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = false
+        imageView.image = BundleImage.animatedImage(url: url)
+        imageView.startAnimating()
+        return imageView
+    }
+
+    func updateUIView(_ imageView: UIImageView, context: Context) {
+        imageView.image = BundleImage.animatedImage(url: url)
+        imageView.startAnimating()
+    }
+}
+
+private extension MoriAsset {
+    var isAnimated: Bool {
+        filename.lowercased().hasSuffix(".gif")
+    }
+
+    var shouldSplitOnAdd: Bool {
+        switch category {
+        case .earrings, .blush, .brows, .shadow, .lashes:
+            true
+        default:
+            false
+        }
+    }
+
+    var splitOffsetX: CGFloat {
+        switch category {
+        case .earrings: 0.20
+        case .blush: 0.15
+        case .brows, .shadow, .lashes: 0.11
+        default: 0
+        }
+    }
+}
+
+private extension MoriLayer {
+    func displayWidth(in stageSize: CGSize) -> CGFloat {
+        if isBackground {
+            return stageSize.width
+        }
+        let baseWidth = stageSize.width * widthRatio
+        return cropSide == nil ? baseWidth : baseWidth * 0.52
     }
 }
 
@@ -607,6 +721,7 @@ private struct CandyButtonStyle: ButtonStyle {
             .minimumScaleFactor(0.72)
             .foregroundStyle(Color(red: 0.28, green: 0.13, blue: 0.21))
             .padding(.horizontal, compact ? 5 : 12)
+            .padding(.vertical, compact ? 4 : 6)
             .frame(minHeight: compact ? 28 : 38)
             .frame(maxWidth: .infinity)
             .background(
