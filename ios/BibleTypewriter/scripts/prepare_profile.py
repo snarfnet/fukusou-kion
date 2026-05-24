@@ -52,10 +52,9 @@ def find_or_create_profile(bundle_id, certificate_id):
     existing = api_json("GET", f"/profiles?filter[name]={PROFILE_NAME}&limit=20").get("data", [])
     for profile in existing:
         attrs = profile.get("attributes", {})
-        if attrs.get("profileState") != "ACTIVE":
-            continue
         if certificate_id in profile_certificate_ids(profile["id"]) and attrs.get("profileContent"):
             return profile
+        print(f"Deleting stale provisioning profile: {profile['id']} ({attrs.get('profileState', 'unknown')})")
         api_json("DELETE", f"/profiles/{profile['id']}")
 
     payload = {
