@@ -356,19 +356,34 @@ def price_point_for_subscription(subscription_id, yen):
 
 def ensure_subscription_price(subscription_id, subscription):
     price_id = price_point_for_subscription(subscription_id, subscription["priceYen"])
-    response = api("POST", "/subscriptionPrices", data=json_body({
-        "data": {
-            "type": "subscriptionPrices",
-            "attributes": {"startDate": None, "preserveCurrentPrice": False},
-            "relationships": {
-                "subscription": {"data": {"type": "subscriptions", "id": subscription_id}},
-                "subscriptionPricePoint": {"data": {"type": "subscriptionPricePoints", "id": price_id}},
-            },
-        }
-    }))
-    print(f"Subscription price {subscription['priceYen']} JPY: {response.status_code}")
-    if response.status_code not in (200, 201):
-        print(response.text[:1200])
+    price_points = [{"id": price_id}]
+    price_points.extend(list_all(f"/subscriptionPricePoints/{price_id}/equalizations?limit=200"))
+    created = 0
+    conflicts = 0
+    failures = 0
+    for point in price_points:
+        response = api("POST", "/subscriptionPrices", data=json_body({
+            "data": {
+                "type": "subscriptionPrices",
+                "attributes": {"startDate": None, "preserveCurrentPrice": False},
+                "relationships": {
+                    "subscription": {"data": {"type": "subscriptions", "id": subscription_id}},
+                    "subscriptionPricePoint": {"data": {"type": "subscriptionPricePoints", "id": point["id"]}},
+                },
+            }
+        }))
+        if response.status_code in (200, 201):
+            created += 1
+        elif response.status_code == 409:
+            conflicts += 1
+        else:
+            failures += 1
+            print(f"Subscription price point failed {point['id']}: {response.status_code} {response.text[:500]}")
+        time.sleep(0.2)
+    print(
+        f"Subscription prices from {subscription['priceYen']} JPY: "
+        f"created={created} conflicts={conflicts} failures={failures}"
+    )
 
 
 def ensure_subscription_review_screenshot(subscription_id):
