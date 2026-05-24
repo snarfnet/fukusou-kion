@@ -302,10 +302,11 @@ def ensure_lowest_paid_price(app_id):
     paid.sort(key=lambda item: item[0])
     price_point = paid[0][1]
     price_value = paid[0][0]
-    local_id = "${lowestPaidPrice}"
+    local_id = "${newprice-0}"
     payload = {
         "data": {
             "type": "appPriceSchedules",
+            "attributes": {},
             "relationships": {
                 "app": {"data": {"type": "apps", "id": app_id}},
                 "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
@@ -315,7 +316,7 @@ def ensure_lowest_paid_price(app_id):
         "included": [{
             "type": "appPrices",
             "id": local_id,
-            "attributes": {"startDate": "2026-05-24"},
+            "attributes": {"startDate": None},
             "relationships": {
                 "appPricePoint": {"data": {"type": "appPricePoints", "id": price_point["id"]}}
             },
@@ -323,6 +324,8 @@ def ensure_lowest_paid_price(app_id):
     }
     response = api("POST", "/appPriceSchedules", json=payload)
     print(f"Lowest paid price ({price_value}): {response.status_code}")
+    if response.status_code not in (200, 201):
+        print(response.text[:1200])
 
 
 def parse_price(value):
