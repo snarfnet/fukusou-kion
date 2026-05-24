@@ -187,6 +187,26 @@ def ensure_iap_price(iap_id, product):
         print(response.text[:1200])
 
 
+def all_territories():
+    return [{"type": "territories", "id": row["id"]} for row in list_all("/territories?limit=200")]
+
+
+def ensure_iap_availability(iap_id, product_id):
+    response = api("POST", "/inAppPurchaseAvailabilities", data=json_body({
+        "data": {
+            "type": "inAppPurchaseAvailabilities",
+            "attributes": {"availableInNewTerritories": True},
+            "relationships": {
+                "inAppPurchase": {"data": {"type": "inAppPurchases", "id": iap_id}},
+                "availableTerritories": {"data": all_territories()},
+            },
+        }
+    }))
+    print(f"IAP availability all territories {product_id}: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        print(response.text[:1200])
+
+
 def upload_asset(create_path, relationship_name, relationship_type, owner_id, filename):
     data = filename.read_bytes()
     checksum = hashlib.md5(data).hexdigest()
@@ -449,6 +469,7 @@ def main():
         print(f"IAP state {product['productId']}: {row.get('attributes', {}).get('state')}")
         ensure_iap_localization(iap_id, product)
         ensure_iap_price(iap_id, product)
+        ensure_iap_availability(iap_id, product["productId"])
         ensure_iap_review_screenshot(iap_id, product["productId"])
         if os.environ.get("SUBMIT_PURCHASES_FOR_REVIEW") == "1":
             review_submission_for_iap(iap_id, product["productId"])
@@ -560,6 +581,7 @@ def main():
             continue
         ensure_iap_localization(iap_id, product)
         ensure_iap_price(iap_id, product)
+        ensure_iap_availability(iap_id, product["productId"])
         ensure_iap_review_screenshot(iap_id, product["productId"])
         if os.environ.get("SUBMIT_PURCHASES_FOR_REVIEW") == "1":
             review_submission_for_iap(iap_id, product["productId"])
