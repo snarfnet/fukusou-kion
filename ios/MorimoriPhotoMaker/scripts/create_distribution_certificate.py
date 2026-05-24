@@ -10,6 +10,7 @@ from asc_helpers import api, api_json, fail, json_body
 
 
 KEYCHAIN = os.environ.get("BUILD_KEYCHAIN", "build.keychain")
+REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFICATE", "") == "1"
 WORK_DIR = Path("/tmp/morimori-photo-maker-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
@@ -71,14 +72,17 @@ def parse_expiration(value):
 def delete_known_invalid_certificates():
     now = datetime.now(timezone.utc)
     deleted = 0
-    for certificate in certificate_lists():
+    certificates = certificate_lists()
+    print(f"Found {len(certificates)} distribution certificate(s) to inspect.")
+    for certificate in certificates:
         attrs = certificate.get("attributes", {})
         serial = (attrs.get("serialNumber") or "").replace(":", "").upper()
         expiration = parse_expiration(attrs.get("expirationDate"))
         names = " ".join(str(attrs.get(key) or "") for key in ("name", "displayName", "commonName")).lower()
         is_morimori_ci_cert = any(marker in names for marker in CI_CERT_MARKERS)
         should_delete = (
-            serial in INVALID_SERIALS
+            REPLACE_DISTRIBUTION_CERTIFICATE
+            or serial in INVALID_SERIALS
             or is_morimori_ci_cert
             or (expiration is not None and expiration < now)
         )
