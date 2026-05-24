@@ -20,6 +20,7 @@ jobs:
       APP_BUNDLE_ID: com.tokyonasu.bibletypewriter
       APP_NAME: "聖書のことば"
       APP_SKU: bibletypewriter-ios
+      APP_ID: ${{ vars.BIBLETYPEWRITER_APP_ID }}
       BUNDLE_NAME: BibleTypewriter
       PROFILE_NAME: "BibleTypewriter App Store"
       APP_VERSION: "1.0"

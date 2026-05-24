@@ -13,6 +13,7 @@ BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.bibletypewriter")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "BibleTypewriter")
 APP_NAME = os.environ.get("APP_NAME", "聖書のことば")
 APP_SKU = os.environ.get("APP_SKU", "bibletypewriter-ios")
+APP_ID = os.environ.get("APP_ID")
 P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 
 
@@ -71,6 +72,11 @@ def ensure_bundle_id():
 
 
 def ensure_app(bundle):
+    if APP_ID:
+        print(f"Using existing App Store Connect app: {APP_ID}")
+        print(f"APP_ID={APP_ID}")
+        return
+
     body = api("GET", f"/apps?{query({'filter[bundleId]': BUNDLE_ID, 'limit': '1'})}")
     if body.get("data"):
         app = body["data"][0]
@@ -91,7 +97,14 @@ def ensure_app(bundle):
             },
         }
     }
-    app = api("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
+    try:
+        app = api("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
+    except RuntimeError as error:
+        raise RuntimeError(
+            "Bundle ID is ready, but this API key cannot create the App Store Connect app record. "
+            f"Create the app manually in ASC using bundle ID {BUNDLE_ID}, then rerun this workflow. "
+            f"Original error: {error}"
+        )
     print(f"App created: {app['attributes'].get('name')} ({app['id']})")
     print(f"APP_ID={app['id']}")
 
