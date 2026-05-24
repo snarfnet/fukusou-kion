@@ -185,6 +185,13 @@ jobs:
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
 
+      - name: Upload App Store metadata and screenshots
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/upload_appstore_assets.py
+
       - name: Submit for App Review
         if: ${{ inputs.submit_for_review }}
         env:
