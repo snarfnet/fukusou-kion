@@ -2,8 +2,8 @@ import SwiftUI
 
 @MainActor
 final class BibleReaderViewModel: ObservableObject {
-    @Published var translation: BibleTranslation = .kougo
-    @Published var selectedBook: BibleBook = BibleCatalog.kougoBooks[0]
+    @Published var translation: BibleTranslation = .web
+    @Published var selectedBook: BibleBook = BibleCatalog.books[0]
     @Published var selectedChapter = 1
     @Published var currentChapter: BibleChapter?
     @Published var visibleText = ""
@@ -11,7 +11,7 @@ final class BibleReaderViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    let books = BibleCatalog.kougoBooks
+    let books = BibleCatalog.books
 
     private let service = BibleService()
     private var typeTask: Task<Void, Never>?
@@ -51,8 +51,8 @@ final class BibleReaderViewModel: ObservableObject {
                 chapter: selectedChapter,
                 translation: translation,
                 verses: [
-                    BibleVerse(verse: 1, text: "初めに言があった。言は神と共にあった。言は神であった。"),
-                    BibleVerse(verse: 2, text: "この言は初めに神と共にあった。")
+                    BibleVerse(verse: 1, text: "In the beginning was the Word, and the Word was with God, and the Word was God."),
+                    BibleVerse(verse: 2, text: "The same was in the beginning with God.")
                 ]
             )
             currentChapter = fallback
@@ -117,7 +117,7 @@ final class BibleReaderViewModel: ObservableObject {
                 typedCount += 1
 
                 let previous = typedCount > 1 ? fullText[fullText.index(fullText.startIndex, offsetBy: typedCount - 2)] : " "
-                let delay = "。、，,;:!?！？\n".contains(previous) ? 230_000_000 : UInt64(Int.random(in: 58_000_000...94_000_000))
+                let delay = ".。;:!?、\n".contains(previous) ? 230_000_000 : UInt64(Int.random(in: 58_000_000...94_000_000))
                 try? await Task.sleep(nanoseconds: delay)
             }
 

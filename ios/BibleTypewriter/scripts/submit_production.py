@@ -1,4 +1,4 @@
-import hashlib
+﻿import hashlib
 import os
 import re
 import sys
@@ -29,12 +29,12 @@ META = {
     "ja": {
         "description": """聖書のことばは、静かな背景の上に聖書本文を一文字ずつ流す読書アプリです。
 
-口語訳、WEB、KJVを切り替えながら、創世記、詩篇、福音書などを落ち着いた画面で読めます。本文は白い文字でゆっくり表示され、上へ流れた文字は少しずつ薄れて消えます。章が終わると、ひと呼吸おいて次の章へ進みます。
+権利面に配慮し、この版では口語訳を収録していません。本文は WEB（World English Bible）と KJV（King James Version）の2種類です。書名と章を選ぶと、白い文字がゆっくり現れ、上へ流れた文字は少しずつ薄れて消えます。章が終わると、ひと呼吸おいて次の章へ進みます。
 
 背景は聖書の書巻に合わせて変わります。創世記には天地創造を思わせる星空、詩篇には静かな水辺、福音書には朝の湖畔、黙示録には雲と金色の光。派手な演出ではなく、読む時間を邪魔しない余白を大切にしました。
 
 主な機能:
-- 口語訳、WEB、KJVの切り替え
+- WEB / KJV の切り替え
 - 書名と章の選択
 - タイポライター風の本文表示
 - 一時停止、前の章、次の章、おまかせ選択
@@ -42,21 +42,21 @@ META = {
 - iPhone SEからPro Maxまで読みやすい縦画面設計
 
 祈りの前、眠る前、移動中の短い時間に。聖書のことばを、静かに眺めるためのアプリです。""",
-        "keywords": "聖書,口語訳,KJV,WEB,祈り,詩篇,福音書,創世記,読書,キリスト教",
-        "whatsNew": "初回リリースです。",
-        "promotionalText": "聖書のことばが、静かな背景に一文字ずつ流れます。",
+        "keywords": "聖書,KJV,WEB,祈り,詩篇,福音書,創世記,読書,キリスト教,聖句",
+        "whatsNew": "口語訳を外し、WEB / KJVのみの構成にしました。",
+        "promotionalText": "WEB / KJVの聖書本文が、静かな背景に一文字ずつ流れます。",
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": """Bible Typewriter is a quiet scripture reading app that displays Bible text one character at a time over calm, sacred backgrounds.
 
-Switch between Kougo Japanese, WEB, and KJV, choose a book and chapter, then let the words flow slowly on screen. Text that reaches the top gently fades away, and when a chapter ends, the app pauses for a moment before moving to the next chapter.
+This version does not include the Japanese Kougo translation. To keep the app safer for distribution, the available translations are WEB (World English Bible) and KJV (King James Version). Choose a book and chapter, then let the words flow slowly on screen. Text that reaches the top gently fades away, and when a chapter ends, the app pauses for a moment before moving to the next chapter.
 
 Backgrounds change with the book category: a creation-like starry sky for Genesis, still water for Psalms, dawn by the lake for the Gospels, and soft golden clouds for Revelation. The design keeps the center calm and readable, with no loud effects.
 
 Features:
-- Kougo Japanese, WEB, and KJV
+- WEB and KJV translations
 - Book and chapter selection
 - Typewriter-style scripture display
 - Pause, previous, next, and random chapter controls
@@ -64,14 +64,13 @@ Features:
 - Portrait layout tuned for iPhone SE through Pro Max
 
 Use it before prayer, before sleep, or whenever you want a slower way to sit with scripture.""",
-        "keywords": "bible,scripture,kjv,web,japanese,prayer,psalms,gospel,genesis,reading",
-        "whatsNew": "Initial release.",
-        "promotionalText": "A quiet typewriter-style Bible reader.",
+        "keywords": "bible,scripture,kjv,web,prayer,psalms,gospel,genesis,reading,christian",
+        "whatsNew": "Removed the Kougo translation and kept WEB / KJV only.",
+        "promotionalText": "A quiet WEB / KJV Bible reader with typewriter-style text.",
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
     },
 }
-
 
 def make_token():
     now = int(time.time())
@@ -344,7 +343,7 @@ def ensure_review_detail(version_id):
         "contactPhone": "+1 844 209 0611",
         "contactEmail": "support@snarfnet.github.io",
         "demoAccountRequired": False,
-        "notes": "ログイン不要です。口語訳、WEB、KJVを選び、書名と章を選択すると本文がタイポライター風に表示されます。有料アプリのため広告はありません。",
+        "notes": "ログイン不要です。WEBまたはKJVを選び、書名と章を選択すると本文がタイポライター風に表示されます。有料アプリのため広告はありません。口語訳は収録していません。",
     }
     response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
     if response.status_code == 200 and body.get("data"):

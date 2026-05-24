@@ -20,30 +20,7 @@ struct BibleService {
     }
 
     func loadChapter(book: BibleBook, chapter: Int, translation: BibleTranslation) async throws -> BibleChapter {
-        switch translation {
-        case .kougo:
-            return try await loadKougoChapter(book: book, chapter: chapter)
-        case .web, .kjv:
-            return try await loadEnglishChapter(book: book, chapter: chapter, translation: translation)
-        }
-    }
-
-    private func loadKougoChapter(book: BibleBook, chapter: Int) async throws -> BibleChapter {
-        guard let url = URL(string: "https://jpn.bible/kougo/\(book.id)") else {
-            throw BibleServiceError.invalidURL
-        }
-
-        let (data, _) = try await session.data(from: url)
-        guard let html = String(data: data, encoding: .utf8) else {
-            throw BibleServiceError.emptyChapter
-        }
-
-        let verses = extractKougoVerses(from: html, chapter: chapter)
-        guard !verses.isEmpty else {
-            throw BibleServiceError.emptyChapter
-        }
-
-        return BibleChapter(book: book, chapter: chapter, translation: .kougo, verses: verses)
+        try await loadEnglishChapter(book: book, chapter: chapter, translation: translation)
     }
 
     private func loadEnglishChapter(book: BibleBook, chapter: Int, translation: BibleTranslation) async throws -> BibleChapter {
@@ -69,38 +46,6 @@ struct BibleService {
         }
 
         return BibleChapter(book: book, chapter: decoded.chapter ?? chapter, translation: translation, verses: verses)
-    }
-
-    private func extractKougoVerses(from html: String, chapter: Int) -> [BibleVerse] {
-        let pattern = #"<span class="verse" id="\#(chapter):(\d+)">([\s\S]*?)</span>\s*</span>"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
-        let nsRange = NSRange(html.startIndex..<html.endIndex, in: html)
-
-        return regex.matches(in: html, range: nsRange).compactMap { match in
-            guard
-                let verseRange = Range(match.range(at: 1), in: html),
-                let bodyRange = Range(match.range(at: 2), in: html),
-                let verse = Int(html[verseRange])
-            else {
-                return nil
-            }
-
-            let raw = String(html[bodyRange])
-            let content = raw
-                .replacingOccurrences(of: #"<rt[\s\S]*?</rt>"#, with: "", options: .regularExpression)
-                .replacingOccurrences(of: #"<rp[\s\S]*?</rp>"#, with: "", options: .regularExpression)
-                .replacingOccurrences(of: #"<[^>]+>"#, with: "", options: .regularExpression)
-                .replacingOccurrences(of: "&nbsp;", with: " ")
-                .replacingOccurrences(of: "&quot;", with: "\"")
-                .replacingOccurrences(of: "&#39;", with: "'")
-                .replacingOccurrences(of: "&lt;", with: "<")
-                .replacingOccurrences(of: "&gt;", with: ">")
-                .replacingOccurrences(of: "&amp;", with: "&")
-                .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-
-            return content.isEmpty ? nil : BibleVerse(verse: verse, text: content)
-        }
     }
 }
 

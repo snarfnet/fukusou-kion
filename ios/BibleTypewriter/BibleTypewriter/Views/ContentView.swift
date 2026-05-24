@@ -75,9 +75,9 @@ struct ContentView: View {
             }
 
             HStack(spacing: 8) {
-                ControlButton(title: "‹", action: viewModel.previousChapter)
-                ControlButton(title: viewModel.isPaused ? "▶" : "Ⅱ", action: viewModel.togglePause)
-                ControlButton(title: "›", action: viewModel.nextChapter)
+                ControlButton(title: "戻る", action: viewModel.previousChapter)
+                ControlButton(title: viewModel.isPaused ? "再生" : "停止", action: viewModel.togglePause)
+                ControlButton(title: "次へ", action: viewModel.nextChapter)
             }
 
             HStack {
@@ -203,7 +203,6 @@ private struct TypewriterScrollText: View {
             }
         }
     }
-
 }
 
 private struct BundleBackgroundImage: View {
