@@ -27,14 +27,6 @@ on:
         options:
           - "true"
           - "false"
-  push:
-    branches:
-      - codex/morimori-glasses-testflight
-    paths:
-      - ".github/workflows/morimori-photo-maker-production.yml"
-      - "ios/MorimoriPhotoMaker/**"
-      - "data/morimori_paid_packs.json"
-
 concurrency:
   group: morimori-photo-maker-production
   cancel-in-progress: true
