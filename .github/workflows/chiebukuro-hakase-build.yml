@@ -1,0 +1,47 @@
+name: ChiebukuroHakase Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/chiebukuro-hakase-deluxe
+    paths:
+      - "ios/ChiebukuroHakase/**"
+      - ".github/workflows/chiebukuro-hakase-build.yml"
+
+jobs:
+  build:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ChiebukuroHakase
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Resolve packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project ChiebukuroHakase.xcodeproj \
+            -scheme ChiebukuroHakase
+
+      - name: Build simulator
+        run: |
+          xcodebuild build \
+            -project ChiebukuroHakase.xcodeproj \
+            -scheme ChiebukuroHakase \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,name=iPhone 16 Pro" \
+            CODE_SIGNING_ALLOWED=NO
