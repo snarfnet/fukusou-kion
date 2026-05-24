@@ -8,6 +8,7 @@ enum MorimoriBuildConfig {
 
 struct ContentView: View {
     @State private var selectedCategory: MoriCategory = .hair
+    @State private var activeAdjustment: AdjustmentTool?
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var basePhoto: UIImage?
     @State private var layers: [MoriLayer] = []
@@ -29,8 +30,8 @@ struct ContentView: View {
             let isCompact = proxy.size.height < 720
             let pagePadding: CGFloat = isCompact ? 8 : 12
             let stageWidth = proxy.size.width - pagePadding * 2
-            let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.52)
-            let compactAssetHeight = max(72, proxy.size.height - compactStageHeight - 246)
+            let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.58)
+            let compactAssetHeight = max(96, proxy.size.height - compactStageHeight - 156 - (activeAdjustment == nil ? 0 : 42))
 
             ZStack {
                 LinearGradient(
@@ -51,21 +52,28 @@ struct ContentView: View {
                         photoPicker: photoPicker
                     )
 
-                    StageView(
-                        basePhoto: basePhoto,
-                        layers: $layers,
-                        selectedLayerID: $selectedLayerID,
-                        dragStart: $dragStart,
-                        photoPicker: photoPicker
-                    )
-                    .frame(height: isCompact ? compactStageHeight : nil)
-                    .frame(maxHeight: isCompact ? nil : .infinity)
-                    .layoutPriority(1)
+                    ZStack(alignment: .leading) {
+                        StageView(
+                            basePhoto: basePhoto,
+                            layers: $layers,
+                            selectedLayerID: $selectedLayerID,
+                            dragStart: $dragStart,
+                            photoPicker: photoPicker
+                        )
+                        .frame(height: isCompact ? compactStageHeight : nil)
+                        .frame(maxHeight: isCompact ? nil : .infinity)
+                        .layoutPriority(1)
+
+                        if selectedLayer != nil {
+                            AdjustmentRail(activeTool: $activeAdjustment)
+                                .padding(.leading, 8)
+                        }
+                    }
 
                     if isCompact {
-                        ControlPanel(
-                            compact: true,
+                        CompactControlPanel(
                             layer: selectedLayer,
+                            activeTool: activeAdjustment,
                             onScale: { value in updateSelected { layer in layer.widthRatio = value } },
                             onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
                             onOpacity: { value in updateSelected { layer in layer.opacity = value } },
@@ -78,7 +86,7 @@ struct ContentView: View {
 
                         ScrollView(.vertical, showsIndicators: true) {
                             VStack(spacing: 6) {
-                                CategoryStrip(selectedCategory: $selectedCategory)
+                                CategoryStrip(compact: true, selectedCategory: $selectedCategory)
                                 AssetGrid(
                                     compact: true,
                                     assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
@@ -102,7 +110,7 @@ struct ContentView: View {
                             onDelete: deleteSelected
                         )
 
-                        CategoryStrip(selectedCategory: $selectedCategory)
+                        CategoryStrip(compact: false, selectedCategory: $selectedCategory)
                         AssetGrid(
                             compact: false,
                             assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
@@ -152,6 +160,7 @@ struct ContentView: View {
         )
         layers.append(layer)
         selectedLayerID = layer.id
+        activeAdjustment = nil
     }
 
     private func updateSelected(_ update: (inout MoriLayer) -> Void) {
@@ -183,6 +192,9 @@ struct ContentView: View {
         guard let selectedLayerID else { return }
         layers.removeAll { $0.id == selectedLayerID }
         self.selectedLayerID = layers.last?.id
+        if self.selectedLayerID == nil {
+            activeAdjustment = nil
+        }
     }
 
     private func autoMori() {
@@ -193,6 +205,30 @@ struct ContentView: View {
 
     private func share() {
         sharePayload = SharePayload(image: MoriImageExporter.render(basePhoto: basePhoto, layers: layers))
+    }
+}
+
+private enum AdjustmentTool: CaseIterable, Identifiable {
+    case scale
+    case rotate
+    case opacity
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .scale: "大きさ"
+        case .rotate: "回転"
+        case .opacity: "透明度"
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .scale: "arrow.up.left.and.arrow.down.right"
+        case .rotate: "rotate.right"
+        case .opacity: "circle.lefthalf.filled"
+        }
     }
 }
 
@@ -209,26 +245,36 @@ private struct HeaderView<PhotoPicker: View>: View {
 
     var body: some View {
         VStack(spacing: compact ? 6 : 10) {
-            VStack(spacing: 2) {
-                Text("MORIMORI PHOTO")
-                    .font((compact ? Font.caption2 : Font.caption).weight(.black))
-                    .foregroundStyle(Color(red: 0.58, green: 0.14, blue: 0.38))
-                Text("盛り盛りフォトメーカー")
-                    .font(.system(size: compact ? 22 : 34, weight: .black, design: .rounded))
-                    .foregroundStyle(Color(red: 0.84, green: 0.16, blue: 0.50))
-                    .shadow(color: .white, radius: 0, x: 0, y: 2)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, compact ? 8 : 18)
-            .background(.white.opacity(0.62), in: RoundedRectangle(cornerRadius: compact ? 14 : 22))
-            .overlay(RoundedRectangle(cornerRadius: compact ? 14 : 22).stroke(.white.opacity(0.9), lineWidth: 1))
-
             HStack(spacing: 8) {
                 photoPicker
                 Button("おまかせ盛り", action: onAutoMori)
                 Button("共有", action: onShare)
             }
             .buttonStyle(CandyButtonStyle(compact: compact))
+        }
+    }
+}
+
+private struct AdjustmentRail: View {
+    @Binding var activeTool: AdjustmentTool?
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ForEach(AdjustmentTool.allCases) { tool in
+                Button {
+                    activeTool = activeTool == tool ? nil : tool
+                } label: {
+                    Image(systemName: tool.iconName)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(activeTool == tool ? .white : Color(red: 0.58, green: 0.14, blue: 0.38))
+                        .frame(width: 38, height: 38)
+                        .background(activeTool == tool ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.86), in: Circle())
+                        .overlay(Circle().stroke(.white.opacity(0.95), lineWidth: 1))
+                        .shadow(color: Color(red: 0.54, green: 0.18, blue: 0.35).opacity(0.18), radius: 5, y: 2)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(tool.title)
+            }
         }
     }
 }
@@ -351,17 +397,13 @@ private struct ControlPanel: View {
 
             if let layer {
                 SliderRow(title: "大きさ", displayValue: "\(Int(layer.widthRatio * 100))%", value: Double(layer.widthRatio), range: 0.08...2.6) { onScale(CGFloat($0)) }
-                SliderRow(title: "回転", displayValue: "\(Int(layer.rotation.degrees))%", value: layer.rotation.degrees, range: -180...180, onChange: onRotate)
+                SliderRow(title: "回転", displayValue: "\(Int(layer.rotation.degrees))°", value: layer.rotation.degrees, range: -180...180, onChange: onRotate)
                 SliderRow(title: "透明度", displayValue: "\(Int(layer.opacity * 100))%", value: Double(layer.opacity), range: 0.2...1.0) { onOpacity(CGFloat($0)) }
             }
 
             HStack {
                 Button("背面", action: onBack)
                 Button("前面", action: onFront)
-                Button("反転", action: onFlip)
-            }
-            HStack {
-                Button("複製", action: onDuplicate)
                 Button("削除", action: onDelete)
             }
             .disabled(layer == nil)
@@ -369,6 +411,45 @@ private struct ControlPanel: View {
         .padding(compact ? 8 : 12)
         .background(.white.opacity(0.72), in: RoundedRectangle(cornerRadius: 18))
         .buttonStyle(CandyButtonStyle(compact: compact))
+    }
+}
+
+private struct CompactControlPanel: View {
+    let layer: MoriLayer?
+    let activeTool: AdjustmentTool?
+    let onScale: (CGFloat) -> Void
+    let onRotate: (Double) -> Void
+    let onOpacity: (CGFloat) -> Void
+    let onBack: () -> Void
+    let onFront: () -> Void
+    let onFlip: () -> Void
+    let onDuplicate: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        VStack(spacing: 5) {
+            if let layer, let activeTool {
+                switch activeTool {
+                case .scale:
+                    SliderRow(title: activeTool.title, displayValue: "\(Int(layer.widthRatio * 100))%", value: Double(layer.widthRatio), range: 0.08...2.6) { onScale(CGFloat($0)) }
+                case .rotate:
+                    SliderRow(title: activeTool.title, displayValue: "\(Int(layer.rotation.degrees))°", value: layer.rotation.degrees, range: -180...180, onChange: onRotate)
+                case .opacity:
+                    SliderRow(title: activeTool.title, displayValue: "\(Int(layer.opacity * 100))%", value: Double(layer.opacity), range: 0.2...1.0) { onOpacity(CGFloat($0)) }
+                }
+            }
+
+            HStack(spacing: 5) {
+                Button("背面", action: onBack)
+                Button("前面", action: onFront)
+                Button("削除", action: onDelete)
+            }
+            .disabled(layer == nil)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(.white.opacity(0.74), in: RoundedRectangle(cornerRadius: 14))
+        .buttonStyle(CandyButtonStyle(compact: true))
     }
 }
 
@@ -397,25 +478,26 @@ private struct SliderRow: View {
 }
 
 private struct CategoryStrip: View {
+    let compact: Bool
     @Binding var selectedCategory: MoriCategory
 
     var body: some View {
         let columns = [
-            GridItem(.adaptive(minimum: 72), spacing: 6)
+            GridItem(.adaptive(minimum: compact ? 62 : 72), spacing: compact ? 4 : 6)
         ]
 
-        LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: compact ? 4 : 6) {
             ForEach(MoriCategory.allCases) { category in
                 Button {
                     selectedCategory = category
                 } label: {
                     Text(category.rawValue)
-                        .font(.caption.weight(.black))
+                        .font((compact ? Font.caption2 : Font.caption).weight(.black))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                         .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, compact ? 6 : 10)
+                        .padding(.vertical, compact ? 6 : 8)
                         .foregroundStyle(selectedCategory == category ? .white : Color(red: 0.33, green: 0.18, blue: 0.25))
                         .background(selectedCategory == category ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.74), in: Capsule())
                 }
@@ -433,10 +515,10 @@ private struct AssetGrid: View {
 
     var body: some View {
         let columns = [
-            GridItem(.adaptive(minimum: compact ? 70 : 78), spacing: 8)
+            GridItem(.adaptive(minimum: compact ? 64 : 78), spacing: compact ? 6 : 8)
         ]
 
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: compact ? 6 : 8) {
                 ForEach(assets) { asset in
                     Button {
                         onSelect(asset)
@@ -446,7 +528,7 @@ private struct AssetGrid: View {
                                 Image(uiImage: image)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: compact ? 42 : 54)
+                                    .frame(height: compact ? 34 : 54)
                             }
                             Text(asset.name)
                                 .font(.caption2.weight(.black))
@@ -462,7 +544,7 @@ private struct AssetGrid: View {
                                     .background(Color(red: 0.86, green: 0.18, blue: 0.52), in: Capsule())
                             }
                         }
-                        .frame(width: compact ? 70 : 78, height: compact ? 78 : 92)
+                        .frame(width: compact ? 64 : 78, height: compact ? 70 : 92)
                         .padding(4)
                         .background(.white.opacity(0.78), in: RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(red: 0.96, green: 0.72, blue: 0.84), lineWidth: 1))
@@ -496,7 +578,7 @@ private struct CandyButtonStyle: ButtonStyle {
             .font(.caption.weight(.black))
             .foregroundStyle(Color(red: 0.28, green: 0.13, blue: 0.21))
             .padding(.horizontal, compact ? 8 : 12)
-            .frame(minHeight: compact ? 32 : 38)
+            .frame(minHeight: compact ? 28 : 38)
             .frame(maxWidth: .infinity)
             .background(
                 LinearGradient(colors: [.white.opacity(0.95), Color(red: 1.0, green: 0.77, blue: 0.88).opacity(0.92)], startPoint: .top, endPoint: .bottom),
