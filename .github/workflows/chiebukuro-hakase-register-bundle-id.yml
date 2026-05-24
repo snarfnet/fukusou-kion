@@ -1,0 +1,60 @@
+name: ChiebukuroHakase Register Bundle ID
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/chiebukuro-hakase-deluxe
+    paths:
+      - ".github/workflows/chiebukuro-hakase-register-bundle-id.yml"
+
+jobs:
+  register-bundle-id:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ChiebukuroHakase
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.chiebukurohakase
+      BUNDLE_NAME: ChiebukuroHakase
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        shell: bash
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          chmod 600 /tmp/asc_key.p8
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Register Bundle ID
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/register_bundle_id.py
