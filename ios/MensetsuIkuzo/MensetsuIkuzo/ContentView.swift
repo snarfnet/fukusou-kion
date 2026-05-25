@@ -30,11 +30,13 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { proxy in
             let compact = proxy.size.height < 730
+            let stageWidth = min(proxy.size.width - 20, compact ? 430 : 620)
+            let stageHeight = min(stageWidth * 4 / 3, proxy.size.height * (compact ? 0.62 : 0.66))
 
             ZStack {
                 InterviewTheme.background.ignoresSafeArea()
 
-                VStack(spacing: compact ? 8 : 12) {
+                VStack(spacing: compact ? 6 : 10) {
                     header
 
                     StageView(
@@ -42,8 +44,7 @@ struct ContentView: View {
                         layers: $layers,
                         selectedLayerID: $selectedLayerID
                     )
-                    .frame(maxWidth: min(proxy.size.width - 28, compact ? 360 : 460))
-                    .frame(maxHeight: compact ? proxy.size.height * 0.48 : proxy.size.height * 0.56)
+                    .frame(width: stageWidth, height: stageHeight)
 
                     if let selectedLayer {
                         LayerControls(
@@ -61,10 +62,10 @@ struct ContentView: View {
 
                     GenderPicker(selection: $genderFilter)
                     CategoryStrip(selection: $selectedCategory)
-                    AssetGrid(assets: filteredAssets, onSelect: addAsset)
+                    AssetGrid(assets: filteredAssets, compact: compact, onSelect: addAsset)
                 }
-                .padding(.horizontal, 12)
-                .padding(.top, 10)
+                .padding(.horizontal, 10)
+                .padding(.top, compact ? 6 : 10)
                 .padding(.bottom, 8)
             }
         }
@@ -349,21 +350,30 @@ private struct LayerControls: View {
                     .foregroundStyle(InterviewTheme.muted)
             }
 
-            HStack(spacing: 10) {
-                Slider(
+            VStack(spacing: 8) {
+                ControlSlider(
+                    title: "大きさ",
+                    valueText: "\(Int(layer.widthRatio * 100))%",
                     value: Binding(
                         get: { Double(layer.widthRatio) },
                         set: { onScale(CGFloat($0)) }
                     ),
-                    in: 0.12...1.55
+                    range: 0.18...2.40
                 )
-                Slider(value: Binding(get: { layer.rotation.degrees }, set: onRotate), in: -35...35)
-                Slider(
+                ControlSlider(
+                    title: "角度",
+                    valueText: "\(Int(layer.rotation.degrees))°",
+                    value: Binding(get: { layer.rotation.degrees }, set: onRotate),
+                    range: -45...45
+                )
+                ControlSlider(
+                    title: "透明度",
+                    valueText: "\(Int(layer.opacity * 100))%",
                     value: Binding(
                         get: { Double(layer.opacity) },
                         set: { onOpacity(CGFloat($0)) }
                     ),
-                    in: 0.25...1
+                    range: 0.25...1
                 )
             }
 
@@ -420,11 +430,36 @@ private struct CategoryStrip: View {
     }
 }
 
+private struct ControlSlider: View {
+    let title: String
+    let valueText: String
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text(title)
+                .font(.caption2.weight(.black))
+                .foregroundStyle(InterviewTheme.muted)
+                .frame(width: 44, alignment: .leading)
+            Slider(value: $value, in: range)
+            Text(valueText)
+                .font(.caption2.weight(.black))
+                .monospacedDigit()
+                .foregroundStyle(InterviewTheme.ink)
+                .frame(width: 48, alignment: .trailing)
+        }
+    }
+}
+
 private struct AssetGrid: View {
     let assets: [MoriAsset]
+    let compact: Bool
     let onSelect: (MoriAsset) -> Void
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 5)
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 8), count: compact ? 4 : 5)
+    }
 
     var body: some View {
         ScrollView {
@@ -444,7 +479,7 @@ private struct AssetGrid: View {
                                         .padding(5)
                                 }
                             }
-                            .frame(height: 58)
+                            .frame(height: compact ? 66 : 74)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(InterviewTheme.line))
 
                             Text(asset.name)

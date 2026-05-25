@@ -82,13 +82,13 @@ enum MoriLibrary {
 
     private static func makeAssets() -> [MoriAsset] {
         let categories: [(MoriCategory, Int, CGPoint, CGFloat, Double)] = [
-            (.hair, 20, CGPoint(x: 0.50, y: 0.24), 0.62, 30),
-            (.businessTop, 18, CGPoint(x: 0.50, y: 0.63), 0.76, 42),
-            (.businessBottom, 12, CGPoint(x: 0.50, y: 0.82), 0.68, 38),
-            (.casualTop, 16, CGPoint(x: 0.50, y: 0.63), 0.74, 42),
-            (.casualBottom, 10, CGPoint(x: 0.50, y: 0.82), 0.66, 38),
-            (.glasses, 10, CGPoint(x: 0.50, y: 0.43), 0.42, 58),
-            (.accessory, 12, CGPoint(x: 0.66, y: 0.72), 0.28, 62),
+            (.hair, 20, CGPoint(x: 0.50, y: 0.24), 0.92, 30),
+            (.businessTop, 18, CGPoint(x: 0.50, y: 0.64), 1.28, 42),
+            (.businessBottom, 12, CGPoint(x: 0.50, y: 0.82), 1.08, 38),
+            (.casualTop, 16, CGPoint(x: 0.50, y: 0.64), 1.22, 42),
+            (.casualBottom, 10, CGPoint(x: 0.50, y: 0.82), 1.04, 38),
+            (.glasses, 10, CGPoint(x: 0.50, y: 0.43), 0.64, 58),
+            (.accessory, 12, CGPoint(x: 0.66, y: 0.72), 0.50, 62),
             (.background, 2, CGPoint(x: 0.50, y: 0.50), 1.00, 4)
         ]
 
