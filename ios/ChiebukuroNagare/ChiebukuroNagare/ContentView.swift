@@ -70,6 +70,8 @@ struct ContentView: View {
                     .font(.system(size: isEnglish ? 30 : 38, weight: .bold, design: .serif))
                     .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.75), radius: 12, y: 3)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
             }
             Spacer()
         }
@@ -84,13 +86,15 @@ struct ContentView: View {
             Text("\(isEnglish ? "Category" : "分類") / \(currentWisdom.category)")
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.72))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
 
             Text(typedText)
-                .font(.system(size: 30, weight: .bold, design: .serif))
+                .font(.system(size: 28, weight: .bold, design: .serif))
                 .lineSpacing(9)
                 .foregroundStyle(.white)
                 .shadow(color: .black.opacity(0.9), radius: 10, y: 3)
-                .minimumScaleFactor(0.7)
+                .minimumScaleFactor(0.5)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(alignment: .bottomTrailing) {
