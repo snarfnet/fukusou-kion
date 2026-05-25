@@ -88,8 +88,7 @@ enum MoriLibrary {
             (.casualTop, 16, CGPoint(x: 0.50, y: 0.64), 1.22, 42),
             (.casualBottom, 10, CGPoint(x: 0.50, y: 0.82), 1.04, 38),
             (.glasses, 10, CGPoint(x: 0.50, y: 0.43), 0.64, 58),
-            (.accessory, 12, CGPoint(x: 0.66, y: 0.72), 0.50, 62),
-            (.background, 2, CGPoint(x: 0.50, y: 0.50), 1.00, 4)
+            (.accessory, 14, CGPoint(x: 0.66, y: 0.72), 0.50, 62)
         ]
 
         var result: [MoriAsset] = []

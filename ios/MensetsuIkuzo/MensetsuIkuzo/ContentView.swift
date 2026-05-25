@@ -54,6 +54,8 @@ struct ContentView: View {
                             onOpacity: { value in updateSelected { $0.opacity = value } },
                             onBack: sendBack,
                             onFront: bringFront,
+                            onSelectLower: { selectLayer(offset: -1) },
+                            onSelectUpper: { selectLayer(offset: 1) },
                             onFlip: { updateSelected { $0.isFlipped.toggle() } },
                             onDuplicate: duplicateSelected,
                             onDelete: deleteSelected
@@ -178,7 +180,7 @@ struct ContentView: View {
     private func autoInterview() {
         layers.removeAll()
         let preferredAudience: AssetAudience = genderFilter == .men ? .men : (genderFilter == .women ? .women : .all)
-        for category in [MoriCategory.background, .hair, .businessTop, .glasses, .accessory] {
+        for category in [MoriCategory.hair, .businessTop, .glasses, .accessory] {
             let candidates = MoriLibrary.assets.filter {
                 $0.category == category && ($0.audience == preferredAudience || $0.audience == .all || genderFilter == .all)
             }
@@ -187,6 +189,20 @@ struct ContentView: View {
             }
         }
         selectedLayerID = layers.last?.id
+    }
+
+    private func selectLayer(offset: Int) {
+        let sorted = layers.sorted { $0.zIndex < $1.zIndex }
+        guard !sorted.isEmpty else { return }
+        guard
+            let selectedLayerID,
+            let index = sorted.firstIndex(where: { $0.id == selectedLayerID })
+        else {
+            self.selectedLayerID = sorted.last?.id
+            return
+        }
+        let nextIndex = (index + offset + sorted.count) % sorted.count
+        self.selectedLayerID = sorted[nextIndex].id
     }
 
     private func renderImage() -> UIImage {
@@ -333,6 +349,8 @@ private struct LayerControls: View {
     let onOpacity: (CGFloat) -> Void
     let onBack: () -> Void
     let onFront: () -> Void
+    let onSelectLower: () -> Void
+    let onSelectUpper: () -> Void
     let onFlip: () -> Void
     let onDuplicate: () -> Void
     let onDelete: () -> Void
@@ -358,7 +376,7 @@ private struct LayerControls: View {
                         get: { Double(layer.widthRatio) },
                         set: { onScale(CGFloat($0)) }
                     ),
-                    range: 0.18...2.40
+                    range: 0.10...5.00
                 )
                 ControlSlider(
                     title: "角度",
@@ -378,8 +396,13 @@ private struct LayerControls: View {
             }
 
             HStack(spacing: 8) {
+                ControlIcon(systemName: "arrow.down.circle", action: onSelectLower)
+                ControlIcon(systemName: "arrow.up.circle", action: onSelectUpper)
                 ControlIcon(systemName: "square.2.layers.3d.bottom.filled", action: onBack)
                 ControlIcon(systemName: "square.2.layers.3d.top.filled", action: onFront)
+            }
+
+            HStack(spacing: 8) {
                 ControlIcon(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right", action: onFlip)
                 ControlIcon(systemName: "plus.square.on.square", action: onDuplicate)
                 ControlIcon(systemName: "trash", destructive: true, action: onDelete)
@@ -458,7 +481,7 @@ private struct AssetGrid: View {
     let onSelect: (MoriAsset) -> Void
 
     private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 8), count: compact ? 4 : 5)
+        Array(repeating: GridItem(.flexible(), spacing: 8), count: compact ? 3 : 4)
     }
 
     var body: some View {
@@ -476,10 +499,10 @@ private struct AssetGrid: View {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFit()
-                                        .padding(5)
+                                        .padding(2)
                                 }
                             }
-                            .frame(height: compact ? 66 : 74)
+                            .frame(height: compact ? 92 : 110)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(InterviewTheme.line))
 
                             Text(asset.name)
