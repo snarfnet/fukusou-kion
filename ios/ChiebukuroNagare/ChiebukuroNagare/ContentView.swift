@@ -25,6 +25,7 @@ struct ContentView: View {
                 controls
                 BannerAdView()
             }
+            .safeAreaPadding(.horizontal)
             .ignoresSafeArea(.keyboard)
         }
         .preferredColorScheme(.dark)
@@ -89,6 +90,8 @@ struct ContentView: View {
                 .lineSpacing(9)
                 .foregroundStyle(.white)
                 .shadow(color: .black.opacity(0.9), radius: 10, y: 3)
+                .minimumScaleFactor(0.7)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(alignment: .bottomTrailing) {
                     if !isPaused {
