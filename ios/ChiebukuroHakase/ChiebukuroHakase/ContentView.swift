@@ -9,9 +9,19 @@ struct ContentView: View {
     @State private var previousTexts: [String] = []
     @State private var isPaused = false
     @State private var typingTask: Task<Void, Never>?
+    @State private var showFavorites = false
+    @State private var showSettings = false
+    @State private var favorites = FavoritesManager()
+    @State private var notificationManager = NotificationManager()
 
     private var currentWisdom: WisdomItem {
         wisdoms[currentIndex]
+    }
+
+    private var shareText: String {
+        let w = currentWisdom
+        let sep = isEnglish ? ". " : "。"
+        return "\(w.title)\(sep)\(w.content)"
     }
 
     var body: some View {
@@ -30,9 +40,20 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .task {
             start(at: dailyIndex())
+            if notificationManager.isEnabled {
+                notificationManager.scheduleDaily(wisdoms: wisdoms)
+            }
         }
         .onDisappear {
             typingTask?.cancel()
+        }
+        .sheet(isPresented: $showFavorites) {
+            FavoritesView(wisdoms: wisdoms, favorites: favorites) { index in
+                start(at: index)
+            }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(notificationManager: notificationManager, wisdoms: wisdoms)
         }
     }
 
@@ -73,13 +94,20 @@ struct ContentView: View {
 
             Spacer()
 
-            Text(isEnglish ? "50,000" : "50,000件")
-                .font(.system(size: 13, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.9))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
-                .background(.black.opacity(0.35), in: Capsule())
-                .overlay(Capsule().stroke(.white.opacity(0.18), lineWidth: 1))
+            HStack(spacing: 10) {
+                Button { showFavorites = true } label: {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.white.opacity(0.85))
+                }
+
+                Button { showSettings = true } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.white.opacity(0.85))
+                }
+            }
+            .padding(.top, 6)
         }
         .padding(.horizontal, 22)
         .padding(.top, 20)
@@ -89,9 +117,17 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 18) {
             flowLog
 
-            Text("\(isEnglish ? "Category" : "分類") / \(currentWisdom.category)")
-                .font(.system(size: 14, weight: .medium, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.72))
+            HStack {
+                Text("\(isEnglish ? "Category" : "分類") / \(currentWisdom.category)")
+                    .font(.system(size: 14, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.white.opacity(0.72))
+
+                Spacer()
+
+                Text("\(currentIndex + 1) / \(wisdoms.count.formatted())")
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.white.opacity(0.5))
+            }
 
             Text(typedText)
                 .font(.system(size: 29, weight: .bold, design: .serif))
@@ -152,6 +188,21 @@ struct ContentView: View {
                 start(at: randomIndex())
             }
             .font(.system(size: 15, weight: .bold, design: .rounded))
+
+            Divider()
+                .frame(height: 28)
+                .overlay(.white.opacity(0.2))
+
+            Button {
+                favorites.toggle(currentWisdom.id)
+            } label: {
+                Image(systemName: favorites.isFavorite(currentWisdom.id) ? "heart.fill" : "heart")
+            }
+            .tint(favorites.isFavorite(currentWisdom.id) ? .pink : .white.opacity(0.18))
+
+            ShareLink(item: shareText) {
+                Image(systemName: "square.and.arrow.up")
+            }
         }
         .buttonStyle(.borderedProminent)
         .tint(.white.opacity(0.18))
