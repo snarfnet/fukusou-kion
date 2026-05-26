@@ -1,0 +1,80 @@
+name: Build & Upload
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  ASC_KEY_ID: "WDXGY9WX55"
+  ASC_ISSUER_ID: "2be0734f-943a-4d61-9dc9-5d9045c46fec"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
+          echo "Using: $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Setup ASC API Key
+        env:
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+        run: |
+          mkdir -p ~/private_keys
+          echo "$ASC_API_KEY_CONTENT" | base64 -D > ~/private_keys/AuthKey_${ASC_KEY_ID}.p8
+
+      - name: Build archive
+        run: |
+          xcodebuild archive \
+            -project ChiebukuroHakase.xcodeproj \
+            -scheme ChiebukuroHakase \
+            -archivePath build/ChiebukuroHakase.xcarchive \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
+            -authenticationKeyID ${ASC_KEY_ID} \
+            -authenticationKeyIssuerID ${ASC_ISSUER_ID} \
+            CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGN_STYLE=Automatic
+
+      - name: Export IPA
+        run: |
+          cat > ExportOptions.plist << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>destination</key>
+            <string>upload</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+          </dict>
+          </plist>
+          PLIST
+
+          xcodebuild -exportArchive \
+            -archivePath build/ChiebukuroHakase.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/export \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
+            -authenticationKeyID ${ASC_KEY_ID} \
+            -authenticationKeyIssuerID ${ASC_ISSUER_ID}
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf ~/private_keys
+        continue-on-error: true

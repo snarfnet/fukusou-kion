@@ -24,6 +24,7 @@ struct ContentView: View {
                 typewriterArea
                 controls
             }
+            .safeAreaPadding(.bottom)
             .ignoresSafeArea(.keyboard)
         }
         .preferredColorScheme(.dark)
@@ -155,7 +156,7 @@ struct ContentView: View {
         .buttonStyle(.borderedProminent)
         .tint(.white.opacity(0.18))
         .controlSize(.large)
-        .padding(.bottom, 8)
+        .padding(.bottom, 24)
     }
 
     private func start(at rawIndex: Int) {
