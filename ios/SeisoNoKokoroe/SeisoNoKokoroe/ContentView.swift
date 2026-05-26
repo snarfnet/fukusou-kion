@@ -297,7 +297,7 @@ struct ContentView: View {
 
 @Observable
 final class CleaningViewModel {
-    let allTips: [CleaningTip] = CleaningData.makeTips()
+    private(set) var allTips: [CleaningTip] = []
     var filteredTips: [CleaningTip] = []
     var categories: [String] = ["すべて"]
     var selectedCategory = "すべて"
@@ -311,6 +311,7 @@ final class CleaningViewModel {
     var remainingSeconds = 600
     var isTimerRunning = false
     var showingAlarm = false
+    private var isLoaded = false
 
     private var typeTask: Task<Void, Never>?
     private var streamTask: Task<Void, Never>?
@@ -318,10 +319,7 @@ final class CleaningViewModel {
     private var timerTask: Task<Void, Never>?
     private var alarmTask: Task<Void, Never>?
 
-    init() {
-        filteredTips = allTips
-        categories = ["すべて"] + Array(Set(allTips.map(\.category))).sorted()
-    }
+    init() {}
 
     var currentTip: CleaningTip? {
         guard !filteredTips.isEmpty else { return nil }
@@ -349,6 +347,12 @@ final class CleaningViewModel {
     }
 
     func start() {
+        if !isLoaded {
+            allTips = CleaningData.makeTips()
+            filteredTips = allTips
+            categories = ["すべて"] + Array(Set(allTips.map(\.category))).sorted()
+            isLoaded = true
+        }
         applyFilters()
         caretTask = Task { @MainActor in
             while !Task.isCancelled {
