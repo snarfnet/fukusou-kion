@@ -29,9 +29,10 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { proxy in
             let isCompact = proxy.size.height < 720
-            let pagePadding: CGFloat = isCompact ? 8 : 12
-            let railColumnWidth: CGFloat = isCompact ? 48 : 54
-            let railGap: CGFloat = isCompact ? 4 : 8
+            let isIPad = proxy.size.width > 700
+            let pagePadding: CGFloat = isCompact ? 8 : (isIPad ? 24 : 12)
+            let railColumnWidth: CGFloat = isCompact ? 48 : (isIPad ? 64 : 54)
+            let railGap: CGFloat = isCompact ? 4 : (isIPad ? 16 : 8)
             let stageWidth = proxy.size.width - pagePadding * 2 - railColumnWidth - railGap
             let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.58)
             let compactAssetHeight = max(96, proxy.size.height - compactStageHeight - 88 - (activeAdjustment == nil ? 0 : 42))
@@ -64,7 +65,8 @@ struct ContentView: View {
                                     activeTool: $activeAdjustment,
                                     onBack: sendBack,
                                     onFront: bringFront,
-                                    onDelete: deleteSelected
+                                    onDelete: deleteSelected,
+                                    isIPad: isIPad
                                 )
                             } else {
                                 Color.clear
@@ -110,6 +112,7 @@ struct ContentView: View {
                     } else {
                         ControlPanel(
                             compact: false,
+                            isIPad: isIPad,
                             layer: selectedLayer,
                             onScale: { value in updateSelected { layer in layer.widthRatio = value } },
                             onRotate: { value in updateSelected { layer in layer.rotation.degrees = value } },
@@ -121,9 +124,10 @@ struct ContentView: View {
                             onDelete: deleteSelected
                         )
 
-                        CategoryStrip(compact: false, selectedCategory: $selectedCategory)
+                        CategoryStrip(compact: false, isIPad: isIPad, selectedCategory: $selectedCategory)
                         AssetGrid(
                             compact: false,
+                            isIPad: isIPad,
                             assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
                             isUnlocked: isAssetUnlocked,
                             onLocked: showPurchasePrompt,
@@ -357,6 +361,11 @@ private struct StoreSheet: View {
                         Task { await purchaseStore.restore() }
                     }
                 }
+
+                Section("法的情報") {
+                    Link("プライバシーポリシー", destination: URL(string: "https://snarfnet.github.io/MorimoriPhotoMaker/privacy")!)
+                    Link("利用規約 (EULA)", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                }
             }
             .navigationTitle("ショップ")
             .toolbar {
@@ -433,9 +442,10 @@ private struct AdjustmentRail: View {
     let onBack: () -> Void
     let onFront: () -> Void
     let onDelete: () -> Void
+    var isIPad: Bool = false
 
     var body: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: isIPad ? 12 : 7) {
             ForEach(AdjustmentTool.allCases) { tool in
                 Button {
                     activeTool = activeTool == tool ? nil : tool
@@ -444,7 +454,8 @@ private struct AdjustmentRail: View {
                         iconName: tool.iconName,
                         title: tool.title,
                         tint: Color(red: 0.58, green: 0.14, blue: 0.38),
-                        isActive: activeTool == tool
+                        isActive: activeTool == tool,
+                        isIPad: isIPad
                     )
                 }
                 .buttonStyle(.plain)
@@ -454,9 +465,9 @@ private struct AdjustmentRail: View {
             Spacer()
                 .frame(height: 12)
 
-            RailActionButton(iconName: "arrow.down", title: "背面", tint: Color(red: 0.58, green: 0.14, blue: 0.38), action: onBack)
-            RailActionButton(iconName: "arrow.up", title: "前面", tint: Color(red: 0.58, green: 0.14, blue: 0.38), action: onFront)
-            RailActionButton(iconName: "trash", title: "削除", tint: Color(red: 0.82, green: 0.13, blue: 0.28), action: onDelete)
+            RailActionButton(iconName: "arrow.down", title: "背面", tint: Color(red: 0.58, green: 0.14, blue: 0.38), action: onBack, isIPad: isIPad)
+            RailActionButton(iconName: "arrow.up", title: "前面", tint: Color(red: 0.58, green: 0.14, blue: 0.38), action: onFront, isIPad: isIPad)
+            RailActionButton(iconName: "trash", title: "削除", tint: Color(red: 0.82, green: 0.13, blue: 0.28), action: onDelete, isIPad: isIPad)
         }
     }
 }
@@ -466,10 +477,11 @@ private struct RailActionButton: View {
     let title: String
     let tint: Color
     let action: () -> Void
+    var isIPad: Bool = false
 
     var body: some View {
         Button(action: action) {
-            RailIconLabel(iconName: iconName, title: title, tint: tint, isActive: false)
+            RailIconLabel(iconName: iconName, title: title, tint: tint, isActive: false, isIPad: isIPad)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
@@ -482,21 +494,23 @@ private struct RailIconLabel: View {
     let tint: Color
     let isActive: Bool
 
+    var isIPad: Bool = false
+
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: isIPad ? 4 : 2) {
             Image(systemName: iconName)
-                .font(.system(size: 15, weight: .bold))
+                .font(.system(size: isIPad ? 22 : 15, weight: .bold))
                 .foregroundStyle(isActive ? .white : tint)
-                .frame(width: 34, height: 34)
+                .frame(width: isIPad ? 48 : 34, height: isIPad ? 48 : 34)
                 .background(isActive ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.88), in: Circle())
                 .overlay(Circle().stroke(.white.opacity(0.95), lineWidth: 1))
                 .shadow(color: Color(red: 0.54, green: 0.18, blue: 0.35).opacity(0.18), radius: 5, y: 2)
             Text(title)
-                .font(.system(size: 9, weight: .black, design: .rounded))
+                .font(.system(size: isIPad ? 12 : 9, weight: .black, design: .rounded))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .foregroundStyle(tint)
-                .frame(width: 42)
+                .frame(width: isIPad ? 56 : 42)
         }
     }
 }
@@ -578,11 +592,13 @@ private struct StageView<PhotoPicker: View>: View {
                 }
                 let displaySize = layer.displaySize(in: stageSize, imageSize: image.size)
                 let center = CGPoint(x: stageSize.width * layer.position.x, y: stageSize.height * layer.position.y)
-                let radians = -layer.rotation.degrees * .pi / 180
+                let radians = CGFloat(-layer.rotation.degrees * .pi / 180)
                 let translated = CGPoint(x: point.x - center.x, y: point.y - center.y)
+                let cosR = CoreGraphics.cos(radians)
+                let sinR = CoreGraphics.sin(radians)
                 var local = CGPoint(
-                    x: translated.x * cos(radians) - translated.y * sin(radians),
-                    y: translated.x * sin(radians) + translated.y * cos(radians)
+                    x: translated.x * cosR - translated.y * sinR,
+                    y: translated.x * sinR + translated.y * cosR
                 )
                 if layer.isFlipped {
                     local.x *= -1
@@ -699,6 +715,7 @@ private extension MoriLayer {
 
 private struct ControlPanel: View {
     let compact: Bool
+    var isIPad: Bool = false
     let layer: MoriLayer?
     let onScale: (CGFloat) -> Void
     let onRotate: (Double) -> Void
@@ -789,25 +806,28 @@ private struct SliderRow: View {
 
 private struct CategoryStrip: View {
     let compact: Bool
+    var isIPad: Bool = false
     @Binding var selectedCategory: MoriCategory
 
     var body: some View {
+        let minWidth: CGFloat = compact ? 62 : (isIPad ? 90 : 72)
+        let gridSpacing: CGFloat = compact ? 4 : (isIPad ? 10 : 6)
         let columns = [
-            GridItem(.adaptive(minimum: compact ? 62 : 72), spacing: compact ? 4 : 6)
+            GridItem(.adaptive(minimum: minWidth), spacing: gridSpacing)
         ]
 
-        LazyVGrid(columns: columns, alignment: .leading, spacing: compact ? 4 : 6) {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: gridSpacing) {
             ForEach(MoriCategory.allCases) { category in
                 Button {
                     selectedCategory = category
                 } label: {
                     Text(category.rawValue)
-                        .font((compact ? Font.caption2 : Font.caption).weight(.black))
+                        .font((compact ? Font.caption2 : (isIPad ? Font.body : Font.caption)).weight(.black))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                         .frame(maxWidth: .infinity)
-                        .padding(.horizontal, compact ? 6 : 10)
-                        .padding(.vertical, compact ? 6 : 8)
+                        .padding(.horizontal, compact ? 6 : (isIPad ? 14 : 10))
+                        .padding(.vertical, compact ? 6 : (isIPad ? 12 : 8))
                         .foregroundStyle(selectedCategory == category ? .white : Color(red: 0.33, green: 0.18, blue: 0.25))
                         .background(selectedCategory == category ? Color(red: 0.86, green: 0.18, blue: 0.52) : .white.opacity(0.74), in: Capsule())
                 }
@@ -820,17 +840,20 @@ private struct CategoryStrip: View {
 
 private struct AssetGrid: View {
     let compact: Bool
+    var isIPad: Bool = false
     let assets: [MoriAsset]
     let isUnlocked: (MoriAsset) -> Bool
     let onLocked: (MoriAsset) -> Void
     let onSelect: (MoriAsset) -> Void
 
     var body: some View {
+        let minWidth: CGFloat = compact ? 64 : (isIPad ? 100 : 78)
+        let gridSpacing: CGFloat = compact ? 6 : (isIPad ? 12 : 8)
         let columns = [
-            GridItem(.adaptive(minimum: compact ? 64 : 78), spacing: compact ? 6 : 8)
+            GridItem(.adaptive(minimum: minWidth), spacing: gridSpacing)
         ]
 
-        LazyVGrid(columns: columns, spacing: compact ? 6 : 8) {
+        LazyVGrid(columns: columns, spacing: gridSpacing) {
                 ForEach(assets) { asset in
                     let unlocked = isUnlocked(asset)
                     Button {
@@ -840,29 +863,29 @@ private struct AssetGrid: View {
                         }
                         onSelect(asset)
                     } label: {
-                        VStack(spacing: 4) {
+                        VStack(spacing: isIPad ? 6 : 4) {
                             if let image = BundleImage.load(asset.filename, folder: "Overlays") {
                                 Image(uiImage: image)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: compact ? 34 : 54)
+                                    .frame(height: compact ? 34 : (isIPad ? 72 : 54))
                             }
                             Text(asset.name)
-                                .font(.caption2.weight(.black))
+                                .font((isIPad ? Font.caption : Font.caption2).weight(.black))
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.7)
                             if asset.pack != .free {
                                 Text(unlocked ? asset.pack.title : "LOCK")
-                                    .font(.system(size: 9, weight: .black, design: .rounded))
+                                    .font(.system(size: isIPad ? 11 : 9, weight: .black, design: .rounded))
                                     .lineLimit(1)
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical, 1)
+                                    .padding(.horizontal, isIPad ? 7 : 5)
+                                    .padding(.vertical, isIPad ? 2 : 1)
                                     .foregroundStyle(.white)
                                     .background(Color(red: 0.86, green: 0.18, blue: 0.52), in: Capsule())
                             }
                         }
-                        .frame(width: compact ? 64 : 78, height: compact ? 70 : 92)
-                        .padding(4)
+                        .frame(width: compact ? 64 : (isIPad ? 100 : 78), height: compact ? 70 : (isIPad ? 120 : 92))
+                        .padding(isIPad ? 6 : 4)
                         .opacity(unlocked ? 1 : 0.55)
                         .background(.white.opacity(0.78), in: RoundedRectangle(cornerRadius: 10))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(unlocked ? Color(red: 0.96, green: 0.72, blue: 0.84) : .gray.opacity(0.45), lineWidth: 1))
