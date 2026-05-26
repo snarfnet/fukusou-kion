@@ -51,6 +51,7 @@ struct ContentView: View {
                 VStack(spacing: isCompact ? 6 : 10) {
                     HeaderView(
                         compact: isCompact,
+                        isIPad: isIPad,
                         onAutoMori: autoMori,
                         onStore: { showStore = true },
                         onShare: share,
@@ -363,7 +364,7 @@ private struct StoreSheet: View {
                 }
 
                 Section("法的情報") {
-                    Link("プライバシーポリシー", destination: URL(string: "https://snarfnet.github.io/MorimoriPhotoMaker/privacy")!)
+                    Link("プライバシーポリシー", destination: URL(string: "https://snarfnet.github.io/privacy.html")!)
                     Link("利用規約 (EULA)", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
                 }
             }
@@ -417,6 +418,7 @@ private struct StoreSheet: View {
 
 private struct HeaderView<PhotoPicker: View>: View {
     let compact: Bool
+    var isIPad: Bool = false
     let onAutoMori: () -> Void
     let onStore: () -> Void
     let onShare: () -> Void
@@ -425,14 +427,26 @@ private struct HeaderView<PhotoPicker: View>: View {
 
     var body: some View {
         VStack(spacing: compact ? 6 : 10) {
-            HStack(spacing: compact ? 5 : 8) {
-                photoPicker
-                Button("ショップ", action: onStore)
-                Button("おまかせ盛り", action: onAutoMori)
-                Button("共有", action: onShare)
-                Button("保存", action: onSave)
+            if isIPad {
+                HStack(spacing: 14) {
+                    photoPicker
+                    Button("ショップ", action: onStore)
+                    Button("おまかせ盛り", action: onAutoMori)
+                    Spacer()
+                    Button("共有", action: onShare)
+                    Button("保存", action: onSave)
+                }
+                .buttonStyle(CandyButtonStyle(compact: false))
+            } else {
+                HStack(spacing: compact ? 5 : 8) {
+                    photoPicker
+                    Button("ショップ", action: onStore)
+                    Button("おまかせ盛り", action: onAutoMori)
+                    Button("共有", action: onShare)
+                    Button("保存", action: onSave)
+                }
+                .buttonStyle(CandyButtonStyle(compact: compact))
             }
-            .buttonStyle(CandyButtonStyle(compact: compact))
         }
     }
 }
