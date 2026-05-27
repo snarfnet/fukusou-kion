@@ -81,21 +81,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pyjwt cryptography requests
 
-      - name: Create distribution certificate
-        env:
-          ASC_P8_PATH: /tmp/asc_key.p8
-          BUILD_KEYCHAIN: build.keychain
-          KEYCHAIN_PASSWORD: temporary-keychain-password
-        shell: bash
-        run: |
-          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
-          security set-keychain-settings -lut 21600 build.keychain
-          . .venv/bin/activate
-          python scripts/create_distribution_certificate.py | tee /tmp/chiebukuro-hakase-cert.log
-          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/chiebukuro-hakase-cert.log >> "$GITHUB_ENV"
-
       - name: Resolve App Store Connect app
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -103,13 +88,6 @@ jobs:
           . .venv/bin/activate
           python scripts/resolve_app_by_bundle.py | tee /tmp/chiebukuro-hakase-app.log
           grep '^APP_ID=' /tmp/chiebukuro-hakase-app.log >> "$GITHUB_ENV"
-
-      - name: Prepare provisioning profile
-        env:
-          ASC_P8_PATH: /tmp/asc_key.p8
-        run: |
-          . .venv/bin/activate
-          python scripts/prepare_profile.py
 
       - name: Generate Xcode project
         run: xcodegen generate
@@ -137,10 +115,8 @@ jobs:
             -authenticationKeyPath "$ASC_P8_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM=83VGKGSQUH \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID"
 
       - name: Export IPA
@@ -149,8 +125,7 @@ jobs:
         shell: bash
         run: |
           /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist || true
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" exportOptions.plist
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Delete :signingStyle" exportOptions.plist || true
           xcodebuild -exportArchive \
             -archivePath build/ChiebukuroHakase.xcarchive \
             -exportOptionsPlist exportOptions.plist \
