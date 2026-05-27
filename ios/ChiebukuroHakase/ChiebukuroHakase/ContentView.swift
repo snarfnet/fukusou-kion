@@ -1,7 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    private let wisdoms = WisdomStore.load()
+    let wisdoms: [WisdomItem]
+    let favorites: FavoritesManager
+    let tracker: ReadingTracker
+    let notificationManager: NotificationManager
+
     private let isEnglish = Locale.preferredLanguages.first?.hasPrefix("en") == true
 
     @State private var currentIndex = 0
@@ -10,9 +14,6 @@ struct ContentView: View {
     @State private var isPaused = false
     @State private var typingTask: Task<Void, Never>?
     @State private var showFavorites = false
-    @State private var showSettings = false
-    @State private var favorites = FavoritesManager()
-    @State private var notificationManager = NotificationManager()
 
     private var currentWisdom: WisdomItem {
         wisdoms[currentIndex]
@@ -51,9 +52,6 @@ struct ContentView: View {
             FavoritesView(wisdoms: wisdoms, favorites: favorites) { index in
                 start(at: index)
             }
-        }
-        .sheet(isPresented: $showSettings) {
-            SettingsView(notificationManager: notificationManager, wisdoms: wisdoms)
         }
     }
 
@@ -94,23 +92,16 @@ struct ContentView: View {
 
             Spacer()
 
-            HStack(spacing: 10) {
-                Button { showFavorites = true } label: {
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.white.opacity(0.85))
-                }
-
-                Button { showSettings = true } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.white.opacity(0.85))
-                }
+            Button { showFavorites = true } label: {
+                Image(systemName: "heart.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.white.opacity(0.85))
             }
             .padding(.top, 6)
         }
         .padding(.horizontal, 22)
         .padding(.top, 20)
+        .padding(.bottom, 8)
     }
 
     private var typewriterArea: some View {
@@ -215,6 +206,7 @@ struct ContentView: View {
         isPaused = false
         currentIndex = wrapped(rawIndex)
         typedText = ""
+        tracker.markRead(currentWisdom.id)
         typingTask = Task { await typeCurrentWisdom() }
     }
 
@@ -275,8 +267,4 @@ struct ContentView: View {
         let count = wisdoms.count
         return (index % count + count) % count
     }
-}
-
-#Preview {
-    ContentView()
 }
