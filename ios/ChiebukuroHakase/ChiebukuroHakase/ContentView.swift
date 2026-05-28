@@ -35,6 +35,7 @@ struct ContentView: View {
                 typewriterArea
                 controls
             }
+            .frame(maxWidth: 640)
             .safeAreaPadding(.bottom)
             .ignoresSafeArea(.keyboard)
         }
@@ -56,24 +57,45 @@ struct ContentView: View {
     }
 
     private var background: some View {
-        ZStack {
-            Image("ChiebukuroBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+        GeometryReader { proxy in
+            let size = proxy.size
+            let isWideLayout = min(size.width, size.height) >= 700
 
-            LinearGradient(
-                colors: [.black.opacity(0.62), .black.opacity(0.18), .black.opacity(0.82)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            ZStack {
+                Color.black
 
-            LinearGradient(
-                colors: [.black.opacity(0.52), .clear, .black.opacity(0.45)],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
+                Image("ChiebukuroBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: size.width, height: size.height)
+                    .clipped()
+                    .blur(radius: isWideLayout ? 12 : 0)
+                    .opacity(isWideLayout ? 0.72 : 1)
+
+                if isWideLayout {
+                    Image("ChiebukuroBackground")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(
+                            width: min(size.width * 0.72, 620),
+                            height: size.height * 0.96
+                        )
+                        .shadow(color: .black.opacity(0.7), radius: 22, y: 8)
+                }
+
+                LinearGradient(
+                    colors: [.black.opacity(0.62), .black.opacity(0.18), .black.opacity(0.82)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                LinearGradient(
+                    colors: [.black.opacity(0.52), .clear, .black.opacity(0.45)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+            .frame(width: size.width, height: size.height)
             .ignoresSafeArea()
         }
     }
