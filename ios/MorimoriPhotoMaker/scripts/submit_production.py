@@ -21,25 +21,29 @@ SCREENSHOT_GROUPS = [
 
 META = {
     "ja": {
-        "description": """盛り盛りフォトメーカーは、写真に髪型、メイク、メガネ、ネイル、感情スタンプ、小物を重ねて遊べる写真デコアプリです。
+        "description": """Morimori Photo Maker lets you decorate photos with hair, makeup, glasses, nails, emotion stickers, and cute accessories.
 
-写真を選んだら、好きなカテゴリーから素材をタップするだけ。位置、大きさ、回転、透明度を調整して、自分だけの盛り盛り画像を作れます。
+Pick a photo, tap a decoration, then adjust position, scale, rotation, and opacity. Save the finished image to Photos and share it with friends or on social media.
 
-無料素材に加えて、韓国風、姫盛り、昭和バブル、ヤンキー、ネイル、感情素材などのパックも用意しています。単品パックで必要な素材だけ追加したり、月額サブスクでロック素材をまとめて使ったりできます。
+Free items are included. Optional single packs and an auto-renewable All Access monthly subscription are available in the in-app shop.
 
-作った画像は写真アプリに保存できます。SNS用のプロフィール画像、友だちへのネタ画像、イベント前の盛り加工にどうぞ。""",
-        "keywords": "写真加工,デコ,盛り,メイク,髪型,メガネ,ネイル,スタンプ,かわいい,サブスク",
-        "whatsNew": "初回リリースです。",
-        "promotionalText": "写真にメイク、髪型、メガネ、ネイルを重ねて、かわいく盛れる写真デコアプリ。",
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy Policy: https://snarfnet.github.io/privacy.html""",
+        "keywords": "photo,decoration,makeup,hair,glasses,nails,stickers,kawaii,selfie,editor",
+        "whatsNew": "Initial release.",
+        "promotionalText": "Decorate photos with cute makeup, hair, glasses, nails, and stickers.",
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
-        "description": """Morimori Photo Maker is a cute photo decoration app for layering hairstyles, makeup, glasses, nails, emotion stickers, and accessories onto your photos.
+        "description": """Morimori Photo Maker lets you decorate photos with hair, makeup, glasses, nails, emotion stickers, and cute accessories.
 
-Pick a photo, tap a decoration, then adjust position, scale, rotation, and opacity. Create a playful edited image for your album, profile, or social posts.
+Pick a photo, tap a decoration, then adjust position, scale, rotation, and opacity. Save the finished image to Photos and share it with friends or on social media.
 
-Use free items, buy individual themed packs, or subscribe monthly to unlock all locked items.""",
+Free items are included. Optional single packs and an auto-renewable All Access monthly subscription are available in the in-app shop.
+
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy Policy: https://snarfnet.github.io/privacy.html""",
         "keywords": "photo,decoration,makeup,hair,glasses,nails,stickers,kawaii,selfie,editor",
         "whatsNew": "Initial release.",
         "promotionalText": "Decorate photos with cute makeup, hair, glasses, nails, and stickers.",
@@ -202,7 +206,7 @@ def update_app_info_localizations(app_info_id):
     localizations = list_all(f"/appInfos/{app_info_id}/appInfoLocalizations?limit=20")
     for loc in localizations:
         locale = loc["attributes"].get("locale")
-        subtitle = "写真をかわいく盛れるデコアプリ" if locale == "ja" else "Cute photo decoration"
+        subtitle = "Cute photo decoration"
         response = api("PATCH", f"/appInfoLocalizations/{loc['id']}", data=json_body({
             "data": {
                 "type": "appInfoLocalizations",
@@ -288,7 +292,7 @@ def ensure_review_detail(version_id):
         "contactPhone": "+1 844 209 0611",
         "contactEmail": "support@snarfnet.github.io",
         "demoAccountRequired": False,
-        "notes": "ログイン不要です。写真は端末内で処理します。アプリ内課金はStoreKitで単品パック購入と月額サブスクに対応しています。",
+        "notes": "No login is required. Photos are processed on device. The subscription purchase screen includes functional Terms of Use (EULA) and Privacy Policy links. The App Store description also includes both links.",
     }
     response = api("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
     body = response.json() if response.text else {}

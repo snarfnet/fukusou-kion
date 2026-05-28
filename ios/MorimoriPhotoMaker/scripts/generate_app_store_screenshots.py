@@ -103,11 +103,11 @@ def draw_app_frame(base, box, variant):
     pad = int(w * 0.035)
     stage = (x1 + pad, y1 + header_h + pad, x2 - pad, y2 - tabs_h - tray_h - pad)
 
-    buttons = ["写真", "ショップ", "おまかせ盛り", "共有", "保存"]
+    buttons = ["Photo", "Shop", "Auto", "Share", "Save"]
     bx = x1 + pad
     by = y1 + int(header_h * 0.2)
     for label in buttons:
-        bw = int(w * (0.15 if label != "おまかせ盛り" else 0.22))
+        bw = int(w * (0.15 if label != "Auto" else 0.22))
         rounded(draw, (bx, by, bx + bw, by + int(header_h * 0.62)), 18, (255, 105, 174))
         centered(draw, (bx + bw // 2, by + int(header_h * 0.31)), label, (255, 255, 255), max(18, int(w * 0.024)), True)
         bx += bw + int(w * 0.018)
@@ -127,7 +127,7 @@ def draw_app_frame(base, box, variant):
         add_sample_deco(base, stage, variant)
 
     tab_y = y2 - tabs_h - tray_h
-    tabs = ["ヘア", "メガネ", "ネイル", "感情", "小物"]
+    tabs = ["Hair", "Glasses", "Nails", "Mood", "Items"]
     tx = x1 + pad
     for index, label in enumerate(tabs):
         tw = int((w - pad * 2) / len(tabs) - 7)
@@ -168,21 +168,21 @@ def draw_shop_content(draw, stage):
     sx1, sy1, sx2, sy2 = stage
     sw, sh = sx2 - sx1, sy2 - sy1
     title_size = max(24, int(sw * 0.05))
-    text(draw, (sx1 + 34, sy1 + 38), "素材ショップ", (112, 38, 92), title_size, True)
+    text(draw, (sx1 + 34, sy1 + 38), "Decoration Shop", (112, 38, 92), title_size, True)
     rows = [
-        ("月額サブスク", "全ロック素材が使い放題", "680円"),
-        ("姫盛りパック", "ティアラ・リボン・姫ヘア", "200円"),
-        ("キャバ嬢ネイルパック", "50枚のネイル素材", "300円"),
-        ("韓国ヘアパック", "15枚のヘア素材", "200円"),
+        ("All Access", "Unlock every locked decoration pack", "Subscribe"),
+        ("Princess Pack", "Tiaras, ribbons, and cute hair items", "View"),
+        ("Cabaret Nail Pack", "Glossy nail decorations", "View"),
+        ("Korean Hair Pack", "Trendy hair decorations", "View"),
     ]
     y = sy1 + int(sh * 0.18)
-    for index, (name, detail, price) in enumerate(rows):
+    for index, (name, detail, action_label) in enumerate(rows):
         fill = (255, 239, 249) if index else (255, 221, 241)
         rounded(draw, (sx1 + 28, y, sx2 - 28, y + int(sh * 0.16)), 22, fill, (244, 150, 204), 2)
         text(draw, (sx1 + 54, y + int(sh * 0.055)), name, (104, 36, 88), max(20, int(sw * 0.038)), True)
         text(draw, (sx1 + 54, y + int(sh * 0.105)), detail, (126, 75, 105), max(16, int(sw * 0.026)))
-        rounded(draw, (sx2 - 160, y + 26, sx2 - 48, y + int(sh * 0.16) - 26), 18, (230, 45, 135))
-        centered(draw, (sx2 - 104, y + int(sh * 0.08)), price, (255, 255, 255), max(16, int(sw * 0.026)), True)
+        rounded(draw, (sx2 - 190, y + 26, sx2 - 48, y + int(sh * 0.16) - 26), 18, (230, 45, 135))
+        centered(draw, (sx2 - 119, y + int(sh * 0.08)), action_label, (255, 255, 255), max(16, int(sw * 0.026)), True)
         y += int(sh * 0.18)
 
 
@@ -209,7 +209,7 @@ def draw_asset_tray(base, box, variant):
             base.paste(image, (ax + (size - image.width) // 2, ay + (size - image.height) // 2), image)
         if locked:
             rounded(draw, (ax + size - 42, ay + 8, ax + size - 8, ay + 42), 13, (84, 35, 82))
-            centered(draw, (ax + size - 25, ay + 25), "鍵", (255, 255, 255), max(15, size // 6), True)
+            centered(draw, (ax + size - 25, ay + 25), "Lock", (255, 255, 255), max(12, size // 8), True)
         ax += size + gap
 
 
@@ -250,9 +250,9 @@ def main():
     iphone67 = (1290, 2796)
     ipad129 = (2048, 2732)
     shots = [
-        ("写真を選んで、すぐ盛れる", "髪型・メガネ・ネイルを重ねて編集", "edit"),
-        ("パックで世界観を追加", "姫盛り、韓国風、ネイルまでまとめて選べる", "shop"),
-        ("サブスクで全部解放", "月額680円でロック素材が使い放題", "all"),
+        ("Pick a photo and decorate", "Layer hair, glasses, nails, and stickers", "edit"),
+        ("Add themed packs", "Choose from princess, Korean style, nails, and more", "shop"),
+        ("Unlock more decorations", "Use single packs or All Access from the shop", "all"),
     ]
     for index, (title, subtitle, variant) in enumerate(shots, 1):
         screenshot(iphone67, title, subtitle, f"iphone67_{index:02d}.png", variant)

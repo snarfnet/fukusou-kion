@@ -325,23 +325,31 @@ private struct StoreSheet: View {
         NavigationStack {
             List {
                 if let product = purchaseStore.subscriptionProduct {
-                    Section("サブスク") {
+                    Section("Subscription") {
                         productRow(
-                            title: "全ロック素材使い放題",
-                            detail: "すべての課金パックを月額で解放",
+                            title: "All Access Monthly",
+                            detail: "Auto-renews every month. Unlocks all paid decoration packs.",
                             price: product.displayPrice,
                             action: { Task { await purchaseStore.purchase(product) } }
                         )
                     }
+
+                    Section("Subscription Info") {
+                        Link("Terms of Use (EULA)", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                        Link("Privacy Policy", destination: URL(string: "https://snarfnet.github.io/privacy.html")!)
+                        Text("You can manage or cancel this subscription from your Apple ID subscription settings after purchase.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
-                Section("単品パック") {
+                Section("Packs") {
                     ForEach(MoriPack.allCases.filter { $0.productID != nil }) { pack in
                         let product = purchaseStore.product(for: pack)
                         productRow(
                             title: pack.title,
-                            detail: pack.itemCount.map { "\($0)点" } ?? "追加素材",
-                            price: product?.displayPrice ?? pack.priceYen.map { "\($0)円" } ?? "",
+                            detail: pack.itemCount.map { "\($0) items" } ?? "Decoration items",
+                            price: product?.displayPrice ?? pack.priceYen.map { "JPY \($0)" } ?? "",
                             highlighted: pack == promptPack,
                             purchased: purchaseStore.purchasedPacks.contains(pack),
                             action: {
@@ -353,21 +361,21 @@ private struct StoreSheet: View {
                 }
 
                 Section {
-                    Button("購入を復元") {
+                    Button("Restore Purchases") {
                         Task { await purchaseStore.restore() }
                     }
                 }
             }
-            .navigationTitle("ショップ")
+            .navigationTitle("Shop")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("閉じる") { dismiss() }
+                    Button("Close") { dismiss() }
                 }
             }
             .task {
                 await purchaseStore.load()
             }
-            .alert("お知らせ", isPresented: Binding(get: { purchaseStore.errorMessage != nil }, set: { if !$0 { purchaseStore.errorMessage = nil } })) {
+            .alert("Notice", isPresented: Binding(get: { purchaseStore.errorMessage != nil }, set: { if !$0 { purchaseStore.errorMessage = nil } })) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(purchaseStore.errorMessage ?? "")
@@ -393,11 +401,11 @@ private struct StoreSheet: View {
             }
             Spacer()
             if purchased {
-                Text("購入済み")
+                Text("Purchased")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
             } else {
-                Button(price.isEmpty ? "読み込み中" : price, action: action)
+                Button(price.isEmpty ? "Loading" : price, action: action)
                     .disabled(price.isEmpty)
                     .buttonStyle(.borderedProminent)
             }
