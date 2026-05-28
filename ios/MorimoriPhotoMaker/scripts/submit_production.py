@@ -402,6 +402,7 @@ def assign_build(version_id, build_id):
 
 
 def cancel_open_review_submissions(app_id):
+    canceled_ids = set()
     body = api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=20")
     for submission in body.get("data", []):
         state = submission.get("attributes", {}).get("state")
@@ -414,6 +415,17 @@ def cancel_open_review_submissions(app_id):
                 }
             }))
             print(f"Canceled review submission {submission['id']}: {response.status_code}")
+            if response.status_code in (200, 202):
+                canceled_ids.add(submission["id"])
+    return canceled_ids
+
+
+def review_submission_state(submission_id):
+    response = api("GET", f"/reviewSubmissions/{submission_id}")
+    if response.status_code != 200:
+        print(f"Review submission state lookup {submission_id}: {response.status_code}")
+        return None
+    return response.json().get("data", {}).get("attributes", {}).get("state")
 
 
 def ready_review_submission_id(app_id):
@@ -425,7 +437,10 @@ def ready_review_submission_id(app_id):
 
 
 def submit_for_review(app_id, version_id):
-    cancel_open_review_submissions(app_id)
+    canceled_ids = cancel_open_review_submissions(app_id)
+    if canceled_ids:
+        print("Waiting for canceled review submissions to detach...")
+        time.sleep(120)
     submission_id = ready_review_submission_id(app_id)
     if not submission_id:
         submission_id = api_json("POST", "/reviewSubmissions", data=json_body({
@@ -436,7 +451,8 @@ def submit_for_review(app_id, version_id):
             }
         }))["data"]["id"]
 
-    for attempt in range(20):
+    item_added = False
+    for attempt in range(1, 61):
         response = api("POST", "/reviewSubmissionItems", data=json_body({
             "data": {
                 "type": "reviewSubmissionItems",
@@ -446,8 +462,9 @@ def submit_for_review(app_id, version_id):
                 },
             }
         }))
-        print(f"Review item {attempt + 1}/20: {response.status_code}")
+        print(f"Review item {attempt}/60: {response.status_code}")
         if response.status_code == 201:
+            item_added = True
             break
         if response.status_code == 409 and "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
             time.sleep(60)
@@ -455,12 +472,32 @@ def submit_for_review(app_id, version_id):
         if response.status_code == 409 and "ITEM_PART_OF_ANOTHER_SUBMISSION" in response.text:
             match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", response.text)
             if match:
-                submission_id = match.group(1)
-                break
-        if response.status_code != 409:
+                other_id = match.group(1)
+                other_state = review_submission_state(other_id)
+                print(f"Review item already belongs to {other_id} state={other_state}")
+                if other_state == "READY_FOR_REVIEW":
+                    submission_id = other_id
+                    item_added = True
+                    break
+                if other_state in ("UNRESOLVED_ISSUES", "WAITING_FOR_REVIEW"):
+                    canceled_ids.update(cancel_open_review_submissions(app_id))
+                if other_id in canceled_ids or other_state in ("CANCELED", "CANCELING", "REJECTED"):
+                    submission_id = api_json("POST", "/reviewSubmissions", data=json_body({
+                        "data": {
+                            "type": "reviewSubmissions",
+                            "attributes": {"platform": "IOS"},
+                            "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+                        }
+                    }))["data"]["id"]
+                time.sleep(60)
+                continue
+        if response.status_code == 409:
             time.sleep(30)
             continue
         raise RuntimeError(f"Review item blocked: {response.text[:4000]}")
+
+    if not item_added:
+        raise RuntimeError("Review item could not be added to a submittable review submission.")
 
     for attempt in range(1, 31):
         response = api("PATCH", f"/reviewSubmissions/{submission_id}", data=json_body({
