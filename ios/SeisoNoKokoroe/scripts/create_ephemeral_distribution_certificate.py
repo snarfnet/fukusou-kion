@@ -93,6 +93,29 @@ def revoke_expired_certificate():
     return True
 
 
+def revoke_generated_certificate():
+    candidates = []
+    for cert in list_certificates():
+        attrs = cert.get("attributes", {})
+        haystack = " ".join(
+            str(attrs.get(key, ""))
+            for key in ("name", "displayName", "certificateType", "serialNumber")
+        )
+        print(f"Distribution certificate: {cert['id']} {haystack}", file=sys.stderr, flush=True)
+        if "SeisoNoKokoroe" in haystack or "SeisoNoKokoroe GitHub Actions" in haystack:
+            candidates.append(cert)
+
+    if not candidates:
+        return False
+
+    for cert in candidates:
+        response, _ = request("DELETE", f"/certificates/{cert['id']}")
+        if response.status_code not in (200, 204):
+            raise RuntimeError(f"Generated certificate revoke failed {response.status_code}: {response.text[:500]}")
+        print(f"Revoked generated certificate: {cert['id']}", file=sys.stderr, flush=True)
+    return True
+
+
 def generate_csr():
     CERT_DIR.mkdir(parents=True, exist_ok=True)
     subprocess.run(["openssl", "genrsa", "-out", str(PRIVATE_KEY_PATH), "2048"], check=True)
@@ -124,10 +147,11 @@ def create_certificate(csr):
     if response.status_code in (200, 201):
         return body["data"]
 
-    if response.status_code == 409 and revoke_expired_certificate():
-        response, body = request("POST", "/certificates", json=payload)
-        if response.status_code in (200, 201):
-            return body["data"]
+    if response.status_code == 409:
+        if revoke_expired_certificate() or revoke_generated_certificate():
+            response, body = request("POST", "/certificates", json=payload)
+            if response.status_code in (200, 201):
+                return body["data"]
 
     raise RuntimeError(f"Certificate create failed {response.status_code}: {response.text[:500]}")
 
