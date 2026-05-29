@@ -29,6 +29,7 @@ SCREENSHOT_GROUPS = [
     ("APP_IPHONE_55", "iphone55", 3),
     ("APP_IPAD_PRO_3GEN_129", "ipad129", 3),
 ]
+METADATA_FIELDS = ("description", "keywords", "promotionalText", "supportUrl")
 
 META = {
     "ja": {
@@ -44,6 +45,7 @@ META = {
         "keywords": "\u6383\u9664,\u8c46\u77e5\u8b58,\u98a8\u6c34,\u30bf\u30a4\u30de\u30fc,\u30ad\u30c3\u30c1\u30f3,\u6d74\u5ba4,\u30c8\u30a4\u30ec,\u7384\u95a2,\u6383\u9664\u6a5f,\u30d2\u30f3\u30c8",
         "whatsNew": "\u306f\u3058\u3081\u3066\u306e\u30ea\u30ea\u30fc\u30b9\u3067\u3059\u3002",
         "promotionalText": "\u6383\u9664\u306e\u8c46\u77e5\u8b58\u3001\u98a8\u6c34\u3001\u30bf\u30a4\u30de\u30fc\u3092\u3072\u3068\u3064\u306b\u3002",
+        "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": (
@@ -56,6 +58,7 @@ META = {
         "keywords": "cleaning,tips,feng shui,timer,kitchen,bathroom,toilet,housework,broom,hint",
         "whatsNew": "Initial release.",
         "promotionalText": "Cleaning tips, feng shui, and a broom timer in one app.",
+        "supportUrl": "https://snarfnet.github.io/",
     },
 }
 
@@ -194,11 +197,12 @@ def update_metadata(version_id):
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
         meta = META.get(locale, META["en-US"])
+        editable_meta = {key: meta[key] for key in METADATA_FIELDS if key in meta}
         payload = {
             "data": {
                 "type": "appStoreVersionLocalizations",
                 "id": loc["id"],
-                "attributes": meta,
+                "attributes": editable_meta,
             }
         }
         response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json=payload)
