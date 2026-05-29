@@ -53,6 +53,8 @@ def find_bundle_id():
 
 
 def find_distribution_certificate():
+    if os.environ.get("CERTIFICATE_ID"):
+        return os.environ["CERTIFICATE_ID"]
     for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
         data = api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", [])
         if data:
