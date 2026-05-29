@@ -102,7 +102,7 @@ def revoke_generated_certificate():
             for key in ("name", "displayName", "certificateType", "serialNumber")
         )
         print(f"Distribution certificate: {cert['id']} {haystack}", file=sys.stderr, flush=True)
-        if "SeisoNoKokoroe" in haystack or "SeisoNoKokoroe GitHub Actions" in haystack:
+        if attrs.get("certificateType") == "IOS_DISTRIBUTION":
             candidates.append(cert)
 
     if not candidates:
