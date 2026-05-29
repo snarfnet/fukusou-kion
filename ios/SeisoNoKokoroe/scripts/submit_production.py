@@ -339,6 +339,7 @@ def submit_for_review(app_id, version_id):
     if response.status_code != 201:
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
     submission_id = body["data"]["id"]
+    last_item_error = ""
     for attempt in range(20):
         response = api("POST", "/reviewSubmissionItems", json={
             "data": {
@@ -352,7 +353,11 @@ def submit_for_review(app_id, version_id):
         print(f"Review item {attempt + 1}/20: {response.status_code}")
         if response.status_code == 201:
             break
+        last_item_error = response.text[:1000]
+        print(last_item_error)
         time.sleep(30)
+    else:
+        raise RuntimeError(f"Review item create failed after 20 attempts: {last_item_error}")
     response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
         "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
     })
