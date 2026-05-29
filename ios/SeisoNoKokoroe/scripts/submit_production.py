@@ -308,27 +308,31 @@ def assign_build(version_id, build_id):
 
 def cancel_blocking_submissions(app_id):
     canceled = False
-    for state in ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW"):
-        response, body = api_json("GET", f"/apps/{app_id}/reviewSubmissions?filter[state]={state}&limit=200")
-        if response.status_code != 200:
+    response, body = api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=200")
+    if response.status_code != 200:
+        return
+    for submission in body.get("data", []):
+        submission_id = submission["id"]
+        state = submission.get("attributes", {}).get("state")
+        print(f"Review submission {submission_id}: {state}")
+        if state in ("IN_REVIEW", "COMPLETE", "CANCELED"):
             continue
-        for submission in body.get("data", []):
-            submission_id = submission["id"]
-            response = api("PATCH", f"/reviewSubmissions/{submission_id}", json={
-                "data": {
-                    "type": "reviewSubmissions",
-                    "id": submission_id,
-                    "attributes": {"canceled": True},
-                }
-            })
-            print(f"Canceled {submission_id}: {response.status_code}")
-            canceled = True
+        response = api("PATCH", f"/reviewSubmissions/{submission_id}", json={
+            "data": {
+                "type": "reviewSubmissions",
+                "id": submission_id,
+                "attributes": {"canceled": True},
+            }
+        })
+        print(f"Canceled {submission_id}: {response.status_code} {response.text[:300]}")
+        canceled = True
     if canceled:
         print("Waiting for cancellation to propagate...")
-        time.sleep(30)
+        time.sleep(90)
 
 
 def submit_for_review(app_id, version_id):
+    cancel_blocking_submissions(app_id)
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
             "type": "reviewSubmissions",
