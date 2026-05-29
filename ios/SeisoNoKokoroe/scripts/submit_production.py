@@ -333,6 +333,32 @@ def cancel_blocking_submissions(app_id):
 
 def submit_for_review(app_id, version_id):
     cancel_blocking_submissions(app_id)
+    existing_response, existing_body = api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=200")
+    if existing_response.status_code == 200:
+        for submission in existing_body.get("data", []):
+            submission_id = submission["id"]
+            state = submission.get("attributes", {}).get("state")
+            if state != "READY_FOR_REVIEW":
+                continue
+            print(f"Using existing READY_FOR_REVIEW submission: {submission_id}")
+            item_response = api("POST", "/reviewSubmissionItems", json={
+                "data": {
+                    "type": "reviewSubmissionItems",
+                    "relationships": {
+                        "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                        "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                    },
+                }
+            })
+            print(f"Existing review item: {item_response.status_code} {item_response.text[:500]}")
+            response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
+                "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+            })
+            print(f"Existing review submit: {response.status_code} {response.text[:500]}")
+            if response.status_code == 200:
+                print(f"Submitted existing review submission: {body['data']['attributes']['state']}")
+                return
+
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
             "type": "reviewSubmissions",
