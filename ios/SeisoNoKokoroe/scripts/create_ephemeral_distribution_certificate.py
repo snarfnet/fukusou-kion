@@ -150,6 +150,12 @@ def export_p12(certificate):
             str(P12_PATH),
             "-passout",
             f"pass:{P12_PASSWORD}",
+            "-certpbe",
+            "PBE-SHA1-3DES",
+            "-keypbe",
+            "PBE-SHA1-3DES",
+            "-macalg",
+            "sha1",
         ],
         check=True,
     )
