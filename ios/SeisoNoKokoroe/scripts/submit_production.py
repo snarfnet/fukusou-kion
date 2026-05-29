@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import sys
 import time
@@ -93,6 +94,13 @@ def api_json(method, path, **kwargs):
     except Exception:
         body = {}
     return response, body
+
+
+def response_detail(response, limit=8000):
+    try:
+        return json.dumps(response.json(), ensure_ascii=False, indent=2)[:limit]
+    except Exception:
+        return response.text[:limit]
 
 
 def list_all(path):
@@ -195,6 +203,8 @@ def update_metadata(version_id):
         }
         response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json=payload)
         print(f"Metadata {locale}: {response.status_code}")
+        if response.status_code >= 400:
+            print(response_detail(response))
 
 
 def update_review_detail(version_id):
@@ -324,7 +334,7 @@ def cancel_blocking_submissions(app_id):
                 "attributes": {"canceled": True},
             }
         })
-        print(f"Canceled {submission_id}: {response.status_code} {response.text[:300]}")
+        print(f"Canceled {submission_id}: {response.status_code} {response_detail(response)}")
         canceled = True
     if canceled:
         print("Waiting for cancellation to propagate...")
@@ -350,11 +360,11 @@ def submit_for_review(app_id, version_id):
                     },
                 }
             })
-            print(f"Existing review item: {item_response.status_code} {item_response.text[:500]}")
+            print(f"Existing review item: {item_response.status_code} {response_detail(item_response)}")
             response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
                 "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
             })
-            print(f"Existing review submit: {response.status_code} {response.text[:500]}")
+            print(f"Existing review submit: {response.status_code} {response_detail(response)}")
             if response.status_code == 200:
                 print(f"Submitted existing review submission: {body['data']['attributes']['state']}")
                 return
@@ -383,7 +393,7 @@ def submit_for_review(app_id, version_id):
         print(f"Review item {attempt + 1}/20: {response.status_code}")
         if response.status_code == 201:
             break
-        last_item_error = response.text[:1000]
+        last_item_error = response_detail(response)
         print(last_item_error)
         time.sleep(30)
     else:
