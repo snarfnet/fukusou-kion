@@ -1,9 +1,9 @@
 import AudioToolbox
-import Observation
+import Combine
 import SwiftUI
 
 struct ContentView: View {
-    @State private var viewModel = CleaningViewModel()
+    @StateObject private var viewModel = CleaningViewModel()
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -295,22 +295,22 @@ struct ContentView: View {
     }
 }
 
-@Observable
-final class CleaningViewModel {
+@MainActor
+final class CleaningViewModel: ObservableObject {
     let allTips: [CleaningTip] = CleaningData.makeTips()
-    var filteredTips: [CleaningTip] = []
-    var categories: [String] = ["すべて"]
-    var selectedCategory = "すべて"
-    var query = ""
-    var tipIndex = 0
-    var typedText = ""
-    var caretVisible = true
-    var isStreamPaused = false
-    var recentKeys: [String] = []
-    var selectedMinutes = 10
-    var remainingSeconds = 600
-    var isTimerRunning = false
-    var showingAlarm = false
+    @Published var filteredTips: [CleaningTip] = []
+    @Published var categories: [String] = ["すべて"]
+    @Published var selectedCategory = "すべて"
+    @Published var query = ""
+    @Published var tipIndex = 0
+    @Published var typedText = ""
+    @Published var caretVisible = true
+    @Published var isStreamPaused = false
+    @Published var selectedMinutes = 10
+    @Published var remainingSeconds = 600
+    @Published var isTimerRunning = false
+    @Published var showingAlarm = false
+    private var recentKeys: [String] = []
 
     private var typeTask: Task<Void, Never>?
     private var streamTask: Task<Void, Never>?

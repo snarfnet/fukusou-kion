@@ -203,7 +203,10 @@ def update_review_detail(version_id):
         "demoAccountRequired": False,
         "demoAccountName": "",
         "demoAccountPassword": "",
-        "notes": "Cleaning tips app with feng shui suggestions and a broom-hand timer. No login required.",
+        "notes": (
+            "Cleaning tips app with daily cleaning suggestions and a broom-hand timer. No login required. "
+            "This build fixes the launch issue and replaces screenshots with App Store images that do not include non-iOS status bars."
+        ),
     }
     response, body = api_json("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
     if response.status_code == 200 and body.get("data"):
