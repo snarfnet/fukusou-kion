@@ -14,6 +14,7 @@ APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 BUILD_NUMBER = os.environ["BUILD_NUMBER"]
 P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 SCREENSHOT_DIR = "MarketingAssets/Screenshots"
+APP_PRICE_JPY = os.environ.get("APP_PRICE_JPY", "300")
 
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone69_01.png", "iphone69_02.png", "iphone69_03.png"]),
@@ -170,7 +171,56 @@ def ensure_release_prerequisites(version_id):
             "attributes": {"copyright": "2026 Tokyo Nasu", "usesIdfa": False},
         }
     })
+    ensure_jpy_price()
     ensure_review_detail(version_id)
+
+
+def ensure_jpy_price():
+    price_point = find_jpy_price_point(APP_PRICE_JPY)
+    local_id = "${manualPriceJpy}"
+    payload = {
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "JPN"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [{
+            "type": "appPrices",
+            "id": local_id,
+            "attributes": {"startDate": "2026-05-30"},
+            "relationships": {
+                "appPricePoint": {"data": {"type": "appPricePoints", "id": price_point["id"]}}
+            },
+        }],
+    }
+    response = api("POST", "/appPriceSchedules", json=payload)
+    print(f"JPY {APP_PRICE_JPY} price schedule: {response.status_code}")
+    if response.status_code not in (200, 201, 202, 409):
+        raise RuntimeError(f"Price schedule failed {response.status_code}: {response.text[:500]}")
+
+
+def find_jpy_price_point(target):
+    points = list_all(f"/apps/{APP_ID}/appPricePoints?filter[territory]=JPN&limit=200")
+    matches = [point for point in points if price_matches(point, target)]
+    if matches:
+        return matches[0]
+    sample = ", ".join(
+        str(point.get("attributes", {}).get("customerPrice")) for point in points[:20]
+    )
+    raise RuntimeError(f"No JPN app price point found for {target}. Available sample: {sample}")
+
+
+def price_matches(point, target):
+    value = point.get("attributes", {}).get("customerPrice")
+    if value is None:
+        return False
+    try:
+        return int(float(str(value))) == int(float(target))
+    except ValueError:
+        return str(value).strip() == str(target).strip()
 
 
 def update_age_rating(app_info_id):
