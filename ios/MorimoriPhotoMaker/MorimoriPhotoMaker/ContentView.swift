@@ -360,6 +360,16 @@ private struct StoreSheet: View {
                     }
                 }
 
+                Section("Included with All Access") {
+                    ForEach(MoriPack.allCases.filter { $0.productID == nil && $0 != .free }) { pack in
+                        infoRow(
+                            title: pack.title,
+                            detail: pack.itemCount.map { "\($0) items" } ?? "Decoration items",
+                            badge: "All Access"
+                        )
+                    }
+                }
+
                 Section {
                     Button("Restore Purchases") {
                         Task { await purchaseStore.restore() }
@@ -411,6 +421,22 @@ private struct StoreSheet: View {
             }
         }
         .listRowBackground(highlighted ? Color(red: 1.0, green: 0.90, blue: 0.96) : nil)
+    }
+
+    private func infoRow(title: String, detail: String, badge: String) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(badge)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.secondary)
+        }
     }
 }
 

@@ -73,9 +73,7 @@ enum MoriPack: String, CaseIterable, Identifiable {
         case .varietyPack: "com.tokyonasu.morimoriphotomaker.variety"
         case .cabaretNailPack: "com.tokyonasu.morimoriphotomaker.cabaret.nail"
         case .emotionPack: "com.tokyonasu.morimoriphotomaker.emotion"
-        case .moriHiraganaPack1: "com.tokyonasu.morimoriphotomaker.mori.hiragana1"
-        case .moriHiraganaPack2: "com.tokyonasu.morimoriphotomaker.mori.hiragana2"
-        case .moriKatakanaPack: "com.tokyonasu.morimoriphotomaker.mori.katakana"
+        case .moriHiraganaPack1, .moriHiraganaPack2, .moriKatakanaPack: nil
         }
     }
 

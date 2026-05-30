@@ -292,7 +292,7 @@ def ensure_review_detail(version_id):
         "contactPhone": "+1 844 209 0611",
         "contactEmail": "support@snarfnet.github.io",
         "demoAccountRequired": False,
-        "notes": "No login is required. Photos are processed on device. The subscription purchase screen includes functional Terms of Use (EULA) and Privacy Policy links. The App Store description also includes both links.",
+        "notes": "No login is required. Photos are processed on device. To locate the subscription: launch the app, tap the Shop button in the top toolbar, then see the Subscription section at the top of the shop. The All Access Monthly subscription is the first row. The subscription purchase screen includes functional Terms of Use (EULA) and Privacy Policy links. The App Store description also includes both links.",
     }
     response = api("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
     body = response.json() if response.text else {}
