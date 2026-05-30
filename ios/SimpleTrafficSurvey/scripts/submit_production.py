@@ -423,9 +423,10 @@ def find_or_create_review_submission(version_id):
         if related and related.get("id") != version_id:
             continue
         submission_id = submission["id"]
-        ensure_review_submission_version(submission_id, version_id)
-        print(f"Review submission reused: {submission_id}")
-        return submission_id
+        if ensure_review_submission_version(submission_id, version_id):
+            print(f"Review submission reused: {submission_id}")
+            return submission_id
+        delete_review_submission(submission_id)
 
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
@@ -456,11 +457,19 @@ def ensure_review_submission_version(submission_id, version_id):
     })
     print(f"Review submission version: {response.status_code}")
     if response.status_code in (200, 204):
-        return
+        return True
     response = api("PATCH", f"/reviewSubmissions/{submission_id}/relationships/appStoreVersionForReview", json={
         "data": {"type": "appStoreVersions", "id": version_id}
     })
     print(f"Review submission version relationship: {response.status_code}")
+    return response.status_code in (200, 204)
+
+
+def delete_review_submission(submission_id):
+    response = api("DELETE", f"/reviewSubmissions/{submission_id}")
+    print(f"Review submission delete: {response.status_code}")
+    if response.status_code not in (200, 202, 204, 404):
+        raise RuntimeError(f"Review submission delete failed {response.status_code}: {response.text[:500]}")
 
 
 def main():
