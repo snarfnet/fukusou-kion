@@ -11,6 +11,12 @@ on:
         description: "Japan customer price in JPY"
         required: true
         default: "300"
+  push:
+    branches:
+      - codex/simple-traffic-survey-production
+    paths:
+      - ".github/workflows/simple-traffic-survey-submit-existing.yml"
+      - "ios/SimpleTrafficSurvey/scripts/submit_production.py"
 
 concurrency:
   group: simple-traffic-survey-submit-existing
@@ -28,8 +34,8 @@ jobs:
       APP_SKU: simple-traffic-survey-ios
       BUNDLE_NAME: SimpleTrafficSurvey
       APP_VERSION: "1.0"
-      BUILD_NUMBER: ${{ inputs.buildNumber }}
-      APP_PRICE_JPY: ${{ inputs.priceJpy }}
+      BUILD_NUMBER: ${{ inputs.buildNumber || '103' }}
+      APP_PRICE_JPY: ${{ inputs.priceJpy || '300' }}
 
     steps:
       - name: Checkout
