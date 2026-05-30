@@ -2,9 +2,6 @@ name: SimpleTrafficSurvey Production
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/simple-traffic-survey-production
 
 concurrency:
   group: simple-traffic-survey-production
