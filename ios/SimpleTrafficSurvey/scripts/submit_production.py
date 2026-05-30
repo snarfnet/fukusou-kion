@@ -468,8 +468,6 @@ def ensure_review_submission_version(submission_id, version_id):
 def delete_review_submission(submission_id):
     response = api("DELETE", f"/reviewSubmissions/{submission_id}")
     print(f"Review submission delete: {response.status_code}")
-    if response.status_code not in (200, 202, 204, 404):
-        raise RuntimeError(f"Review submission delete failed {response.status_code}: {response.text[:500]}")
 
 
 def main():
