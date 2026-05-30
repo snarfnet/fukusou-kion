@@ -27,6 +27,7 @@ META = {
         "whatsNew": "\u521D\u56DE\u30EA\u30EA\u30FC\u30B9\u3067\u3059\u3002",
         "promotionalText": "\u30B9\u30DE\u30DB\u3092\u56FA\u5B9A\u3057\u3066\u3001\u901A\u884C\u91CF\u3092\u304B\u3093\u305F\u3093\u8A18\u9332\u3002",
         "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": "Simple Traffic Survey turns your iPhone into a simple pedestrian counter.\n\nPlace a count line on the camera view, fix the phone in position, and the app estimates how many people cross the line. It is useful for quick storefront checks, event entrance checks, and rough location comparisons.\n\nVideo is processed on device. Automatic counting is paired with manual +1 / -1 correction so you can adjust counts in the field. This app is intended for approximate surveys, not certified traffic measurement.",
@@ -34,6 +35,7 @@ META = {
         "whatsNew": "Initial release.",
         "promotionalText": "A simple field counter for quick pedestrian traffic checks.",
         "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
 }
 
@@ -423,10 +425,8 @@ def find_or_create_review_submission(version_id):
         if related and related.get("id") != version_id:
             continue
         submission_id = submission["id"]
-        if ensure_review_submission_version(submission_id, version_id):
-            print(f"Review submission reused: {submission_id}")
-            return submission_id
-        delete_review_submission(submission_id)
+        print(f"Review submission reused: {submission_id}")
+        return submission_id
 
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
