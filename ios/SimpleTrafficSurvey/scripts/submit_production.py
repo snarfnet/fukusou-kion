@@ -394,15 +394,19 @@ def submit_for_review(version_id):
         time.sleep(30)
     for attempt in range(3):
         response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
-            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+            "data": {
+                "type": "reviewSubmissions",
+                "id": submission_id,
+                "attributes": {"submitted": True},
+                "relationships": {
+                    "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}}
+                },
+            }
         })
         if response.status_code == 200:
             print(f"Submitted for App Review: {body['data']['attributes']['state']}")
             return
         print(f"Review submit {attempt + 1}/3: {response.status_code}")
-        if response.status_code == 409 and "appStoreVersionForReview" in response.text:
-            submit_app_store_version(version_id)
-            return
         time.sleep(60)
     raise RuntimeError(f"Review submit failed: {response.status_code} {response.text[:500]}")
 
@@ -451,21 +455,12 @@ def ensure_review_submission_version(submission_id, version_id):
         }
     })
     print(f"Review submission version: {response.status_code}")
-
-
-def submit_app_store_version(version_id):
-    response, body = api_json("POST", "/appStoreVersionSubmissions", json={
-        "data": {
-            "type": "appStoreVersionSubmissions",
-            "relationships": {
-                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
-            },
-        }
-    })
-    if response.status_code in (200, 201):
-        print(f"Submitted app store version: {body['data']['id']}")
+    if response.status_code in (200, 204):
         return
-    raise RuntimeError(f"App store version submit failed {response.status_code}: {response.text[:500]}")
+    response = api("PATCH", f"/reviewSubmissions/{submission_id}/relationships/appStoreVersionForReview", json={
+        "data": {"type": "appStoreVersions", "id": version_id}
+    })
+    print(f"Review submission version relationship: {response.status_code}")
 
 
 def main():
