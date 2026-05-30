@@ -398,9 +398,6 @@ def submit_for_review(version_id):
                 "type": "reviewSubmissions",
                 "id": submission_id,
                 "attributes": {"submitted": True},
-                "relationships": {
-                    "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}}
-                },
             }
         })
         if response.status_code == 200:
@@ -431,10 +428,8 @@ def find_or_create_review_submission(version_id):
     response, body = api_json("POST", "/reviewSubmissions", json={
         "data": {
             "type": "reviewSubmissions",
-            "attributes": {"platform": "IOS"},
             "relationships": {
                 "app": {"data": {"type": "apps", "id": APP_ID}},
-                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
             },
         }
     })
