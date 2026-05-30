@@ -377,17 +377,8 @@ def assign_build(version_id, build_id):
 
 
 def submit_for_review(version_id):
-    response, body = api_json("POST", "/reviewSubmissions", json={
-        "data": {
-            "type": "reviewSubmissions",
-            "attributes": {"platform": "IOS"},
-            "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
-        }
-    })
-    if response.status_code not in (200, 201):
-        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
-    submission_id = body["data"]["id"]
-    for attempt in range(20):
+    submission_id = find_or_create_review_submission(version_id)
+    for attempt in range(10):
         response = api("POST", "/reviewSubmissionItems", json={
             "data": {
                 "type": "reviewSubmissionItems",
@@ -397,8 +388,8 @@ def submit_for_review(version_id):
                 },
             }
         })
-        print(f"Review item {attempt + 1}/20: {response.status_code}")
-        if response.status_code == 201:
+        print(f"Review item {attempt + 1}/10: {response.status_code}")
+        if response.status_code in (201, 409):
             break
         time.sleep(30)
     for attempt in range(30):
@@ -411,6 +402,52 @@ def submit_for_review(version_id):
         print(f"Review submit {attempt + 1}/30: {response.status_code}")
         time.sleep(60)
     raise RuntimeError(f"Review submit failed: {response.status_code} {response.text[:500]}")
+
+
+def find_or_create_review_submission(version_id):
+    for submission in list_all(
+        f"/reviewSubmissions?filter[app]={APP_ID}&filter[platform]=IOS&include=appStoreVersionForReview&limit=200"
+    ):
+        state = submission.get("attributes", {}).get("state")
+        if state not in ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES"):
+            continue
+        relationship = submission.get("relationships", {}).get("appStoreVersionForReview", {})
+        related = relationship.get("data")
+        if related and related.get("id") != version_id:
+            continue
+        submission_id = submission["id"]
+        ensure_review_submission_version(submission_id, version_id)
+        print(f"Review submission reused: {submission_id}")
+        return submission_id
+
+    response, body = api_json("POST", "/reviewSubmissions", json={
+        "data": {
+            "type": "reviewSubmissions",
+            "attributes": {"platform": "IOS"},
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
+            },
+        }
+    })
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:500]}")
+    submission_id = body["data"]["id"]
+    print(f"Review submission created: {submission_id}")
+    return submission_id
+
+
+def ensure_review_submission_version(submission_id, version_id):
+    response = api("PATCH", f"/reviewSubmissions/{submission_id}", json={
+        "data": {
+            "type": "reviewSubmissions",
+            "id": submission_id,
+            "relationships": {
+                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}}
+            },
+        }
+    })
+    print(f"Review submission version: {response.status_code}")
 
 
 def main():
