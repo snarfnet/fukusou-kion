@@ -389,7 +389,10 @@ def submit_for_review(version_id):
             }
         })
         print(f"Review item {attempt + 1}/10: {response.status_code}")
-        if response.status_code in (201, 409):
+        if response.status_code == 201:
+            break
+        if response.status_code == 409:
+            print(f"Review item error: {response.text[:1000]}")
             break
         time.sleep(30)
     for attempt in range(3):
