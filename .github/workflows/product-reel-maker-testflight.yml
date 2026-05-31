@@ -21,11 +21,11 @@ jobs:
         working-directory: ios/ProductReelMaker
     env:
       APP_BUNDLE_ID: com.tokyonasu.productreelmaker
-      APP_NAME: "商品リールメーカー"
+      APP_NAME: "商品を紹介する動画作成"
       APP_SKU: product-reel-maker-ios
       BUNDLE_NAME: ProductReelMaker
       PROFILE_NAME: "ProductReelMaker App Store"
-      PRODUCT_REEL_MAKER_APP_ID: ${{ secrets.PRODUCT_REEL_MAKER_APP_ID }}
+      PRODUCT_REEL_MAKER_APP_ID: "6775141059"
 
     steps:
       - name: Checkout

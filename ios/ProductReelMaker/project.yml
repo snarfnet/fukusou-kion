@@ -30,7 +30,7 @@ targets:
     info:
       path: ProductReelMaker/Resources/Info.plist
       properties:
-        CFBundleDisplayName: "商品リールメーカー"
+        CFBundleDisplayName: "商品を紹介する動画作成"
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
