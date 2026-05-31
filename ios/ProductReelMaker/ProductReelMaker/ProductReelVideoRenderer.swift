@@ -76,7 +76,7 @@ enum ProductReelVideoRenderer {
         let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
         guard status == .authorized || status == .limited else { throw RendererError.photoPermissionDenied }
 
-        try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             PHPhotoLibrary.shared().performChanges {
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
             } completionHandler: { success, error in
@@ -260,7 +260,7 @@ enum ProductReelVideoRenderer {
             .strokeColor: UIColor.black,
             .strokeWidth: stroke ? -5 : 0
         ]
-        text.draw(with: rect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes)
+        text.draw(with: rect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes, context: nil)
     }
 
     private static func drawStar(center: CGPoint, radius: CGFloat, color: UIColor) {

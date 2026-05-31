@@ -136,7 +136,7 @@ struct TextStickerView: View {
             .shadow(color: .black.opacity(0.45), radius: 0, x: 6, y: 6)
             .rotationEffect(.degrees(item.sticker.tilt))
             .scaleEffect(item.scale * max(0.78, 1 - CGFloat(layerIndex) * 0.05))
-            .position(position(for: item.position, layerIndex: layerIndex, in: canvasSize))
+            .position(layerPoint(for: item.position, layerIndex: layerIndex, in: canvasSize))
     }
 
     private var stickerBackground: some View {
@@ -174,7 +174,7 @@ struct MotionStickerView: View {
                 }
             }
             .scaleEffect(item.scale * max(0.8, 1 - CGFloat(layerIndex) * 0.05))
-            .position(position(for: item.position, layerIndex: layerIndex, in: canvasSize))
+            .position(layerPoint(for: item.position, layerIndex: layerIndex, in: canvasSize))
         }
     }
 }
@@ -212,7 +212,7 @@ struct SparkleShape: Shape {
     }
 }
 
-private func position(for position: LayerPosition, layerIndex: Int, in size: CGSize) -> CGPoint {
+private func layerPoint(for position: LayerPosition, layerIndex: Int, in size: CGSize) -> CGPoint {
     let base = position.unitPoint
     let offsets: [CGPoint] = [
         .zero, CGPoint(x: 18, y: -12), CGPoint(x: -18, y: 14), CGPoint(x: 24, y: 18), CGPoint(x: -24, y: -16)
