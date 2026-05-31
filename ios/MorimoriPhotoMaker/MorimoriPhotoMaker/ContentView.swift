@@ -35,6 +35,8 @@ struct ContentView: View {
             let stageWidth = proxy.size.width - pagePadding * 2 - railColumnWidth - railGap
             let compactStageHeight = min(stageWidth * 4 / 3, proxy.size.height * 0.58)
             let compactAssetHeight = max(96, proxy.size.height - compactStageHeight - 88 - (activeAdjustment == nil ? 0 : 42))
+            let regularStageHeight = min(stageWidth * 4 / 3, max(360, proxy.size.height * 0.45))
+            let regularAssetHeight = max(220, proxy.size.height - regularStageHeight - 220)
 
             ZStack {
                 LinearGradient(
@@ -79,8 +81,8 @@ struct ContentView: View {
                             dragStart: $dragStart,
                             photoPicker: photoPicker
                         )
-                        .frame(height: isCompact ? compactStageHeight : nil)
-                        .frame(maxHeight: isCompact ? nil : .infinity)
+                        .frame(height: isCompact ? compactStageHeight : regularStageHeight)
+                        .frame(maxWidth: .infinity)
                         .layoutPriority(1)
                     }
 
@@ -121,14 +123,20 @@ struct ContentView: View {
                             onDelete: deleteSelected
                         )
 
-                        CategoryStrip(compact: false, selectedCategory: $selectedCategory)
-                        AssetGrid(
-                            compact: false,
-                            assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
-                            isUnlocked: isAssetUnlocked,
-                            onLocked: showPurchasePrompt,
-                            onSelect: addAsset
-                        )
+                        ScrollView(.vertical, showsIndicators: true) {
+                            VStack(spacing: 8) {
+                                CategoryStrip(compact: false, selectedCategory: $selectedCategory)
+                                AssetGrid(
+                                    compact: false,
+                                    assets: MoriLibrary.assets.filter { $0.category == selectedCategory },
+                                    isUnlocked: isAssetUnlocked,
+                                    onLocked: showPurchasePrompt,
+                                    onSelect: addAsset
+                                )
+                            }
+                            .padding(.bottom, 10)
+                        }
+                        .frame(height: regularAssetHeight)
                     }
                 }
                 .padding(pagePadding)
