@@ -1,10 +1,23 @@
 import SwiftUI
 import UIKit
 
-struct ReelPreview: View {
+struct ReelPreview<EmptyAction: View>: View {
     var scene: ReelScene?
     var sceneIndex: Int
     var isExporting: Bool
+    var emptyAction: EmptyAction
+
+    init(
+        scene: ReelScene?,
+        sceneIndex: Int,
+        isExporting: Bool,
+        @ViewBuilder emptyAction: () -> EmptyAction
+    ) {
+        self.scene = scene
+        self.sceneIndex = sceneIndex
+        self.isExporting = isExporting
+        self.emptyAction = emptyAction()
+    }
 
     var body: some View {
         ZStack {
@@ -53,15 +66,30 @@ struct ReelPreview: View {
                             .padding(.bottom, 38)
                     }
                 } else {
-                    VStack(spacing: 10) {
-                        Image(systemName: "photo.on.rectangle.angled")
-                            .font(.system(size: 42, weight: .bold))
-                        Text("写真を追加すると、縦型の商品紹介リールを作れます。")
-                            .font(.headline)
-                            .multilineTextAlignment(.center)
+                    GeometryReader { proxy in
+                        Image("ReelHeroBackdrop")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                            .clipped()
+
+                        LinearGradient(
+                            colors: [.white.opacity(0.12), .black.opacity(0.2), .black.opacity(0.4)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+
+                        VStack(spacing: 14) {
+                            emptyAction
+                            Text("写真を追加すると、縦長の商品紹介リールを作れます。")
+                                .font(.headline.weight(.heavy))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .shadow(color: .black.opacity(0.75), radius: 0, x: 2, y: 2)
+                                .padding(.horizontal, 22)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .foregroundStyle(.white.opacity(0.9))
-                    .padding(28)
                 }
 
                 if isExporting {

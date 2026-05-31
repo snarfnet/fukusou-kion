@@ -17,10 +17,27 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { proxy in
             let compact = proxy.size.height < 760
-            let previewHeight = min(proxy.size.width * 1.22, proxy.size.height * (compact ? 0.48 : 0.54))
+            let previewHeight = min(proxy.size.width * 1.16, proxy.size.height * (compact ? 0.43 : 0.50))
+            let editorHeight = max(compact ? 204 : 230, proxy.size.height - previewHeight - (compact ? 170 : 190))
 
             ZStack {
                 Color(red: 0.97, green: 0.94, blue: 0.86).ignoresSafeArea()
+                Image("ReelHeroBackdrop")
+                    .resizable()
+                    .scaledToFill()
+                    .opacity(0.2)
+                    .blur(radius: 18)
+                    .ignoresSafeArea()
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(0.72),
+                        Color(red: 1.0, green: 0.91, blue: 0.72).opacity(0.52),
+                        Color.white.opacity(0.65)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
                 VStack(spacing: compact ? 8 : 12) {
                     header(compact: compact)
@@ -29,7 +46,17 @@ struct ContentView: View {
                         scene: scenes.indices.contains(activeScene) ? scenes[activeScene] : nil,
                         sceneIndex: activeScene,
                         isExporting: isExporting
-                    )
+                    ) {
+                        PhotosPicker(selection: $selectedItems, matching: .images) {
+                            VStack(spacing: 8) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 30, weight: .black))
+                                Text("写真追加")
+                                    .font(.caption.bold())
+                            }
+                        }
+                        .buttonStyle(AddPhotoButtonStyle())
+                    }
                     .frame(height: previewHeight)
                     .padding(.horizontal, 14)
 
@@ -37,7 +64,8 @@ struct ContentView: View {
                         .padding(.horizontal, 14)
 
                     compactEditor
-                        .frame(maxHeight: .infinity, alignment: .top)
+                        .frame(height: editorHeight, alignment: .top)
+                        .padding(.horizontal, 10)
                 }
             }
         }
@@ -132,7 +160,8 @@ struct ContentView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 12)
+            .padding(.top, 10)
 
             Group {
                 switch activeTool {
@@ -151,9 +180,12 @@ struct ContentView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 10)
         }
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(.black.opacity(0.26), lineWidth: 1.5))
+        .shadow(color: .black.opacity(0.12), radius: 0, x: 4, y: 4)
     }
 
     private var captionPanel: some View {

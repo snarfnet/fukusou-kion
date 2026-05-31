@@ -45,6 +45,24 @@ struct SquareToolButtonStyle: ButtonStyle {
     }
 }
 
+struct AddPhotoButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .frame(width: 86, height: 86)
+            .background(
+                ZStack {
+                    Circle().fill(Color.red)
+                    Circle().stroke(.white, lineWidth: 5)
+                    Circle().stroke(.black, lineWidth: 2)
+                }
+            )
+            .shadow(color: .black.opacity(0.48), radius: 0, x: configuration.isPressed ? 2 : 6, y: configuration.isPressed ? 2 : 6)
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .rotationEffect(.degrees(configuration.isPressed ? -2 : -5))
+    }
+}
+
 struct SceneButtonStyle: ButtonStyle {
     var active: Bool
 
