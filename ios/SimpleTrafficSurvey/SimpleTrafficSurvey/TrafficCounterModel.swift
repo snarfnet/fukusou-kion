@@ -19,6 +19,29 @@ struct CountEvent: Identifiable {
 enum CountDirection: String {
     case `in` = "IN"
     case out = "OUT"
+    case pedestrian = "\u{901A}\u{884C}"
+}
+
+enum CountMode: String, Equatable {
+    case storeTraffic
+    case pedestrianTraffic
+
+    static let storageKey = "countMode"
+
+    static var saved: CountMode {
+        let rawValue = UserDefaults.standard.string(forKey: storageKey) ?? ""
+        return CountMode(rawValue: rawValue) ?? .storeTraffic
+    }
+
+    var title: String {
+        self == .storeTraffic ? "\u{5165}\u{9000}\u{5E97}" : "\u{901A}\u{884C}\u{91CF}"
+    }
+
+    var guideText: String {
+        self == .storeTraffic
+            ? "\u{9EC4}\u{8272}\u{3044}\u{7DDA}\u{3092}\u{4EBA}\u{304C}\u{8D8A}\u{3048}\u{308B}\u{3068}\u{3001}\u{5411}\u{304D}\u{306B}\u{5FDC}\u{3058}\u{3066}IN / OUT\u{306B}\u{5206}\u{3051}\u{3066}\u{6570}\u{3048}\u{307E}\u{3059}\u{3002}"
+            : "\u{30AB}\u{30E1}\u{30E9}\u{306B}\u{5165}\u{3063}\u{305F}\u{6B69}\u{884C}\u{8005}\u{3092}\u{901A}\u{884C}\u{91CF}\u{3068}\u{3057}\u{3066}\u{6570}\u{3048}\u{307E}\u{3059}\u{3002}IN / OUT\u{306B}\u{306F}\u{5206}\u{3051}\u{307E}\u{305B}\u{3093}\u{3002}"
+    }
 }
 
 enum CountDirectionMode: String, Equatable {
@@ -57,6 +80,12 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     @Published var statusText = "\u{5F85}\u{6A5F}\u{4E2D}"
     @Published var recentEvents: [CountEvent] = []
     @Published private(set) var lineX: CGFloat = 0.5
+    @Published var countMode: CountMode = CountMode.saved {
+        didSet {
+            UserDefaults.standard.set(countMode.rawValue, forKey: CountMode.storageKey)
+            tracks = []
+        }
+    }
     @Published var directionMode: CountDirectionMode = CountDirectionMode.saved {
         didSet {
             UserDefaults.standard.set(directionMode.rawValue, forKey: CountDirectionMode.storageKey)
@@ -114,13 +143,13 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
 
     func adjust(_ direction: CountDirection, amount: Int) {
         switch direction {
-        case .in:
+        case .in, .pedestrian:
             countIn = max(0, countIn + amount)
         case .out:
             countOut = max(0, countOut + amount)
         }
         if amount > 0 {
-            appendEvent(direction)
+            appendEvent(direction == .pedestrian ? .pedestrian : direction)
         }
     }
 
@@ -131,6 +160,10 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
 
     func toggleDirectionMode() {
         directionMode = directionMode == .leftToRightIn ? .rightToLeftIn : .leftToRightIn
+    }
+
+    func toggleCountMode() {
+        countMode = countMode == .storeTraffic ? .pedestrianTraffic : .storeTraffic
     }
 
     private func markPermissionDenied() {
@@ -210,7 +243,15 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
                 tracks[matchIndex].framesSinceSeen = 0
                 countCrossingIfNeeded(previousX: previousX, currentX: center.x, trackIndex: matchIndex)
             } else {
-                tracks.append(TrackedPerson(lastCenter: center))
+                var newTrack = TrackedPerson(lastCenter: center)
+                if countMode == .pedestrianTraffic, isRunning {
+                    newTrack.hasCounted = true
+                    DispatchQueue.main.async {
+                        self.countIn += 1
+                        self.appendEvent(.pedestrian)
+                    }
+                }
+                tracks.append(newTrack)
             }
         }
 
@@ -233,7 +274,7 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     }
 
     private func countCrossingIfNeeded(previousX: CGFloat, currentX: CGFloat, trackIndex: Int) {
-        guard isRunning, !tracks[trackIndex].hasCounted else { return }
+        guard countMode == .storeTraffic, isRunning, !tracks[trackIndex].hasCounted else { return }
 
         let crossedLeftToRight = previousX < lineX && currentX >= lineX
         let crossedRightToLeft = previousX > lineX && currentX <= lineX
@@ -258,6 +299,8 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
             countIn += 1
         case .out:
             countOut += 1
+        case .pedestrian:
+            countIn += 1
         }
         appendEvent(direction)
     }

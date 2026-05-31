@@ -60,7 +60,11 @@ struct ContentView: View {
                     }
                 }
 
-                countLine(size: proxy.size)
+                if viewModel.countMode == .storeTraffic {
+                    countLine(size: proxy.size)
+                } else {
+                    pedestrianModeOverlay
+                }
                 detectionOverlay(size: proxy.size)
                 cameraChrome
             }
@@ -95,12 +99,14 @@ struct ContentView: View {
 
     private func countLine(size: CGSize) -> some View {
         let linePosition = max(0, min(size.width, size.width * viewModel.lineX))
-        let leftColor = sideColor(for: viewModel.directionMode.leftLabel)
-        let rightColor = sideColor(for: viewModel.directionMode.rightLabel)
+        let leftLabel = viewModel.countMode == .storeTraffic ? viewModel.directionMode.leftLabel : "\u{901A}\u{884C}"
+        let rightLabel = viewModel.countMode == .storeTraffic ? viewModel.directionMode.rightLabel : "\u{901A}\u{884C}"
+        let leftColor = sideColor(for: leftLabel)
+        let rightColor = sideColor(for: rightLabel)
 
         return ZStack {
             HStack {
-                Text(viewModel.directionMode.leftLabel)
+                Text(leftLabel)
                     .font(.system(size: 12, weight: .black, design: .monospaced))
                     .foregroundStyle(leftColor)
                 Image(systemName: "arrow.left")
@@ -110,7 +116,7 @@ struct ContentView: View {
                 Image(systemName: "arrow.right")
                     .font(.system(size: 11, weight: .black))
                     .foregroundStyle(rightColor)
-                Text(viewModel.directionMode.rightLabel)
+                Text(rightLabel)
                     .font(.system(size: 12, weight: .black, design: .monospaced))
                     .foregroundStyle(rightColor)
             }
@@ -154,10 +160,10 @@ struct ContentView: View {
                 .foregroundStyle(.orange)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("黄色い線を人が越えるとカウントします")
+                Text(viewModel.countMode.guideText)
                     .font(.system(size: 13, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
-                Text(viewModel.directionMode.guideText)
+                Text(lineGuideDetail)
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.68))
                     .fixedSize(horizontal: false, vertical: true)
@@ -173,7 +179,35 @@ struct ContentView: View {
     }
 
     private func sideColor(for label: String) -> Color {
-        label == "IN" ? .mint : .orange
+        if label == "IN" {
+            return .mint
+        }
+        if label == "\u{901A}\u{884C}" {
+            return .yellow
+        }
+        return .orange
+    }
+
+    private var lineGuideDetail: String {
+        switch viewModel.countMode {
+        case .storeTraffic:
+            return viewModel.directionMode.guideText
+        case .pedestrianTraffic:
+            return "\u{901A}\u{884C}\u{91CF}\u{30E2}\u{30FC}\u{30C9}\u{3067}\u{306F}\u{4E2D}\u{592E}\u{7DDA}\u{306F}\u{4F7F}\u{308F}\u{305A}\u{3001}\u{753B}\u{9762}\u{306B}\u{5165}\u{3063}\u{305F}\u{6B69}\u{884C}\u{8005}\u{3092}TOTAL\u{306B}\u{8A18}\u{9332}\u{3057}\u{307E}\u{3059}\u{3002}"
+        }
+    }
+
+    private var pedestrianModeOverlay: some View {
+        VStack {
+            Text("\u{901A}\u{884C}\u{91CF}\u{30E2}\u{30FC}\u{30C9}")
+                .font(.system(size: 10, weight: .black, design: .monospaced))
+                .foregroundStyle(.yellow)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(.black.opacity(0.68), in: Capsule())
+                .padding(.top, 10)
+            Spacer()
+        }
     }
 
     private func detectionOverlay(size: CGSize) -> some View {
@@ -245,40 +279,79 @@ struct ContentView: View {
 
                     DigitWindow(value: viewModel.total)
 
-                    HStack(spacing: 12) {
-                        CountBadge(title: "IN", value: viewModel.countIn, color: .mint)
-                        CountBadge(title: "OUT", value: viewModel.countOut, color: .orange)
-                    }
+                    counterBadges
                 }
                 .padding(16)
             }
             .frame(height: 178)
 
             HStack(spacing: 12) {
-                ManualButton(label: "IN -1", systemImage: "minus.circle.fill", tint: .red) {
-                    viewModel.adjust(.in, amount: -1)
+                ManualButton(label: manualMinusLabel, systemImage: "minus.circle.fill", tint: .red) {
+                    viewModel.adjust(manualDirection, amount: -1)
                 }
                 ClickButton(isRunning: viewModel.isRunning) {
                     viewModel.isRunning ? viewModel.pauseCounting() : viewModel.startCounting()
                 }
-                ManualButton(label: "IN +1", systemImage: "plus.circle.fill", tint: .mint) {
-                    viewModel.adjust(.in, amount: 1)
+                ManualButton(label: manualPlusLabel, systemImage: "plus.circle.fill", tint: manualPlusTint) {
+                    viewModel.adjust(manualDirection, amount: 1)
                 }
             }
         }
     }
 
+    @ViewBuilder
+    private var counterBadges: some View {
+        if viewModel.countMode == .storeTraffic {
+            HStack(spacing: 12) {
+                CountBadge(title: "IN", value: viewModel.countIn, color: .mint)
+                CountBadge(title: "OUT", value: viewModel.countOut, color: .orange)
+            }
+        } else {
+            HStack(spacing: 12) {
+                CountBadge(title: "\u{901A}\u{884C}", value: viewModel.total, color: .yellow)
+            }
+        }
+    }
+
+    private var manualDirection: CountDirection {
+        viewModel.countMode == .storeTraffic ? .in : .pedestrian
+    }
+
+    private var manualMinusLabel: String {
+        viewModel.countMode == .storeTraffic ? "IN -1" : "\u{901A}\u{884C} -1"
+    }
+
+    private var manualPlusLabel: String {
+        viewModel.countMode == .storeTraffic ? "IN +1" : "\u{901A}\u{884C} +1"
+    }
+
+    private var manualPlusTint: Color {
+        viewModel.countMode == .storeTraffic ? .mint : .yellow
+    }
+
     private var controlDeck: some View {
         VStack(spacing: 10) {
             Button {
-                viewModel.toggleDirectionMode()
+                viewModel.toggleCountMode()
             } label: {
                 Label(
-                    viewModel.directionMode == .leftToRightIn ? "IN/OUT方向: 左→右 IN" : "IN/OUT方向: 右→左 IN",
-                    systemImage: "arrow.left.arrow.right"
+                    "\u{8A08}\u{6E2C}\u{30E2}\u{30FC}\u{30C9}: \(viewModel.countMode.title)",
+                    systemImage: "slider.horizontal.3"
                 )
             }
-            .buttonStyle(PanelButtonStyle(tint: .mint))
+            .buttonStyle(PanelButtonStyle(tint: .yellow))
+
+            if viewModel.countMode == .storeTraffic {
+                Button {
+                    viewModel.toggleDirectionMode()
+                } label: {
+                    Label(
+                        viewModel.directionMode == .leftToRightIn ? "IN/OUT方向: 左→右 IN" : "IN/OUT方向: 右→左 IN",
+                        systemImage: "arrow.left.arrow.right"
+                    )
+                }
+                .buttonStyle(PanelButtonStyle(tint: .mint))
+            }
 
             HStack(spacing: 10) {
                 Button {
@@ -289,16 +362,16 @@ struct ContentView: View {
                 .buttonStyle(PanelButtonStyle(tint: .gray))
 
                 Button {
-                    viewModel.adjust(.out, amount: 1)
+                    viewModel.adjust(viewModel.countMode == .storeTraffic ? .out : .pedestrian, amount: 1)
                 } label: {
-                    Label("OUT +1", systemImage: "arrow.left")
+                    Label(viewModel.countMode == .storeTraffic ? "OUT +1" : "\u{901A}\u{884C} +1", systemImage: "arrow.left")
                 }
                 .buttonStyle(PanelButtonStyle(tint: .orange))
 
                 Button {
-                    viewModel.adjust(.out, amount: -1)
+                    viewModel.adjust(viewModel.countMode == .storeTraffic ? .out : .pedestrian, amount: -1)
                 } label: {
-                    Label("OUT -1", systemImage: "minus")
+                    Label(viewModel.countMode == .storeTraffic ? "OUT -1" : "\u{901A}\u{884C} -1", systemImage: "minus")
                 }
                 .buttonStyle(PanelButtonStyle(tint: .red))
             }
@@ -328,7 +401,7 @@ struct ContentView: View {
                     HStack {
                         Text(event.direction.rawValue)
                             .font(.system(size: 12, weight: .black, design: .monospaced))
-                            .foregroundStyle(event.direction == .in ? .mint : .orange)
+                            .foregroundStyle(eventColor(event.direction))
                         Text(event.timestamp, style: .time)
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white.opacity(0.72))
@@ -340,6 +413,17 @@ struct ContentView: View {
         }
         .padding(14)
         .background(.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private func eventColor(_ direction: CountDirection) -> Color {
+        switch direction {
+        case .in:
+            return .mint
+        case .out:
+            return .orange
+        case .pedestrian:
+            return .yellow
+        }
     }
 
     private func mappedRect(_ rect: CGRect, in size: CGSize) -> CGRect {
