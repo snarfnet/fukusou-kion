@@ -45,6 +45,37 @@ struct SquareToolButtonStyle: ButtonStyle {
     }
 }
 
+struct DockButtonContent: View {
+    var title: String
+    var systemImage: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: systemImage)
+                .font(.system(size: 18, weight: .black))
+            Text(title)
+                .font(.caption2.bold())
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+struct DockButtonStyle: ButtonStyle {
+    var color: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .frame(height: 56)
+            .background(color.opacity(configuration.isPressed ? 0.78 : 0.96), in: RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.black, lineWidth: 2))
+            .shadow(color: .black.opacity(0.28), radius: 0, x: configuration.isPressed ? 1 : 3, y: configuration.isPressed ? 1 : 3)
+            .offset(x: configuration.isPressed ? 1 : 0, y: configuration.isPressed ? 1 : 0)
+    }
+}
+
 struct QuickRailButtonStyle: ButtonStyle {
     var color: Color
 

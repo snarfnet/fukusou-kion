@@ -13,12 +13,13 @@ struct ContentView: View {
     @State private var activeTool: ToolTab = .text
     @State private var status = "写真を追加すると、TikTokサイズのMP4を作れます。"
     @State private var isExporting = false
+    @State private var activeSheet: ToolSheet?
 
     var body: some View {
         GeometryReader { proxy in
             let compact = proxy.size.height < 760
-            let previewHeight = min(proxy.size.width * 1.16, proxy.size.height * (compact ? 0.43 : 0.50))
-            let editorHeight = max(compact ? 204 : 230, proxy.size.height - previewHeight - (compact ? 170 : 190))
+            let previewHeight = min(proxy.size.width * 1.16, proxy.size.height * 0.50)
+            let editorHeight = max(230, proxy.size.height - previewHeight - 190)
 
             ZStack {
                 Color(red: 0.97, green: 0.94, blue: 0.86).ignoresSafeArea()
@@ -67,14 +68,27 @@ struct ContentView: View {
                         }
                     }
 
-                    topControls
-                        .padding(.horizontal, 14)
+                    if compact {
+                        compactTopControls
+                            .padding(.horizontal, 14)
 
-                    compactEditor
-                        .frame(height: editorHeight, alignment: .top)
-                        .padding(.horizontal, 10)
+                        compactActionDock
+                            .padding(.horizontal, 10)
+                    } else {
+                        topControls
+                            .padding(.horizontal, 14)
+
+                        compactEditor
+                            .frame(height: editorHeight, alignment: .top)
+                            .padding(.horizontal, 10)
+                    }
                 }
             }
+        }
+        .sheet(item: $activeSheet) { sheet in
+            toolSheet(sheet)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
         }
         .task(id: selectedItems) {
             await importPhotos()
@@ -141,6 +155,112 @@ struct ContentView: View {
                 sceneStrip
             }
         }
+    }
+
+    private var compactTopControls: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                TextField("商品名", text: $productName)
+                    .textFieldStyle(.roundedBorder)
+                    .onChange(of: productName) { _, _ in regenerateCaptions() }
+
+                Picker("雰囲気", selection: $tone) {
+                    ForEach(ReelTone.allCases) { tone in
+                        Text(tone.title).tag(tone)
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(width: 104)
+                .onChange(of: tone) { _, _ in regenerateCaptions() }
+            }
+
+            sceneStrip
+                .frame(height: 36)
+        }
+    }
+
+    private var compactActionDock: some View {
+        HStack(spacing: 8) {
+            PhotosPicker(selection: $selectedItems, matching: .images) {
+                DockButtonContent(title: "写真", systemImage: "photo.badge.plus")
+            }
+            .buttonStyle(DockButtonStyle(color: .red))
+
+            Button {
+                activeSheet = .text
+            } label: {
+                DockButtonContent(title: "文字", systemImage: "burst.fill")
+            }
+            .buttonStyle(DockButtonStyle(color: .orange))
+            .disabled(scenes.isEmpty)
+
+            Button {
+                activeSheet = .motion
+            } label: {
+                DockButtonContent(title: "キラ", systemImage: "sparkles")
+            }
+            .buttonStyle(DockButtonStyle(color: .pink))
+            .disabled(scenes.isEmpty)
+
+            Button {
+                activeSheet = .caption
+            } label: {
+                DockButtonContent(title: "文", systemImage: "text.bubble.fill")
+            }
+            .buttonStyle(DockButtonStyle(color: .blue))
+            .disabled(scenes.isEmpty)
+
+            Button {
+                Task { await exportVideo() }
+            } label: {
+                DockButtonContent(title: "保存", systemImage: "square.and.arrow.down")
+            }
+            .buttonStyle(DockButtonStyle(color: .black))
+            .disabled(isExporting || scenes.isEmpty)
+        }
+        .padding(10)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(.black.opacity(0.22), lineWidth: 1.5))
+        .shadow(color: .black.opacity(0.14), radius: 0, x: 4, y: 4)
+    }
+
+    @ViewBuilder
+    private func toolSheet(_ sheet: ToolSheet) -> some View {
+        VStack(spacing: 12) {
+            HStack {
+                Text(sheet.title)
+                    .font(.system(size: 20, weight: .black))
+                Spacer()
+                Button {
+                    activeSheet = nil
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.headline.bold())
+                        .frame(width: 36, height: 36)
+                }
+                .buttonStyle(SquareToolButtonStyle())
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+
+            switch sheet {
+            case .caption:
+                captionPanel
+            case .text:
+                textStickerPanel
+            case .motion:
+                motionPanel
+            }
+
+            Text(status)
+                .font(.caption.bold())
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+        }
+        .presentationBackground(Color(red: 0.98, green: 0.94, blue: 0.84))
     }
 
     private var sceneStrip: some View {
@@ -467,6 +587,22 @@ enum ToolTab: String, CaseIterable, Identifiable {
         switch self {
         case .caption: "キャプション"
         case .text: "ステッカー"
+        case .motion: "キラキラ"
+        }
+    }
+}
+
+enum ToolSheet: String, Identifiable {
+    case caption
+    case text
+    case motion
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .caption: "キャプション"
+        case .text: "文字ステッカー"
         case .motion: "キラキラ"
         }
     }

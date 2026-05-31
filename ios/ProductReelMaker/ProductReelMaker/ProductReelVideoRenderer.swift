@@ -121,6 +121,9 @@ enum ProductReelVideoRenderer {
             bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
         ) else { return }
 
+        context.translateBy(x: 0, y: size.height)
+        context.scaleBy(x: 1, y: -1)
+
         UIGraphicsPushContext(context)
         defer { UIGraphicsPopContext() }
 
