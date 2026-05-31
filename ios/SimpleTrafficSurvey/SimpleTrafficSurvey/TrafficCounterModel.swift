@@ -30,6 +30,7 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     @Published var permissionDenied = false
     @Published var statusText = "\u{5F85}\u{6A5F}\u{4E2D}"
     @Published var recentEvents: [CountEvent] = []
+    @Published private(set) var lineX: CGFloat = 0.5
 
     let session = AVCaptureSession()
 
@@ -38,7 +39,6 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     private let visionQueue = DispatchQueue(label: "camera.counter.vision.queue")
     private var isProcessingFrame = false
     private var tracks: [TrackedPerson] = []
-    private let lineX: CGFloat = 0.5
     private let matchThreshold: CGFloat = 0.16
     private let staleFrameLimit = 12
 
@@ -90,6 +90,11 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         if amount > 0 {
             appendEvent(direction)
         }
+    }
+
+    func moveLine(to normalizedX: CGFloat) {
+        lineX = min(max(normalizedX, 0.12), 0.88)
+        tracks = []
     }
 
     private func markPermissionDenied() {

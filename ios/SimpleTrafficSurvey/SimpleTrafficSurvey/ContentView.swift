@@ -8,16 +8,19 @@ struct ContentView: View {
         ZStack {
             IndustrialBackground()
 
-            VStack(spacing: 16) {
-                header
-                cameraPanel
-                mechanicalCounter
-                controlDeck
-                recentLog
+            ScrollView {
+                VStack(spacing: 14) {
+                    header
+                    cameraPanel
+                    lineGuide
+                    mechanicalCounter
+                    controlDeck
+                    recentLog
+                }
+                .padding(.horizontal, 18)
+                .padding(.top, 14)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 18)
-            .padding(.top, 14)
-            .padding(.bottom, 20)
         }
         .preferredColorScheme(.dark)
         .onAppear {
@@ -57,12 +60,12 @@ struct ContentView: View {
                     }
                 }
 
-                countLine
+                countLine(size: proxy.size)
                 detectionOverlay(size: proxy.size)
                 cameraChrome
             }
         }
-        .frame(height: 280)
+        .frame(height: 270)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -90,24 +93,81 @@ struct ContentView: View {
         .background(Color.black.opacity(0.82))
     }
 
-    private var countLine: some View {
-        HStack(spacing: 0) {
-            Spacer()
+    private func countLine(size: CGSize) -> some View {
+        let linePosition = max(0, min(size.width, size.width * viewModel.lineX))
+
+        return ZStack {
+            HStack {
+                Text("OUT")
+                    .font(.system(size: 12, weight: .black, design: .monospaced))
+                    .foregroundStyle(.orange)
+                Image(systemName: "arrow.left")
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(.orange)
+                Spacer()
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(.mint)
+                Text("IN")
+                    .font(.system(size: 12, weight: .black, design: .monospaced))
+                    .foregroundStyle(.mint)
+            }
+            .padding(.horizontal, 18)
+            .padding(.top, 46)
+            .frame(maxHeight: .infinity, alignment: .top)
+
             Rectangle()
                 .fill(.orange)
                 .frame(width: 3)
                 .shadow(color: .orange.opacity(0.8), radius: 8)
-            Spacer()
+                .position(x: linePosition, y: size.height / 2)
+
+            VStack(spacing: 4) {
+                Text("COUNT LINE")
+                    .font(.system(size: 10, weight: .black, design: .monospaced))
+                    .foregroundStyle(.orange)
+                Text("ドラッグで移動")
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.76))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(.black.opacity(0.68), in: Capsule())
+            .position(x: linePosition, y: 24)
         }
-        .overlay(alignment: .top) {
-            Text("COUNT LINE")
-                .font(.system(size: 10, weight: .black, design: .monospaced))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.black.opacity(0.68), in: Capsule())
+        .frame(width: size.width, height: size.height)
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { value in
+                    viewModel.moveLine(to: value.location.x / max(size.width, 1))
+                }
+        )
+    }
+
+    private var lineGuide: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "line.3.horizontal.decrease.circle.fill")
+                .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(.orange)
-                .padding(.top, 10)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("黄色い線を人が越えるとカウントします")
+                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                Text("左から右はIN、右から左はOUTです。線はカメラ画面上で左右に動かせます。")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.68))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
         }
+        .padding(12)
+        .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(.orange.opacity(0.22), lineWidth: 1)
+        )
     }
 
     private func detectionOverlay(size: CGSize) -> some View {
@@ -189,13 +249,13 @@ struct ContentView: View {
             .frame(height: 178)
 
             HStack(spacing: 12) {
-                ManualButton(label: "-1", systemImage: "minus.circle.fill", tint: .red) {
+                ManualButton(label: "IN -1", systemImage: "minus.circle.fill", tint: .red) {
                     viewModel.adjust(.in, amount: -1)
                 }
                 ClickButton(isRunning: viewModel.isRunning) {
                     viewModel.isRunning ? viewModel.pauseCounting() : viewModel.startCounting()
                 }
-                ManualButton(label: "+1", systemImage: "plus.circle.fill", tint: .mint) {
+                ManualButton(label: "IN +1", systemImage: "plus.circle.fill", tint: .mint) {
                     viewModel.adjust(.in, amount: 1)
                 }
             }
