@@ -95,22 +95,24 @@ struct ContentView: View {
 
     private func countLine(size: CGSize) -> some View {
         let linePosition = max(0, min(size.width, size.width * viewModel.lineX))
+        let leftColor = sideColor(for: viewModel.directionMode.leftLabel)
+        let rightColor = sideColor(for: viewModel.directionMode.rightLabel)
 
         return ZStack {
             HStack {
-                Text("OUT")
+                Text(viewModel.directionMode.leftLabel)
                     .font(.system(size: 12, weight: .black, design: .monospaced))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(leftColor)
                 Image(systemName: "arrow.left")
                     .font(.system(size: 11, weight: .black))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(leftColor)
                 Spacer()
                 Image(systemName: "arrow.right")
                     .font(.system(size: 11, weight: .black))
-                    .foregroundStyle(.mint)
-                Text("IN")
+                    .foregroundStyle(rightColor)
+                Text(viewModel.directionMode.rightLabel)
                     .font(.system(size: 12, weight: .black, design: .monospaced))
-                    .foregroundStyle(.mint)
+                    .foregroundStyle(rightColor)
             }
             .padding(.horizontal, 18)
             .padding(.top, 46)
@@ -155,7 +157,7 @@ struct ContentView: View {
                 Text("黄色い線を人が越えるとカウントします")
                     .font(.system(size: 13, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
-                Text("左から右はIN、右から左はOUTです。線はカメラ画面上で左右に動かせます。")
+                Text(viewModel.directionMode.guideText)
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.68))
                     .fixedSize(horizontal: false, vertical: true)
@@ -168,6 +170,10 @@ struct ContentView: View {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .stroke(.orange.opacity(0.22), lineWidth: 1)
         )
+    }
+
+    private func sideColor(for label: String) -> Color {
+        label == "IN" ? .mint : .orange
     }
 
     private func detectionOverlay(size: CGSize) -> some View {
@@ -263,27 +269,39 @@ struct ContentView: View {
     }
 
     private var controlDeck: some View {
-        HStack(spacing: 10) {
+        VStack(spacing: 10) {
             Button {
-                viewModel.reset()
+                viewModel.toggleDirectionMode()
             } label: {
-                Label("RESET", systemImage: "arrow.counterclockwise")
+                Label(
+                    viewModel.directionMode == .leftToRightIn ? "IN/OUT方向: 左→右 IN" : "IN/OUT方向: 右→左 IN",
+                    systemImage: "arrow.left.arrow.right"
+                )
             }
-            .buttonStyle(PanelButtonStyle(tint: .gray))
+            .buttonStyle(PanelButtonStyle(tint: .mint))
 
-            Button {
-                viewModel.adjust(.out, amount: 1)
-            } label: {
-                Label("OUT +1", systemImage: "arrow.left")
-            }
-            .buttonStyle(PanelButtonStyle(tint: .orange))
+            HStack(spacing: 10) {
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Label("RESET", systemImage: "arrow.counterclockwise")
+                }
+                .buttonStyle(PanelButtonStyle(tint: .gray))
 
-            Button {
-                viewModel.adjust(.out, amount: -1)
-            } label: {
-                Label("OUT -1", systemImage: "minus")
+                Button {
+                    viewModel.adjust(.out, amount: 1)
+                } label: {
+                    Label("OUT +1", systemImage: "arrow.left")
+                }
+                .buttonStyle(PanelButtonStyle(tint: .orange))
+
+                Button {
+                    viewModel.adjust(.out, amount: -1)
+                } label: {
+                    Label("OUT -1", systemImage: "minus")
+                }
+                .buttonStyle(PanelButtonStyle(tint: .red))
             }
-            .buttonStyle(PanelButtonStyle(tint: .red))
         }
         .font(.system(size: 13, weight: .heavy, design: .rounded))
     }

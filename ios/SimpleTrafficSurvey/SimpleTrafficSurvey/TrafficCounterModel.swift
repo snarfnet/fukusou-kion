@@ -21,6 +21,32 @@ enum CountDirection: String {
     case out = "OUT"
 }
 
+enum CountDirectionMode: String, Equatable {
+    case leftToRightIn
+    case rightToLeftIn
+
+    static let storageKey = "countDirectionMode"
+
+    static var saved: CountDirectionMode {
+        let rawValue = UserDefaults.standard.string(forKey: storageKey) ?? ""
+        return CountDirectionMode(rawValue: rawValue) ?? .leftToRightIn
+    }
+
+    var leftLabel: String {
+        self == .leftToRightIn ? "OUT" : "IN"
+    }
+
+    var rightLabel: String {
+        self == .leftToRightIn ? "IN" : "OUT"
+    }
+
+    var guideText: String {
+        self == .leftToRightIn
+            ? "左から右はIN、右から左はOUTです。線はカメラ画面上で左右に動かせます。"
+            : "右から左はIN、左から右はOUTです。線はカメラ画面上で左右に動かせます。"
+    }
+}
+
 final class CameraCounterViewModel: NSObject, ObservableObject {
     @Published var detections: [PersonDetection] = []
     @Published var countIn = 0
@@ -31,6 +57,12 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     @Published var statusText = "\u{5F85}\u{6A5F}\u{4E2D}"
     @Published var recentEvents: [CountEvent] = []
     @Published private(set) var lineX: CGFloat = 0.5
+    @Published var directionMode: CountDirectionMode = CountDirectionMode.saved {
+        didSet {
+            UserDefaults.standard.set(directionMode.rawValue, forKey: CountDirectionMode.storageKey)
+            tracks = []
+        }
+    }
 
     let session = AVCaptureSession()
 
@@ -95,6 +127,10 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     func moveLine(to normalizedX: CGFloat) {
         lineX = min(max(normalizedX, 0.12), 0.88)
         tracks = []
+    }
+
+    func toggleDirectionMode() {
+        directionMode = directionMode == .leftToRightIn ? .rightToLeftIn : .leftToRightIn
     }
 
     private func markPermissionDenied() {
@@ -205,16 +241,25 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         if crossedLeftToRight {
             tracks[trackIndex].hasCounted = true
             DispatchQueue.main.async {
-                self.countIn += 1
-                self.appendEvent(.in)
+                self.applyCrossing(.leftToRightIn)
             }
         } else if crossedRightToLeft {
             tracks[trackIndex].hasCounted = true
             DispatchQueue.main.async {
-                self.countOut += 1
-                self.appendEvent(.out)
+                self.applyCrossing(.rightToLeftIn)
             }
         }
+    }
+
+    private func applyCrossing(_ crossingMode: CountDirectionMode) {
+        let direction: CountDirection = directionMode == crossingMode ? .in : .out
+        switch direction {
+        case .in:
+            countIn += 1
+        case .out:
+            countOut += 1
+        }
+        appendEvent(direction)
     }
 
     private func appendEvent(_ direction: CountDirection) {
