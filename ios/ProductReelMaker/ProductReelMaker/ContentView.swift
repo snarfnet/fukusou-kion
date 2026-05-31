@@ -42,23 +42,30 @@ struct ContentView: View {
                 VStack(spacing: compact ? 8 : 12) {
                     header(compact: compact)
 
-                    ReelPreview(
-                        scene: scenes.indices.contains(activeScene) ? scenes[activeScene] : nil,
-                        sceneIndex: activeScene,
-                        isExporting: isExporting
-                    ) {
-                        PhotosPicker(selection: $selectedItems, matching: .images) {
-                            VStack(spacing: 8) {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 30, weight: .black))
-                                Text("写真追加")
-                                    .font(.caption.bold())
+                    ZStack(alignment: .leading) {
+                        ReelPreview(
+                            scene: scenes.indices.contains(activeScene) ? scenes[activeScene] : nil,
+                            sceneIndex: activeScene,
+                            isExporting: isExporting
+                        ) {
+                            PhotosPicker(selection: $selectedItems, matching: .images) {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 30, weight: .black))
+                                    Text("写真追加")
+                                        .font(.caption.bold())
+                                }
                             }
+                            .buttonStyle(AddPhotoButtonStyle())
                         }
-                        .buttonStyle(AddPhotoButtonStyle())
+                        .frame(height: previewHeight)
+                        .padding(.horizontal, 14)
+
+                        if !scenes.isEmpty {
+                            quickToolRail
+                                .padding(.leading, 4)
+                        }
                     }
-                    .frame(height: previewHeight)
-                    .padding(.horizontal, 14)
 
                     topControls
                         .padding(.horizontal, 14)
@@ -152,6 +159,44 @@ struct ContentView: View {
         }
     }
 
+    private var quickToolRail: some View {
+        VStack(spacing: 8) {
+            Menu {
+                ForEach(ReelLibrary.textStickers) { sticker in
+                    Button {
+                        activeTool = .text
+                        selectedPosition = nextPosition(used: currentScene?.textStickers.map(\.position) ?? [], preferred: selectedPosition)
+                        toggle(sticker)
+                    } label: {
+                        Label(sticker.text.replacingOccurrences(of: "\n", with: " "), image: sticker.assetName)
+                    }
+                }
+            } label: {
+                Image(systemName: "burst.fill")
+                    .font(.system(size: 19, weight: .black))
+                    .frame(width: 42, height: 42)
+            }
+            .buttonStyle(QuickRailButtonStyle(color: .red))
+
+            Menu {
+                ForEach(ReelLibrary.motionStickers) { sticker in
+                    Button {
+                        activeTool = .motion
+                        selectedMotionPosition = nextPosition(used: currentScene?.motionStickers.map(\.position) ?? [], preferred: selectedMotionPosition)
+                        toggle(sticker)
+                    } label: {
+                        Label(sticker.name, systemImage: "sparkles")
+                    }
+                }
+            } label: {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 19, weight: .black))
+                    .frame(width: 42, height: 42)
+            }
+            .buttonStyle(QuickRailButtonStyle(color: .pink))
+        }
+    }
+
     private var compactEditor: some View {
         VStack(spacing: 8) {
             Picker("編集", selection: $activeTool) {
@@ -234,12 +279,10 @@ struct ContentView: View {
                     Button {
                         toggle(sticker)
                     } label: {
-                        Text(sticker.text)
-                            .font(.system(size: 16, weight: .black))
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
-                            .minimumScaleFactor(0.65)
-                            .frame(height: 54)
+                        Image(sticker.assetName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 68)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(StickerChipStyle(active: currentScene?.textStickers.contains { $0.sticker.id == sticker.id } == true, colors: sticker.colors))

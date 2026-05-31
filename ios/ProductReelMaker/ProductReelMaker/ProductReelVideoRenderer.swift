@@ -190,21 +190,27 @@ enum ProductReelVideoRenderer {
             context?.scaleBy(x: scale, y: scale)
             context?.setAlpha(CGFloat(fade))
 
-            UIColor.white.setFill()
-            UIColor.black.setStroke()
-            let outline = UIBezierPath(roundedRect: rect.insetBy(dx: -18, dy: -18), cornerRadius: 34)
-            outline.lineWidth = 12
-            outline.fill()
-            outline.stroke()
+            if let image = UIImage(named: item.sticker.assetName) {
+                let ratio = image.size.height / max(image.size.width, 1)
+                let imageRect = CGRect(x: -235, y: -235 * ratio, width: 470, height: 470 * ratio)
+                image.draw(in: imageRect)
+            } else {
+                UIColor.white.setFill()
+                UIColor.black.setStroke()
+                let outline = UIBezierPath(roundedRect: rect.insetBy(dx: -18, dy: -18), cornerRadius: 34)
+                outline.lineWidth = 12
+                outline.fill()
+                outline.stroke()
 
-            let fill = UIBezierPath(roundedRect: rect, cornerRadius: 24)
-            item.sticker.uiColors.first?.setFill()
-            fill.fill()
-            UIColor.black.setStroke()
-            fill.lineWidth = 6
-            fill.stroke()
+                let fill = UIBezierPath(roundedRect: rect, cornerRadius: 24)
+                item.sticker.uiColors.first?.setFill()
+                fill.fill()
+                UIColor.black.setStroke()
+                fill.lineWidth = 6
+                fill.stroke()
 
-            drawString(item.sticker.text, in: rect.insetBy(dx: 22, dy: 28), fontSize: 56, color: .white, alignment: .center)
+                drawString(item.sticker.text, in: rect.insetBy(dx: 22, dy: 28), fontSize: 56, color: .white, alignment: .center)
+            }
             context?.restoreGState()
         }
     }

@@ -151,34 +151,14 @@ struct TextStickerView: View {
     var canvasSize: CGSize
 
     var body: some View {
-        Text(item.sticker.text)
-            .font(.system(size: 24, weight: .black))
-            .foregroundStyle(.white)
-            .multilineTextAlignment(.center)
-            .lineLimit(2)
-            .minimumScaleFactor(0.65)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(stickerBackground)
-            .overlay(stickerOutline)
-            .shadow(color: .black.opacity(0.45), radius: 0, x: 6, y: 6)
+        Image(item.sticker.assetName)
+            .resizable()
+            .scaledToFit()
+            .frame(width: item.sticker.text.contains("\n") ? 168 : 188)
+            .shadow(color: .black.opacity(0.38), radius: 0, x: 5, y: 5)
             .rotationEffect(.degrees(item.sticker.tilt))
             .scaleEffect(item.scale * max(0.78, 1 - CGFloat(layerIndex) * 0.05))
             .position(layerPoint(for: item.position, layerIndex: layerIndex, in: canvasSize))
-    }
-
-    private var stickerBackground: some View {
-        RoundedRectangle(cornerRadius: item.sticker.shape == .bubble ? 22 : 10)
-            .fill(LinearGradient(colors: item.sticker.colors, startPoint: .topLeading, endPoint: .bottomTrailing))
-            .overlay {
-                RoundedRectangle(cornerRadius: item.sticker.shape == .bubble ? 22 : 10)
-                    .stroke(.white, lineWidth: 5)
-            }
-    }
-
-    private var stickerOutline: some View {
-        RoundedRectangle(cornerRadius: item.sticker.shape == .bubble ? 22 : 10)
-            .stroke(.black, lineWidth: 2)
     }
 }
 

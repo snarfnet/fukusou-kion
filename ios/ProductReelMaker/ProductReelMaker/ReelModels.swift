@@ -59,6 +59,7 @@ struct ReelScene: Identifiable {
 struct TextSticker: Identifiable {
     let id: String
     let text: String
+    let assetName: String
     let colors: [Color]
     let tilt: Double
     let shape: StickerShape
@@ -140,12 +141,14 @@ enum ReelLibrary {
         "可愛\nすぎ", "使える", "早い者\n勝ち", "話題に\nなりそう", "これは\nアリ",
         "クセに\nなる", "いい\n感じ", "目立つ", "新発見", "本気で\n推す"
     ].enumerated().map { index, text in
+        let number = String(format: "%02d", index + 1)
         let palettes: [[Color]] = [
             [.red, .orange], [.pink, .purple], [.cyan, .blue], [.mint, .green], [.yellow, .orange]
         ]
         return TextSticker(
-            id: "promo-\(index)",
+            id: "promo-\(number)",
             text: text,
+            assetName: "PromoSticker\(number)",
             colors: palettes[index % palettes.count],
             tilt: [-8, 6, -4, 5, -7, 3][index % 6],
             shape: StickerShape.allCases[index % StickerShape.allCases.count]

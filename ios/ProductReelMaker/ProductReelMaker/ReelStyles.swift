@@ -45,6 +45,20 @@ struct SquareToolButtonStyle: ButtonStyle {
     }
 }
 
+struct QuickRailButtonStyle: ButtonStyle {
+    var color: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .background(color, in: RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white, lineWidth: 3))
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.black, lineWidth: 1.5))
+            .shadow(color: .black.opacity(0.36), radius: 0, x: configuration.isPressed ? 1 : 3, y: configuration.isPressed ? 1 : 3)
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+    }
+}
+
 struct AddPhotoButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
