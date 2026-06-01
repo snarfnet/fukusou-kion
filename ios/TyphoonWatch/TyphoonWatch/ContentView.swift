@@ -21,10 +21,10 @@ struct ContentView: View {
                         feedStrip(metrics)
                         timelineCard(metrics)
                     }
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
                     .padding(.horizontal, metrics.screenPadding)
                     .padding(.top, 12)
                     .padding(.bottom, 22)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
             }
             .navigationBarHidden(true)
