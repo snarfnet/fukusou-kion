@@ -18,11 +18,11 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
 
 ## Latest Training Run
 
-- GitHub Actions run: `26754037593`
+- GitHub Actions run: `26756357252`
 - Artifact: `TsuchinokoCandidate-CoreML`
-- Artifact ID: `7331562935`
-- Validation classification error: `0.09375`
-- Validation accuracy estimate: `0.90625`
+- Artifact ID: `7332542038`
+- Validation classification error: `0.03125`
+- Validation accuracy estimate: `0.96875`
 
 The validation set is still synthetic-heavy, so this score is only a smoke test.
 
@@ -32,6 +32,7 @@ The workflow runs `scripts/evaluate_coreml.swift` after training.
 
 - `models/evaluation.csv`: per-image expected label, predicted label, confidence, and correctness
 - `models/evaluation.json`: summary counts, accuracy, false positives, and false negatives
+- Latest evaluation: 192 validation images, 186 correct, 2 false positives, 4 false negatives
 
 These files help find hard negatives and decide what field images to collect next.
 
