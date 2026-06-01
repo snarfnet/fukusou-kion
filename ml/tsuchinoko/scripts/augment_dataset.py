@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PROCESSED = ROOT / "processed"
 AUGMENTED = ROOT / "augmented"
 LABELS = ["tsuchinoko_candidate", "not_tsuchinoko"]
-TRAIN_VARIANTS_PER_IMAGE = 56
-VAL_VARIANTS_PER_IMAGE = 12
+TRAIN_VARIANTS_PER_IMAGE = 240
+VAL_VARIANTS_PER_IMAGE = 48
 OUTPUT_SIZE = (512, 384)
 
 
@@ -26,7 +26,7 @@ def iter_source_images(bucket: str, label: str):
 
 def random_crop(image: Image.Image, rng: random.Random) -> Image.Image:
     width, height = image.size
-    scale = rng.uniform(0.78, 1.0)
+    scale = rng.uniform(0.68, 1.0)
     crop_w = max(64, int(width * scale))
     crop_h = max(64, int(height * scale))
     left = rng.randint(0, max(0, width - crop_w))
@@ -55,16 +55,18 @@ def augment(image: Image.Image, seed: int) -> Image.Image:
         output = output.rotate(rng.uniform(-4.0, 4.0), resample=Image.Resampling.BICUBIC, expand=False)
 
     output = output.resize(OUTPUT_SIZE, Image.Resampling.LANCZOS)
-    output = ImageEnhance.Brightness(output).enhance(rng.uniform(0.72, 1.28))
-    output = ImageEnhance.Contrast(output).enhance(rng.uniform(0.72, 1.35))
-    output = ImageEnhance.Color(output).enhance(rng.uniform(0.55, 1.28))
+    output = ImageEnhance.Brightness(output).enhance(rng.uniform(0.58, 1.46))
+    output = ImageEnhance.Contrast(output).enhance(rng.uniform(0.62, 1.55))
+    output = ImageEnhance.Color(output).enhance(rng.uniform(0.38, 1.38))
 
-    if rng.random() < 0.35:
-        output = output.filter(ImageFilter.GaussianBlur(radius=rng.uniform(0.2, 1.1)))
+    if rng.random() < 0.45:
+        output = output.filter(ImageFilter.GaussianBlur(radius=rng.uniform(0.2, 1.35)))
     if rng.random() < 0.72:
         output = add_noise(output, rng)
-    if rng.random() < 0.25:
+    if rng.random() < 0.32:
         output = ImageOps.grayscale(output).convert("RGB")
+    if rng.random() < 0.18:
+        output = ImageOps.autocontrast(output, cutoff=rng.uniform(0.0, 1.8))
 
     return output
 

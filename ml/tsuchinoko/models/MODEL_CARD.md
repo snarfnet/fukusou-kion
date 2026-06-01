@@ -9,9 +9,9 @@ It should not be used to claim that a real tsuchinoko was found. In an app, show
 ## Training Data
 
 - Approved raw images: 6
-- Augmented images: 248
-- Train: 224
-- Validation: 24
+- Augmented images: 1056
+- Train: 960
+- Validation: 96
 - Classes:
   - `tsuchinoko_candidate`
   - `not_tsuchinoko`
@@ -23,7 +23,7 @@ It should not be used to claim that a real tsuchinoko was found. In an app, show
 - Validation classification error: `0.41666666666666663`
 - Validation accuracy estimate: `0.5833333333333334`
 
-The validation set is very small and mostly synthetic, so this score is only a smoke test.
+The validation set is still synthetic-heavy, so this score is only a smoke test.
 
 ## Next Data Needs
 
