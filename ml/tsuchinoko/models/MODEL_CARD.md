@@ -16,6 +16,8 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
   - `tsuchinoko_candidate`
   - `not_tsuchinoko`
 
+The manifest uses a fixed `split` column so hard-example additions do not randomly change the validation set.
+
 ## Latest Training Run
 
 - GitHub Actions run: `26765841776`

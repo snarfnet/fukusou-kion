@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "manifests" / "dataset.csv"
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 EXPECTED_LABELS = {"tsuchinoko_candidate", "not_tsuchinoko"}
+EXPECTED_SPLITS = {"", "train", "val"}
 MIN_RAW_PER_LABEL = 8
 MIN_AUGMENTED_PER_LABEL = 1500
 MAX_BALANCE_RATIO = 1.25
@@ -55,6 +56,9 @@ def check_manifest(rows: list[dict[str, str]]) -> list[str]:
         seen_paths.add(path)
         if label not in EXPECTED_LABELS:
             errors.append(f"dataset.csv:{index}: unexpected label: {label}")
+        split = row.get("split", "").strip()
+        if split not in EXPECTED_SPLITS:
+            errors.append(f"dataset.csv:{index}: unexpected split: {split}")
         if status == "approved":
             approved_counts[label] += 1
             source_path = ROOT / path

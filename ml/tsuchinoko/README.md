@@ -51,6 +51,8 @@ python ml/tsuchinoko/scripts/dataset_report.py
 python ml/tsuchinoko/scripts/quality_check.py
 ```
 
+`manifests/dataset.csv` の `split` 列で `train` または `val` を指定できます。ハード例を増やすときは、評価を安定させるため検証用の画像を固定し、新しく足した紛らわしい画像はまず学習側に入れます。
+
 実地画像を取り込む場合は、まず `field_data/positive_review` または `field_data/negative_review` に置き、ドライランで確認します。
 
 ```bash

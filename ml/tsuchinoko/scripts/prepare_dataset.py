@@ -35,12 +35,22 @@ def main() -> None:
                 rows.append(row)
 
     grouped = defaultdict(list)
+    forced_train = []
+    forced_val = []
     for row in rows:
-        grouped[row["label"]].append(row)
+        split = row.get("split", "").strip()
+        if split == "train":
+            forced_train.append(row)
+        elif split == "val":
+            forced_val.append(row)
+        else:
+            grouped[row["label"]].append(row)
 
     buckets = [("train", []), ("val", [])]
     train_rows = buckets[0][1]
     val_rows = buckets[1][1]
+    train_rows.extend(forced_train)
+    val_rows.extend(forced_val)
     rng = random.Random(42)
     for label_rows in grouped.values():
         rng.shuffle(label_rows)
