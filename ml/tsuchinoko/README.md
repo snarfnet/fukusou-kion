@@ -28,3 +28,28 @@
 ## 注意
 
 本物のツチノコ画像が存在しないため、現実映像では太いヘビ、枝、ホースなどを候補として拾う可能性があります。アプリ上の表現は「ツチノコ候補」「UMA候補」が安全です。
+
+## 現在のデータ量
+
+- 承認済み元画像: 6枚
+- 増強後画像: 248枚
+- `tsuchinoko_candidate`: 124枚
+- `not_tsuchinoko`: 124枚
+
+この数はプロトタイプ用です。実用に寄せるには、実地のトレイルカメラ映像から負例を増やし、正例は画風・角度・距離が偏らないように追加します。
+
+## 手順
+
+```bash
+python ml/tsuchinoko/scripts/prepare_dataset.py
+python ml/tsuchinoko/scripts/augment_dataset.py
+python ml/tsuchinoko/scripts/dataset_report.py
+```
+
+Core MLモデル作成はmacOSで行います。
+
+```bash
+swift ml/tsuchinoko/scripts/train_create_ml.swift
+```
+
+GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を手動実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel` が出ます。

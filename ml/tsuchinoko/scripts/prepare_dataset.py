@@ -11,9 +11,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "manifests" / "dataset.csv"
 TRAIN_RATIO = 0.8
+LABELS = ["tsuchinoko_candidate", "not_tsuchinoko"]
+
+
+def clear_processed() -> None:
+    for bucket in ["train", "val"]:
+        for label in LABELS:
+            label_dir = ROOT / "processed" / bucket / label
+            label_dir.mkdir(parents=True, exist_ok=True)
+            for path in label_dir.iterdir():
+                if path.name != ".gitkeep" and path.is_file():
+                    path.unlink()
 
 
 def main() -> None:
+    clear_processed()
+
     rows = []
     with MANIFEST.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
