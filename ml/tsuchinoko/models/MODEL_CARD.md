@@ -33,8 +33,11 @@ The workflow runs `scripts/evaluate_coreml.swift` after training.
 - `models/evaluation.csv`: per-image expected label, predicted label, confidence, and correctness
 - `models/evaluation.json`: summary counts, accuracy, false positives, and false negatives
 - Latest evaluation: 192 validation images, 186 correct, 2 false positives, 4 false negatives
+- `models/hard_examples`: copied false positives and false negatives for visual review
 
 These files help find hard negatives and decide what field images to collect next.
+
+Current hard examples suggest the model still needs more dim, monochrome, grass-occluded negatives and more grass-occluded thick-body positives.
 
 ## Next Data Needs
 

@@ -69,6 +69,14 @@ GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行しま�
 
 `evaluation.csv` は画像ごとの正解ラベル、予測ラベル、信頼度、正誤を出します。外した画像を見れば、次に集めるべき負例や正例を決めやすくなります。
 
+失敗例だけを集める場合は次を使います。
+
+```bash
+python ml/tsuchinoko/scripts/collect_hard_examples.py
+```
+
+出力先は `models/hard_examples/` です。現在の失敗例では、白黒・暗所・草地・細長く見える候補で迷いやすい傾向があります。次に増やすなら、暗所のホース・枝・ヘビ、草に隠れた太い候補を優先します。
+
 ## 最新モデル
 
 - モデル: `models/TsuchinokoCandidate.mlmodel`
