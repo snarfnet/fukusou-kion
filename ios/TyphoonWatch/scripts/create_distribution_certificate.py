@@ -3,6 +3,7 @@ import base64
 import hashlib
 import os
 import subprocess
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -73,6 +74,25 @@ def parse_expiration(value):
         return None
 
 
+def serial_from_certificate_content(certificate):
+    content = certificate.get("attributes", {}).get("certificateContent")
+    if not content:
+        detail = api_json("GET", f"/certificates/{certificate['id']}").get("data", certificate)
+        content = detail.get("attributes", {}).get("certificateContent")
+    if not content:
+        return ""
+    with tempfile.NamedTemporaryFile(suffix=".cer") as temp_cert:
+        temp_cert.write(base64.b64decode(content))
+        temp_cert.flush()
+        result = subprocess.run(
+            ["openssl", "x509", "-inform", "DER", "-in", temp_cert.name, "-noout", "-serial"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    return result.stdout.strip().replace("serial=", "").replace(":", "").upper()
+
+
 def delete_known_invalid_certificates():
     now = datetime.now(timezone.utc)
     deleted = 0
@@ -81,6 +101,8 @@ def delete_known_invalid_certificates():
     for certificate in certificates:
         attrs = certificate.get("attributes", {})
         serial = (attrs.get("serialNumber") or "").replace(":", "").upper()
+        if not serial:
+            serial = serial_from_certificate_content(certificate)
         expiration = parse_expiration(attrs.get("expirationDate"))
         names = " ".join(str(attrs.get(key) or "") for key in ("name", "displayName", "commonName")).lower()
         is_typhoon_watch_ci_cert = any(marker in names for marker in CI_CERT_MARKERS)
