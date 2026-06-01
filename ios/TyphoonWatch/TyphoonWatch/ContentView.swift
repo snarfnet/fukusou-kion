@@ -1,15 +1,7 @@
 import SwiftUI
-import UIKit
 
 struct ContentView: View {
     @StateObject private var model = TyphoonViewModel()
-    @State private var viewportSize: CGSize = .zero
-    private var metrics: LayoutMetrics {
-        LayoutMetrics(
-            width: viewportSize.width > 0 ? viewportSize.width : UIScreen.main.bounds.width,
-            height: viewportSize.height > 0 ? viewportSize.height : UIScreen.main.bounds.height
-        )
-    }
 
     var body: some View {
         NavigationStack {
@@ -25,23 +17,18 @@ struct ContentView: View {
 
                     ScrollView {
                         VStack(spacing: metrics.sectionSpacing) {
-                            header
-                            riskDeck
-                            trackCard
-                            feedStrip
-                            timelineCard
+                            header(metrics)
+                            riskDeck(metrics)
+                            trackCard(metrics)
+                            feedStrip(metrics)
+                            timelineCard(metrics)
                         }
                         .padding(.horizontal, metrics.screenPadding)
                         .padding(.top, max(8, proxy.safeAreaInsets.top + 6))
                         .padding(.bottom, max(18, proxy.safeAreaInsets.bottom + 18))
-                        .frame(width: metrics.contentWidth, alignment: .topLeading)
+                        .frame(maxWidth: metrics.contentWidth, alignment: .topLeading)
                     }
-                }
-                .onAppear {
-                    viewportSize = proxy.size
-                }
-                .onChange(of: proxy.size) { _, newSize in
-                    viewportSize = newSize
+                    .frame(width: proxy.size.width, height: proxy.size.height)
                 }
             }
             .navigationBarHidden(true)
@@ -55,7 +42,7 @@ struct ContentView: View {
         .tint(.cyan)
     }
 
-    private var header: some View {
+    private func header(_ metrics: LayoutMetrics) -> some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Typhoon Watch")
@@ -84,10 +71,10 @@ struct ContentView: View {
         }
     }
 
-    private var riskDeck: some View {
-        CompactPanel {
+    private func riskDeck(_ metrics: LayoutMetrics) -> some View {
+        CompactPanel(metrics: metrics) {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
+                VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("現在の判断")
                             .font(.caption.weight(.bold))
@@ -98,11 +85,11 @@ struct ContentView: View {
                             .lineLimit(2)
                             .minimumScaleFactor(0.76)
                     }
-                    Spacer()
                     Text(model.statusText)
                         .font(.caption.weight(.bold))
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .background(Color(hex: model.risk.level.colorHex).opacity(0.22), in: Capsule())
@@ -153,12 +140,14 @@ struct ContentView: View {
         }
     }
 
-    private var trackCard: some View {
-        CompactPanel {
+    private func trackCard(_ metrics: LayoutMetrics) -> some View {
+        CompactPanel(metrics: metrics) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Label("進路", systemImage: "scope")
                         .font(.headline.weight(.black))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     Spacer()
                     Text(model.storm.source)
                         .font(.caption2.weight(.bold))
@@ -189,8 +178,8 @@ struct ContentView: View {
         }
     }
 
-    private var feedStrip: some View {
-        CompactPanel {
+    private func feedStrip(_ metrics: LayoutMetrics) -> some View {
+        CompactPanel(metrics: metrics) {
             VStack(alignment: .leading, spacing: 10) {
                 Label("データ元", systemImage: "antenna.radiowaves.left.and.right")
                     .font(.headline.weight(.black))
@@ -220,21 +209,21 @@ struct ContentView: View {
         }
     }
 
-    private var timelineCard: some View {
-        CompactPanel {
+    private func timelineCard(_ metrics: LayoutMetrics) -> some View {
+        CompactPanel(metrics: metrics) {
             VStack(alignment: .leading, spacing: 10) {
                 Label("観測リスト", systemImage: "list.bullet.rectangle")
                     .font(.headline.weight(.black))
                     .foregroundStyle(.white)
 
                 ForEach(model.storm.points.suffix(8)) { point in
-                    timelineRow(point)
+                    timelineRow(point, metrics: metrics)
                 }
             }
         }
     }
 
-    private func timelineRow(_ point: TyphoonPoint) -> some View {
+    private func timelineRow(_ point: TyphoonPoint, metrics: LayoutMetrics) -> some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack(spacing: 8) {
                 Text(point.time.compactTime)
@@ -362,12 +351,11 @@ private struct TrackMap: View {
 }
 
 private struct CompactPanel<Content: View>: View {
+    let metrics: LayoutMetrics
     let content: Content
-    private var metrics: LayoutMetrics {
-        LayoutMetrics(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-    }
 
-    init(@ViewBuilder content: () -> Content) {
+    init(metrics: LayoutMetrics, @ViewBuilder content: () -> Content) {
+        self.metrics = metrics
         self.content = content()
     }
 
