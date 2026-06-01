@@ -342,7 +342,7 @@ private struct MetricTile: View {
 
 private extension Date {
     var compactTime: String {
-        formatted(.dateTime.month(.twoDigits).day(.twoDigits).hour(.twoDigits).minute(.twoDigits))
+        formatted(.dateTime.month(.twoDigits).day(.twoDigits).hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
     }
 }
 
