@@ -2,33 +2,29 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = TyphoonViewModel()
+    private let metrics = LayoutMetrics(width: 320, height: 568)
 
     var body: some View {
         NavigationStack {
-            GeometryReader { proxy in
-                let metrics = LayoutMetrics(width: proxy.size.width, height: proxy.size.height)
+            ZStack {
+                Image("TyphoonHeroBackdrop")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .overlay(Color.black.opacity(0.46))
 
-                ZStack {
-                    Image("TyphoonHeroBackdrop")
-                        .resizable()
-                        .scaledToFill()
-                        .ignoresSafeArea()
-                        .overlay(Color.black.opacity(0.46))
-
-                    ScrollView {
-                        VStack(spacing: metrics.sectionSpacing) {
-                            header(metrics)
-                            riskDeck(metrics)
-                            trackCard(metrics)
-                            feedStrip(metrics)
-                            timelineCard(metrics)
-                        }
-                        .padding(.horizontal, metrics.screenPadding)
-                        .padding(.top, max(8, proxy.safeAreaInsets.top + 6))
-                        .padding(.bottom, max(18, proxy.safeAreaInsets.bottom + 18))
-                        .frame(maxWidth: metrics.contentWidth, alignment: .topLeading)
+                ScrollView {
+                    VStack(spacing: metrics.sectionSpacing) {
+                        header(metrics)
+                        riskDeck(metrics)
+                        trackCard(metrics)
+                        feedStrip(metrics)
+                        timelineCard(metrics)
                     }
-                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .padding(.horizontal, metrics.screenPadding)
+                    .padding(.top, 12)
+                    .padding(.bottom, 22)
                 }
             }
             .navigationBarHidden(true)
@@ -262,7 +258,6 @@ private struct LayoutMetrics {
 
     var isNarrow: Bool { width <= 375 }
     var screenPadding: CGFloat { isNarrow ? 10 : 16 }
-    var contentWidth: CGFloat { max(0, width - screenPadding * 2) }
     var sectionSpacing: CGFloat { isNarrow ? 10 : 14 }
     var titleSize: CGFloat { isNarrow ? 28 : 34 }
     var refreshButtonSize: CGFloat { isNarrow ? 38 : 42 }
