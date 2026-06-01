@@ -80,10 +80,12 @@ python ml/tsuchinoko/scripts/collect_hard_examples.py
 ## 最新モデル
 
 - モデル: `models/TsuchinokoCandidate.mlmodel`
-- GitHub Actions run: `26756357252`
-- Artifact ID: `7332542038`
-- 検証エラー: `0.03125`
-- 検証精度の目安: `0.96875`
+- GitHub Actions run: `26758205871`
+- Artifact ID: `7333436618`
+- 検証エラー: `0.10416666666666663`
+- 検証精度の目安: `0.8958333333333334`
+- 評価精度: `0.890625`
+- 失敗例: 21枚（誤検知3枚、見逃し18枚）
 - 評価CSV: `models/evaluation.csv`
 - 評価JSON: `models/evaluation.json`
 

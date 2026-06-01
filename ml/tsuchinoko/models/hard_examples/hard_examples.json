@@ -1,5 +1,5 @@
 {
-  "total_hard_examples": 6,
-  "false_positives": 2,
-  "false_negatives": 4
+  "total_hard_examples": 21,
+  "false_positives": 3,
+  "false_negatives": 18
 }
