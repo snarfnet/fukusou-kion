@@ -1,33 +1,37 @@
 # Tsuchinoko Candidate Model
 
-ツチノコを断定するモデルではなく、山道や草地の映像から「ツチノコらしき動体」を候補として拾うための学習セットです。
+ツチノコそのものを断定するモデルではありません。山道や草地の映像から「ツチノコらしい動体候補」を拾うための、試作用の学習セットです。
+
+アプリ上では「ツチノコ候補」または「UMA候補」のように表示する想定です。
 
 ## ラベル
 
 - `tsuchinoko_candidate`: 太く短い胴体、ヘビに近い頭部、地面を横切るUMA風の対象
-- `not_tsuchinoko`: ヘビ、トカゲ、枝、落ち葉、ホース、ロープ、猫のしっぽ、影など
+- `not_tsuchinoko`: ヘビ、トカゲ、枝、落ち葉、ホース、ロープ、根、影など
 
 ## 方針
 
 - ネット画像は利用規約を確認してから `raw/positive_licensed` に入れる
-- 規約未確認の画像は学習に使わない
+- 利用規約が不明な画像は学習に使わない
 - ImageGenなどで作った合成画像は `raw/positive_synthetic` に入れる
-- 誤検出候補はできるだけ実写寄りに集める
-- 最終的には `tsuchinoko_candidate / not_tsuchinoko` の2クラス分類から始める
+- 誤検知を減らすため、実写寄りの負例を多めに集める
+- まずは `tsuchinoko_candidate / not_tsuchinoko` の2クラス分類で進める
 
 ## フォルダ
 
 - `raw/positive_licensed`: ライセンス確認済みのツチノコ素材
 - `raw/positive_synthetic`: 生成画像
-- `raw/negative`: 誤検出候補
+- `raw/negative`: 誤検知を減らすための負例
 - `processed/train`: 学習用
 - `processed/val`: 検証用
+- `augmented`: 増強後の学習・検証画像
 - `manifests`: 画像ソース、プロンプト、ライセンスメモ
-- `scripts`: 整理・学習・Core ML変換の補助
+- `models`: 書き出したCore MLモデル
+- `scripts`: 整理、増強、集計、Core ML変換
 
 ## 注意
 
-本物のツチノコ画像が存在しないため、現実映像では太いヘビ、枝、ホースなどを候補として拾う可能性があります。アプリ上の表現は「ツチノコ候補」「UMA候補」が安全です。
+本物のツチノコ画像が存在しないため、現実の映像では太いヘビ、枝、ホースなどを候補として拾う可能性があります。実用に近づけるには、現地のトレイルカメラ映像から負例を増やし、正例の画風、角度、距離も広げます。
 
 ## 現在のデータ量
 
@@ -36,7 +40,7 @@
 - `tsuchinoko_candidate`: 528枚
 - `not_tsuchinoko`: 528枚
 
-この数はプロトタイプ用です。実用に寄せるには、実地のトレイルカメラ映像から負例を増やし、正例は画風・角度・距離が偏らないように追加します。
+この数はプロトタイプ用です。実用に近づけるには、実地映像の負例を中心に増やします。
 
 ## 手順
 
@@ -52,13 +56,14 @@ Core MLモデル作成はmacOSで行います。
 swift ml/tsuchinoko/scripts/train_create_ml.swift
 ```
 
-GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を手動実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel` が出ます。
+GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel` が入ります。
 
 ## 最新モデル
 
 - モデル: `models/TsuchinokoCandidate.mlmodel`
-- GitHub Actions run: `26748962089`
-- 検証エラー: `0.41666666666666663`
-- 検証精度の目安: `0.5833333333333334`
+- GitHub Actions run: `26749578617`
+- Artifact ID: `7329351590`
+- 検証エラー: `0.44791666666666663`
+- 検証精度の目安: `0.5520833333333334`
 
-検証データが24枚と少ないため、これは動作確認レベルです。実用には負例を中心に増やします。
+検証データも合成寄りなので、この数字は動作確認レベルです。実用に進めるには、現地映像の負例と、実写に近い候補画像を足して再学習します。
