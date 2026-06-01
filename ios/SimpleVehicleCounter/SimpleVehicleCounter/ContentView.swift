@@ -135,7 +135,7 @@ struct ContentView: View {
                     .frame(width: rect.width, height: rect.height)
                     .position(x: rect.midX, y: rect.midY)
                     .overlay {
-                        Text("\(Int(detection.motionScore * 1000))")
+                        Text("CAR \(Int(detection.vehicleScore * 100))")
                             .font(.system(size: 10, weight: .black, design: .monospaced))
                             .foregroundStyle(.black)
                             .padding(.horizontal, 5)
@@ -159,7 +159,7 @@ struct ContentView: View {
 
                 Spacer()
 
-                Text("動体検出")
+                Text("車両フィルター")
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.74))
                     .padding(.horizontal, 9)
@@ -178,9 +178,9 @@ struct ContentView: View {
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(.yellow)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("黄色い線を車両が越えると1台として数えます")
+                    Text("黄色い線を車両候補が越えると1台として数えます")
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
-                    Text("IN / OUTは使いません。車両合計だけを記録します。")
+                    Text("人や小さい二輪を拾いにくいよう、幅・高さ・形で絞ります。")
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.68))
                 }

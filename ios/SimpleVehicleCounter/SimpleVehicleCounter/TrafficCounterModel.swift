@@ -8,6 +8,7 @@ struct VehicleDetection: Identifiable, Equatable {
     let id = UUID()
     let rect: CGRect
     let motionScore: Double
+    let vehicleScore: Double
 }
 
 struct VehicleEvent: Identifiable {
@@ -77,7 +78,19 @@ final class VehicleCounterViewModel: NSObject, ObservableObject {
     }
 
     var minMotionAreaRatio: Double {
-        0.055 - (recognitionDistance * 0.043)
+        0.065 - (recognitionDistance * 0.038)
+    }
+
+    var minVehicleWidth: Double {
+        0.22 - (recognitionDistance * 0.08)
+    }
+
+    var minVehicleHeight: Double {
+        0.09 - (recognitionDistance * 0.025)
+    }
+
+    var minVehicleBoxArea: Double {
+        0.032 - (recognitionDistance * 0.014)
     }
 
     func requestCameraAccess() {
@@ -251,7 +264,43 @@ final class VehicleCounterViewModel: NSObject, ObservableObject {
             width: CGFloat(maxX - minX + 1) / CGFloat(current.columns),
             height: CGFloat(maxY - minY + 1) / CGFloat(current.rows)
         )
-        return VehicleDetection(rect: rect, motionScore: ratio)
+        guard let vehicleScore = vehicleCandidateScore(for: rect, motionRatio: ratio) else {
+            return nil
+        }
+        return VehicleDetection(rect: rect, motionScore: ratio, vehicleScore: vehicleScore)
+    }
+
+    private func vehicleCandidateScore(for rect: CGRect, motionRatio: Double) -> Double? {
+        let width = Double(rect.width)
+        let height = Double(rect.height)
+        let area = width * height
+        let aspectRatio = width / max(height, 0.001)
+        let centerY = Double(rect.midY)
+
+        guard width >= minVehicleWidth, height >= minVehicleHeight, area >= minVehicleBoxArea else {
+            return nil
+        }
+
+        guard aspectRatio >= 1.15 && aspectRatio <= 5.8 else {
+            return nil
+        }
+
+        guard centerY <= 0.68 else {
+            return nil
+        }
+
+        let widthScore = min(1.0, width / 0.32)
+        let heightScore = min(1.0, height / 0.18)
+        let shapeScore = 1.0 - min(1.0, abs(aspectRatio - 2.3) / 2.3)
+        let roadPositionScore = 1.0 - min(1.0, max(0.0, centerY - 0.18) / 0.5)
+        let motionScore = min(1.0, motionRatio / 0.12)
+        let vehicleScore = (widthScore * 0.28)
+            + (heightScore * 0.18)
+            + (shapeScore * 0.28)
+            + (roadPositionScore * 0.14)
+            + (motionScore * 0.12)
+
+        return vehicleScore >= 0.52 ? vehicleScore : nil
     }
 
     private func updateTracks(with detection: VehicleDetection?) {
