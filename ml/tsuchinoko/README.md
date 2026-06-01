@@ -57,8 +57,8 @@ GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を手動実行�
 ## 最新モデル
 
 - モデル: `models/TsuchinokoCandidate.mlmodel`
-- GitHub Actions run: `26748637368`
-- 検証エラー: `0.375`
-- 検証精度の目安: `0.625`
+- GitHub Actions run: `26748962089`
+- 検証エラー: `0.41666666666666663`
+- 検証精度の目安: `0.5833333333333334`
 
 検証データが24枚と少ないため、これは動作確認レベルです。実用には負例を中心に増やします。
