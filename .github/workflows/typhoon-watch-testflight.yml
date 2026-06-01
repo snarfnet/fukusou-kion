@@ -1,0 +1,194 @@
+name: TyphoonWatch TestFlight Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      register_only:
+        description: "Only create or resolve the App Store Connect app, then stop before signing/build/upload"
+        required: false
+        default: "false"
+  push:
+    branches:
+      - codex/typhoon-watch-testflight
+    paths:
+      - ".github/workflows/typhoon-watch-testflight.yml"
+      - "ios/TyphoonWatch/**"
+
+concurrency:
+  group: typhoon-watch-testflight
+  cancel-in-progress: true
+
+jobs:
+  upload-testflight:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/TyphoonWatch
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.typhoonwatch
+      APP_NAME: "台風ウォッチ"
+      APP_SKU: typhoon-watch-ios
+      BUNDLE_NAME: TyphoonWatch
+      PROFILE_NAME: "TyphoonWatch App Store"
+      TYPHOON_WATCH_APP_ID: ${{ secrets.TYPHOON_WATCH_APP_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Create distribution certificate
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+          REPLACE_DISTRIBUTION_CERTIFICATE: "0"
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/typhoon-watch-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/typhoon-watch-cert.log >> "$GITHUB_ENV"
+          grep '^ASC_CERTIFICATE_ID=' /tmp/typhoon-watch-cert.log >> "$GITHUB_ENV"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUNDLE_ID: ${{ env.APP_BUNDLE_ID }}
+        run: |
+          . .venv/bin/activate
+          if [ -n "$TYPHOON_WATCH_APP_ID" ]; then
+            echo "APP_ID=$TYPHOON_WATCH_APP_ID" >> "$GITHUB_ENV"
+            python scripts/ensure_asc_app.py
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/typhoon-watch-app.log
+            if grep '^APP_ID=' /tmp/typhoon-watch-app.log >> "$GITHUB_ENV"; then
+              echo "App Store Connect app resolved."
+            else
+              echo "App Store Connect app is not ready yet."
+              echo "Create an app record for $APP_BUNDLE_ID, then add GitHub Secret TYPHOON_WATCH_APP_ID."
+              exit 1
+            fi
+          fi
+
+      - name: Resolve app bundle
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/resolve_app_bundle.py | tee /tmp/typhoon-watch-bundle.log
+          grep '^APP_BUNDLE_ID=' /tmp/typhoon-watch-bundle.log >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        run: xcodegen generate
+
+      - name: Set build number
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        run: |
+          BUILD_NUM=$(( GITHUB_RUN_NUMBER + 100 ))
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
+
+      - name: Archive
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive \
+            -project TyphoonWatch.xcodeproj \
+            -scheme TyphoonWatch \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/TyphoonWatch.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUM"
+
+      - name: Export and upload IPA
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" export_options.plist
+          xcodebuild -exportArchive \
+            -archivePath build/TyphoonWatch.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Wait for TestFlight build processing
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_testflight_build.py
+
+      - name: Upload archive artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TyphoonWatch-xcarchive
+          path: ios/TyphoonWatch/build/TyphoonWatch.xcarchive
+          if-no-files-found: ignore
