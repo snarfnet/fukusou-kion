@@ -93,24 +93,52 @@ def serial_from_certificate_content(certificate):
     return result.stdout.strip().replace("serial=", "").replace(":", "").upper()
 
 
+def certificate_detail(certificate):
+    detail = api_json("GET", f"/certificates/{certificate['id']}").get("data", certificate)
+    attrs = dict(certificate.get("attributes", {}))
+    attrs.update(detail.get("attributes", {}))
+    return attrs
+
+
 def delete_known_invalid_certificates():
     now = datetime.now(timezone.utc)
     deleted = 0
     certificates = certificate_lists()
     print(f"Found {len(certificates)} distribution certificate(s) to inspect.")
     for certificate in certificates:
-        attrs = certificate.get("attributes", {})
+        attrs = certificate_detail(certificate)
         serial = (attrs.get("serialNumber") or "").replace(":", "").upper()
         if not serial:
-            serial = serial_from_certificate_content(certificate)
+            serial = serial_from_certificate_content({"id": certificate["id"], "attributes": attrs})
         expiration = parse_expiration(attrs.get("expirationDate"))
         names = " ".join(str(attrs.get(key) or "") for key in ("name", "displayName", "commonName")).lower()
         is_typhoon_watch_ci_cert = any(marker in names for marker in CI_CERT_MARKERS)
+        has_certificate_content = bool(attrs.get("certificateContent"))
+        is_pending_request = not serial and not expiration and not has_certificate_content
+        reason = ""
+        if REPLACE_DISTRIBUTION_CERTIFICATE:
+            reason = "replace requested"
+        elif serial in INVALID_SERIALS:
+            reason = "known invalid serial"
+        elif is_typhoon_watch_ci_cert:
+            reason = "TyphoonWatch CI certificate"
+        elif expiration is not None and expiration < now:
+            reason = "expired certificate"
+        elif is_pending_request:
+            reason = "pending certificate request"
+        print(
+            "Inspecting distribution certificate "
+            f"{certificate['id']} serial={serial or 'none'} "
+            f"expires={attrs.get('expirationDate') or 'none'} "
+            f"has_content={'yes' if has_certificate_content else 'no'} "
+            f"reason={reason or 'keep'}"
+        )
         should_delete = (
             REPLACE_DISTRIBUTION_CERTIFICATE
             or serial in INVALID_SERIALS
             or is_typhoon_watch_ci_cert
             or (expiration is not None and expiration < now)
+            or is_pending_request
         )
         if not should_delete:
             continue
