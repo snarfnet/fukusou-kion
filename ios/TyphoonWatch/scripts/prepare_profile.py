@@ -39,8 +39,7 @@ def find_distribution_certificate():
         for certificate in certificates:
             if cert_sha1(certificate) == CERT_SHA1:
                 return certificate
-        print(f"Warning: no App Store Connect certificate matched installed certificate {CERT_SHA1}.")
-        print("Using the first available distribution certificate.")
+        raise RuntimeError(f"No App Store Connect certificate matched installed certificate {CERT_SHA1}.")
     return certificates[0]
 
 
