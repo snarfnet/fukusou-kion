@@ -35,9 +35,9 @@
 
 ## 現在のデータ量
 
-- 承認済み元画像: 18枚
-- 増強後画像: 3552枚
-- `tsuchinoko_candidate`: 1776枚
+- 承認済み元画像: 17枚
+- 増強後画像: 3312枚
+- `tsuchinoko_candidate`: 1536枚
 - `not_tsuchinoko`: 1776枚
 
 この数はプロトタイプ用です。実用に近づけるには、実地映像の負例を中心に増やします。
@@ -48,6 +48,7 @@
 python ml/tsuchinoko/scripts/prepare_dataset.py
 python ml/tsuchinoko/scripts/augment_dataset.py
 python ml/tsuchinoko/scripts/dataset_report.py
+python ml/tsuchinoko/scripts/quality_check.py
 ```
 
 Core MLモデル作成はmacOSで行います。

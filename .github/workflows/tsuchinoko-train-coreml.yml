@@ -36,6 +36,7 @@ jobs:
           python3 scripts/prepare_dataset.py
           python3 scripts/augment_dataset.py
           python3 scripts/dataset_report.py
+          python3 scripts/quality_check.py
 
       - name: Train Create ML image classifier
         run: swift scripts/train_create_ml.swift
