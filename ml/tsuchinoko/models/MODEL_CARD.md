@@ -8,10 +8,10 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
 
 ## Training Data
 
-- Approved raw images: 29
-- Augmented images: 5808
-- Train: 5520
-- Validation: 288
+- Approved raw images: 38
+- Augmented images: 7392
+- Train: 6960
+- Validation: 432
 - Classes:
   - `tsuchinoko_candidate`
   - `not_tsuchinoko`
@@ -37,7 +37,7 @@ The workflow runs `scripts/evaluate_coreml.swift` after training.
 
 These files help find hard negatives and decide what field images to collect next.
 
-Current hard examples show the model still confuses some branch/root images with candidates. It now misses fewer positive candidates, but needs more hard negative field footage.
+Current hard examples show the model still confuses some branch/root images with candidates. This dataset revision adds more branch/root, vine, hose, ordinary snake, and occluded candidate images.
 
 ## Next Data Needs
 
