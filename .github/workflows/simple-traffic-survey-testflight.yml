@@ -50,6 +50,7 @@ jobs:
         run: |
           BUILD_NUMBER=$((GITHUB_RUN_NUMBER + 100))
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+          echo "PROFILE_NAME=SimpleTrafficSurvey App Store $BUILD_NUMBER" >> "$GITHUB_ENV"
           sed -i "" "s/CURRENT_PROJECT_VERSION: \"1\"/CURRENT_PROJECT_VERSION: \"$BUILD_NUMBER\"/" project.yml
 
       - name: Write App Store Connect key
