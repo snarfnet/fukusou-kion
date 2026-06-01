@@ -7,6 +7,10 @@ on:
         description: "Only create or resolve the App Store Connect app, then stop before signing/build/upload"
         required: false
         default: "false"
+      replace_distribution_certificate:
+        description: "Delete existing distribution certificates if Apple blocks creating a CI certificate"
+        required: false
+        default: "false"
   push:
     branches:
       - codex/typhoon-watch-testflight
@@ -77,7 +81,7 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
-          REPLACE_DISTRIBUTION_CERTIFICATE: "0"
+          REPLACE_DISTRIBUTION_CERTIFICATE: ${{ github.event.inputs.replace_distribution_certificate }}
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain

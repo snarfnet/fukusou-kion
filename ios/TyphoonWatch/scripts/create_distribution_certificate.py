@@ -10,7 +10,11 @@ from asc_helpers import api, api_json, fail, json_body
 
 
 KEYCHAIN = os.environ.get("BUILD_KEYCHAIN", "build.keychain")
-REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFICATE", "") == "1"
+REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFICATE", "").lower() in {
+    "1",
+    "true",
+    "yes",
+}
 WORK_DIR = Path("/tmp/typhoon-watch-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
