@@ -7,6 +7,12 @@ on:
         description: "Optional App Store Connect build number"
         required: false
         default: ""
+  push:
+    branches:
+      - codex/simple-traffic-survey-production
+    paths:
+      - ".github/workflows/simple-vehicle-counter-testflight.yml"
+      - "ios/SimpleVehicleCounter/**"
 
 concurrency:
   group: simple-vehicle-counter-testflight
