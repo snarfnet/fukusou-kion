@@ -98,7 +98,7 @@ jobs:
               echo "Existing p12 certificate is revoked or expired; creating a fresh CI certificate after deleting only the known invalid certificate."
               rm /tmp/distribution.p12
               . .venv/bin/activate
-              python scripts/create_distribution_certificate.py | tee /tmp/typhoon-watch-cert.log
+              REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE=1 python scripts/create_distribution_certificate.py | tee /tmp/typhoon-watch-cert.log
               grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/typhoon-watch-cert.log >> "$GITHUB_ENV"
               grep '^ASC_CERTIFICATE_ID=' /tmp/typhoon-watch-cert.log >> "$GITHUB_ENV"
             else

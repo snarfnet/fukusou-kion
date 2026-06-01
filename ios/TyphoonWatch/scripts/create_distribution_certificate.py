@@ -16,6 +16,9 @@ REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFIC
     "true",
     "yes",
 }
+REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE = os.environ.get(
+    "REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE", ""
+).lower() in {"1", "true", "yes"}
 WORK_DIR = Path("/tmp/typhoon-watch-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
@@ -103,6 +106,7 @@ def certificate_detail(certificate):
 def delete_known_invalid_certificates():
     now = datetime.now(timezone.utc)
     deleted = 0
+    inspected = []
     certificates = certificate_lists()
     print(f"Found {len(certificates)} distribution certificate(s) to inspect.")
     for certificate in certificates:
@@ -141,11 +145,23 @@ def delete_known_invalid_certificates():
             or is_pending_request
         )
         if not should_delete:
+            if expiration is not None:
+                inspected.append((expiration, certificate, serial))
             continue
         response = api("DELETE", f"/certificates/{certificate['id']}")
         print(
             f"Deleted stale distribution certificate {certificate['id']} "
             f"serial={serial or 'unknown'} status={response.status_code}"
+        )
+        if response.status_code in (200, 204):
+            deleted += 1
+    if deleted == 0 and REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE and inspected:
+        expiration, certificate, serial = sorted(inspected, key=lambda item: item[0])[0]
+        response = api("DELETE", f"/certificates/{certificate['id']}")
+        print(
+            f"Deleted oldest active distribution certificate {certificate['id']} "
+            f"serial={serial or 'unknown'} expires={expiration.isoformat()} "
+            f"status={response.status_code}"
         )
         if response.status_code in (200, 204):
             deleted += 1
