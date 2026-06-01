@@ -62,9 +62,9 @@ GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行しま�
 ## 最新モデル
 
 - モデル: `models/TsuchinokoCandidate.mlmodel`
-- GitHub Actions run: `26751022745`
-- Artifact ID: `7330262766`
-- 検証エラー: `0.26041666666666663`
-- 検証精度の目安: `0.7395833333333334`
+- GitHub Actions run: `26754037593`
+- Artifact ID: `7331562935`
+- 検証エラー: `0.09375`
+- 検証精度の目安: `0.90625`
 
 検証データも合成寄りなので、この数字は動作確認レベルです。実用に進めるには、現地映像の負例と、実写に近い候補画像を足して再学習します。

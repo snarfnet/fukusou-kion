@@ -18,11 +18,11 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
 
 ## Latest Training Run
 
-- GitHub Actions run: `26751022745`
+- GitHub Actions run: `26754037593`
 - Artifact: `TsuchinokoCandidate-CoreML`
-- Artifact ID: `7330262766`
-- Validation classification error: `0.26041666666666663`
-- Validation accuracy estimate: `0.7395833333333334`
+- Artifact ID: `7331562935`
+- Validation classification error: `0.09375`
+- Validation accuracy estimate: `0.90625`
 
 The validation set is still synthetic-heavy, so this score is only a smoke test.
 
