@@ -1,13 +1,21 @@
 import AVFoundation
 import Combine
 import CoreGraphics
+import CoreML
 import Foundation
+import ImageIO
 import Vision
 
 struct PersonDetection: Identifiable, Equatable {
     let id: UUID
     let rect: CGRect
     let confidence: Float
+    let source: DetectionSource
+}
+
+enum DetectionSource: Equatable {
+    case vision
+    case coreML
 }
 
 struct CountEvent: Identifiable {
@@ -99,9 +107,15 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     private let videoQueue = DispatchQueue(label: "camera.counter.video.queue")
     private let visionQueue = DispatchQueue(label: "camera.counter.vision.queue")
     private var isProcessingFrame = false
+    private var coreMLRequest: VNCoreMLRequest?
     private var tracks: [TrackedPerson] = []
     private let matchThreshold: CGFloat = 0.16
     private let staleFrameLimit = 12
+
+    override init() {
+        super.init()
+        configureCoreMLModel()
+    }
 
     var total: Int {
         countIn + countOut
@@ -138,6 +152,7 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         countOut = 0
         recentEvents = []
         tracks = []
+        detections = []
         statusText = isRunning ? "\u{8ABF}\u{67FB}\u{4E2D}" : "\u{30EA}\u{30BB}\u{30C3}\u{30C8}\u{6E08}\u{307F}"
     }
 
@@ -166,6 +181,20 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         countMode = countMode == .storeTraffic ? .pedestrianTraffic : .storeTraffic
     }
 
+    private func configureCoreMLModel() {
+        do {
+            let configuration = MLModelConfiguration()
+            configuration.computeUnits = .all
+            let model = try YOLOv3TinyInt8LUT(configuration: configuration).model
+            let visionModel = try VNCoreMLModel(for: model)
+            let request = VNCoreMLRequest(model: visionModel)
+            request.imageCropAndScaleOption = .scaleFill
+            coreMLRequest = request
+        } catch {
+            coreMLRequest = nil
+        }
+    }
+
     private func markPermissionDenied() {
         permissionDenied = true
         statusText = "\u{30AB}\u{30E1}\u{30E9}\u{8A31}\u{53EF}\u{304C}\u{5FC5}\u{8981}\u{3067}\u{3059}"
@@ -188,7 +217,6 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         }
 
         session.addInput(input)
-
         videoOutput.alwaysDiscardsLateVideoFrames = true
         videoOutput.videoSettings = [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
@@ -213,10 +241,14 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         }
     }
 
-    private func handleDetections(_ observations: [VNHumanObservation]) {
-        let normalizedDetections = observations
-            .filter { $0.confidence > 0.35 }
-            .map { PersonDetection(id: UUID(), rect: $0.boundingBox, confidence: $0.confidence) }
+    private func handleDetections(
+        humanObservations: [VNHumanObservation],
+        objectObservations: [VNRecognizedObjectObservation]
+    ) {
+        let normalizedDetections = mergedPersonDetections(
+            humanObservations: humanObservations,
+            objectObservations: objectObservations
+        )
 
         updateTracks(with: normalizedDetections)
 
@@ -228,6 +260,77 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         }
     }
 
+    private func mergedPersonDetections(
+        humanObservations: [VNHumanObservation],
+        objectObservations: [VNRecognizedObjectObservation]
+    ) -> [PersonDetection] {
+        let visionDetections = humanObservations
+            .filter { $0.confidence > 0.30 }
+            .map {
+                PersonDetection(
+                    id: UUID(),
+                    rect: $0.boundingBox,
+                    confidence: $0.confidence,
+                    source: .vision
+                )
+            }
+
+        let coreMLDetections = objectObservations.compactMap { observation -> PersonDetection? in
+            guard let label = observation.labels.first,
+                  label.identifier == "person",
+                  label.confidence >= 0.34
+            else {
+                return nil
+            }
+
+            let rect = observation.boundingBox
+            let area = rect.width * rect.height
+            let aspectRatio = rect.width / max(rect.height, 0.001)
+            guard area >= 0.004, rect.height >= 0.07, aspectRatio >= 0.16, aspectRatio <= 1.4 else {
+                return nil
+            }
+
+            return PersonDetection(
+                id: UUID(),
+                rect: rect,
+                confidence: label.confidence,
+                source: .coreML
+            )
+        }
+
+        return deduplicatedDetections(visionDetections + coreMLDetections)
+    }
+
+    private func deduplicatedDetections(_ detections: [PersonDetection]) -> [PersonDetection] {
+        var merged: [PersonDetection] = []
+        let sorted = detections.sorted { lhs, rhs in
+            if lhs.source != rhs.source {
+                return lhs.source == .vision
+            }
+            return lhs.confidence > rhs.confidence
+        }
+
+        for detection in sorted {
+            guard !merged.contains(where: { intersectionOverUnion($0.rect, detection.rect) > 0.45 }) else {
+                continue
+            }
+            merged.append(detection)
+        }
+
+        return Array(merged.prefix(30))
+    }
+
+    private func intersectionOverUnion(_ lhs: CGRect, _ rhs: CGRect) -> CGFloat {
+        let intersection = lhs.intersection(rhs)
+        guard !intersection.isNull else {
+            return 0
+        }
+
+        let intersectionArea = intersection.width * intersection.height
+        let unionArea = (lhs.width * lhs.height) + (rhs.width * rhs.height) - intersectionArea
+        return unionArea > 0 ? intersectionArea / unionArea : 0
+    }
+
     private func updateTracks(with detections: [PersonDetection]) {
         tracks = tracks.map { track in
             var copy = track
@@ -235,12 +338,14 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
             return copy
         }
 
+        var matchedTrackIndexes = Set<Int>()
         for detection in detections {
             let center = CGPoint(x: detection.rect.midX, y: detection.rect.midY)
-            if let matchIndex = bestMatchIndex(for: center) {
+            if let matchIndex = bestMatchIndex(for: center, excluding: matchedTrackIndexes) {
                 let previousX = tracks[matchIndex].lastCenter.x
                 tracks[matchIndex].lastCenter = center
                 tracks[matchIndex].framesSinceSeen = 0
+                matchedTrackIndexes.insert(matchIndex)
                 countCrossingIfNeeded(previousX: previousX, currentX: center.x, trackIndex: matchIndex)
             } else {
                 var newTrack = TrackedPerson(lastCenter: center)
@@ -258,11 +363,11 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         tracks.removeAll { $0.framesSinceSeen > staleFrameLimit }
     }
 
-    private func bestMatchIndex(for center: CGPoint) -> Int? {
+    private func bestMatchIndex(for center: CGPoint, excluding matchedTrackIndexes: Set<Int>) -> Int? {
         var bestIndex: Int?
         var bestDistance = CGFloat.greatestFiniteMagnitude
 
-        for index in tracks.indices where tracks[index].framesSinceSeen < 4 {
+        for index in tracks.indices where tracks[index].framesSinceSeen < 4 && !matchedTrackIndexes.contains(index) {
             let distance = hypot(center.x - tracks[index].lastCenter.x, center.y - tracks[index].lastCenter.y)
             if distance < bestDistance {
                 bestDistance = distance
@@ -324,21 +429,29 @@ extension CameraCounterViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
         }
 
         isProcessingFrame = true
-        let request = VNDetectHumanRectanglesRequest { [weak self] request, _ in
-            guard let self else { return }
-            let observations = request.results as? [VNHumanObservation] ?? []
-            self.handleDetections(observations)
-            self.isProcessingFrame = false
-        }
-        request.upperBodyOnly = false
-
         visionQueue.async {
+            let humanRequest = VNDetectHumanRectanglesRequest()
+            humanRequest.upperBodyOnly = false
+            var requests: [VNRequest] = [humanRequest]
+            if let coreMLRequest = self.coreMLRequest {
+                requests.append(coreMLRequest)
+            }
+
             let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: [:])
             do {
-                try handler.perform([request])
+                try handler.perform(requests)
+                let humanObservations = humanRequest.results ?? []
+                let objectObservations = self.coreMLRequest?.results as? [VNRecognizedObjectObservation] ?? []
+                self.handleDetections(
+                    humanObservations: humanObservations,
+                    objectObservations: objectObservations
+                )
             } catch {
-                self.isProcessingFrame = false
+                DispatchQueue.main.async {
+                    self.statusText = "検出エラー"
+                }
             }
+            self.isProcessingFrame = false
         }
     }
 }

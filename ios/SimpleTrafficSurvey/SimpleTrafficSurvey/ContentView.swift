@@ -243,7 +243,7 @@ struct ContentView: View {
 
                 Spacer()
 
-                Text("端末内処理")
+                Text("Vision + Core ML")
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.74))
                     .padding(.horizontal, 9)
