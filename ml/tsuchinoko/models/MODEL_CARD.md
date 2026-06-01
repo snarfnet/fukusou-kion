@@ -8,10 +8,10 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
 
 ## Training Data
 
-- Approved raw images: 6
-- Augmented images: 1056
-- Train: 960
-- Validation: 96
+- Approved raw images: 18
+- Augmented images: 3552
+- Train: 3360
+- Validation: 192
 - Classes:
   - `tsuchinoko_candidate`
   - `not_tsuchinoko`
