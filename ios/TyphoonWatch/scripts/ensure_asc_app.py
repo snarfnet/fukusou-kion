@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.typhoonwatch")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "TyphoonWatch")
-APP_NAME = os.environ.get("APP_NAME", "台風ウォッチ")
+APP_NAME = os.environ.get("APP_NAME", "台風を観測")
 APP_SKU = os.environ.get("APP_SKU", "typhoon-watch-ios")
 
 

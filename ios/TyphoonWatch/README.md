@@ -1,4 +1,4 @@
-# 台風ウォッチ
+# 台風を観測
 
 台風の進路、地点リスク、公式データ元をコンパクトに見られるiOSアプリです。
 
@@ -32,6 +32,8 @@ open TyphoonWatch.xcodeproj
 - `TYPHOON_WATCH_APP_ID`（App Store Connectにアプリ作成済みの場合）
 
 手動実行はGitHub Actionsの `TyphoonWatch TestFlight Upload` からできます。`codex/typhoon-watch-testflight` ブランチへpushしても走ります。
+
+App Store Connect App ID: `6775479428`
 
 ## 生成アセット
 
