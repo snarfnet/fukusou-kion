@@ -2,6 +2,11 @@ name: SimpleTrafficSurvey Production
 
 on:
   workflow_dispatch:
+    inputs:
+      submitForReview:
+        description: "Submit to App Review after upload"
+        required: false
+        default: "false"
 
 concurrency:
   group: simple-traffic-survey-production
@@ -166,6 +171,7 @@ jobs:
             --apiIssuer "$ASC_ISSUER_ID"
 
       - name: Submit for review
+        if: ${{ inputs.submitForReview == 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: python3 scripts/submit_production.py
