@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>&#x7C21;&#x6613;&#x81EA;&#x8EE2;&#x8ECA;&#x30AB;&#x30A6;&#x30F3;&#x30BF;&#x30FC;</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>&#x81EA;&#x8EE2;&#x8ECA;&#x306E;&#x52D5;&#x304D;&#x3092;&#x691C;&#x51FA;&#x3057;&#x3066;&#x7C21;&#x6613;&#x7684;&#x306B;&#x53F0;&#x6570;&#x3092;&#x6570;&#x3048;&#x308B;&#x305F;&#x3081;&#x3001;&#x30AB;&#x30E1;&#x30E9;&#x3092;&#x4F7F;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;&#x6620;&#x50CF;&#x306F;&#x7AEF;&#x672B;&#x5185;&#x3067;&#x51E6;&#x7406;&#x3057;&#x307E;&#x3059;&#x3002;</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string></string>
+	</dict>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Dark</string>
+</dict>
+</plist>
+
