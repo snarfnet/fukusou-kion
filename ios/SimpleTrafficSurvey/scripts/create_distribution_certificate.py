@@ -12,6 +12,7 @@ WORK_DIR = Path("/tmp/simple-traffic-survey-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
 CERT_PATH = WORK_DIR / "distribution.cer"
+CERTIFICATE_TYPES = ("DISTRIBUTION", "IOS_DISTRIBUTION")
 
 
 def run(args):
@@ -38,7 +39,7 @@ def generate_csr():
 def create_certificate():
     csr_content = CSR_PATH.read_text(encoding="utf-8")
     last_error = None
-    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
+    for certificate_type in CERTIFICATE_TYPES:
         payload = {
             "data": {
                 "type": "certificates",
@@ -56,6 +57,35 @@ def create_certificate():
             last_error = error
             print(f"Certificate create failed for {certificate_type}: {error}")
     raise RuntimeError(last_error)
+
+
+def distribution_certificates():
+    certificates = []
+    seen_ids = set()
+    for certificate_type in CERTIFICATE_TYPES:
+        data = api_json("GET", f"/certificates?filter[certificateType]={certificate_type}&limit=200").get("data", [])
+        for certificate in data:
+            if certificate["id"] not in seen_ids:
+                certificates.append(certificate)
+                seen_ids.add(certificate["id"])
+    return certificates
+
+
+def replace_distribution_certificates():
+    if os.environ.get("REPLACE_DISTRIBUTION_CERTS") != "true":
+        return
+
+    certificates = distribution_certificates()
+    if not certificates:
+        return
+
+    print("Replacing existing distribution certificates so CI can create a fresh signing identity.")
+    for certificate in certificates:
+        attrs = certificate.get("attributes", {})
+        cert_type = attrs.get("certificateType", "unknown")
+        display_name = attrs.get("displayName", "unnamed")
+        print(f"Deleting certificate {certificate['id']} ({cert_type}, {display_name})")
+        api_json("DELETE", f"/certificates/{certificate['id']}")
 
 
 def import_certificate(certificate):
@@ -76,7 +106,11 @@ def import_certificate(certificate):
 
 def main():
     generate_csr()
-    certificate = create_certificate()
+    try:
+        certificate = create_certificate()
+    except Exception:
+        replace_distribution_certificates()
+        certificate = create_certificate()
     import_certificate(certificate)
 
 
