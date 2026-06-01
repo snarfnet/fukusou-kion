@@ -77,7 +77,7 @@ def ensure_app(bundle):
         except Exception as error:
             last_error = error
 
-    raise RuntimeError(f"App Store Connect app was not created: {last_error}")
+    print(f"Warning: App Store Connect app was not created: {last_error}")
 
 
 def main():

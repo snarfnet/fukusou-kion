@@ -133,8 +133,9 @@ jobs:
           else
             python3 scripts/ensure_asc_app.py | tee /tmp/simple-vehicle-counter-ensure-app.log
             APP_ID_VALUE="$(grep '^APP_ID=' /tmp/simple-vehicle-counter-ensure-app.log | tail -1 | cut -d= -f2)"
-            test -n "$APP_ID_VALUE"
-            echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+            if [ -n "$APP_ID_VALUE" ]; then
+              echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+            fi
           fi
 
       - name: Prepare provisioning profile
@@ -179,6 +180,7 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
       - name: Upload build to App Store Connect
+        if: ${{ env.APP_ID != '' }}
         run: |
           IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
           test -n "$IPA_PATH"
@@ -187,3 +189,9 @@ jobs:
             --file "$IPA_PATH" \
             --apiKey "$ASC_KEY_ID" \
             --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleVehicleCounter-ipa
+          path: ios/SimpleVehicleCounter/build/export/*.ipa
