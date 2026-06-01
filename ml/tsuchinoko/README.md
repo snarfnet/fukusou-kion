@@ -35,10 +35,10 @@
 
 ## 現在のデータ量
 
-- 承認済み元画像: 17枚
-- 増強後画像: 3312枚
-- `tsuchinoko_candidate`: 1536枚
-- `not_tsuchinoko`: 1776枚
+- 承認済み元画像: 23枚
+- 増強後画像: 4368枚
+- `tsuchinoko_candidate`: 2304枚
+- `not_tsuchinoko`: 2064枚
 
 この数はプロトタイプ用です。実用に近づけるには、実地映像の負例を中心に増やします。
 
@@ -75,7 +75,7 @@ GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行しま�
 python ml/tsuchinoko/scripts/collect_hard_examples.py
 ```
 
-出力先は `models/hard_examples/` です。現在の失敗例では、白黒・暗所・草地・細長く見える候補で迷いやすい傾向があります。次に増やすなら、暗所のホース・枝・ヘビ、草に隠れた太い候補を優先します。
+出力先は `models/hard_examples/` です。現在の失敗例では、白黒・暗所・草地・細長く見える候補で迷いやすい傾向があります。今回の追加では、暗所のホース、赤外線風のホース、草に隠れた太い候補を足しました。
 
 ## 最新モデル
 

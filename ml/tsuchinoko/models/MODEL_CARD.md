@@ -8,10 +8,10 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
 
 ## Training Data
 
-- Approved raw images: 17
-- Augmented images: 3312
-- Train: 3120
-- Validation: 192
+- Approved raw images: 23
+- Augmented images: 4368
+- Train: 4080
+- Validation: 288
 - Classes:
   - `tsuchinoko_candidate`
   - `not_tsuchinoko`
@@ -37,7 +37,7 @@ The workflow runs `scripts/evaluate_coreml.swift` after training.
 
 These files help find hard negatives and decide what field images to collect next.
 
-Current hard examples suggest the model still needs more dim, monochrome, grass-occluded negatives and more grass-occluded thick-body positives.
+Current hard examples suggested the model needed more dim, monochrome, grass-occluded negatives and grass-occluded thick-body positives. This dataset revision adds targeted synthetic examples for those cases.
 
 ## Next Data Needs
 
