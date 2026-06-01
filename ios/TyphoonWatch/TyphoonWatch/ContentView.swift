@@ -1,26 +1,36 @@
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @StateObject private var model = TyphoonViewModel()
+    private var metrics: LayoutMetrics {
+        LayoutMetrics(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+    }
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Image("TyphoonHeroBackdrop")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .overlay(Color.black.opacity(0.46))
+            GeometryReader { proxy in
+                let metrics = LayoutMetrics(width: proxy.size.width, height: proxy.size.height)
 
-                ScrollView {
-                    VStack(spacing: 14) {
-                        header
-                        riskDeck
-                        trackCard
-                        feedStrip
-                        timelineCard
+                ZStack {
+                    Image("TyphoonHeroBackdrop")
+                        .resizable()
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                        .overlay(Color.black.opacity(0.46))
+
+                    ScrollView {
+                        VStack(spacing: metrics.sectionSpacing) {
+                            header
+                            riskDeck
+                            trackCard
+                            feedStrip
+                            timelineCard
+                        }
+                        .padding(.horizontal, metrics.screenPadding)
+                        .padding(.top, max(8, proxy.safeAreaInsets.top + 6))
+                        .padding(.bottom, max(18, proxy.safeAreaInsets.bottom + 18))
                     }
-                    .padding(16)
                 }
             }
             .navigationBarHidden(true)
@@ -38,8 +48,10 @@ struct ContentView: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Typhoon Watch")
-                    .font(.system(size: 34, weight: .black, design: .serif))
+                    .font(.system(size: metrics.titleSize, weight: .black, design: .serif))
                     .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.76)
 
                 Text(model.storm.name)
                     .font(.subheadline.weight(.semibold))
@@ -54,7 +66,7 @@ struct ContentView: View {
             } label: {
                 Image(systemName: model.isLoading ? "waveform" : "arrow.clockwise")
                     .font(.headline.weight(.bold))
-                    .frame(width: 42, height: 42)
+                    .frame(width: metrics.refreshButtonSize, height: metrics.refreshButtonSize)
                     .background(.ultraThinMaterial, in: Circle())
             }
             .accessibilityLabel("更新")
@@ -72,6 +84,8 @@ struct ContentView: View {
                         Text("\(model.selectedRegion.name) \(model.risk.level.rawValue)")
                             .font(.title2.weight(.black))
                             .foregroundStyle(.white)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.76)
                     }
                     Spacer()
                     Text(model.statusText)
@@ -112,6 +126,7 @@ struct ContentView: View {
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.78))
                     .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
                     MetricTile(title: "最接近", value: model.risk.closestAt?.compactTime ?? "不明")
@@ -137,10 +152,10 @@ struct ContentView: View {
                 .foregroundStyle(.white)
 
                 TrackMap(points: model.storm.points, region: model.selectedRegion)
-                    .frame(height: 280)
+                    .frame(height: metrics.mapHeight)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-                HStack(spacing: 8) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: metrics.actionMinWidth), spacing: 8)], spacing: 8) {
                     ForEach(model.risk.actions, id: \.self) { action in
                         Text(action)
                             .font(.caption2.weight(.bold))
@@ -174,8 +189,9 @@ struct ContentView: View {
                                     Text(feed.detail)
                                         .font(.caption2)
                                         .foregroundStyle(.white.opacity(0.62))
+                                        .lineLimit(2)
                                 }
-                                .frame(width: 142, alignment: .leading)
+                                .frame(width: metrics.feedWidth, alignment: .leading)
                                 .padding(10)
                                 .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
                                 .foregroundStyle(.white)
@@ -195,28 +211,64 @@ struct ContentView: View {
                     .foregroundStyle(.white)
 
                 ForEach(model.storm.points.suffix(8)) { point in
-                    HStack {
-                        Text(point.time.compactTime)
-                            .font(.caption.weight(.bold))
-                            .frame(width: 66, alignment: .leading)
-                        Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.72))
-                        Spacer()
-                        Text("\(point.pressure.map(String.init) ?? "--") hPa")
-                            .font(.caption.weight(.bold))
-                        Text("\(point.wind.map(String.init) ?? "--") kt")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(.cyan.opacity(0.9))
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.vertical, 7)
-                    .padding(.horizontal, 8)
-                    .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 8))
+                    timelineRow(point)
                 }
             }
         }
     }
+
+    private func timelineRow(_ point: TyphoonPoint) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 8) {
+                Text(point.time.compactTime)
+                    .font(.caption.weight(.bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+
+                Spacer(minLength: 6)
+
+                Text("\(point.pressure.map(String.init) ?? "--") hPa")
+                    .font(.caption.weight(.bold))
+                    .lineLimit(1)
+
+                Text("\(point.wind.map(String.init) ?? "--") kt")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.cyan.opacity(0.9))
+                    .lineLimit(1)
+            }
+
+            Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.72))
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+        }
+        .foregroundStyle(.white)
+        .padding(.vertical, metrics.timelineVerticalPadding)
+        .padding(.horizontal, 8)
+        .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct LayoutMetrics {
+    let width: CGFloat
+    let height: CGFloat
+
+    var isNarrow: Bool { width <= 375 }
+    var screenPadding: CGFloat { isNarrow ? 10 : 16 }
+    var sectionSpacing: CGFloat { isNarrow ? 10 : 14 }
+    var titleSize: CGFloat { isNarrow ? 28 : 34 }
+    var refreshButtonSize: CGFloat { isNarrow ? 38 : 42 }
+    var panelPadding: CGFloat { isNarrow ? 10 : 14 }
+    var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
+    var mapHeight: CGFloat {
+        let availableWidth = width - screenPadding * 2 - panelPadding * 2
+        let ratio = isNarrow ? 0.62 : 0.72
+        return min(isNarrow ? 220 : 280, max(isNarrow ? 168 : 220, availableWidth * ratio))
+    }
+    var actionMinWidth: CGFloat { isNarrow ? 118 : 132 }
+    var feedWidth: CGFloat { isNarrow ? 124 : 142 }
+    var timelineVerticalPadding: CGFloat { isNarrow ? 6 : 7 }
 }
 
 private struct TrackMap: View {
@@ -290,6 +342,9 @@ private struct TrackMap: View {
 
 private struct CompactPanel<Content: View>: View {
     let content: Content
+    private var metrics: LayoutMetrics {
+        LayoutMetrics(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+    }
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -297,10 +352,10 @@ private struct CompactPanel<Content: View>: View {
 
     var body: some View {
         content
-            .padding(14)
+            .padding(metrics.panelPadding)
             .background {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous)
                         .fill(.ultraThinMaterial)
 
                     Image("RadarPanelTexture")
@@ -308,14 +363,14 @@ private struct CompactPanel<Content: View>: View {
                         .scaledToFill()
                         .opacity(0.16)
                         .blendMode(.screen)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous))
                 }
             }
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous)
                     .stroke(Color.white.opacity(0.16), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous))
     }
 }
 
