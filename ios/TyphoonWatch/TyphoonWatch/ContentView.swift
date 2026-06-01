@@ -3,8 +3,12 @@ import UIKit
 
 struct ContentView: View {
     @StateObject private var model = TyphoonViewModel()
+    @State private var viewportSize: CGSize = .zero
     private var metrics: LayoutMetrics {
-        LayoutMetrics(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        LayoutMetrics(
+            width: viewportSize.width > 0 ? viewportSize.width : UIScreen.main.bounds.width,
+            height: viewportSize.height > 0 ? viewportSize.height : UIScreen.main.bounds.height
+        )
     }
 
     var body: some View {
@@ -30,7 +34,14 @@ struct ContentView: View {
                         .padding(.horizontal, metrics.screenPadding)
                         .padding(.top, max(8, proxy.safeAreaInsets.top + 6))
                         .padding(.bottom, max(18, proxy.safeAreaInsets.bottom + 18))
+                        .frame(width: metrics.contentWidth, alignment: .topLeading)
                     }
+                }
+                .onAppear {
+                    viewportSize = proxy.size
+                }
+                .onChange(of: proxy.size) { _, newSize in
+                    viewportSize = newSize
                 }
             }
             .navigationBarHidden(true)
@@ -90,6 +101,8 @@ struct ContentView: View {
                     Spacer()
                     Text(model.statusText)
                         .font(.caption.weight(.bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .background(Color(hex: model.risk.level.colorHex).opacity(0.22), in: Capsule())
@@ -107,6 +120,8 @@ struct ContentView: View {
                         Image(systemName: "location.viewfinder")
                         Text(model.selectedRegion.name)
                             .font(.subheadline.weight(.bold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
                         Spacer()
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.caption.weight(.black))
@@ -148,6 +163,8 @@ struct ContentView: View {
                     Text(model.storm.source)
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(.white.opacity(0.64))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
                 }
                 .foregroundStyle(.white)
 
@@ -256,6 +273,7 @@ private struct LayoutMetrics {
 
     var isNarrow: Bool { width <= 375 }
     var screenPadding: CGFloat { isNarrow ? 10 : 16 }
+    var contentWidth: CGFloat { max(0, width - screenPadding * 2) }
     var sectionSpacing: CGFloat { isNarrow ? 10 : 14 }
     var titleSize: CGFloat { isNarrow ? 28 : 34 }
     var refreshButtonSize: CGFloat { isNarrow ? 38 : 42 }
@@ -336,7 +354,10 @@ private struct TrackMap: View {
         let padding = 22.0
         let x = padding + ((longitude - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * (size.width - padding * 2)
         let y = padding + ((bounds.maxLat - latitude) / (bounds.maxLat - bounds.minLat)) * (size.height - padding * 2)
-        return CGPoint(x: x, y: y)
+        return CGPoint(
+            x: min(max(x, padding), size.width - padding),
+            y: min(max(y, padding), size.height - padding)
+        )
     }
 }
 
@@ -353,6 +374,7 @@ private struct CompactPanel<Content: View>: View {
     var body: some View {
         content
             .padding(metrics.panelPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background {
                 ZStack {
                     RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous)
