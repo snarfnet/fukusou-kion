@@ -87,7 +87,12 @@ jobs:
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
-          if python3 scripts/create_distribution_certificate.py | tee /tmp/simple-traffic-survey-cert.log; then
+          set +e
+          python3 scripts/create_distribution_certificate.py > /tmp/simple-traffic-survey-cert.log 2>&1
+          CERT_CREATE_STATUS=$?
+          set -e
+          cat /tmp/simple-traffic-survey-cert.log
+          if [ "$CERT_CREATE_STATUS" -eq 0 ] && grep -q '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/simple-traffic-survey-cert.log; then
             grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/simple-traffic-survey-cert.log >> "$GITHUB_ENV"
             exit 0
           fi
