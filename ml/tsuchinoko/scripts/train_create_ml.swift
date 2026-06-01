@@ -28,7 +28,9 @@ let classifier = try MLImageClassifier(trainingData: trainingData, parameters: p
 if FileManager.default.fileExists(atPath: valURL.path) {
     let validationData = MLImageClassifier.DataSource.labeledDirectories(at: valURL)
     let metrics = classifier.evaluation(on: validationData)
-    print("validation accuracy: \(metrics.classificationError)")
+    let error = metrics.classificationError
+    print("validation classification error: \(error)")
+    print("validation accuracy estimate: \(1.0 - error)")
 }
 
 var metadata = MLModelMetadata(author: "TokyoNasu")

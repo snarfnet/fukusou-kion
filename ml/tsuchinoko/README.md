@@ -53,3 +53,12 @@ swift ml/tsuchinoko/scripts/train_create_ml.swift
 ```
 
 GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を手動実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel` が出ます。
+
+## 最新モデル
+
+- モデル: `models/TsuchinokoCandidate.mlmodel`
+- GitHub Actions run: `26748637368`
+- 検証エラー: `0.375`
+- 検証精度の目安: `0.625`
+
+検証データが24枚と少ないため、これは動作確認レベルです。実用には負例を中心に増やします。
