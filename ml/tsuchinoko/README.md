@@ -51,6 +51,13 @@ python ml/tsuchinoko/scripts/dataset_report.py
 python ml/tsuchinoko/scripts/quality_check.py
 ```
 
+実地画像を取り込む場合は、まず `field_data/positive_review` または `field_data/negative_review` に置き、ドライランで確認します。
+
+```bash
+python ml/tsuchinoko/scripts/import_field_data.py --label not_tsuchinoko
+python ml/tsuchinoko/scripts/import_field_data.py --label not_tsuchinoko --license-status approved --confirm
+```
+
 Core MLモデル作成はmacOSで行います。
 
 ```bash
