@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>&#x7C21;&#x6613;&#x4EA4;&#x901A;&#x91CF;&#x8ABF;&#x67FB;</string>
+	<string>&#x7C21;&#x6613;&#x6B69;&#x884C;&#x8005;&#x4EA4;&#x901A;&#x91CF;&#x8ABF;&#x67FB;</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>

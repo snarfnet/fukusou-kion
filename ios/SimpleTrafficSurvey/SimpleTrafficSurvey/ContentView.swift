@@ -31,7 +31,7 @@ struct ContentView: View {
     private var header: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("簡易交通量調査")
+                Text("簡易歩行者交通量調査")
                     .font(.system(size: 24, weight: .heavy, design: .rounded))
                 Text("カウントライン通過で自動加算")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))

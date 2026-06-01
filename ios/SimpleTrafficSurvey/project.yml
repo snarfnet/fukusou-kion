@@ -32,7 +32,7 @@ targets:
     info:
       path: SimpleTrafficSurvey/Resources/Info.plist
       properties:
-        CFBundleDisplayName: "簡易交通量調査"
+        CFBundleDisplayName: "簡易歩行者交通量調査"
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
