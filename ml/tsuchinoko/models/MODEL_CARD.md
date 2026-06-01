@@ -26,6 +26,15 @@ It must not be used to claim that a real tsuchinoko was found. In an app, show r
 
 The validation set is still synthetic-heavy, so this score is only a smoke test.
 
+## Evaluation Output
+
+The workflow runs `scripts/evaluate_coreml.swift` after training.
+
+- `models/evaluation.csv`: per-image expected label, predicted label, confidence, and correctness
+- `models/evaluation.json`: summary counts, accuracy, false positives, and false negatives
+
+These files help find hard negatives and decide what field images to collect next.
+
 ## Next Data Needs
 
 - More negative images from real outdoor camera footage

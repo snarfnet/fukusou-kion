@@ -41,8 +41,14 @@ jobs:
       - name: Train Create ML image classifier
         run: swift scripts/train_create_ml.swift
 
+      - name: Evaluate Core ML model
+        run: swift scripts/evaluate_coreml.swift
+
       - name: Upload model artifact
         uses: actions/upload-artifact@v4
         with:
           name: TsuchinokoCandidate-CoreML
-          path: ml/tsuchinoko/models/TsuchinokoCandidate.mlmodel
+          path: |
+            ml/tsuchinoko/models/TsuchinokoCandidate.mlmodel
+            ml/tsuchinoko/models/evaluation.csv
+            ml/tsuchinoko/models/evaluation.json

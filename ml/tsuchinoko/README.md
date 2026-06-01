@@ -62,9 +62,12 @@ Core MLモデル作成はmacOSで行います。
 
 ```bash
 swift ml/tsuchinoko/scripts/train_create_ml.swift
+swift ml/tsuchinoko/scripts/evaluate_coreml.swift
 ```
 
-GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel` が入ります。
+GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel`、`evaluation.csv`、`evaluation.json` が入ります。
+
+`evaluation.csv` は画像ごとの正解ラベル、予測ラベル、信頼度、正誤を出します。外した画像を見れば、次に集めるべき負例や正例を決めやすくなります。
 
 ## 最新モデル
 
