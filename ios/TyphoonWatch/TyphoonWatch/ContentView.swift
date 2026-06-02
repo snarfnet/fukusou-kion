@@ -611,3 +611,9 @@ private extension Color {
     ContentView()
         .frame(width: 320, height: 568)
 }
+
+#Preview("iPhone SE Large Text") {
+    ContentView()
+        .previewDevice("iPhone SE (3rd generation)")
+        .dynamicTypeSize(.accessibility1)
+}
