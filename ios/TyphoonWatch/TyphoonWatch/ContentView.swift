@@ -7,7 +7,7 @@ struct ContentView: View {
         NavigationStack {
             GeometryReader { proxy in
                 let safeWidth = max(260, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
-                let edgeInset: CGFloat = safeWidth <= 340 ? 8 : (safeWidth <= 390 ? 10 : 18)
+                let edgeInset: CGFloat = safeWidth <= 340 ? 6 : (safeWidth <= 390 ? 9 : 18)
                 let contentWidth = min(430, max(1, safeWidth - edgeInset * 2))
                 let metrics = LayoutMetrics(width: contentWidth, height: proxy.size.height)
 
@@ -50,7 +50,7 @@ struct ContentView: View {
     private func header(_ metrics: LayoutMetrics) -> some View {
         CompactPanel(metrics: metrics, style: .hero) {
             VStack(alignment: .leading, spacing: metrics.headerSpacing) {
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: metrics.headerActionSpacing) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("台風を観測")
                             .font(.system(size: metrics.titleSize, weight: .black, design: .rounded))
@@ -66,7 +66,7 @@ struct ContentView: View {
                     }
                     .layoutPriority(1)
 
-                    Spacer(minLength: 8)
+                    Spacer(minLength: 6)
 
                     Button {
                         Task { await model.refresh() }
@@ -76,6 +76,7 @@ struct ContentView: View {
                             .frame(width: metrics.refreshButtonSize, height: metrics.refreshButtonSize)
                             .background(Color.white.opacity(0.13), in: Circle())
                     }
+                    .frame(width: metrics.refreshButtonSize, height: metrics.refreshButtonSize)
                     .accessibilityLabel("最新データを取得")
                     .buttonStyle(.plain)
                 }
@@ -141,12 +142,13 @@ struct ContentView: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "location.viewfinder")
+                            .frame(width: 18)
                         Text(model.selectedRegion.name)
                             .font(.subheadline.weight(.bold))
                             .lineLimit(1)
                             .minimumScaleFactor(0.78)
                             .layoutPriority(1)
-                        Spacer()
+                        Spacer(minLength: 0)
                         if !metrics.isNarrow {
                             Text("変更")
                                 .font(.caption2.weight(.black))
@@ -156,7 +158,7 @@ struct ContentView: View {
                             .font(.caption.weight(.black))
                             .foregroundStyle(.cyan.opacity(0.9))
                     }
-                    .padding(.horizontal, 12)
+                    .padding(.horizontal, metrics.controlHorizontalPadding)
                     .padding(.vertical, 10)
                     .frame(minHeight: metrics.regionPickerHeight)
                     .background(Color.white.opacity(metrics.controlBackgroundOpacity), in: RoundedRectangle(cornerRadius: 8))
@@ -230,7 +232,7 @@ struct ContentView: View {
                             .lineLimit(metrics.actionLineLimit)
                             .minimumScaleFactor(0.74)
                             .labelStyle(.titleAndIcon)
-                            .padding(.horizontal, 9)
+                            .padding(.horizontal, metrics.actionHorizontalPadding)
                             .padding(.vertical, 8)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
@@ -251,10 +253,10 @@ struct ContentView: View {
                 VStack(spacing: 8) {
                     ForEach(AppData.feeds.prefix(metrics.feedLimit)) { feed in
                         Link(destination: URL(string: feed.url)!) {
-                            HStack(spacing: 10) {
+                            HStack(spacing: metrics.feedRowSpacing) {
                                 Image(systemName: "arrow.up.forward.app")
                                     .font(.caption.weight(.black))
-                                    .frame(width: 26, height: 26)
+                                    .frame(width: metrics.feedIconSize, height: metrics.feedIconSize)
                                     .background(Color.white.opacity(0.1), in: Circle())
 
                                 VStack(alignment: .leading, spacing: 3) {
@@ -270,7 +272,7 @@ struct ContentView: View {
                                 }
                                 .layoutPriority(1)
 
-                                Spacer(minLength: 4)
+                                Spacer(minLength: 0)
 
                                 if !metrics.isNarrow {
                                     Image(systemName: "chevron.right")
@@ -278,7 +280,7 @@ struct ContentView: View {
                                         .foregroundStyle(.white.opacity(0.42))
                                 }
                             }
-                            .padding(10)
+                            .padding(metrics.feedRowPadding)
                             .frame(minHeight: metrics.feedRowHeight)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.white.opacity(metrics.controlBackgroundOpacity), in: RoundedRectangle(cornerRadius: 8))
@@ -391,15 +393,17 @@ private struct LayoutMetrics {
     var sectionSpacing: CGFloat { isNarrow ? 9 : 14 }
     var innerSpacing: CGFloat { isNarrow ? 10 : 12 }
     var headerSpacing: CGFloat { isNarrow ? 8 : 12 }
+    var headerActionSpacing: CGFloat { isNarrow ? 6 : 10 }
     var summaryLineLimit: Int { isNarrow ? 3 : 4 }
-    var titleSize: CGFloat { isNarrow ? 24 : 32 }
-    var headlineSize: CGFloat { isNarrow ? 20 : 24 }
-    var refreshButtonSize: CGFloat { isNarrow ? 46 : 44 }
+    var titleSize: CGFloat { width <= 340 ? 22 : (isNarrow ? 24 : 32) }
+    var headlineSize: CGFloat { width <= 340 ? 19 : (isNarrow ? 20 : 24) }
+    var refreshButtonSize: CGFloat { 44 }
     var regionPickerHeight: CGFloat { isNarrow ? 50 : 44 }
+    var controlHorizontalPadding: CGFloat { width <= 340 ? 9 : 12 }
     var controlBackgroundOpacity: Double { isNarrow ? 0.12 : 0.09 }
     var controlStrokeOpacity: Double { isNarrow ? 0.34 : 0.22 }
     var feedStrokeOpacity: Double { isNarrow ? 0.14 : 0.0 }
-    var panelPadding: CGFloat { isNarrow ? 11 : 14 }
+    var panelPadding: CGFloat { width <= 340 ? 9 : (isNarrow ? 11 : 14) }
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
     var mapHeight: CGFloat {
         let availableWidth = width - panelPadding * 2
@@ -407,10 +411,14 @@ private struct LayoutMetrics {
         return min(isNarrow ? 176 : 280, max(isNarrow ? 148 : 220, availableWidth * ratio))
     }
     var actionFont: Font { isNarrow ? .caption : .caption2 }
+    var actionHorizontalPadding: CGFloat { width <= 340 ? 8 : 9 }
     var feedDetailFont: Font { isNarrow ? .caption : .caption2 }
     var actionLineLimit: Int { isNarrow ? 2 : 3 }
     var feedLimit: Int { isNarrow ? 3 : 6 }
-    var feedRowHeight: CGFloat { isNarrow ? 56 : 52 }
+    var feedIconSize: CGFloat { width <= 340 ? 24 : 26 }
+    var feedRowSpacing: CGFloat { width <= 340 ? 8 : 10 }
+    var feedRowPadding: CGFloat { width <= 340 ? 8 : 10 }
+    var feedRowHeight: CGFloat { isNarrow ? 58 : 52 }
     var timelineLimit: Int { isNarrow ? 6 : 8 }
     var timelineVerticalPadding: CGFloat { isNarrow ? 6 : 7 }
     var metricColumns: [GridItem] {
