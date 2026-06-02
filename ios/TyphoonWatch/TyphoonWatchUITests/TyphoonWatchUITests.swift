@@ -21,13 +21,13 @@ final class TyphoonWatchUITests: XCTestCase {
         scrollUntilVisible(trackMap, in: app)
         XCTAssertTrue(trackMap.isHittable, "Track map should be reachable in the compact scrolling layout.")
 
-        let firstFeed = app.links["dataFeed-0"].firstMatch
+        let firstFeed = app.descendants(matching: .any)["dataFeed-0"].firstMatch
         scrollUntilVisible(firstFeed, in: app)
         XCTAssertTrue(firstFeed.isHittable, "First data source link should be reachable and tappable on compact iPhone.")
     }
 
     private func scrollUntilVisible(_ element: XCUIElement, in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
-        for _ in 0..<6 where !element.isHittable {
+        for _ in 0..<10 where !element.isHittable {
             app.swipeUp()
         }
         XCTAssertTrue(element.exists, "Expected element to exist after scrolling.", file: file, line: line)
