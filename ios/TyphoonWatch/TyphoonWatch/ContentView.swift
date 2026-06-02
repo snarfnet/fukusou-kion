@@ -78,8 +78,12 @@ struct ContentView: View {
 
                 HStack(spacing: 8) {
                     Label(model.statusText, systemImage: model.isLoading ? "arrow.triangle.2.circlepath" : "checkmark.seal.fill")
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
                     Spacer(minLength: 6)
                     Text(model.storm.updatedAt.compactTime)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
                 }
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white.opacity(0.78))
@@ -96,7 +100,7 @@ struct ContentView: View {
                     Text("現在の判断")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(.cyan.opacity(0.9))
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text(model.selectedRegion.name)
                             .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
                             .foregroundStyle(.white)
@@ -126,10 +130,13 @@ struct ContentView: View {
                             .font(.subheadline.weight(.bold))
                             .lineLimit(1)
                             .minimumScaleFactor(0.78)
+                            .layoutPriority(1)
                         Spacer()
-                        Text("変更")
-                            .font(.caption2.weight(.black))
-                            .foregroundStyle(.white.opacity(0.66))
+                        if !metrics.isNarrow {
+                            Text("変更")
+                                .font(.caption2.weight(.black))
+                                .foregroundStyle(.white.opacity(0.66))
+                        }
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.caption.weight(.black))
                             .foregroundStyle(.cyan.opacity(0.9))
@@ -245,12 +252,15 @@ struct ContentView: View {
                                         .lineLimit(2)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
+                                .layoutPriority(1)
 
                                 Spacer(minLength: 4)
 
-                                Image(systemName: "chevron.right")
-                                    .font(.caption.weight(.black))
-                                    .foregroundStyle(.white.opacity(0.42))
+                                if !metrics.isNarrow {
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.weight(.black))
+                                        .foregroundStyle(.white.opacity(0.42))
+                                }
                             }
                             .padding(10)
                             .frame(minHeight: 52)
