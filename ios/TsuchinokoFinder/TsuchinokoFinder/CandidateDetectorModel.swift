@@ -3,6 +3,7 @@ import CoreML
 import Foundation
 import ImageIO
 import UIKit
+import UserNotifications
 import Vision
 
 struct CandidateEvent: Identifiable {
@@ -20,6 +21,17 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     @Published var candidateConfidence = 0.0
     @Published var candidateLabel = Copy.noCandidate
     @Published var sampleText = Copy.noSample
+    @Published var notificationStatusText = Copy.notificationOff
+    @Published var notificationEnabled: Bool = UserDefaults.standard.bool(forKey: "tsuchinokoNotificationEnabled") {
+        didSet {
+            UserDefaults.standard.set(notificationEnabled, forKey: "tsuchinokoNotificationEnabled")
+            if notificationEnabled {
+                requestNotificationPermission()
+            } else {
+                notificationStatusText = Copy.notificationOff
+            }
+        }
+    }
     @Published var recentEvents: [CandidateEvent] = []
     @Published var threshold: Double = {
         let saved = UserDefaults.standard.double(forKey: "tsuchinokoThreshold")
@@ -43,6 +55,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     private var frameIndex = 0
     private var isProcessingFrame = false
     private var lastCandidateAt = Date.distantPast
+    private var lastNotificationAt = Date.distantPast
     private var sampleIndex = 0
     private let inferenceFrameStride = 15
     private let sampleNames = [
@@ -62,6 +75,14 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
 
     var hasCandidate: Bool {
         candidateConfidence >= threshold
+    }
+
+    override init() {
+        super.init()
+        UNUserNotificationCenter.current().delegate = self
+        if notificationEnabled {
+            requestNotificationPermission()
+        }
     }
 
     func requestCameraAccess() {
@@ -262,6 +283,38 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         if recentEvents.count > 8 {
             recentEvents.removeLast()
         }
+        sendCandidateNotificationIfNeeded(confidence: confidence)
+    }
+
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [weak self] granted, _ in
+            DispatchQueue.main.async {
+                self?.notificationStatusText = granted ? Copy.notificationOn : Copy.notificationDenied
+                if !granted {
+                    self?.notificationEnabled = false
+                    self?.notificationStatusText = Copy.notificationDenied
+                }
+            }
+        }
+    }
+
+    private func sendCandidateNotificationIfNeeded(confidence: Double) {
+        guard notificationEnabled, Date().timeIntervalSince(lastNotificationAt) > 60 else {
+            return
+        }
+        lastNotificationAt = Date()
+
+        let content = UNMutableNotificationContent()
+        content.title = Copy.notificationTitle
+        content.body = "\(Copy.notificationBody) \(Int(confidence * 100))%"
+        content.sound = .default
+
+        let request = UNNotificationRequest(
+            identifier: "tsuchinoko-candidate-\(UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
     }
 
     private func sampleURL(for name: String) -> URL? {
@@ -333,10 +386,25 @@ private enum Copy {
     static let sampleCandidateGravel = "\u{5019}\u{88DC}\u{30FB}\u{7802}\u{5229}\u{9053}"
     static let sampleNegativeBranch = "\u{78BA}\u{8A8D}\u{7528}\u{30FB}\u{679D}"
     static let sampleNegativeHose = "\u{78BA}\u{8A8D}\u{7528}\u{30FB}\u{30DB}\u{30FC}\u{30B9}"
+    static let notificationOff = "通知はオフ"
+    static let notificationOn = "通知はオン"
+    static let notificationDenied = "通知が許可されていません"
+    static let notificationTitle = "ツチノコ候補を検知"
+    static let notificationBody = "候補らしさ:"
     static let cameraPermissionNeeded = "\u{30AB}\u{30E1}\u{30E9}\u{8A31}\u{53EF}\u{304C}\u{5FC5}\u{8981}\u{3067}\u{3059}"
     static let cameraUnavailable = "\u{30AB}\u{30E1}\u{30E9}\u{3092}\u{958B}\u{3051}\u{307E}\u{305B}\u{3093}"
     static let modelMissing = "Model file is missing"
     static let modelUnavailable = "Model is not ready"
     static let modelLoadError = "Model load error"
     static let analysisFailed = "Analysis failed"
+}
+
+extension CandidateDetectorViewModel: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
+    }
 }
