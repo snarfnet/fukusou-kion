@@ -227,6 +227,8 @@ struct ContentView: View {
                 TrackMap(points: model.storm.points, region: model.selectedRegion)
                     .frame(height: metrics.mapHeight)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .accessibilityLabel("台風の進路図")
+                    .accessibilityIdentifier("typhoonTrackMap")
 
                 VStack(spacing: 7) {
                     ForEach(model.risk.actions, id: \.self) { action in
@@ -254,7 +256,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
 
                 VStack(spacing: 8) {
-                    ForEach(AppData.feeds.prefix(metrics.feedLimit)) { feed in
+                    ForEach(Array(AppData.feeds.prefix(metrics.feedLimit).enumerated()), id: \.element.id) { index, feed in
                         Link(destination: URL(string: feed.url)!) {
                             HStack(spacing: metrics.feedRowSpacing) {
                                 Image(systemName: "arrow.up.forward.app")
@@ -296,6 +298,7 @@ struct ContentView: View {
                         }
                         .accessibilityLabel("\(feed.name)。\(feed.detail)")
                         .accessibilityHint("外部サイトを開きます")
+                        .accessibilityIdentifier("dataFeed-\(index)")
                     }
                 }
                 .buttonStyle(.plain)
