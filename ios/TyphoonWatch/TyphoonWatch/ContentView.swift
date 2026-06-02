@@ -427,7 +427,7 @@ private struct LayoutMetrics {
     var timelineLimit: Int { isNarrow ? 6 : 8 }
     var timelineVerticalPadding: CGFloat { isNarrow ? 6 : 7 }
     var metricColumns: [GridItem] {
-        if isNarrow {
+        if width <= 330 {
             return [GridItem(.flexible(), spacing: 8)]
         }
         return Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
