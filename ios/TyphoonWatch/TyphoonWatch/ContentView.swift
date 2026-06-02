@@ -224,7 +224,7 @@ struct ContentView: View {
                 VStack(spacing: 7) {
                     ForEach(model.risk.actions, id: \.self) { action in
                         Label(action, systemImage: "checkmark.circle.fill")
-                            .font(.caption2.weight(.bold))
+                            .font(metrics.actionFont.weight(.bold))
                             .lineLimit(metrics.actionLineLimit)
                             .minimumScaleFactor(0.74)
                             .labelStyle(.titleAndIcon)
@@ -261,7 +261,7 @@ struct ContentView: View {
                                         .lineLimit(1)
                                         .minimumScaleFactor(0.78)
                                     Text(feed.detail)
-                                        .font(.caption2)
+                                        .font(metrics.feedDetailFont)
                                         .foregroundStyle(.white.opacity(0.62))
                                         .lineLimit(2)
                                         .fixedSize(horizontal: false, vertical: true)
@@ -404,6 +404,8 @@ private struct LayoutMetrics {
         let ratio = isNarrow ? 0.58 : 0.72
         return min(isNarrow ? 176 : 280, max(isNarrow ? 148 : 220, availableWidth * ratio))
     }
+    var actionFont: Font { isNarrow ? .caption : .caption2 }
+    var feedDetailFont: Font { isNarrow ? .caption : .caption2 }
     var actionLineLimit: Int { isNarrow ? 2 : 3 }
     var feedLimit: Int { isNarrow ? 3 : 6 }
     var feedRowHeight: CGFloat { isNarrow ? 56 : 52 }
