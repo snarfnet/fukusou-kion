@@ -47,29 +47,65 @@ jobs:
       - name: Build for compact iPhone Simulator
         run: |
           COMPACT_DEVICE_LINE=""
-          for DEVICE_NAME in "iPhone SE" "iPhone 16e" "iPhone 17e"; do
-            COMPACT_DEVICE_LINE=$(
-              xcrun simctl list devices available |
-                grep -E "^[[:space:]]+$DEVICE_NAME.*\\([0-9A-F-]{36}\\)" |
-                head -n 1
+          COMPACT_DEVICE_ID=""
+          COMPACT_DEVICE_LABEL=""
+          EXISTING_SE_LINE=$(
+            xcrun simctl list devices available |
+              grep -E "^[[:space:]]+iPhone SE.*\\([0-9A-F-]{36}\\)" |
+              head -n 1
+          )
+          if [ -n "$EXISTING_SE_LINE" ]; then
+            COMPACT_DEVICE_LINE="$EXISTING_SE_LINE"
+            COMPACT_DEVICE_LABEL="existing iPhone SE"
+          else
+            SE_DEVICE_TYPE=$(
+              xcrun simctl list devicetypes |
+                grep -E "iPhone SE.*\\(com\\.apple\\.CoreSimulator\\.SimDeviceType\\." |
+                sed -E 's/.*\((com\.apple\.CoreSimulator\.SimDeviceType\.[^)]+)\).*/\1/' |
+                tail -n 1
             )
-            if [ -n "$COMPACT_DEVICE_LINE" ]; then
-              break
+            IOS_RUNTIME=$(
+              xcrun simctl list runtimes available |
+                grep -E "iOS .*\\(com\\.apple\\.CoreSimulator\\.SimRuntime\\." |
+                sed -E 's/.*\((com\.apple\.CoreSimulator\.SimRuntime\.[^)]+)\).*/\1/' |
+                tail -n 1
+            )
+            if [ -n "$SE_DEVICE_TYPE" ] && [ -n "$IOS_RUNTIME" ]; then
+              COMPACT_DEVICE_ID=$(
+                xcrun simctl create "TyphoonWatch CI iPhone SE" "$SE_DEVICE_TYPE" "$IOS_RUNTIME"
+              )
+              COMPACT_DEVICE_LINE="TyphoonWatch CI iPhone SE ($COMPACT_DEVICE_ID)"
+              COMPACT_DEVICE_LABEL="created iPhone SE"
             fi
-          done
+          fi
+          if [ -z "$COMPACT_DEVICE_LINE" ]; then
+            for DEVICE_NAME in "iPhone 16e" "iPhone 17e"; do
+              COMPACT_DEVICE_LINE=$(
+                xcrun simctl list devices available |
+                  grep -E "^[[:space:]]+$DEVICE_NAME.*\\([0-9A-F-]{36}\\)" |
+                  head -n 1
+              )
+              if [ -n "$COMPACT_DEVICE_LINE" ]; then
+                COMPACT_DEVICE_LABEL="compact fallback"
+                break
+              fi
+            done
+          fi
           if [ -z "$COMPACT_DEVICE_LINE" ]; then
             echo "No compact iPhone simulator found. Available devices:"
             xcrun simctl list devices available
             exit 1
           fi
-          if ! echo "$COMPACT_DEVICE_LINE" | grep -q "iPhone SE"; then
+          if ! echo "$COMPACT_DEVICE_LABEL" | grep -q "iPhone SE"; then
             echo "::warning::No iPhone SE simulator found on this runner; using nearest compact iPhone simulator."
           fi
-          COMPACT_DEVICE_ID=$(
-            echo "$COMPACT_DEVICE_LINE" |
-              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/'
-          )
-          echo "Building on compact simulator: $COMPACT_DEVICE_LINE"
+          if [ -z "$COMPACT_DEVICE_ID" ]; then
+            COMPACT_DEVICE_ID=$(
+              echo "$COMPACT_DEVICE_LINE" |
+                sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/'
+            )
+          fi
+          echo "Building on compact simulator ($COMPACT_DEVICE_LABEL): $COMPACT_DEVICE_LINE"
           xcodebuild build \
             -project TyphoonWatch.xcodeproj \
             -scheme TyphoonWatch \
