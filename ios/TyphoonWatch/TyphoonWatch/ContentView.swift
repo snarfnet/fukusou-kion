@@ -391,7 +391,7 @@ struct ContentView: View {
     }
 }
 
-private struct LayoutMetrics {
+struct LayoutMetrics {
     let width: CGFloat
     let height: CGFloat
 

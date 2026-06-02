@@ -48,7 +48,19 @@ targets:
         UIUserInterfaceStyle: Dark
     scheme:
       testTargets:
+        - TyphoonWatchTests
         - TyphoonWatchUITests
+  TyphoonWatchTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - TyphoonWatchTests
+    dependencies:
+      - target: TyphoonWatch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.typhoonwatch.tests
   TyphoonWatchUITests:
     type: bundle.ui-testing
     platform: iOS

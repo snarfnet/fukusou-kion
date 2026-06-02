@@ -118,7 +118,6 @@ jobs:
             -scheme TyphoonWatch \
             -configuration Debug \
             -destination "platform=iOS Simulator,id=$COMPACT_DEVICE_ID" \
-            -only-testing:TyphoonWatchUITests/TyphoonWatchUITests \
             -derivedDataPath build/CompactDerivedData \
             CODE_SIGNING_ALLOWED=NO
           APP_PATH="build/CompactDerivedData/Build/Products/Debug-iphonesimulator/TyphoonWatch.app"
