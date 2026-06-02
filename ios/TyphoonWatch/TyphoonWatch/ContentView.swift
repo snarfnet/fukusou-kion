@@ -96,19 +96,22 @@ struct ContentView: View {
                     Text("現在の判断")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(.cyan.opacity(0.9))
-                    Text("\(model.selectedRegion.name) \(model.risk.level.rawValue)")
-                        .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
-                        .foregroundStyle(.white)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.72)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(model.selectedRegion.name)
+                            .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
 
-                Text(model.risk.summary)
-                    .font(.footnote)
-                    .foregroundStyle(.white)
-                    .lineSpacing(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                        Text(model.risk.level.rawValue)
+                            .font(.caption.weight(.black))
+                            .padding(.horizontal, 9)
+                            .padding(.vertical, 5)
+                            .background(Color(hex: model.risk.level.colorHex).opacity(0.22), in: Capsule())
+                            .foregroundStyle(Color(hex: model.risk.level.colorHex))
+                            .lineLimit(1)
+                    }
+                }
 
                 Menu {
                     Picker("地域を選択", selection: $model.selectedRegion) {
@@ -136,6 +139,12 @@ struct ContentView: View {
                     .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .accessibilityLabel("地域を選択")
+
+                Text(model.risk.summary)
+                    .font(.footnote)
+                    .foregroundStyle(.white)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 ProgressView(value: min(model.risk.score, 100), total: 100)
                     .tint(Color(hex: model.risk.level.colorHex))
