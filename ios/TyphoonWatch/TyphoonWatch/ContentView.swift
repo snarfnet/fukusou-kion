@@ -107,19 +107,25 @@ struct ContentView: View {
                         .font(.caption.weight(.bold))
                         .foregroundStyle(.cyan.opacity(0.9))
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(model.selectedRegion.name)
-                            .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
-                            .foregroundStyle(.white)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.72)
+                        if metrics.isNarrow {
+                            Text(model.selectedRegion.name)
+                                .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.72)
 
-                        Text(model.risk.level.rawValue)
-                            .font(.caption.weight(.black))
-                            .padding(.horizontal, 9)
-                            .padding(.vertical, 5)
-                            .background(Color(hex: model.risk.level.colorHex).opacity(0.22), in: Capsule())
-                            .foregroundStyle(Color(hex: model.risk.level.colorHex))
-                            .lineLimit(1)
+                            RiskBadge(level: model.risk.level)
+                        } else {
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                Text(model.selectedRegion.name)
+                                    .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
+                                    .foregroundStyle(.white)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.72)
+
+                                RiskBadge(level: model.risk.level)
+                            }
+                        }
                     }
                 }
 
@@ -149,7 +155,7 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .frame(minHeight: 44)
+                    .frame(minHeight: metrics.regionPickerHeight)
                     .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
@@ -213,11 +219,11 @@ struct ContentView: View {
                     .frame(height: metrics.mapHeight)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: metrics.actionMinWidth), spacing: 8)], spacing: 8) {
+                VStack(spacing: 7) {
                     ForEach(model.risk.actions, id: \.self) { action in
                         Label(action, systemImage: "checkmark.circle.fill")
                             .font(.caption2.weight(.bold))
-                            .lineLimit(3)
+                            .lineLimit(metrics.actionLineLimit)
                             .minimumScaleFactor(0.74)
                             .labelStyle(.titleAndIcon)
                             .padding(.horizontal, 9)
@@ -378,14 +384,15 @@ private struct LayoutMetrics {
     var titleSize: CGFloat { isNarrow ? 24 : 32 }
     var headlineSize: CGFloat { isNarrow ? 20 : 24 }
     var refreshButtonSize: CGFloat { 44 }
+    var regionPickerHeight: CGFloat { isNarrow ? 50 : 44 }
     var panelPadding: CGFloat { isNarrow ? 11 : 14 }
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
     var mapHeight: CGFloat {
         let availableWidth = width - panelPadding * 2
-        let ratio = isNarrow ? 0.62 : 0.72
-        return min(isNarrow ? 190 : 280, max(isNarrow ? 154 : 220, availableWidth * ratio))
+        let ratio = isNarrow ? 0.58 : 0.72
+        return min(isNarrow ? 176 : 280, max(isNarrow ? 148 : 220, availableWidth * ratio))
     }
-    var actionMinWidth: CGFloat { isNarrow ? width - panelPadding * 2 : 132 }
+    var actionLineLimit: Int { isNarrow ? 2 : 3 }
     var feedLimit: Int { isNarrow ? 4 : 6 }
     var timelineVerticalPadding: CGFloat { isNarrow ? 6 : 7 }
     var metricColumns: [GridItem] {
@@ -393,6 +400,20 @@ private struct LayoutMetrics {
             return [GridItem(.flexible(), spacing: 8)]
         }
         return Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
+    }
+}
+
+private struct RiskBadge: View {
+    let level: RiskLevel
+
+    var body: some View {
+        Text(level.rawValue)
+            .font(.caption.weight(.black))
+            .padding(.horizontal, 9)
+            .padding(.vertical, 5)
+            .background(Color(hex: level.colorHex).opacity(0.22), in: Capsule())
+            .foregroundStyle(Color(hex: level.colorHex))
+            .lineLimit(1)
     }
 }
 
