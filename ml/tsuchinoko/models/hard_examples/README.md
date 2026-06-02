@@ -1,65 +1,43 @@
 # Hard Examples
 
-- Total: 57
-- False positives: 45
-- False negatives: 12
+- Total: 35
+- False positives: 15
+- False negatives: 20
 
 ## Files
 
-- `models/hard_examples/false_positive/001_0_710050_negative_branch_forest_01_aug_000.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.710050`
-- `models/hard_examples/false_positive/002_0_911742_negative_branch_forest_01_aug_001.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.911742`
-- `models/hard_examples/false_positive/003_0_998795_negative_branch_forest_01_aug_003.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.998795`
-- `models/hard_examples/false_positive/004_0_944842_negative_branch_forest_01_aug_004.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.944842`
-- `models/hard_examples/false_positive/005_0_983233_negative_branch_forest_01_aug_005.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.983233`
-- `models/hard_examples/false_positive/006_0_890298_negative_branch_forest_01_aug_006.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.890298`
-- `models/hard_examples/false_positive/007_0_983139_negative_branch_forest_01_aug_007.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.983139`
-- `models/hard_examples/false_positive/008_0_850188_negative_branch_forest_01_aug_008.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.850188`
-- `models/hard_examples/false_positive/009_0_761792_negative_branch_forest_01_aug_009.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.761792`
-- `models/hard_examples/false_positive/010_0_501800_negative_branch_forest_01_aug_014.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.501800`
-- `models/hard_examples/false_positive/011_0_764018_negative_branch_forest_01_aug_015.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.764018`
-- `models/hard_examples/false_positive/012_0_905300_negative_branch_forest_01_aug_016.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.905300`
-- `models/hard_examples/false_positive/013_0_675006_negative_branch_forest_01_aug_017.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.675006`
-- `models/hard_examples/false_positive/014_0_719789_negative_branch_forest_01_aug_019.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.719789`
-- `models/hard_examples/false_positive/015_0_682621_negative_branch_forest_01_aug_020.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.682621`
-- `models/hard_examples/false_positive/016_0_950059_negative_branch_forest_01_aug_023.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.950059`
-- `models/hard_examples/false_positive/017_0_996726_negative_branch_forest_01_aug_024.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.996726`
-- `models/hard_examples/false_positive/018_0_959203_negative_branch_forest_01_aug_026.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.959203`
-- `models/hard_examples/false_positive/019_0_679312_negative_branch_forest_01_aug_028.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.679312`
-- `models/hard_examples/false_positive/020_0_711467_negative_branch_forest_01_aug_029.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.711467`
-- `models/hard_examples/false_positive/021_0_880255_negative_branch_forest_01_aug_032.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.880255`
-- `models/hard_examples/false_positive/022_0_996901_negative_branch_forest_01_aug_033.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.996901`
-- `models/hard_examples/false_positive/023_0_583039_negative_branch_forest_01_aug_035.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.583039`
-- `models/hard_examples/false_positive/024_0_899765_negative_branch_forest_01_aug_038.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.899765`
-- `models/hard_examples/false_positive/025_0_956004_negative_branch_forest_01_aug_039.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.956004`
-- `models/hard_examples/false_positive/026_0_957416_negative_branch_forest_01_aug_041.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.957416`
-- `models/hard_examples/false_positive/027_0_806865_negative_branch_forest_01_aug_042.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.806865`
-- `models/hard_examples/false_positive/028_0_959887_negative_branch_forest_01_aug_043.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.959887`
-- `models/hard_examples/false_positive/029_0_999895_negative_branch_forest_01_aug_045.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.999895`
-- `models/hard_examples/false_positive/030_0_999383_negative_branch_forest_01_aug_046.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.999383`
-- `models/hard_examples/false_positive/031_0_960099_negative_branch_forest_01_aug_047.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.960099`
-- `models/hard_examples/false_positive/032_0_732240_negative_branch_grass_tangle_01_aug_002.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.732240`
-- `models/hard_examples/false_positive/033_0_977672_negative_branch_grass_tangle_01_aug_012.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.977672`
-- `models/hard_examples/false_positive/034_0_868481_negative_branch_grass_tangle_01_aug_013.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.868481`
-- `models/hard_examples/false_positive/035_0_681081_negative_branch_grass_tangle_01_aug_019.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.681081`
-- `models/hard_examples/false_positive/036_0_972234_negative_branch_grass_tangle_01_aug_023.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.972234`
-- `models/hard_examples/false_positive/037_0_998103_negative_branch_grass_tangle_01_aug_024.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.998103`
-- `models/hard_examples/false_positive/038_0_776338_negative_branch_grass_tangle_01_aug_027.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.776338`
-- `models/hard_examples/false_positive/039_0_996727_negative_branch_grass_tangle_01_aug_030.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.996727`
-- `models/hard_examples/false_positive/040_0_607618_negative_branch_grass_tangle_01_aug_031.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.607618`
-- `models/hard_examples/false_positive/041_0_518000_negative_branch_grass_tangle_01_aug_032.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.518000`
-- `models/hard_examples/false_positive/042_0_999780_negative_branch_grass_tangle_01_aug_034.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.999780`
-- `models/hard_examples/false_positive/043_0_536883_negative_branch_grass_tangle_01_aug_036.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.536883`
-- `models/hard_examples/false_positive/044_0_999778_negative_branch_grass_tangle_01_aug_040.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.999778`
-- `models/hard_examples/false_positive/045_0_686348_negative_branch_grass_tangle_01_aug_045.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.686348`
-- `models/hard_examples/false_negative/046_0_656963_tsuchinoko_candidate_grass_day_01_aug_002.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.656963`
-- `models/hard_examples/false_negative/047_0_763712_tsuchinoko_candidate_grass_occluded_01_aug_002.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.763712`
-- `models/hard_examples/false_negative/048_0_956581_tsuchinoko_candidate_grass_occluded_01_aug_006.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.956581`
-- `models/hard_examples/false_negative/049_0_673458_tsuchinoko_candidate_grass_occluded_01_aug_007.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.673458`
-- `models/hard_examples/false_negative/050_0_691886_tsuchinoko_candidate_grass_occluded_01_aug_011.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.691886`
-- `models/hard_examples/false_negative/051_0_891314_tsuchinoko_candidate_grass_occluded_01_aug_012.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.891314`
-- `models/hard_examples/false_negative/052_0_664830_tsuchinoko_candidate_grass_occluded_01_aug_013.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.664830`
-- `models/hard_examples/false_negative/053_0_660940_tsuchinoko_candidate_grass_occluded_01_aug_016.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.660940`
-- `models/hard_examples/false_negative/054_0_662722_tsuchinoko_candidate_grass_occluded_01_aug_020.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.662722`
-- `models/hard_examples/false_negative/055_0_962598_tsuchinoko_candidate_grass_occluded_01_aug_026.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.962598`
-- `models/hard_examples/false_negative/056_0_984822_tsuchinoko_candidate_grass_occluded_01_aug_033.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.984822`
-- `models/hard_examples/false_negative/057_0_868747_tsuchinoko_candidate_grass_occluded_01_aug_043.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.868747`
+- `models/hard_examples/false_positive/001_0_596472_negative_branch_forest_01_aug_000.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.596472`
+- `models/hard_examples/false_positive/002_0_517158_negative_branch_forest_01_aug_001.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.517158`
+- `models/hard_examples/false_positive/003_0_900100_negative_branch_forest_01_aug_003.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.900100`
+- `models/hard_examples/false_positive/004_0_729869_negative_branch_forest_01_aug_006.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.729869`
+- `models/hard_examples/false_positive/005_0_974879_negative_branch_forest_01_aug_007.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.974879`
+- `models/hard_examples/false_positive/006_0_659286_negative_branch_lowlight_grass_02_aug_001.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.659286`
+- `models/hard_examples/false_positive/007_0_692079_negative_branch_lowlight_grass_02_aug_002.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.692079`
+- `models/hard_examples/false_positive/008_0_733915_negative_branch_lowlight_grass_02_aug_003.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.733915`
+- `models/hard_examples/false_positive/009_0_521234_negative_branch_lowlight_grass_02_aug_006.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.521234`
+- `models/hard_examples/false_positive/010_0_899890_negative_branch_lowlight_grass_02_aug_007.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.899890`
+- `models/hard_examples/false_positive/011_0_586892_negative_branch_lowlight_grass_02_aug_008.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.586892`
+- `models/hard_examples/false_positive/012_0_746420_negative_branch_lowlight_grass_02_aug_010.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.746420`
+- `models/hard_examples/false_positive/013_0_883026_negative_branch_lowlight_grass_02_aug_015.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.883026`
+- `models/hard_examples/false_positive/014_0_879426_negative_ordinary_snake_wet_path_01_aug_008.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.879426`
+- `models/hard_examples/false_positive/015_0_801818_negative_vine_leaf_path_01_aug_010.jpg`: expected `not_tsuchinoko`, predicted `tsuchinoko_candidate`, confidence `0.801818`
+- `models/hard_examples/false_negative/016_0_660785_tsuchinoko_candidate_forest_path_01_aug_012.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.660785`
+- `models/hard_examples/false_negative/017_0_640867_tsuchinoko_candidate_forest_path_01_aug_013.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.640867`
+- `models/hard_examples/false_negative/018_0_993102_tsuchinoko_candidate_grass_day_01_aug_000.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.993102`
+- `models/hard_examples/false_negative/019_0_996868_tsuchinoko_candidate_grass_day_01_aug_001.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.996868`
+- `models/hard_examples/false_negative/020_0_716081_tsuchinoko_candidate_grass_day_01_aug_002.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.716081`
+- `models/hard_examples/false_negative/021_0_990187_tsuchinoko_candidate_grass_day_01_aug_003.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.990187`
+- `models/hard_examples/false_negative/022_0_900136_tsuchinoko_candidate_grass_day_01_aug_004.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.900136`
+- `models/hard_examples/false_negative/023_0_976909_tsuchinoko_candidate_grass_day_01_aug_005.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.976909`
+- `models/hard_examples/false_negative/024_0_992585_tsuchinoko_candidate_grass_day_01_aug_006.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.992585`
+- `models/hard_examples/false_negative/025_0_971651_tsuchinoko_candidate_grass_day_01_aug_007.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.971651`
+- `models/hard_examples/false_negative/026_0_976882_tsuchinoko_candidate_grass_day_01_aug_008.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.976882`
+- `models/hard_examples/false_negative/027_0_884827_tsuchinoko_candidate_grass_day_01_aug_009.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.884827`
+- `models/hard_examples/false_negative/028_0_702344_tsuchinoko_candidate_grass_day_01_aug_010.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.702344`
+- `models/hard_examples/false_negative/029_0_995214_tsuchinoko_candidate_grass_day_01_aug_013.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.995214`
+- `models/hard_examples/false_negative/030_0_943251_tsuchinoko_candidate_grass_day_01_aug_014.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.943251`
+- `models/hard_examples/false_negative/031_0_995361_tsuchinoko_candidate_grass_day_01_aug_015.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.995361`
+- `models/hard_examples/false_negative/032_0_688189_tsuchinoko_candidate_gravel_road_01_aug_009.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.688189`
+- `models/hard_examples/false_negative/033_0_549974_tsuchinoko_candidate_wet_leaves_01_aug_000.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.549974`
+- `models/hard_examples/false_negative/034_0_600925_tsuchinoko_candidate_wet_leaves_01_aug_006.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.600925`
+- `models/hard_examples/false_negative/035_0_606813_tsuchinoko_candidate_wet_leaves_01_aug_008.jpg`: expected `tsuchinoko_candidate`, predicted `not_tsuchinoko`, confidence `0.606813`

@@ -2,16 +2,15 @@
 
 ## Purpose
 
-This is a prototype Core ML image classifier for `tsuchinoko_candidate` vs `not_tsuchinoko`.
+This Core ML image classifier separates `tsuchinoko_candidate` from `not_tsuchinoko`.
 
-It must not be used to claim that a real tsuchinoko was found. In an app, show results as "ツチノコ候補" or "UMA候補".
+The app must not claim that a real tsuchinoko was found. It should show the result as a candidate score and notify only when the app sees a strong, repeated candidate.
 
 ## Training Data
 
-- Approved raw images: 45
-- Augmented images: 9072
-- Train: 8640
-- Validation: 432
+- Approved raw images before augmentation: 122
+- Shape-focused raw images added in this revision: 77
+- Projected augmented images for the next training set: 3534
 - Classes:
   - `tsuchinoko_candidate`
   - `not_tsuchinoko`
@@ -20,13 +19,10 @@ The manifest uses a fixed `split` column so hard-example additions do not random
 
 ## Latest Training Run
 
-- GitHub Actions run: `26765841776`
+- GitHub Actions run: `26816367982`
 - Artifact: `TsuchinokoCandidate-CoreML`
-- Artifact ID: `7337211961`
-- Validation classification error: `0.23263888888888884`
-- Validation accuracy estimate: `0.7673611111111112`
-
-The validation set is still synthetic-heavy, so this score is only a smoke test.
+- Model: `models/TsuchinokoCandidate.mlmodel`
+- App bundle copy: `ios/TsuchinokoFinder/TsuchinokoFinder/Models/TsuchinokoCandidate.mlmodel`
 
 ## Evaluation Output
 
@@ -34,16 +30,36 @@ The workflow runs `scripts/evaluate_coreml.swift` after training.
 
 - `models/evaluation.csv`: per-image expected label, predicted label, confidence, and correctness
 - `models/evaluation.json`: summary counts, accuracy, false positives, and false negatives
-- Latest evaluation: 288 validation images, 231 correct, 45 false positives, 12 false negatives
 - `models/hard_examples`: copied false positives and false negatives for visual review
 
-These files help find hard negatives and decide what field images to collect next.
+Latest evaluation:
 
-Current hard examples show the model still confuses some branch/root images with candidates and misses some gravel-road candidates. This dataset revision adds more branch/root, vine, hose, ordinary snake, and gravel-road candidate images.
+- Total validation images: 144
+- Correct: 109
+- Accuracy: `0.7569444444444444`
+- False positives: 15
+- False negatives: 20
+
+The previous model had 45 false positives and 12 false negatives on its evaluation set. This revision intentionally moves the app toward fewer false alerts. It may miss more weak candidates, but it should be less eager to call branches, vines, hoses, or ordinary snake-like shapes a tsuchinoko candidate.
+
+The validation set is still synthetic-heavy, so these numbers are a smoke test, not proof of field performance.
+
+## What Changed
+
+This revision adds shape-focused examples:
+
+- Positive examples emphasize a short, thick body, low posture, visible head/body balance, and a grounded silhouette.
+- Negative examples emphasize long thin snakes, branches, vines, hoses, roots, and line-like objects.
+
+The app also applies stricter candidate logic:
+
+- Higher default threshold
+- Repeated candidate frames before alerting
+- Motion-based gating so a single static frame is less likely to trigger
 
 ## Next Data Needs
 
-- More negative images from real outdoor camera footage
-- Ordinary snakes in different lighting and angles
-- Branches, hoses, ropes, roots, shadows, and wet leaves
-- More tsuchinoko-style positives with different body thickness, colors, camera distances, and partial occlusion
+- Real trail camera negatives from the intended environment
+- Ordinary snakes in more lighting, angles, and distances
+- Branches, hoses, ropes, roots, wet leaves, and shadows that look close to candidates
+- More tsuchinoko-style positives with varied thickness, color, camera distance, partial occlusion, and body direction

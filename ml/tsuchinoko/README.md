@@ -1,49 +1,54 @@
 # Tsuchinoko Candidate Model
 
-ツチノコそのものを断定するモデルではありません。山道や草地の映像から「ツチノコらしい動体候補」を拾うための、試作用の学習セットです。
+このモデルは、カメラ映像からツチノコらしい形を探すための試作モデルです。本物のツチノコを断定するものではありません。
 
-アプリ上では「ツチノコ候補」または「UMA候補」のように表示する想定です。
+アプリでは候補スコアとして表示します。通知は、強い候補が連続して見えたときだけ出します。
 
 ## ラベル
 
-- `tsuchinoko_candidate`: 太く短い胴体、ヘビに近い頭部、地面を横切るUMA風の対象
-- `not_tsuchinoko`: ヘビ、トカゲ、枝、落ち葉、ホース、ロープ、根、影など
+- `tsuchinoko_candidate`: 太く短い胴体、低い姿勢、胴体に近い頭部、地面に沿ったUMAらしい輪郭
+- `not_tsuchinoko`: 普通のヘビ、枝、つる、ホース、ロープ、根、濡れた葉、影など
 
-## 方針
+## データ方針
 
-- ネット画像は利用規約を確認してから `raw/positive_licensed` に入れる
-- 利用規約が不明な画像は学習に使わない
-- ImageGenなどで作った合成画像は `raw/positive_synthetic` に入れる
-- 誤検知を減らすため、実写寄りの負例を多めに集める
-- ツチノコ判別の軸が崩れないよう、太く短い胴体、低い姿勢、頭部と胴体の比率を強く持つ正例を入れる
-- 細長いヘビ、ホース、枝のように「似ているがツチノコの形ではない」負例を入れる
-- まずは `tsuchinoko_candidate / not_tsuchinoko` の2クラス分類で進める
+- 利用許可を確認した実写画像は `raw/positive_licensed` に入れる
+- 生成画像や合成した正例は `raw/positive_synthetic` に入れる
+- 誤検出を減らす負例は `raw/negative` に入れる
+- 権利が不明な画像は学習に使わない
+- 実地カメラの負例を増やす。誤通知を減らすにはここが一番大事
+
+## 今回の方向
+
+今回の更新は、洗濯物など特定の物だけを避けるものではありません。ツチノコらしい形そのものを強く見分ける方向に寄せています。
+
+追加データでは次を重視しています。
+
+- 細長い線ではなく、短く太い胴体
+- 頭部と胴体の比率
+- 地面に沿った低い姿勢
+- 枝、つる、ホース、普通のヘビとの輪郭差
 
 ## フォルダ
 
-- `raw/positive_licensed`: ライセンス確認済みのツチノコ素材
-- `raw/positive_synthetic`: 生成画像
-- `raw/negative`: 誤検知を減らすための負例
-- `processed/train`: 学習用
-- `processed/val`: 検証用
+- `raw/positive_licensed`: 利用許可を確認した元画像
+- `raw/positive_synthetic`: 生成した正例画像
+- `raw/negative`: 誤検出を減らす負例
+- `processed/train`: 学習用に整えた画像
+- `processed/val`: 検証用に整えた画像
 - `augmented`: 増強後の学習・検証画像
-- `manifests`: 画像ソース、プロンプト、ライセンスメモ
-- `models`: 書き出したCore MLモデル
-- `scripts`: 整理、増強、集計、Core ML変換
-
-## 注意
-
-本物のツチノコ画像が存在しないため、現実の映像では太いヘビ、枝、ホースなどを候補として拾う可能性があります。実用に近づけるには、現地のトレイルカメラ映像から負例を増やし、正例の画風、角度、距離も広げます。
+- `manifests`: 画像ソース、プロンプト、ライセンス、分割情報
+- `models`: 学習済みCore MLモデルと評価結果
+- `scripts`: 整理、増強、集計、学習、評価スクリプト
 
 ## 現在のデータ量
 
-- 承認済み元画像: 122枚
-- 形状重視の合成元画像: 77枚
+- 増強前の承認済み元画像: 122枚
+- 今回追加した形状重視の元画像: 77枚
 - 次回学習時の増強後画像: 3534枚
 - `tsuchinoko_candidate`: 1774枚
 - `not_tsuchinoko`: 1760枚
 
-この数はプロトタイプ用です。実用に近づけるには、実地映像の負例を中心に増やします。
+まだ試作段階の数です。実用に近づけるには、実際に設置する場所のカメラ映像、とくに負例を増やします。
 
 ## 手順
 
@@ -54,44 +59,36 @@ python ml/tsuchinoko/scripts/dataset_report.py
 python ml/tsuchinoko/scripts/quality_check.py
 ```
 
-`manifests/dataset.csv` の `split` 列で `train` または `val` を指定できます。ハード例を増やすときは、評価を安定させるため検証用の画像を固定し、新しく足した紛らわしい画像はまず学習側に入れます。
+`manifests/dataset.csv` の `split` 列で `train` と `val` を指定します。評価を安定させるため、検証用画像は固定します。
 
-実地画像を取り込む場合は、まず `field_data/positive_review` または `field_data/negative_review` に置き、ドライランで確認します。
+実地画像を取り込む場合:
 
 ```bash
 python ml/tsuchinoko/scripts/import_field_data.py --label not_tsuchinoko
 python ml/tsuchinoko/scripts/import_field_data.py --label not_tsuchinoko --license-status approved --confirm
 ```
 
-Core MLモデル作成はmacOSで行います。
+Core MLの学習はmacOSで実行します。
 
 ```bash
 swift ml/tsuchinoko/scripts/train_create_ml.swift
 swift ml/tsuchinoko/scripts/evaluate_coreml.swift
 ```
 
-GitHub Actionsから作る場合は `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` アーティファクトに `.mlmodel`、`evaluation.csv`、`evaluation.json` が入ります。
+GitHub Actionsでは `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` に次が入ります。
 
-`evaluation.csv` は画像ごとの正解ラベル、予測ラベル、信頼度、正誤を出します。外した画像を見れば、次に集めるべき負例や正例を決めやすくなります。
-
-失敗例だけを集める場合は次を使います。
-
-```bash
-python ml/tsuchinoko/scripts/collect_hard_examples.py
-```
-
-出力先は `models/hard_examples/` です。現在の失敗例では、白黒・暗所・草地・細長く見える候補で迷いやすい傾向があります。今回の追加では、赤外線風の枝・根、濡れた葉のつる、泥に隠れたホース、普通のヘビ、砂利道の太い候補を足しました。
+- `TsuchinokoCandidate.mlmodel`
+- `evaluation.csv`
+- `evaluation.json`
+- `hard_examples`
 
 ## 最新モデル
 
 - モデル: `models/TsuchinokoCandidate.mlmodel`
-- GitHub Actions run: `26765841776`
-- Artifact ID: `7337211961`
-- 検証エラー: `0.23263888888888884`
-- 検証精度の目安: `0.7673611111111112`
-- 評価精度: `0.8020833333333334`
-- 失敗例: 57枚（誤検知45枚、見逃し12枚）
-- 評価CSV: `models/evaluation.csv`
-- 評価JSON: `models/evaluation.json`
+- GitHub Actions run: `26816367982`
+- 評価画像: 144枚
+- 評価精度: `0.7569444444444444`
+- 誤検出: 15枚
+- 見逃し: 20枚
 
-検証データも合成寄りなので、この数字は動作確認レベルです。今回の検証では、枝・根を候補と誤判定しやすい傾向が残っています。次の再学習では、形状重視の正例と、細長いヘビ・ホース・枝の負例を追加し、ツチノコらしい太く短い胴体をより強く見させます。
+前回の評価は誤検出45枚、見逃し12枚でした。新しいモデルはかなり慎重です。ツチノコではない形で通知しにくくする一方、弱い候補や遠い候補は、より強い証拠が出るまで候補扱いしにくくなります。
