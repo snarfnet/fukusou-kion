@@ -6,7 +6,7 @@ final class TyphoonViewModel: ObservableObject {
     @Published var storm = TyphoonService.sampleStorm
     @Published var selectedRegion = AppData.regions[0]
     @Published var isLoading = false
-    @Published var statusText = "サンプルデータ"
+    @Published var statusText = "サンプル"
 
     private let service = TyphoonService()
 
@@ -65,16 +65,16 @@ struct TyphoonService {
 
         if score > 72 {
             level = .alert
-            summary = "進路が近く、風雨の影響を強く受ける想定です。公式発表と避難情報を短い間隔で確認してください。"
-            actions = ["警報と避難情報を優先", "停電、断水、交通停止に備える", "海岸や河川に近づかない"]
+            summary = "台風が近く、風雨の影響を強く受けるおそれがあります。公式発表と避難情報を短い間隔で確認してください。"
+            actions = ["警報と避難情報を確認", "停電、断水、交通停止に備える", "海岸や河川に近づかない"]
         } else if score > 44 {
             level = .caution
-            summary = "接近の可能性があります。風、雨、交通の乱れを早めに確認してください。"
-            actions = ["48時間以内の予定を見直す", "雨雲レーダーと風予報を併用", "屋外の飛びやすい物を片付ける"]
+            summary = "接近の可能性があります。雨、風、交通の乱れを早めに確認しておくと安心です。"
+            actions = ["48時間以内の予報を確認", "雨雲レーダーと風予報を見る", "屋外の飛びやすい物を片付ける"]
         } else {
             level = .watch
-            summary = "現時点の接近度は低めです。進路が変わる前提で、更新を確認してください。"
-            actions = ["1日2回は進路更新を確認", "離島移動は欠航情報も見る", "発達予想が強まったら通知対象に入れる"]
+            summary = "今のところ接近度は低めです。進路が変わる前提で、更新を確認してください。"
+            actions = ["1日2回、進路を確認", "離島移動や欠航情報を見る", "発達傾向が強まったら通知対象に入れる"]
         }
 
         return RiskSnapshot(
@@ -131,7 +131,7 @@ struct TyphoonService {
 
     static let sampleStorm = TyphoonStorm(
         name: "台風サンプル 03W",
-        source: "offline scenario",
+        source: "サンプルデータ",
         updatedAt: Date(),
         points: [
             .init(time: Date().addingTimeInterval(-21_600), latitude: 20.1, longitude: 131.7, pressure: 985, wind: 45, isForecast: false),
