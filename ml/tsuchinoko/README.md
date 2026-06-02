@@ -1,45 +1,22 @@
 # Tsuchinoko Candidate Model
 
-このモデルは、カメラ映像からツチノコらしい形を探すための試作モデルです。本物のツチノコを断定するものではありません。
-
-アプリでは候補スコアとして表示します。通知は、強い候補が連続して見えたときだけ出します。
+このモデルは、カメラ映像の中から「ツチノコらしい候補」を見つけるための試作モデルです。
+本物のツチノコを断定するものではありません。アプリでは候補スコアとして扱い、強い候補が連続して見えたときだけ通知します。
 
 ## ラベル
 
-- `tsuchinoko_candidate`: 太く短い胴体、低い姿勢、胴体に近い頭部、地面に沿ったUMAらしい輪郭
-- `not_tsuchinoko`: 普通のヘビ、枝、つる、ホース、ロープ、根、濡れた葉、影、帽子、服、バッグ、靴、ボトル、箱など
+- `tsuchinoko_candidate`: 短く太い胴体、低い姿勢、頭と胴体のバランス、地面に沿った輪郭を持つ候補
+- `not_tsuchinoko`: 普通の蛇、枝、つる、ホース、ロープ、根、濡れた葉、影、帽子、布、バッグ、靴、ボトル、箱など
 
-## データ方針
+## 今回の方針
 
-- 利用許可を確認した実写画像は `raw/positive_licensed` に入れる
-- 生成画像や合成した正例は `raw/positive_synthetic` に入れる
-- 誤検出を減らす負例は `raw/negative` に入れる
-- 権利が不明な画像は学習に使わない
-- 実地カメラの負例を増やす。誤通知を減らすにはここが一番大事
+普通の物でも99%が出る問題を下げるため、二値分類モデルの学習データを強めました。
 
-## 今回の方向
+- 帽子、布、バッグ、靴、ボトル、箱などの普通物体を負例に追加
+- 短く太い胴体、頭と胴体の比率、低い姿勢を強めた正例を追加
+- 検証セットにも普通物体を入れ、誤検出が残っていないか確認
 
-今回の更新は、帽子や洗濯物だけを避ける修正ではありません。二値分類モデルが普通の物に99%を出す問題を抑えるため、ツチノコらしい形と普通の物体を学習上で強く分けます。
-
-追加データでは次を重視しています。
-
-- 短く太い胴体
-- 頭部と胴体の比率
-- 地面に沿った低い姿勢
-- 枝、つる、ホース、普通のヘビとの輪郭差
-- 帽子、服、バッグ、靴、ボトル、箱など普通の物体との違い
-
-## フォルダ
-
-- `raw/positive_licensed`: 利用許可を確認した元画像
-- `raw/positive_synthetic`: 生成した正例画像
-- `raw/negative`: 誤検出を減らす負例
-- `processed/train`: 学習用に整えた画像
-- `processed/val`: 検証用に整えた画像
-- `augmented`: 増強後の学習・検証画像
-- `manifests`: 画像ソース、プロンプト、ライセンス、分割情報
-- `models`: 学習済みCore MLモデルと評価結果
-- `scripts`: 整理、増強、集計、学習、評価スクリプト
+洗濯物や帽子だけを個別に避ける修正ではなく、ツチノコらしい形と普通の物体の違いを学習側で強める方針です。
 
 ## 現在のデータ量
 
@@ -54,6 +31,31 @@
 
 まだ試作段階の数です。実用に近づけるには、実際に設置する場所のカメラ映像、とくに負例を増やします。
 
+## 最新モデル
+
+- モデル: `models/TsuchinokoCandidate.mlmodel`
+- GitHub Actions run: `26819506050`
+- 評価画像: 720枚
+- 正解: 693枚
+- 評価精度: `0.9625`
+- 誤検出: 7枚
+- 見逃し: 20枚
+- 追加した普通物体の誤検出: 0枚
+
+残った誤検出は、枝、つる、濡れた道の普通の蛇など、ツチノコ候補に形が近いものです。帽子、布、バッグ、靴、ボトル、箱は今回の検証では誤検出していません。
+
+## フォルダ
+
+- `raw/positive_licensed`: 利用許可を確認した元画像
+- `raw/positive_synthetic`: 生成した正例画像
+- `raw/negative`: 誤検出を減らす負例
+- `processed/train`: 学習用に整えた画像
+- `processed/val`: 検証用に整えた画像
+- `augmented`: 増強後の学習・検証画像
+- `manifests`: 画像ソース、プロンプト、ライセンス、分割情報
+- `models`: 学習済みCore MLモデルと評価結果
+- `scripts`: 整理、増強、集計、学習、評価スクリプト
+
 ## 手順
 
 ```bash
@@ -66,7 +68,7 @@ python ml/tsuchinoko/scripts/dataset_report.py
 python ml/tsuchinoko/scripts/quality_check.py
 ```
 
-`manifests/dataset.csv` の `split` 列で `train` と `val` を指定します。評価を安定させるため、検証用画像は固定します。
+`manifests/dataset.csv` の `split` 列で `train` と `val` を固定しています。評価を安定させるため、検証用画像は固定します。
 
 実地画像を取り込む場合:
 
@@ -75,27 +77,16 @@ python ml/tsuchinoko/scripts/import_field_data.py --label not_tsuchinoko
 python ml/tsuchinoko/scripts/import_field_data.py --label not_tsuchinoko --license-status approved --confirm
 ```
 
-Core MLの学習はmacOSで実行します。
+Core ML の学習は macOS で実行します。
 
 ```bash
 swift ml/tsuchinoko/scripts/train_create_ml.swift
 swift ml/tsuchinoko/scripts/evaluate_coreml.swift
 ```
 
-GitHub Actionsでは `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` に次が入ります。
+GitHub Actions では `Train Tsuchinoko Core ML` を実行します。成功すると `TsuchinokoCandidate-CoreML` に次が入ります。
 
 - `TsuchinokoCandidate.mlmodel`
 - `evaluation.csv`
 - `evaluation.json`
 - `hard_examples`
-
-## 最新モデル
-
-- モデル: `models/TsuchinokoCandidate.mlmodel`
-- GitHub Actions run: `26816367982`
-- 評価画像: 144枚
-- 評価精度: `0.7569444444444444`
-- 誤検出: 15枚
-- 見逃し: 20枚
-
-次の学習では、普通物体の負例と厳しめの正例を入れた評価セットで見ます。ここで誤検出が減っているか、見逃しが増えすぎていないかを確認します。
