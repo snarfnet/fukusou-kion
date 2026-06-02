@@ -130,6 +130,75 @@ jobs:
           sleep 8
           mkdir -p build/screenshots
           xcrun simctl io "$COMPACT_DEVICE_ID" screenshot build/screenshots/compact-iphone.png
+          swift - <<'SWIFT'
+          import CoreGraphics
+          import Foundation
+          import ImageIO
+
+          let url = URL(fileURLWithPath: "build/screenshots/compact-iphone.png")
+          guard
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
+          else {
+              fatalError("Could not read compact screenshot.")
+          }
+
+          let width = image.width
+          let height = image.height
+          let bytesPerPixel = 4
+          let bytesPerRow = width * bytesPerPixel
+          var data = [UInt8](repeating: 0, count: height * bytesPerRow)
+
+          guard let context = CGContext(
+              data: &data,
+              width: width,
+              height: height,
+              bitsPerComponent: 8,
+              bytesPerRow: bytesPerRow,
+              space: CGColorSpaceCreateDeviceRGB(),
+              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+          ) else {
+              fatalError("Could not create screenshot analysis context.")
+          }
+
+          context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+          var bright = 0
+          var accent = 0
+          var tealPanel = 0
+          var sampledColors = Set<Int>()
+          let total = width * height
+          let sampleStep = max(1, total / 20_000)
+
+          for index in 0..<total {
+              let offset = index * bytesPerPixel
+              let red = Int(data[offset])
+              let green = Int(data[offset + 1])
+              let blue = Int(data[offset + 2])
+
+              if red > 185 && green > 185 && blue > 185 {
+                  bright += 1
+              }
+              if red > 210 && green < 140 && blue < 120 {
+                  accent += 1
+              }
+              if (35...115).contains(red) && (90...155).contains(green) && (95...165).contains(blue) {
+                  tealPanel += 1
+              }
+              if index % sampleStep == 0 {
+                  sampledColors.insert((red << 16) | (green << 8) | blue)
+              }
+          }
+
+          let brightRatio = Double(bright) / Double(total)
+          let accentRatio = Double(accent) / Double(total)
+          let tealRatio = Double(tealPanel) / Double(total)
+          print(String(format: "compact screenshot bright_ratio=%.4f accent_ratio=%.4f teal_ratio=%.4f sampled_unique_colors=%d", brightRatio, accentRatio, tealRatio, sampledColors.count))
+
+          if brightRatio < 0.015 || accentRatio < 0.001 || tealRatio < 0.004 || sampledColors.count < 1800 {
+              fatalError("Compact screenshot does not contain enough visible TyphoonWatch UI.")
+          }
+          SWIFT
           xcrun simctl shutdown "$COMPACT_DEVICE_ID" || true
 
       - name: Upload compact screenshot
