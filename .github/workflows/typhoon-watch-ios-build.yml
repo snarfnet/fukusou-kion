@@ -44,23 +44,35 @@ jobs:
             -destination "generic/platform=iOS Simulator" \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Build for iPhone SE Simulator
+      - name: Build for compact iPhone Simulator
         run: |
-          SE_DEVICE_ID=$(
-            xcrun simctl list devices available |
-              grep -E 'iPhone SE.*\([0-9A-F-]{36}\)' |
-              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' |
-              head -n 1
-          )
-          if [ -z "$SE_DEVICE_ID" ]; then
-            echo "No available iPhone SE simulator found. Available devices:"
+          COMPACT_DEVICE_LINE=""
+          for DEVICE_NAME in "iPhone SE" "iPhone 16e" "iPhone 17e"; do
+            COMPACT_DEVICE_LINE=$(
+              xcrun simctl list devices available |
+                grep -E "^[[:space:]]+$DEVICE_NAME.*\\([0-9A-F-]{36}\\)" |
+                head -n 1
+            )
+            if [ -n "$COMPACT_DEVICE_LINE" ]; then
+              break
+            fi
+          done
+          if [ -z "$COMPACT_DEVICE_LINE" ]; then
+            echo "No compact iPhone simulator found. Available devices:"
             xcrun simctl list devices available
             exit 1
           fi
-          echo "Building on iPhone SE simulator $SE_DEVICE_ID"
+          if ! echo "$COMPACT_DEVICE_LINE" | grep -q "iPhone SE"; then
+            echo "::warning::No iPhone SE simulator found on this runner; using nearest compact iPhone simulator."
+          fi
+          COMPACT_DEVICE_ID=$(
+            echo "$COMPACT_DEVICE_LINE" |
+              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/'
+          )
+          echo "Building on compact simulator: $COMPACT_DEVICE_LINE"
           xcodebuild build \
             -project TyphoonWatch.xcodeproj \
             -scheme TyphoonWatch \
             -configuration Debug \
-            -destination "platform=iOS Simulator,id=$SE_DEVICE_ID" \
+            -destination "platform=iOS Simulator,id=$COMPACT_DEVICE_ID" \
             CODE_SIGNING_ALLOWED=NO
