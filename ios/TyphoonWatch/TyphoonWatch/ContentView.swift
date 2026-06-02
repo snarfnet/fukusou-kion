@@ -157,10 +157,10 @@ struct ContentView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
                     .frame(minHeight: metrics.regionPickerHeight)
-                    .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
+                    .background(Color.white.opacity(metrics.controlBackgroundOpacity), in: RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.cyan.opacity(0.22), lineWidth: 1)
+                            .stroke(Color.cyan.opacity(metrics.controlStrokeOpacity), lineWidth: 1)
                     )
                     .foregroundStyle(.white)
                     .contentShape(RoundedRectangle(cornerRadius: 8))
@@ -279,7 +279,11 @@ struct ContentView: View {
                             .padding(10)
                             .frame(minHeight: metrics.feedRowHeight)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+                            .background(Color.white.opacity(metrics.controlBackgroundOpacity), in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.white.opacity(metrics.feedStrokeOpacity), lineWidth: 1)
+                            )
                             .foregroundStyle(.white)
                             .contentShape(RoundedRectangle(cornerRadius: 8))
                         }
@@ -388,6 +392,9 @@ private struct LayoutMetrics {
     var headlineSize: CGFloat { isNarrow ? 20 : 24 }
     var refreshButtonSize: CGFloat { isNarrow ? 46 : 44 }
     var regionPickerHeight: CGFloat { isNarrow ? 50 : 44 }
+    var controlBackgroundOpacity: Double { isNarrow ? 0.12 : 0.09 }
+    var controlStrokeOpacity: Double { isNarrow ? 0.34 : 0.22 }
+    var feedStrokeOpacity: Double { isNarrow ? 0.14 : 0.0 }
     var panelPadding: CGFloat { isNarrow ? 11 : 14 }
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
     var mapHeight: CGFloat {
