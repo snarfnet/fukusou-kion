@@ -127,14 +127,21 @@ struct ContentView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.78)
                         Spacer()
+                        Text("変更")
+                            .font(.caption2.weight(.black))
+                            .foregroundStyle(.white.opacity(0.66))
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.caption.weight(.black))
-                            .foregroundStyle(.white.opacity(0.58))
+                            .foregroundStyle(.cyan.opacity(0.9))
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
                     .frame(minHeight: 44)
                     .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.cyan.opacity(0.22), lineWidth: 1)
+                    )
                     .foregroundStyle(.white)
                     .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
@@ -240,6 +247,10 @@ struct ContentView: View {
                                 }
 
                                 Spacer(minLength: 4)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.caption.weight(.black))
+                                    .foregroundStyle(.white.opacity(0.42))
                             }
                             .padding(10)
                             .frame(minHeight: 52)
