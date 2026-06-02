@@ -35,6 +35,7 @@ jobs:
       BUNDLE_NAME: TsuchinokoFinder
       PROFILE_NAME: "TsuchinokoFinder App Store"
       APP_VERSION: "1.0"
+      APP_PRICE_JPY: "100"
 
     steps:
       - name: Checkout
@@ -148,6 +149,12 @@ jobs:
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: python3 scripts/prepare_profile.py
+
+      - name: Set App Store price
+        if: ${{ env.APP_ID != '' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/set_app_price.py
 
       - name: Generate Xcode project
         run: xcodegen generate

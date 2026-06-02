@@ -7,7 +7,7 @@
 - Bundle ID: `com.tokyonasu.tsuchinokofinder`
 - SKU: `tsuchinoko-finder-ios`
 - Primary locale: Japanese
-- Price: choose after product decision.
+- Price: JPY 100.
 
 ## Metadata
 
