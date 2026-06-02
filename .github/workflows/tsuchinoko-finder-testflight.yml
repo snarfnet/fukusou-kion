@@ -7,6 +7,10 @@ on:
         description: "Optional App Store Connect build number"
         required: false
         default: ""
+      appId:
+        description: "Optional App Store Connect app ID after manual app creation"
+        required: false
+        default: ""
   push:
     branches:
       - codex/simple-traffic-survey-production
@@ -128,7 +132,9 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUNDLE_ID: ${{ env.APP_BUNDLE_ID }}
         run: |
-          if [ -n "${{ secrets.TSUCHINOKO_FINDER_APP_ID }}" ]; then
+          if [ -n "${{ inputs.appId }}" ]; then
+            echo "APP_ID=${{ inputs.appId }}" >> "$GITHUB_ENV"
+          elif [ -n "${{ secrets.TSUCHINOKO_FINDER_APP_ID }}" ]; then
             echo "APP_ID=${{ secrets.TSUCHINOKO_FINDER_APP_ID }}" >> "$GITHUB_ENV"
           else
             python3 scripts/ensure_asc_app.py | tee /tmp/tsuchinoko-finder-ensure-app.log

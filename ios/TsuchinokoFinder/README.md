@@ -28,3 +28,28 @@ cd ios/TsuchinokoFinder
 xcodegen generate
 xcodebuild -project TsuchinokoFinder.xcodeproj -scheme TsuchinokoFinder -configuration Release -destination generic/platform=iOS archive -archivePath build/TsuchinokoFinder.xcarchive
 ```
+
+## TestFlight
+
+GitHub Actions workflow:
+
+```text
+TsuchinokoFinder TestFlight
+```
+
+The workflow can archive and export the IPA. If App Store Connect app creation is blocked by API-key permissions, create the app manually in App Store Connect first.
+
+Use these values:
+
+- Name: `ツチノコ候補探知`
+- Bundle ID: `com.tokyonasu.tsuchinokofinder`
+- SKU: `tsuchinoko-finder-ios`
+- Primary locale: Japanese
+
+After manual creation, rerun the workflow with the `appId` input set to the App Store Connect app ID. The same value can also be stored as the `TSUCHINOKO_FINDER_APP_ID` repository secret.
+
+Latest verified run:
+
+- Run ID: `26794305145`
+- Result: archive and IPA export succeeded
+- Artifact: `TsuchinokoFinder-ipa`
