@@ -30,7 +30,7 @@ jobs:
         working-directory: ios/TsuchinokoFinder
     env:
       APP_BUNDLE_ID: com.tokyonasu.tsuchinokofinder
-      APP_NAME: "\u30C4\u30C1\u30CE\u30B3\u5019\u88DC\u63A2\u77E5"
+      APP_NAME: "\u30C4\u30C1\u30CE\u30B3\u3092\u63A2\u3059\uFF01"
       APP_SKU: tsuchinoko-finder-ios
       BUNDLE_NAME: TsuchinokoFinder
       PROFILE_NAME: "TsuchinokoFinder App Store"

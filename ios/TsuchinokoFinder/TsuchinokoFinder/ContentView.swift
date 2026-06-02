@@ -329,7 +329,7 @@ private struct PanelButtonStyle: ButtonStyle {
 }
 
 private enum UIStrings {
-    static let title = "\u{30C4}\u{30C1}\u{30CE}\u{30B3}\u{5019}\u{88DC}\u{63A2}\u{77E5}"
+    static let title = "ツチノコを探す！"
     static let subtitle = "\u{5C71}\u{9053}\u{3084}\u{8349}\u{3080}\u{3089}\u{306E}\u{6620}\u{50CF}\u{304B}\u{3089}\u{5019}\u{88DC}\u{3092}\u{63A2}\u{3059}"
     static let cameraPermission = "\u{30AB}\u{30E1}\u{30E9}\u{306E}\u{4F7F}\u{7528}\u{3092}\u{8A31}\u{53EF}\u{3057}\u{3066}\u{304F}\u{3060}\u{3055}\u{3044}"
     static let openSettings = "\u{8A2D}\u{5B9A}\u{3092}\u{958B}\u{304F}"

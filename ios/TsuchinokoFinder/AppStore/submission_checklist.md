@@ -3,7 +3,7 @@
 ## App Store Connect
 
 - Create the app manually if the API key cannot create apps.
-- App name: `ツチノコ候補探知`
+- App name: `ツチノコを探す！`
 - Bundle ID: `com.tokyonasu.tsuchinokofinder`
 - SKU: `tsuchinoko-finder-ios`
 - Primary locale: Japanese

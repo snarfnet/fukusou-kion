@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("BUNDLE_ID", "com.tokyonasu.tsuchinokofinder")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "TsuchinokoFinder")
-APP_NAME = os.environ.get("APP_NAME", "\u30C4\u30C1\u30CE\u30B3\u5019\u88DC\u63A2\u77E5")
+APP_NAME = os.environ.get("APP_NAME", "\u30C4\u30C1\u30CE\u30B3\u3092\u63A2\u3059\uFF01")
 APP_SKU = os.environ.get("APP_SKU", "tsuchinoko-finder-ios")
 
 

@@ -1,6 +1,7 @@
 import AVFoundation
 import CoreML
 import Foundation
+import ImageIO
 import UIKit
 import Vision
 
@@ -40,8 +41,10 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     private let videoQueue = DispatchQueue(label: "tsuchinoko.finder.video.queue")
     private var visionRequest: VNCoreMLRequest?
     private var frameIndex = 0
+    private var isProcessingFrame = false
     private var lastCandidateAt = Date.distantPast
     private var sampleIndex = 0
+    private let inferenceFrameStride = 15
     private let sampleNames = [
         "candidate_forest_path",
         "candidate_gravel_road",
@@ -112,9 +115,8 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         sampleIndex += 1
 
         guard
-            let url = Bundle.main.url(forResource: sampleName, withExtension: "png", subdirectory: "ReviewSamples"),
-            let image = UIImage(contentsOfFile: url.path),
-            let cgImage = image.cgImage
+            let url = sampleURL(for: sampleName),
+            let cgImage = downsampledCGImage(at: url)
         else {
             statusText = Copy.sampleMissing
             return
@@ -169,7 +171,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         guard !isCameraReady else { return }
 
         session.beginConfiguration()
-        session.sessionPreset = .hd1280x720
+        session.sessionPreset = .vga640x480
 
         guard
             let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
@@ -209,8 +211,10 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     private func process(pixelBuffer: CVPixelBuffer) {
         guard isScanning, let visionRequest else { return }
         frameIndex += 1
-        guard frameIndex % 10 == 0 else { return }
+        guard frameIndex % inferenceFrameStride == 0, !isProcessingFrame else { return }
 
+        isProcessingFrame = true
+        defer { isProcessingFrame = false }
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right)
         do {
             try handler.perform([visionRequest])
@@ -258,6 +262,27 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         if recentEvents.count > 8 {
             recentEvents.removeLast()
         }
+    }
+
+    private func sampleURL(for name: String) -> URL? {
+        Bundle.main.url(forResource: name, withExtension: "png", subdirectory: "ReviewSamples")
+            ?? Bundle.main.url(forResource: name, withExtension: "png")
+    }
+
+    private func downsampledCGImage(at url: URL, maxPixelSize: CGFloat = 1024) -> CGImage? {
+        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else {
+            return nil
+        }
+
+        let options = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: false,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
+        ] as CFDictionary
+
+        return CGImageSourceCreateThumbnailAtIndex(source, 0, options)
     }
 
     private func sampleDisplayName(for name: String) -> String {

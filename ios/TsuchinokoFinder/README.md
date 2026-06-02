@@ -1,13 +1,13 @@
-# Tsuchinoko Candidate Finder
+# ツチノコを探す！
 
 iOS app for scanning live camera footage and surfacing possible tsuchinoko-style candidates.
 
-The app must not claim that a real tsuchinoko was found. It shows Core ML output as a candidate signal, then asks the user to confirm the scene and footage.
+The app must not claim that a real tsuchinoko was found. It shows a candidate signal, then asks the user to confirm the scene and footage.
 
 ## Features
 
 - On-device camera analysis
-- `TsuchinokoCandidate.mlmodel` candidate classification
+- Candidate classification model
 - Adjustable confidence threshold
 - Candidate highlight overlay
 - Recent candidate log
@@ -42,7 +42,7 @@ The workflow can archive and export the IPA. If App Store Connect app creation i
 
 Use these values:
 
-- Name: `ツチノコ候補探知`
+- Name: `ツチノコを探す！`
 - Bundle ID: `com.tokyonasu.tsuchinokofinder`
 - SKU: `tsuchinoko-finder-ios`
 - Primary locale: Japanese
