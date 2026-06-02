@@ -74,7 +74,7 @@ struct ContentView: View {
                             .frame(width: metrics.refreshButtonSize, height: metrics.refreshButtonSize)
                             .background(Color.white.opacity(0.13), in: Circle())
                     }
-                    .accessibilityLabel("更新")
+                    .accessibilityLabel("最新データを取得")
                     .buttonStyle(.plain)
                 }
 
@@ -287,6 +287,8 @@ struct ContentView: View {
                             .foregroundStyle(.white)
                             .contentShape(RoundedRectangle(cornerRadius: 8))
                         }
+                        .accessibilityLabel("\(feed.name)。\(feed.detail)")
+                        .accessibilityHint("外部サイトを開きます")
                     }
                 }
                 .buttonStyle(.plain)
