@@ -2,29 +2,36 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = TyphoonViewModel()
-    private let metrics = LayoutMetrics(width: 320, height: 568)
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Image("TyphoonHeroBackdrop")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .overlay(Color.black.opacity(0.46))
+            GeometryReader { proxy in
+                let safeWidth = max(280, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
+                let contentWidth = min(430, max(260, safeWidth - 24))
+                let metrics = LayoutMetrics(width: contentWidth, height: proxy.size.height)
 
-                ScrollView {
-                    VStack(spacing: metrics.sectionSpacing) {
-                        header(metrics)
-                        riskDeck(metrics)
-                        trackCard(metrics)
-                        feedStrip(metrics)
-                        timelineCard(metrics)
+                ZStack {
+                    Image("TyphoonHeroBackdrop")
+                        .resizable()
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                        .overlay(Color.black.opacity(0.46))
+
+                    ScrollView {
+                        VStack(spacing: metrics.sectionSpacing) {
+                            header(metrics)
+                            riskDeck(metrics)
+                            trackCard(metrics)
+                            feedStrip(metrics)
+                            timelineCard(metrics)
+                        }
+                        .frame(width: contentWidth, alignment: .topLeading)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, max(12, proxy.safeAreaInsets.top + 8))
+                        .padding(.bottom, max(22, proxy.safeAreaInsets.bottom + 22))
                     }
-                    .padding(.horizontal, metrics.screenPadding)
-                    .padding(.top, 12)
-                    .padding(.bottom, 22)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .scrollIndicators(.hidden)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .navigationBarHidden(true)
