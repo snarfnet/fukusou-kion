@@ -164,7 +164,7 @@ def main() -> int:
     required_array_fields = ["aliases", "colors", "priceFactors", "identificationTips", "treatments"]
     valid_groups = set("あかさたなはまやらわ")
 
-    results.append(check("80種類以上の天然石データ", gemstone_count >= 80, f"{gemstone_count} entries"))
+    results.append(check("100種類以上の天然石データ", gemstone_count >= 100, f"{gemstone_count} entries"))
     results.append(check("Gemstoneブロック解析", len(blocks) == gemstone_count, f"{len(blocks)} blocks"))
     missing_detail = []
     invalid_groups = []
@@ -255,7 +255,7 @@ def main() -> int:
     if scheme.exists():
         ET.parse(scheme)
         results.append(check("共有スキームXML", True))
-    results.append(check("README更新", "ライブカメラ判定" in readme and "80種類" in readme))
+    results.append(check("README更新", "ライブカメラ判定" in readme and "100種類以上" in readme))
     results.append(check("README判定根拠", "判定の根拠" in readme and "色相" in readme and "市場価格" in readme))
     results.append(check("README判定確度", "判定確度" in readme and "中くらい" in readme and "撮り直し" in readme))
     results.append(check("READMEサンプル判定", "サンプルで試す" in readme and "翡翠とターコイズ" in readme and "実機カメラがない環境" in readme))
@@ -279,7 +279,7 @@ def main() -> int:
     results.append(check("README鑑別メモ", "鑑別・ランク確認メモ" in readme and "硬度" in readme and "屈折率" in readme))
     results.append(check("READMEランク目安", "ランク目安" in readme and "鑑定ランク" in readme))
     results.append(check("README相場データ", "MARKET_DATA_NOTES.md" in readme and "International Gem Society" in readme))
-    results.append(check("README相場一覧", "80種類の相場一覧" in readme and "市場価格" in readme))
+    results.append(check("README相場一覧", "100種類以上の相場一覧" in readme and "市場価格" in readme))
     results.append(check("README相場購入前", "買う前に見る項目" in readme and "無処理/安定化/染色/再生品" in readme))
     results.append(check("README用語集", "鑑別・相場の用語集" in readme and "A貨翡翠" in readme and "カラット" in readme))
     results.append(check("相場更新メモ", market_notes_path.exists() and "GIA Jadeite Jade Quality Factors" in market_notes and "International Gem Society Gem Price Guide" in market_notes and "固定価格" in market_notes))
@@ -309,7 +309,7 @@ def main() -> int:
     results.append(check("QA鑑別メモ", "鑑別・ランク確認メモ" in qa and "硬度" in qa and "屈折率" in qa))
     results.append(check("QAランク目安", "ランク目安" in qa and "鑑定ランク" in qa))
     results.append(check("QA相場更新", "相場更新" in qa and "MARKET_DATA_NOTES.md" in qa))
-    results.append(check("QA相場一覧", "80種類の相場一覧" in qa and "市場価格" in qa and "詳細へ移動" in qa))
+    results.append(check("QA相場一覧", "100種類以上の相場一覧" in qa and "市場価格" in qa and "詳細へ移動" in qa))
     results.append(check("QA相場購入前", "買う前に見る項目" in qa and "処理、証明、品質、価格" in qa and "無処理/安定化/染色/再生品" in qa))
     results.append(check("QA用語集", "鑑別・相場の用語集" in qa and "A貨翡翠" in qa and "屈折率" in qa and "鑑別書" in qa))
     if completion_audit.exists():
