@@ -75,6 +75,7 @@ struct ContentView: View {
                             .background(Color.white.opacity(0.13), in: Circle())
                     }
                     .accessibilityLabel("更新")
+                    .buttonStyle(.plain)
                 }
 
                 Group {
@@ -165,6 +166,7 @@ struct ContentView: View {
                     .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .accessibilityLabel("地域を選択")
+                .buttonStyle(.plain)
 
                 Text(model.risk.summary)
                     .font(.footnote)
@@ -283,6 +285,7 @@ struct ContentView: View {
                         }
                     }
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -383,7 +386,7 @@ private struct LayoutMetrics {
     var summaryLineLimit: Int { isNarrow ? 3 : 4 }
     var titleSize: CGFloat { isNarrow ? 24 : 32 }
     var headlineSize: CGFloat { isNarrow ? 20 : 24 }
-    var refreshButtonSize: CGFloat { 44 }
+    var refreshButtonSize: CGFloat { isNarrow ? 46 : 44 }
     var regionPickerHeight: CGFloat { isNarrow ? 50 : 44 }
     var panelPadding: CGFloat { isNarrow ? 11 : 14 }
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
