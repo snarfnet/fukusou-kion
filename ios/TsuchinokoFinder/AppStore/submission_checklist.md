@@ -48,7 +48,8 @@ If App Review asks for a demo video, record on a physical iPhone:
 3. Tap `開始`.
 4. Point the camera at `review_sample_sheet.png` on paper or another screen.
 5. Show the confidence value, threshold slider, and candidate log.
-6. Show the review note that results are candidates, not a definitive discovery.
+6. Tap `サンプル確認` to show the bundled sample flow.
+7. Show the review note that results are candidates, not a definitive discovery.
 
 ## TestFlight Upload
 

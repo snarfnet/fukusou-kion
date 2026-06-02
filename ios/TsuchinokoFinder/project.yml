@@ -24,6 +24,7 @@ targets:
     resources:
       - TsuchinokoFinder/Assets.xcassets
       - TsuchinokoFinder/Resources/PrivacyInfo.xcprivacy
+      - TsuchinokoFinder/Resources/ReviewSamples
     settings:
       base:
         PRODUCT_NAME: TsuchinokoFinder

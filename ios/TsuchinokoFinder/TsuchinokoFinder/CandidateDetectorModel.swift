@@ -1,6 +1,7 @@
 import AVFoundation
 import CoreML
 import Foundation
+import UIKit
 import Vision
 
 struct CandidateEvent: Identifiable {
@@ -17,6 +18,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     @Published var statusText = Copy.preparing
     @Published var candidateConfidence = 0.0
     @Published var candidateLabel = Copy.noCandidate
+    @Published var sampleText = Copy.noSample
     @Published var recentEvents: [CandidateEvent] = []
     @Published var threshold: Double = {
         let saved = UserDefaults.standard.double(forKey: "tsuchinokoThreshold")
@@ -39,6 +41,13 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     private var visionRequest: VNCoreMLRequest?
     private var frameIndex = 0
     private var lastCandidateAt = Date.distantPast
+    private var sampleIndex = 0
+    private let sampleNames = [
+        "candidate_forest_path",
+        "candidate_gravel_road",
+        "negative_branch",
+        "negative_hose",
+    ]
 
     var thresholdLabel: String {
         "\(Int(threshold * 100))%"
@@ -88,7 +97,44 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         recentEvents = []
         candidateConfidence = 0
         candidateLabel = Copy.noCandidate
+        sampleText = Copy.noSample
         statusText = isScanning ? Copy.scanning : Copy.resetDone
+    }
+
+    func runNextSample() {
+        loadModel()
+        guard let visionRequest else {
+            statusText = Copy.modelUnavailable
+            return
+        }
+
+        let sampleName = sampleNames[sampleIndex % sampleNames.count]
+        sampleIndex += 1
+
+        guard
+            let url = Bundle.main.url(forResource: sampleName, withExtension: "png", subdirectory: "ReviewSamples"),
+            let image = UIImage(contentsOfFile: url.path),
+            let cgImage = image.cgImage
+        else {
+            statusText = Copy.sampleMissing
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.sampleText = "\(Copy.samplePrefix) \(self.sampleDisplayName(for: sampleName))"
+            self.statusText = Copy.sampleRunning
+        }
+
+        videoQueue.async {
+            let handler = VNImageRequestHandler(cgImage: cgImage, orientation: .up)
+            do {
+                try handler.perform([visionRequest])
+            } catch {
+                DispatchQueue.main.async {
+                    self.statusText = Copy.analysisFailed
+                }
+            }
+        }
     }
 
     private func loadModel() {
@@ -213,6 +259,21 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
             recentEvents.removeLast()
         }
     }
+
+    private func sampleDisplayName(for name: String) -> String {
+        switch name {
+        case "candidate_forest_path":
+            return Copy.sampleCandidateForest
+        case "candidate_gravel_road":
+            return Copy.sampleCandidateGravel
+        case "negative_branch":
+            return Copy.sampleNegativeBranch
+        case "negative_hose":
+            return Copy.sampleNegativeHose
+        default:
+            return name
+        }
+    }
 }
 
 extension CandidateDetectorViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -239,6 +300,14 @@ private enum Copy {
     static let reviewNeeded = "\u{8981}\u{78BA}\u{8A8D}"
     static let candidateDetected = "\u{5019}\u{88DC}\u{3092}\u{691C}\u{77E5}"
     static let motionToReview = "\u{8981}\u{78BA}\u{8A8D}\u{306E}\u{52D5}\u{4F53}"
+    static let noSample = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{672A}\u{5B9F}\u{884C}"
+    static let samplePrefix = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}"
+    static let sampleRunning = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{89E3}\u{6790}\u{4E2D}"
+    static let sampleMissing = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{304C}\u{898B}\u{3064}\u{304B}\u{308A}\u{307E}\u{305B}\u{3093}"
+    static let sampleCandidateForest = "\u{5019}\u{88DC}\u{30FB}\u{5C71}\u{9053}"
+    static let sampleCandidateGravel = "\u{5019}\u{88DC}\u{30FB}\u{7802}\u{5229}\u{9053}"
+    static let sampleNegativeBranch = "\u{78BA}\u{8A8D}\u{7528}\u{30FB}\u{679D}"
+    static let sampleNegativeHose = "\u{78BA}\u{8A8D}\u{7528}\u{30FB}\u{30DB}\u{30FC}\u{30B9}"
     static let cameraPermissionNeeded = "\u{30AB}\u{30E1}\u{30E9}\u{8A31}\u{53EF}\u{304C}\u{5FC5}\u{8981}\u{3067}\u{3059}"
     static let cameraUnavailable = "\u{30AB}\u{30E1}\u{30E9}\u{3092}\u{958B}\u{3051}\u{307E}\u{305B}\u{3093}"
     static let modelMissing = "Model file is missing"

@@ -182,22 +182,37 @@ struct ContentView: View {
     }
 
     private var controlPanel: some View {
-        HStack(spacing: 12) {
-            Button {
-                viewModel.isScanning ? viewModel.pauseScanning() : viewModel.startScanning()
-            } label: {
-                Label(viewModel.isScanning ? UIStrings.pause : UIStrings.start, systemImage: viewModel.isScanning ? "pause.fill" : "play.fill")
-                    .frame(maxWidth: .infinity)
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                Button {
+                    viewModel.isScanning ? viewModel.pauseScanning() : viewModel.startScanning()
+                } label: {
+                    Label(viewModel.isScanning ? UIStrings.pause : UIStrings.start, systemImage: viewModel.isScanning ? "pause.fill" : "play.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PanelButtonStyle(tint: .cyan))
+
+                Button {
+                    viewModel.resetLog()
+                } label: {
+                    Label(UIStrings.reset, systemImage: "arrow.counterclockwise")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PanelButtonStyle(tint: .white))
             }
-            .buttonStyle(PanelButtonStyle(tint: .cyan))
 
             Button {
-                viewModel.resetLog()
+                viewModel.runNextSample()
             } label: {
-                Label(UIStrings.reset, systemImage: "arrow.counterclockwise")
+                Label(UIStrings.sampleCheck, systemImage: "photo.on.rectangle.angled")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(PanelButtonStyle(tint: .white))
+            .buttonStyle(PanelButtonStyle(tint: .green))
+
+            Text(viewModel.sampleText)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundStyle(.white.opacity(0.58))
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -324,6 +339,7 @@ private enum UIStrings {
     static let start = "\u{958B}\u{59CB}"
     static let pause = "\u{505C}\u{6B62}"
     static let reset = "\u{30EA}\u{30BB}\u{30C3}\u{30C8}"
+    static let sampleCheck = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{78BA}\u{8A8D}"
     static let howToUse = "\u{4F7F}\u{3044}\u{65B9}"
     static let guide = "\u{5730}\u{9762}\u{304C}\u{898B}\u{3048}\u{308B}\u{3088}\u{3046}\u{306B}\u{56FA}\u{5B9A}\u{3057}\u{3001}\u{8349}\u{3080}\u{3089}\u{3084}\u{5C71}\u{9053}\u{3092}\u{3086}\u{3063}\u{304F}\u{308A}\u{6620}\u{3057}\u{3066}\u{304F}\u{3060}\u{3055}\u{3044}\u{3002}\u{5019}\u{88DC}\u{304C}\u{51FA}\u{305F}\u{3089}\u{753B}\u{9762}\u{3060}\u{3051}\u{3067}\u{65AD}\u{5B9A}\u{305B}\u{305A}\u{3001}\u{5468}\u{56F2}\u{306E}\u{72B6}\u{6CC1}\u{3068}\u{6620}\u{50CF}\u{3092}\u{898B}\u{3066}\u{78BA}\u{8A8D}\u{3057}\u{3066}\u{304F}\u{3060}\u{3055}\u{3044}\u{3002}"
     static let disclaimer = "\u{679D}\u{3001}\u{6839}\u{3001}\u{30DB}\u{30FC}\u{30B9}\u{3001}\u{666E}\u{901A}\u{306E}\u{30D8}\u{30D3}\u{3001}\u{5F71}\u{3092}\u{5019}\u{88DC}\u{3068}\u{3057}\u{3066}\u{62FE}\u{3046}\u{5834}\u{5408}\u{304C}\u{3042}\u{308A}\u{307E}\u{3059}\u{3002}"

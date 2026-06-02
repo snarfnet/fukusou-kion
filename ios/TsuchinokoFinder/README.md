@@ -12,6 +12,7 @@ The app must not claim that a real tsuchinoko was found. It shows Core ML output
 - Candidate highlight overlay
 - Recent candidate log
 - Camera permission guidance
+- Bundled sample check flow for App Review and demos
 
 ## App Store Positioning
 

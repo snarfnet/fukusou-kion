@@ -13,6 +13,8 @@ How to test:
 5. Adjust 候補判定ライン to test the threshold.
 6. When confidence exceeds the threshold, the candidate label and log update.
 
+The app also includes an in-app sample flow. Tap サンプル確認 to run the bundled review samples through the same Core ML classifier without needing to aim the camera at an external image.
+
 Review samples:
 
 The repository includes a printable sample sheet at:
