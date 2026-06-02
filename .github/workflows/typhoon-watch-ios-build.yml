@@ -113,13 +113,22 @@ jobs:
             -destination "platform=iOS Simulator,id=$COMPACT_DEVICE_ID" \
             -derivedDataPath build/CompactDerivedData \
             CODE_SIGNING_ALLOWED=NO
-          xcodebuild test \
-            -project TyphoonWatch.xcodeproj \
-            -scheme TyphoonWatch \
-            -configuration Debug \
-            -destination "platform=iOS Simulator,id=$COMPACT_DEVICE_ID" \
-            -derivedDataPath build/CompactDerivedData \
-            CODE_SIGNING_ALLOWED=NO
+          run_compact_tests() {
+            xcodebuild test \
+              -project TyphoonWatch.xcodeproj \
+              -scheme TyphoonWatch \
+              -configuration Debug \
+              -destination "platform=iOS Simulator,id=$COMPACT_DEVICE_ID" \
+              -derivedDataPath build/CompactDerivedData \
+              CODE_SIGNING_ALLOWED=NO
+          }
+          run_compact_tests || {
+            echo "Compact simulator test launch failed once; rebooting simulator and retrying."
+            xcrun simctl shutdown "$COMPACT_DEVICE_ID" || true
+            xcrun simctl boot "$COMPACT_DEVICE_ID" || true
+            xcrun simctl bootstatus "$COMPACT_DEVICE_ID" -b
+            run_compact_tests
+          }
           APP_PATH="build/CompactDerivedData/Build/Products/Debug-iphonesimulator/TyphoonWatch.app"
           test -d "$APP_PATH"
           xcrun simctl boot "$COMPACT_DEVICE_ID" || true
