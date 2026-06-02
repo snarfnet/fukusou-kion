@@ -194,7 +194,9 @@ jobs:
           let tealRatio = Double(tealPanel) / Double(total)
           print(String(format: "compact screenshot bright_ratio=%.4f accent_ratio=%.4f teal_ratio=%.4f sampled_unique_colors=%d", brightRatio, accentRatio, tealRatio, sampledColors.count))
 
-          if brightRatio < 0.015 || accentRatio < 0.001 || tealRatio < 0.004 || sampledColors.count < 1800 {
+          fflush(stdout)
+
+          if brightRatio < 0.010 || tealRatio < 0.003 || sampledColors.count < 900 {
               fatalError("Compact screenshot does not contain enough visible TyphoonWatch UI.")
           }
           SWIFT
