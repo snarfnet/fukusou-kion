@@ -130,8 +130,10 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
+                    .frame(minHeight: 44)
                     .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
                     .foregroundStyle(.white)
+                    .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .accessibilityLabel("地域を選択")
 
@@ -219,9 +221,11 @@ struct ContentView: View {
                                 Spacer(minLength: 4)
                             }
                             .padding(10)
+                            .frame(minHeight: 52)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
                             .foregroundStyle(.white)
+                            .contentShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
                 }
@@ -263,25 +267,46 @@ struct ContentView: View {
                 Spacer(minLength: 0)
             }
 
-            HStack(spacing: 10) {
-                Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.72))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.78)
+            if metrics.isNarrow {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.72))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
 
-                Spacer(minLength: 0)
+                    HStack(spacing: 10) {
+                        Text("\(point.pressure.map(String.init) ?? "--") hPa")
+                            .font(.caption.weight(.bold))
+                            .lineLimit(1)
 
-                Text("\(point.pressure.map(String.init) ?? "--") hPa")
-                    .font(.caption.weight(.bold))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.78)
+                        Text("\(point.wind.map(String.init) ?? "--") kt")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.cyan.opacity(0.9))
+                            .lineLimit(1)
+                    }
+                }
+            } else {
+                HStack(spacing: 10) {
+                    Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.72))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
 
-                Text("\(point.wind.map(String.init) ?? "--") kt")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.cyan.opacity(0.9))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.78)
+                    Spacer(minLength: 0)
+
+                    Text("\(point.pressure.map(String.init) ?? "--") hPa")
+                        .font(.caption.weight(.bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+
+                    Text("\(point.wind.map(String.init) ?? "--") kt")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.cyan.opacity(0.9))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+                }
             }
         }
         .foregroundStyle(.white)
