@@ -6,7 +6,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             GeometryReader { proxy in
-                let safeWidth = max(260, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
+                let safeWidth = max(1, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
                 let edgeInset: CGFloat = safeWidth <= 340 ? 6 : (safeWidth <= 390 ? 9 : 18)
                 let contentWidth = min(430, max(1, safeWidth - edgeInset * 2))
                 let metrics = LayoutMetrics(width: contentWidth, height: proxy.size.height)
@@ -407,8 +407,10 @@ private struct LayoutMetrics {
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
     var mapHeight: CGFloat {
         let availableWidth = width - panelPadding * 2
-        let ratio = isNarrow ? 0.58 : 0.72
-        return min(isNarrow ? 176 : 280, max(isNarrow ? 148 : 220, availableWidth * ratio))
+        let ratio: CGFloat = width <= 340 ? 0.54 : (isNarrow ? 0.58 : 0.72)
+        let compactMinimum: CGFloat = width <= 340 ? 136 : 148
+        let compactMaximum: CGFloat = width <= 340 ? 164 : 176
+        return min(isNarrow ? compactMaximum : 280, max(isNarrow ? compactMinimum : 220, availableWidth * ratio))
     }
     var actionFont: Font { isNarrow ? .caption : .caption2 }
     var actionHorizontalPadding: CGFloat { width <= 340 ? 8 : 9 }
