@@ -141,6 +141,17 @@ struct ContentView: View {
                     .tint(Color(hex: model.risk.level.colorHex))
                     .scaleEffect(x: 1, y: 1.6, anchor: .center)
 
+                HStack(spacing: 8) {
+                    Text("リスク目安")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white.opacity(0.62))
+                    Spacer(minLength: 0)
+                    Text("\(Int(min(model.risk.score, 100).rounded()))%")
+                        .font(.caption.weight(.black))
+                        .foregroundStyle(Color(hex: model.risk.level.colorHex))
+                }
+                .accessibilityLabel("リスク目安 \(Int(min(model.risk.score, 100).rounded()))パーセント")
+
                 LazyVGrid(columns: metrics.metricColumns, spacing: 8) {
                     MetricTile(title: "最接近", value: model.risk.closestAt?.compactTime ?? "不明")
                     MetricTile(title: "最短距離", value: "\(Int(model.risk.closestKm.rounded())) km")
@@ -154,12 +165,11 @@ struct ContentView: View {
     private func trackCard(_ metrics: LayoutMetrics) -> some View {
         CompactPanel(metrics: metrics) {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 3) {
                     Label("進路", systemImage: "scope")
                         .font(.headline.weight(.black))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                    Spacer(minLength: 6)
                     Text(model.storm.source)
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(.white.opacity(0.64))
@@ -325,7 +335,7 @@ private struct LayoutMetrics {
     var innerSpacing: CGFloat { isNarrow ? 10 : 12 }
     var titleSize: CGFloat { isNarrow ? 24 : 32 }
     var headlineSize: CGFloat { isNarrow ? 20 : 24 }
-    var refreshButtonSize: CGFloat { isNarrow ? 40 : 44 }
+    var refreshButtonSize: CGFloat { 44 }
     var panelPadding: CGFloat { isNarrow ? 11 : 14 }
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
     var mapHeight: CGFloat {
