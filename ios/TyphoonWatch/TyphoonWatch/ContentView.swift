@@ -601,3 +601,13 @@ private extension Color {
         )
     }
 }
+
+#Preview("iPhone SE") {
+    ContentView()
+        .previewDevice("iPhone SE (3rd generation)")
+}
+
+#Preview("320pt Compact") {
+    ContentView()
+        .frame(width: 320, height: 568)
+}
