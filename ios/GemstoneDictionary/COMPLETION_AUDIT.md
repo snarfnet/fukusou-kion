@@ -57,6 +57,7 @@
 - App Store説明文、プライバシーポリシー、TestFlightメモ、スクリーンショット案あり
 - 静的検証スクリプトあり
 - GitHub ActionsのiOSビルドCIあり
+- iPhone実機で完成判定するための `REAL_DEVICE_QA.md` あり
 
 ## 検証済み
 
@@ -73,13 +74,14 @@
 - Xcodeプロジェクト、共有スキーム、Info.plist
 - AppIcon、PrivacyInfo、JSON、plist
 - GitHub Actionsワークフロー
+- GitHub Actions `GemstoneDictionary iOS Build` の成功
+- 実機QAシート
 
 ## 未検証
 
-このWindows環境では確認できないため、完了前にMacまたはCIで確認する。
+このWindows環境では確認できないため、完了前にMacまたはiPhone実機で確認する。
 
 - `bash scripts/build_mac.sh` の成功
-- GitHub Actions `GemstoneDictionary iOS Build` の成功
 - iPhone実機でライブカメラが起動する
 - iPhone実機でカメラ許可拒否時の表示が崩れない
 - iPhone実機で撮影後に候補、サイズ、透明度、価格が表示される
@@ -88,4 +90,4 @@
 
 ## 完了判断
 
-静的な成果物は要件を満たしている。アプリとして完成扱いにするには、Mac/CIのXcodeビルド成功と、iPhone実機カメラ確認が必要。
+静的な成果物とGitHub ActionsのXcodeビルドは要件を満たしている。アプリとして完成扱いにするには、`REAL_DEVICE_QA.md` に沿ったiPhone実機カメラ確認が必要。

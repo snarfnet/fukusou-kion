@@ -135,8 +135,10 @@ def main() -> int:
     readme = read(ROOT / "README.md")
     qa_checklist = ROOT / "QA_CHECKLIST.md"
     completion_audit = ROOT / "COMPLETION_AUDIT.md"
+    real_device_qa_path = ROOT / "REAL_DEVICE_QA.md"
     market_notes_path = ROOT / "MARKET_DATA_NOTES.md"
     market_notes = read(market_notes_path) if market_notes_path.exists() else ""
+    real_device_qa = read(real_device_qa_path) if real_device_qa_path.exists() else ""
     build_script = ROOT / "scripts" / "build_mac.sh"
     workflow = ROOT.parents[1] / ".github" / "workflows" / "gemstone-dictionary-ios-build.yml"
     xcodeproj = ROOT / "GemstoneDictionary.xcodeproj" / "project.pbxproj"
@@ -279,6 +281,7 @@ def main() -> int:
     results.append(check("README鑑別メモ", "鑑別・ランク確認メモ" in readme and "硬度" in readme and "屈折率" in readme))
     results.append(check("READMEランク目安", "ランク目安" in readme and "鑑定ランク" in readme))
     results.append(check("README相場データ", "MARKET_DATA_NOTES.md" in readme and "International Gem Society" in readme))
+    results.append(check("README実機QA", "REAL_DEVICE_QA.md" in readme and "iPhone実機" in readme and "10円玉基準" in readme))
     results.append(check("README相場一覧", "100種類以上の相場一覧" in readme and "市場価格" in readme))
     results.append(check("README相場購入前", "買う前に見る項目" in readme and "無処理/安定化/染色/再生品" in readme))
     results.append(check("README用語集", "鑑別・相場の用語集" in readme and "A貨翡翠" in readme and "カラット" in readme))
@@ -312,6 +315,7 @@ def main() -> int:
     results.append(check("QA相場一覧", "100種類以上の相場一覧" in qa and "市場価格" in qa and "詳細へ移動" in qa))
     results.append(check("QA相場購入前", "買う前に見る項目" in qa and "処理、証明、品質、価格" in qa and "無処理/安定化/染色/再生品" in qa))
     results.append(check("QA用語集", "鑑別・相場の用語集" in qa and "A貨翡翠" in qa and "屈折率" in qa and "鑑別書" in qa))
+    results.append(check("実機QAシート", real_device_qa_path.exists() and "実機QAシート" in real_device_qa and "合格条件" in real_device_qa and "10円玉" in real_device_qa and "完成判断" in real_device_qa))
     if completion_audit.exists():
         audit = read(completion_audit)
         results.append(check("完成監査ドキュメント", "現在満たしている項目" in audit and "未検証" in audit))
