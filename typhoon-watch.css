@@ -1,8 +1,8 @@
 :root {
   --ink: #15252a;
-  --muted: #63727a;
+  --muted: #61717a;
   --paper: #f4f0e7;
-  --panel: rgba(255, 252, 242, 0.92);
+  --panel: rgba(255, 252, 242, 0.94);
   --line: rgba(27, 45, 50, 0.16);
   --sea: #0d3b44;
   --sea-2: #14606b;
@@ -18,18 +18,16 @@
   min-width: 0;
 }
 
-html {
+html,
+body {
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
-  width: 100%;
-  max-width: 100%;
   min-height: 100vh;
-  overflow-x: clip;
   color: var(--ink);
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
   background:
@@ -47,20 +45,18 @@ a {
 canvas,
 img,
 svg {
+  display: block;
   max-width: 100%;
 }
 
 .app-shell {
-  width: 100%;
-  max-width: 1440px;
+  width: min(100%, 1440px);
   margin: 0 auto;
-  padding: 14px clamp(8px, 2vw, 12px) 22px;
-  overflow: clip;
+  padding: 14px max(10px, env(safe-area-inset-left)) 22px max(10px, env(safe-area-inset-right));
 }
 
 .topbar,
 .control-strip,
-.dashboard-grid,
 .section-head {
   display: flex;
   align-items: center;
@@ -70,7 +66,10 @@ svg {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
-  min-width: 0;
+}
+
+.brand {
+  flex: 1 1 auto;
 }
 
 .eyebrow {
@@ -90,8 +89,8 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(1.8rem, 3.4vw, 3.4rem);
-  line-height: 0.94;
+  font-size: clamp(1.62rem, 8vw, 3.4rem);
+  line-height: 1;
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 900;
 }
@@ -103,10 +102,9 @@ h2 {
 
 .top-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex: 0 0 auto;
   align-items: center;
   gap: 8px;
-  min-width: 0;
 }
 
 .icon-button,
@@ -123,19 +121,17 @@ h2 {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  font-size: 1.25rem;
+  font-size: 1.18rem;
+  line-height: 1;
 }
 
 .text-button {
   display: inline-flex;
   align-items: center;
-  max-width: 100%;
   height: 38px;
-  padding: 0 14px;
+  padding: 0 13px;
   border-radius: 999px;
   font-weight: 800;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -147,7 +143,6 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 252, 242, 0.72);
-  min-width: 0;
 }
 
 .control-strip label {
@@ -157,12 +152,6 @@ h2 {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
-  min-width: 0;
-}
-
-.control-strip label span,
-.toggle span {
-  overflow-wrap: anywhere;
 }
 
 select {
@@ -170,7 +159,7 @@ select {
   height: 34px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  padding: 0 12px;
+  padding: 0 10px;
   color: var(--ink);
   background: #fffaf0;
 }
@@ -188,11 +177,11 @@ select {
 }
 
 .dashboard-grid {
-  align-items: stretch;
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr) 280px;
+  grid-template-areas: "status map data";
+  align-items: stretch;
   gap: 10px;
-  min-width: 0;
 }
 
 .status-panel,
@@ -204,6 +193,18 @@ select {
   border-radius: 8px;
   background: var(--panel);
   box-shadow: var(--shadow);
+}
+
+.status-panel {
+  grid-area: status;
+}
+
+.map-panel {
+  grid-area: map;
+}
+
+.data-panel {
+  grid-area: data;
 }
 
 .status-panel,
@@ -232,7 +233,6 @@ select {
 }
 
 .summary-text {
-  min-height: 0;
   margin-bottom: 10px;
   color: var(--muted);
   font-size: 0.82rem;
@@ -281,16 +281,14 @@ select {
 }
 
 .map-panel {
-  min-height: 514px;
   overflow: hidden;
-  max-width: 100%;
 }
 
 .map-head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   padding: 12px 12px 0;
 }
 
@@ -307,8 +305,7 @@ select {
 
 .map-wrap {
   position: relative;
-  height: calc(100% - 54px);
-  min-height: 448px;
+  height: clamp(340px, 54vw, 560px);
   margin-top: 8px;
   background:
     linear-gradient(180deg, rgba(12, 73, 85, 0.96), rgba(6, 31, 39, 0.98)),
@@ -316,7 +313,6 @@ select {
 }
 
 canvas {
-  display: block;
   width: 100%;
   height: 100%;
 }
@@ -438,14 +434,13 @@ canvas {
 .table-wrap {
   max-width: 100%;
   overflow-x: auto;
-  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
-  min-width: 760px;
 }
 
 th,
@@ -464,40 +459,39 @@ th {
 
 @media (max-width: 1180px) {
   .dashboard-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .map-panel {
-    grid-column: 1 / -1;
-    order: -1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "map map"
+      "status data";
   }
 }
 
 @media (max-width: 760px) {
   .app-shell {
-    width: 100%;
-    padding: 10px max(8px, env(safe-area-inset-left)) 18px max(8px, env(safe-area-inset-right));
+    padding-top: 10px;
   }
 
-  .topbar,
   .section-head {
     align-items: flex-start;
     flex-direction: column;
   }
 
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "map"
+      "status"
+      "data";
   }
 
   .control-strip {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 7px;
   }
 
-  .control-strip label,
-  .toggle {
-    width: 100%;
+  .control-strip label:not(.toggle) {
+    grid-column: 1 / -1;
   }
 
   .control-strip label {
@@ -507,16 +501,13 @@ th {
     gap: 5px;
   }
 
-  .control-strip label span {
-    line-height: 1.2;
-  }
-
   .control-strip label.toggle {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 7px;
     border-radius: 8px;
+    width: 100%;
   }
 
   select {
@@ -524,28 +515,24 @@ th {
     width: 100%;
   }
 
-  .map-head {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .source-badge {
-    justify-self: start;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-  }
-
   .map-wrap {
-    min-height: 360px;
-    height: 360px;
+    height: clamp(260px, 72vw, 390px);
   }
 
   .metric-grid {
     grid-template-columns: 1fr;
   }
 
-  table {
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td {
     display: block;
+  }
+
+  table {
     min-width: 0;
   }
 
@@ -553,127 +540,61 @@ th {
     display: none;
   }
 
-  tbody,
-  tr,
-  td {
-    display: block;
-    width: 100%;
-  }
-
-  tbody {
-    display: grid;
-    gap: 8px;
-  }
-
   tr {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.42);
-    overflow: hidden;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
   }
 
   td {
     display: grid;
-    grid-template-columns: minmax(78px, 0.42fr) minmax(0, 1fr);
-    align-items: start;
-    gap: 12px;
-    border-top: 1px solid var(--line);
-    font-size: 0.78rem;
-    text-align: right;
-    overflow-wrap: anywhere;
-  }
-
-  td:first-child {
-    border-top: 0;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 8px;
+    padding: 5px 0;
+    border: 0;
   }
 
   td::before {
     content: attr(data-label);
     color: var(--muted);
-    font-size: 0.66rem;
+    font-size: 0.68rem;
     font-weight: 800;
-    text-align: left;
-    text-transform: uppercase;
-    overflow-wrap: anywhere;
   }
 }
 
 @media (max-width: 380px) {
   .app-shell {
-    padding-left: max(6px, env(safe-area-inset-left));
-    padding-right: max(6px, env(safe-area-inset-right));
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
   }
 
   h1 {
-    font-size: 1.62rem;
+    font-size: 1.52rem;
   }
 
-  h2 {
-    font-size: 0.96rem;
+  .topbar {
+    gap: 8px;
   }
 
   .top-actions {
-    width: 100%;
+    gap: 6px;
   }
 
   .icon-button {
-    flex: 0 0 36px;
     width: 36px;
     height: 36px;
   }
 
   .text-button {
-    flex: 1;
-    justify-content: center;
-    min-width: 0;
-    padding: 0 10px;
-    font-size: 0.84rem;
+    height: 36px;
+    padding: 0 11px;
+    font-size: 0.82rem;
   }
 
+  .map-head,
   .status-panel,
   .data-panel,
   .storm-table-section {
-    padding: 10px;
-  }
-
-  .map-head {
-    padding: 10px 10px 0;
-  }
-
-  .map-wrap {
-    min-height: 292px;
-    height: 292px;
-  }
-
-  th,
-  td {
-    padding: 7px;
-  }
-}
-
-@media (max-width: 340px) {
-  .app-shell {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
-  .control-strip,
-  .status-panel,
-  .data-panel,
-  .storm-table-section {
-    padding: 8px;
-  }
-
-  .map-head {
-    padding: 8px 8px 0;
-  }
-
-  .map-wrap {
-    min-height: 268px;
-    height: 268px;
-  }
-
-  .metric {
-    padding: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }

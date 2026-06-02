@@ -16,56 +16,56 @@ const SOURCE_CATALOG = [
   },
   {
     id: "digital",
-    name: "Digital Typhoon Mf-JSON",
-    role: "西太平洋の台風軌跡。研究利用しやすいJSON。",
-    url: "https://agora.ex.nii.ac.jp/digital-typhoon/mf-json/wnp/2026.ja.json"
+    name: "Digital Typhoon",
+    role: "西太平洋の台風データ。研究利用しやすい公開データ。",
+    url: "https://agora.ex.nii.ac.jp/digital-typhoon/"
   },
   {
     id: "noaa",
     name: "NOAA NHC GIS",
-    role: "大西洋・東太平洋の予報円、風域、警戒域。比較データに使う。",
+    role: "米国側の熱帯低気圧GIS。補助的な確認に使う。",
     url: "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather/MapServer?f=pjson"
   },
   {
     id: "jtwc",
     name: "JTWC Warning",
-    role: "米軍合同台風警報センター。西太平洋の英語速報の補助線。",
+    role: "米軍合同台風警報センター。西太平洋の英語警報。",
     url: "https://www.metoc.navy.mil/jtwc/jtwc.html"
   },
   {
     id: "openmeteo",
     name: "Open-Meteo / ECMWF",
-    role: "地点別の風、雨量、気圧の予報。台風そのものではなく影響を読む。",
+    role: "地点別の風、雨、気圧予報。影響の読み取りに使う。",
     url: "https://api.open-meteo.com/v1/forecast"
   },
   {
     id: "gdacs",
     name: "GDACS",
-    role: "災害アラートと被害規模の把握。海外渡航者向け通知に使う。",
+    role: "災害アラートと被害規模の把握。",
     url: "https://www.gdacs.org/"
   },
   {
     id: "wmo",
     name: "WMO Severe Weather",
-    role: "各国気象機関の重大気象情報を束ねる確認口。",
+    role: "各国気象機関の重大気象情報を確認。",
     url: "https://severeweather.wmo.int/"
   },
   {
     id: "nasa",
     name: "NASA Worldview / GIBS",
-    role: "衛星画像、海面水温、雲域の可視化。画像レイヤーの強化に使う。",
+    role: "衛星画像、海面水温、雲域の可視化。",
     url: "https://worldview.earthdata.nasa.gov/"
   },
   {
     id: "jaxa",
     name: "JAXA GSMaP",
-    role: "衛星全球降水量。大雨リスクの裏取りに使う。",
+    role: "衛星全球降水量。大雨リスクの補助確認。",
     url: "https://sharaku.eorc.jaxa.jp/GSMaP/"
   },
   {
     id: "commercial",
     name: "商用天気API",
-    role: "Weathernews、Tomorrow.io、OpenWeatherなど。通知品質とSLAが必要なら採用。",
+    role: "Weathernews、Tomorrow.io、OpenWeatherなど。通知品質とSLAが必要な運用向け。",
     url: "https://openweathermap.org/api"
   }
 ];
@@ -88,6 +88,7 @@ const FALLBACK_STORM = {
 
 const canvas = document.querySelector("#trackCanvas");
 const ctx = canvas.getContext("2d");
+
 const state = {
   storm: FALLBACK_STORM,
   regionKey: "okinawa",
@@ -95,7 +96,7 @@ const state = {
   showForecast: true,
   showRisk: true,
   hoverPoint: null,
-  sourceStates: {}
+  sourceStates: Object.fromEntries(SOURCE_CATALOG.map((source) => [source.id, "待機中"]))
 };
 
 document.querySelector("#regionSelect").addEventListener("change", (event) => {
@@ -192,8 +193,8 @@ function normalizeMovingFeature(feature) {
   const windProp = (feature.temporalProperties || []).find((item) => item.uom === "kt");
   const points = geometry.coordinates.map((coordinate, index) => ({
     time: geometry.datetimes[index],
-    lat: Number(coordinate[0]),
-    lon: Number(coordinate[1]),
+    lat: Number(coordinate[1]),
+    lon: Number(coordinate[0]),
     pressure: Number(pressureProp?.values?.[index] || 0) || null,
     wind: Number(windProp?.values?.[index] || 0) || null,
     forecast: false
@@ -214,36 +215,33 @@ function render() {
   renderStatus();
   renderTable();
   renderSources();
+  document.querySelector("#stormTitle").textContent = state.storm.name;
+  document.querySelector("#sourceBadge").textContent = state.storm.source;
+  document.querySelector("#updatedAt").textContent = `更新 ${formatTime(state.storm.updatedAt)}`;
 }
 
 function renderStatus() {
   const region = REGIONS[state.regionKey];
   const risk = calculateRisk(state.storm.points, region);
-  const riskTitle = document.querySelector("#riskTitle");
-  const riskFill = document.querySelector("#riskFill");
-  const riskSummary = document.querySelector("#riskSummary");
+  document.querySelector("#riskTitle").textContent = `${region.name} ${risk.label}`;
+  document.querySelector("#riskFill").style.width = `${risk.score}%`;
+  document.querySelector("#riskSummary").textContent = risk.summary;
 
-  riskTitle.textContent = `${region.name} ${risk.label}`;
-  riskFill.style.width = `${risk.score}%`;
-  riskSummary.textContent = risk.summary;
-
-  document.querySelector("#stormTitle").textContent = state.storm.name;
-  document.querySelector("#sourceBadge").textContent = state.storm.source;
-  document.querySelector("#updatedAt").textContent = `更新 ${formatTime(state.storm.updatedAt)}`;
-
-  const latest = state.storm.points[state.storm.points.length - 1];
+  const closest = risk.closest;
+  const strongestWind = Math.max(...state.storm.points.map((point) => point.wind || 0));
+  const lowestPressure = Math.min(...state.storm.points.map((point) => point.pressure || Infinity));
   const metrics = [
-    ["最接近", risk.closestTime ? formatTime(risk.closestTime) : "不明"],
-    ["最短距離", `${Math.round(risk.closestKm)} km`],
-    ["中心気圧", latest.pressure ? `${latest.pressure} hPa` : "不明"],
-    ["最大風速", latest.wind ? `${latest.wind} kt` : "不明"]
+    ["最接近", `${Math.round(closest.distance)} km`],
+    ["最大風速", `${strongestWind || "-"} kt`],
+    ["最低気圧", Number.isFinite(lowestPressure) ? `${lowestPressure} hPa` : "-"],
+    ["予報点", `${state.storm.points.length}点`]
   ];
+
   document.querySelector("#metricGrid").innerHTML = metrics.map(([label, value]) => (
     `<div class="metric"><span>${label}</span><strong>${value}</strong></div>`
   )).join("");
 
-  const advice = buildAdvice(risk);
-  document.querySelector("#adviceList").innerHTML = advice.map((item) => `<li>${item}</li>`).join("");
+  document.querySelector("#adviceList").innerHTML = buildAdvice(risk).map((item) => `<li>${item}</li>`).join("");
 }
 
 function renderTable() {
@@ -255,7 +253,7 @@ function renderTable() {
       <td data-label="位置">${point.lat.toFixed(1)}N / ${point.lon.toFixed(1)}E</td>
       <td data-label="中心気圧">${point.pressure ? `${point.pressure} hPa` : "不明"}</td>
       <td data-label="最大風速">${point.wind ? `${point.wind} kt` : "不明"}</td>
-      <td data-label="監視地点まで">${Math.round(distance)} km</td>
+      <td data-label="地点まで">${Math.round(distance)} km</td>
     </tr>`;
   });
   document.querySelector("#trackTable").innerHTML = rows.join("");
@@ -263,7 +261,7 @@ function renderTable() {
 
 function renderSources() {
   document.querySelector("#sourceList").innerHTML = SOURCE_CATALOG.map((source) => {
-    const stateText = state.sourceStates[source.id] || "待機";
+    const stateText = state.sourceStates[source.id] || "待機中";
     return `<article class="source-card">
       <h3>${source.name}</h3>
       <p>${source.role}</p>
@@ -463,50 +461,40 @@ function calculateRisk(points, region) {
   const summary = score > 72
     ? "進路が近く、風雨の影響を強く受ける想定です。公式発表と避難情報を短い間隔で確認してください。"
     : score > 44
-      ? "接近の可能性があります。風、雨、交通の乱れを早めに見てください。"
-      : "現時点の接近度は低めです。進路が変わる前提で、更新を確認してください。";
+      ? "影響が出る可能性があります。雨、風、交通情報を見ながら予定を調整してください。"
+      : "現時点の影響は限定的です。進路が変わることもあるため、更新を確認してください。";
 
-  return {
-    score,
-    label,
-    summary,
-    closestKm: closest.distance,
-    closestTime: closest.point?.time,
-    strongestWind
-  };
+  return { score, label, summary, closest };
 }
 
 function buildAdvice(risk) {
   if (risk.score > 72) {
-    return ["気象庁の警報、自治体の避難情報を優先して確認", "停電、断水、交通停止を想定して今日中に備蓄を点検", "海岸、河川、用水路には近づかない"];
+    return ["気象庁の警報と自治体の避難情報を確認", "外出予定を減らし、停電・断水に備える", "海沿い、川沿い、崖の近くを避ける"];
   }
   if (risk.score > 44) {
-    return ["48時間以内の予定を見直す", "雨雲レーダーと風予報を併用", "ベランダや屋外の飛びやすい物を片付ける"];
+    return ["雨雲と風の強まりを確認", "交通機関の運休情報を早めに見る", "ベランダや屋外の物を片付ける"];
   }
-  return ["1日2回は進路更新を確認", "旅行や離島移動は欠航情報も見る", "発達予想が強まったら通知対象に入れる"];
+  return ["最新の進路を1日数回確認", "接近時の予定を見直せるようにする", "公式情報を優先して判断する"];
 }
 
 function haversineKm(a, b) {
-  const earth = 6371;
+  const radius = 6371;
+  const toRad = (value) => value * Math.PI / 180;
   const dLat = toRad(b.lat - a.lat);
   const dLon = toRad(b.lon - a.lon);
   const lat1 = toRad(a.lat);
   const lat2 = toRad(b.lat);
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-  return 2 * earth * Math.asin(Math.sqrt(h));
-}
-
-function toRad(value) {
-  return value * Math.PI / 180;
+  return 2 * radius * Math.asin(Math.sqrt(h));
 }
 
 function formatTime(value) {
-  if (!value) return "不明";
   const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "不明";
   return new Intl.DateTimeFormat("ja-JP", {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
     minute: "2-digit"
   }).format(date);
 }

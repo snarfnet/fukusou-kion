@@ -66,7 +66,7 @@ struct TyphoonService {
         if score > 72 {
             level = .alert
             summary = "台風が近く、風雨の影響を強く受けるおそれがあります。公式発表と避難情報を短い間隔で確認してください。"
-            actions = ["警報と避難情報を確認", "停電、断水、交通停止に備える", "海岸や河川に近づかない"]
+            actions = ["警報と避難情報を確認", "停電、断水、交通停止に備える", "海沿いや川沿いに近づかない"]
         } else if score > 44 {
             level = .caution
             summary = "接近の可能性があります。雨、風、交通の乱れを早めに確認しておくと安心です。"
@@ -101,8 +101,8 @@ struct TyphoonService {
 
             return TyphoonPoint(
                 time: date,
-                latitude: coordinate[0],
-                longitude: coordinate[1],
+                latitude: coordinate[1],
+                longitude: coordinate[0],
                 pressure: pressure?.values[safe: index].flatMap(Int.init),
                 wind: wind?.values[safe: index].flatMap(Int.init),
                 isForecast: false

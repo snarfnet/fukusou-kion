@@ -60,8 +60,8 @@ enum AppData {
     ]
 
     static let feeds: [DataFeed] = [
-        .init(name: "気象庁", detail: "公式の台風情報、警報、雨雲の動き", url: "https://www.jma.go.jp/bosai/map.html#contents=typhoon"),
-        .init(name: "Digital Typhoon", detail: "西太平洋の台風軌跡データ", url: "https://agora.ex.nii.ac.jp/digital-typhoon/"),
+        .init(name: "気象庁", detail: "公式の台風情報、警報、雲の動き", url: "https://www.jma.go.jp/bosai/map.html#contents=typhoon"),
+        .init(name: "Digital Typhoon", detail: "西太平洋の台風進路データ", url: "https://agora.ex.nii.ac.jp/digital-typhoon/"),
         .init(name: "NOAA NHC GIS", detail: "予報円、風域、警戒域のGISデータ", url: "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather/MapServer?f=pjson"),
         .init(name: "JTWC", detail: "米軍合同台風警報センター", url: "https://www.metoc.navy.mil/jtwc/jtwc.html"),
         .init(name: "JAXA GSMaP", detail: "衛星による雨量データ", url: "https://sharaku.eorc.jaxa.jp/GSMaP/"),

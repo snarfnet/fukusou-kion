@@ -296,7 +296,7 @@ struct ContentView: View {
                             .foregroundStyle(.white)
                             .contentShape(RoundedRectangle(cornerRadius: 8))
                         }
-                        .accessibilityLabel("\(feed.name)。\(feed.detail)")
+                        .accessibilityLabel("\(feed.name)、\(feed.detail)")
                         .accessibilityHint("外部サイトを開きます")
                         .accessibilityIdentifier("dataFeed-\(index)")
                     }

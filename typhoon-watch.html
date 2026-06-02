@@ -2,26 +2,26 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Typhoon Watch Desk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>台風を観測</title>
   <link rel="stylesheet" href="typhoon-watch.css">
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <div>
+      <div class="brand">
         <p class="eyebrow">Typhoon Intelligence</p>
-        <h1>Typhoon Watch</h1>
+        <h1>台風を観測</h1>
       </div>
       <div class="top-actions">
-        <button id="refreshButton" class="icon-button" type="button" title="最新データを取得">↻</button>
+        <button id="refreshButton" class="icon-button" type="button" aria-label="最新データを取得" title="最新データを取得">↻</button>
         <a class="text-button" href="https://www.jma.go.jp/bosai/map.html#contents=typhoon" target="_blank" rel="noreferrer">気象庁</a>
       </div>
     </header>
 
     <section class="control-strip" aria-label="地点と表示の切り替え">
       <label>
-        <span>監視地点</span>
+        <span>観測地点</span>
         <select id="regionSelect">
           <option value="okinawa">沖縄本島</option>
           <option value="miyako">宮古島</option>
@@ -32,7 +32,7 @@
         </select>
       </label>
       <label>
-        <span>表示</span>
+        <span>表示範囲</span>
         <select id="viewSelect">
           <option value="japan">日本周辺</option>
           <option value="wide">西太平洋</option>
@@ -40,7 +40,7 @@
       </label>
       <label class="toggle">
         <input id="forecastToggle" type="checkbox" checked>
-        <span>予報円を表示</span>
+        <span>予報円</span>
       </label>
       <label class="toggle">
         <input id="riskToggle" type="checkbox" checked>
@@ -49,6 +49,20 @@
     </section>
 
     <section class="dashboard-grid">
+      <section class="map-panel" aria-label="台風の進路図">
+        <div class="map-head">
+          <div>
+            <p class="eyebrow">Track & Forecast</p>
+            <h2 id="stormTitle">台風データ</h2>
+          </div>
+          <div id="sourceBadge" class="source-badge">準備中</div>
+        </div>
+        <div class="map-wrap">
+          <canvas id="trackCanvas" width="980" height="700" aria-label="台風進路図"></canvas>
+          <div id="mapTooltip" class="map-tooltip" hidden></div>
+        </div>
+      </section>
+
       <aside class="status-panel">
         <div class="panel-heading">
           <p class="eyebrow">Risk</p>
@@ -64,20 +78,6 @@
           <ul id="adviceList"></ul>
         </div>
       </aside>
-
-      <section class="map-panel">
-        <div class="map-head">
-          <div>
-            <p class="eyebrow">Track & Forecast</p>
-            <h2 id="stormTitle">台風データ</h2>
-          </div>
-          <div id="sourceBadge" class="source-badge">source pending</div>
-        </div>
-        <div class="map-wrap">
-          <canvas id="trackCanvas" width="980" height="700" aria-label="台風進路図"></canvas>
-          <div id="mapTooltip" class="map-tooltip" hidden></div>
-        </div>
-      </section>
 
       <aside class="data-panel">
         <div class="panel-heading">
@@ -118,7 +118,7 @@
               <th>位置</th>
               <th>中心気圧</th>
               <th>最大風速</th>
-              <th>監視地点まで</th>
+              <th>地点まで</th>
             </tr>
           </thead>
           <tbody id="trackTable"></tbody>
