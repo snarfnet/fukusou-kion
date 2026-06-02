@@ -7,7 +7,7 @@
 ## ラベル
 
 - `tsuchinoko_candidate`: 太く短い胴体、低い姿勢、胴体に近い頭部、地面に沿ったUMAらしい輪郭
-- `not_tsuchinoko`: 普通のヘビ、枝、つる、ホース、ロープ、根、濡れた葉、影など
+- `not_tsuchinoko`: 普通のヘビ、枝、つる、ホース、ロープ、根、濡れた葉、影、帽子、服、バッグ、靴、ボトル、箱など
 
 ## データ方針
 
@@ -19,14 +19,15 @@
 
 ## 今回の方向
 
-今回の更新は、洗濯物など特定の物だけを避けるものではありません。ツチノコらしい形そのものを強く見分ける方向に寄せています。
+今回の更新は、帽子や洗濯物だけを避ける修正ではありません。二値分類モデルが普通の物に99%を出す問題を抑えるため、ツチノコらしい形と普通の物体を学習上で強く分けます。
 
 追加データでは次を重視しています。
 
-- 細長い線ではなく、短く太い胴体
+- 短く太い胴体
 - 頭部と胴体の比率
 - 地面に沿った低い姿勢
 - 枝、つる、ホース、普通のヘビとの輪郭差
+- 帽子、服、バッグ、靴、ボトル、箱など普通の物体との違い
 
 ## フォルダ
 
@@ -42,17 +43,23 @@
 
 ## 現在のデータ量
 
-- 増強前の承認済み元画像: 122枚
-- 今回追加した形状重視の元画像: 77枚
-- 次回学習時の増強後画像: 3534枚
-- `tsuchinoko_candidate`: 1774枚
-- `not_tsuchinoko`: 1760枚
+- 増強前の承認済み元画像: 266枚
+- `tsuchinoko_candidate`: 133枚
+- `not_tsuchinoko`: 133枚
+- 今回追加した普通物体の負例: 72枚
+- 今回追加した厳しめのツチノコ正例: 72枚
+- 次回学習時の増強後画像: 7350枚
+- 増強後 `tsuchinoko_candidate`: 3682枚
+- 増強後 `not_tsuchinoko`: 3668枚
 
 まだ試作段階の数です。実用に近づけるには、実際に設置する場所のカメラ映像、とくに負例を増やします。
 
 ## 手順
 
 ```bash
+python ml/tsuchinoko/scripts/generate_shape_focus_dataset.py
+python ml/tsuchinoko/scripts/generate_common_object_negatives.py
+python ml/tsuchinoko/scripts/generate_strict_tsuchinoko_positives.py
 python ml/tsuchinoko/scripts/prepare_dataset.py
 python ml/tsuchinoko/scripts/augment_dataset.py
 python ml/tsuchinoko/scripts/dataset_report.py
@@ -91,4 +98,4 @@ GitHub Actionsでは `Train Tsuchinoko Core ML` を実行します。成功す�
 - 誤検出: 15枚
 - 見逃し: 20枚
 
-前回の評価は誤検出45枚、見逃し12枚でした。新しいモデルはかなり慎重です。ツチノコではない形で通知しにくくする一方、弱い候補や遠い候補は、より強い証拠が出るまで候補扱いしにくくなります。
+次の学習では、普通物体の負例と厳しめの正例を入れた評価セットで見ます。ここで誤検出が減っているか、見逃しが増えすぎていないかを確認します。
