@@ -1,0 +1,46 @@
+name: GemstoneDictionary iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ios/GemstoneDictionary/**"
+      - ".github/workflows/gemstone-dictionary-ios-build.yml"
+
+concurrency:
+  group: gemstone-dictionary-ios-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ios/GemstoneDictionary
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_APP=$(ls /Applications/ | grep -E "^Xcode_2[6-9]|^Xcode_[3-9][0-9]" | sort -V | tail -1)
+          if [ -n "$XCODE_APP" ]; then
+            sudo xcode-select -s "/Applications/$XCODE_APP"
+          else
+            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          fi
+          xcodebuild -version
+
+      - name: Static verification
+        run: python3 scripts/verify_static.py
+
+      - name: Build for simulator
+        run: |
+          xcodebuild \
+            -project GemstoneDictionary.xcodeproj \
+            -scheme GemstoneDictionary \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
