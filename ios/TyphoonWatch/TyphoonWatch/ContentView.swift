@@ -7,7 +7,8 @@ struct ContentView: View {
         NavigationStack {
             GeometryReader { proxy in
                 let safeWidth = max(260, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
-                let contentWidth = min(430, max(248, safeWidth - 36))
+                let edgeInset: CGFloat = safeWidth <= 340 ? 8 : (safeWidth <= 390 ? 10 : 18)
+                let contentWidth = min(430, max(1, safeWidth - edgeInset * 2))
                 let metrics = LayoutMetrics(width: contentWidth, height: proxy.size.height)
 
                 ZStack {
@@ -25,8 +26,9 @@ struct ContentView: View {
                             feedStrip(metrics)
                             timelineCard(metrics)
                         }
-                        .frame(width: contentWidth, alignment: .topLeading)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                        .frame(maxWidth: contentWidth, alignment: .topLeading)
+                        .padding(.horizontal, edgeInset)
+                        .frame(width: safeWidth, alignment: .center)
                         .padding(.top, max(12, proxy.safeAreaInsets.top + 8))
                         .padding(.bottom, max(22, proxy.safeAreaInsets.bottom + 22))
                     }
