@@ -275,7 +275,7 @@ struct ContentView: View {
                                 }
                             }
                             .padding(10)
-                            .frame(minHeight: 52)
+                            .frame(minHeight: metrics.feedRowHeight)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
                             .foregroundStyle(.white)
@@ -294,7 +294,7 @@ struct ContentView: View {
                     .font(.headline.weight(.black))
                     .foregroundStyle(.white)
 
-                ForEach(model.storm.points.suffix(8)) { point in
+                ForEach(model.storm.points.suffix(metrics.timelineLimit)) { point in
                     timelineRow(point, metrics: metrics)
                 }
             }
@@ -393,7 +393,9 @@ private struct LayoutMetrics {
         return min(isNarrow ? 176 : 280, max(isNarrow ? 148 : 220, availableWidth * ratio))
     }
     var actionLineLimit: Int { isNarrow ? 2 : 3 }
-    var feedLimit: Int { isNarrow ? 4 : 6 }
+    var feedLimit: Int { isNarrow ? 3 : 6 }
+    var feedRowHeight: CGFloat { isNarrow ? 56 : 52 }
+    var timelineLimit: Int { isNarrow ? 6 : 8 }
     var timelineVerticalPadding: CGFloat { isNarrow ? 6 : 7 }
     var metricColumns: [GridItem] {
         if isNarrow {
