@@ -48,7 +48,7 @@ enum CountMode: String, Equatable {
     var guideText: String {
         self == .storeTraffic
             ? "線を越えた向きに合わせてIN / OUTを記録します。"
-            : "画面に入った歩行者を通行量として数えます。"
+            : "画面内で動いた歩行者を通行量として数えます。"
     }
 }
 
@@ -109,8 +109,11 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
     private var isProcessingFrame = false
     private var coreMLRequest: VNCoreMLRequest?
     private var tracks: [TrackedPerson] = []
-    private let matchThreshold: CGFloat = 0.16
-    private let staleFrameLimit = 12
+    private let matchThreshold: CGFloat = 0.22
+    private let staleFrameLimit = 20
+    private let pedestrianMinimumFrames = 3
+    private let pedestrianMovementThreshold: CGFloat = 0.055
+    private let pedestrianEdgeMovementThreshold: CGFloat = 0.025
 
     override init() {
         super.init()
@@ -273,7 +276,7 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         objectObservations: [VNRecognizedObjectObservation]
     ) -> [PersonDetection] {
         let visionDetections = humanObservations
-            .filter { $0.confidence > 0.30 }
+            .filter { $0.confidence > 0.20 }
             .map {
                 PersonDetection(
                     id: UUID(),
@@ -286,7 +289,7 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         let coreMLDetections = objectObservations.compactMap { observation -> PersonDetection? in
             guard let label = observation.labels.first,
                   label.identifier == "person",
-                  label.confidence >= 0.34
+                  label.confidence >= 0.25
             else {
                 return nil
             }
@@ -294,7 +297,7 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
             let rect = observation.boundingBox
             let area = rect.width * rect.height
             let aspectRatio = rect.width / max(rect.height, 0.001)
-            guard area >= 0.004, rect.height >= 0.07, aspectRatio >= 0.16, aspectRatio <= 1.4 else {
+            guard area >= 0.0015, rect.height >= 0.04, aspectRatio >= 0.12, aspectRatio <= 1.7 else {
                 return nil
             }
 
@@ -351,19 +354,16 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
             let center = CGPoint(x: detection.rect.midX, y: detection.rect.midY)
             if let matchIndex = bestMatchIndex(for: center, excluding: matchedTrackIndexes) {
                 let previousX = tracks[matchIndex].lastCenter.x
+                tracks[matchIndex].seenFrames += 1
                 tracks[matchIndex].lastCenter = center
                 tracks[matchIndex].framesSinceSeen = 0
                 matchedTrackIndexes.insert(matchIndex)
                 countCrossingIfNeeded(previousX: previousX, currentX: center.x, trackIndex: matchIndex)
+                countPedestrianIfNeeded(trackIndex: matchIndex)
             } else {
                 var newTrack = TrackedPerson(lastCenter: center)
-                if countMode == .pedestrianTraffic, isRunning {
-                    newTrack.hasCounted = true
-                    DispatchQueue.main.async {
-                        self.countIn += 1
-                        self.appendEvent(.pedestrian)
-                    }
-                }
+                newTrack.firstCenter = center
+                newTrack.startedNearEdge = isNearFrameEdge(center)
                 tracks.append(newTrack)
             }
         }
@@ -403,6 +403,27 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
                 self.applyCrossing(.rightToLeftIn)
             }
         }
+    }
+
+    private func countPedestrianIfNeeded(trackIndex: Int) {
+        guard countMode == .pedestrianTraffic, isRunning, !tracks[trackIndex].hasCounted else { return }
+
+        let track = tracks[trackIndex]
+        guard track.seenFrames >= pedestrianMinimumFrames else { return }
+
+        let movement = hypot(track.lastCenter.x - track.firstCenter.x, track.lastCenter.y - track.firstCenter.y)
+        let movementThreshold = track.startedNearEdge ? pedestrianEdgeMovementThreshold : pedestrianMovementThreshold
+        guard movement >= movementThreshold else { return }
+
+        tracks[trackIndex].hasCounted = true
+        DispatchQueue.main.async {
+            self.countIn += 1
+            self.appendEvent(.pedestrian)
+        }
+    }
+
+    private func isNearFrameEdge(_ point: CGPoint) -> Bool {
+        point.x < 0.18 || point.x > 0.82 || point.y < 0.18 || point.y > 0.82
     }
 
     private func applyCrossing(_ crossingMode: CountDirectionMode) {
@@ -465,7 +486,15 @@ extension CameraCounterViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
 }
 
 private struct TrackedPerson {
+    var firstCenter: CGPoint
     var lastCenter: CGPoint
     var framesSinceSeen = 0
+    var seenFrames = 1
     var hasCounted = false
+    var startedNearEdge = false
+
+    init(lastCenter: CGPoint) {
+        self.firstCenter = lastCenter
+        self.lastCenter = lastCenter
+    }
 }

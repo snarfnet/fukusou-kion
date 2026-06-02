@@ -194,7 +194,7 @@ struct ContentView: View {
         case .storeTraffic:
             return viewModel.directionMode.guideText
         case .pedestrianTraffic:
-            return "画面に入った歩行者をTOTALに記録します。"
+            return "数フレーム追跡し、動きが確認できた歩行者をTOTALに記録します。"
         }
     }
 
@@ -404,7 +404,7 @@ struct ContentView: View {
             }
 
             if viewModel.recentEvents.isEmpty {
-                Text("ラインを越えるとここに記録されます")
+                Text(viewModel.countMode == .storeTraffic ? "ラインを越えるとここに記録されます" : "動きのある歩行者を検知するとここに記録されます")
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(.white.opacity(0.48))
                     .frame(maxWidth: .infinity, alignment: .leading)
