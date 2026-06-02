@@ -47,4 +47,16 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIUserInterfaceStyle: Dark
     scheme:
-      testTargets: []
+      testTargets:
+        - TyphoonWatchUITests
+  TyphoonWatchUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - TyphoonWatchUITests
+    dependencies:
+      - target: TyphoonWatch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.typhoonwatch.uitests

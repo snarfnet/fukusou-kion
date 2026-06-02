@@ -26,7 +26,7 @@ struct ContentView: View {
                             feedStrip(metrics)
                             timelineCard(metrics)
                         }
-                        .frame(maxWidth: contentWidth, alignment: .topLeading)
+                        .frame(width: contentWidth, alignment: .topLeading)
                         .padding(.horizontal, edgeInset)
                         .frame(width: safeWidth, alignment: .center)
                         .padding(.top, max(12, proxy.safeAreaInsets.top + 8))
@@ -34,8 +34,10 @@ struct ContentView: View {
                     }
                     .scrollIndicators(.hidden)
                     .frame(width: proxy.size.width, height: proxy.size.height)
+                    .accessibilityIdentifier("typhoonWatchContentScroll")
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
+                .accessibilityIdentifier("typhoonWatchRoot")
             }
             .navigationBarHidden(true)
             .task {
