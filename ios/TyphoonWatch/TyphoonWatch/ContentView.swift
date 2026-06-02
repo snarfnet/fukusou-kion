@@ -11,7 +11,7 @@ struct ContentView: View {
                 let contentWidth = min(430, max(1, safeWidth - edgeInset * 2))
                 let metrics = LayoutMetrics(width: contentWidth, height: proxy.size.height)
 
-                ZStack {
+                ZStack(alignment: .top) {
                     Image("TyphoonHeroBackdrop")
                         .resizable()
                         .scaledToFill()
@@ -33,8 +33,9 @@ struct ContentView: View {
                         .padding(.bottom, max(22, proxy.safeAreaInsets.bottom + 22))
                     }
                     .scrollIndicators(.hidden)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(width: proxy.size.width, height: proxy.size.height)
                 }
+                .frame(width: proxy.size.width, height: proxy.size.height)
             }
             .navigationBarHidden(true)
             .task {
