@@ -47,9 +47,9 @@ struct ContentView: View {
 
     private func header(_ metrics: LayoutMetrics) -> some View {
         CompactPanel(metrics: metrics, style: .hero) {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: metrics.headerSpacing) {
                 HStack(alignment: .top, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 5) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("台風を観測")
                             .font(.system(size: metrics.titleSize, weight: .black, design: .rounded))
                             .foregroundStyle(.white)
@@ -59,8 +59,8 @@ struct ContentView: View {
                         Text(model.storm.name)
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(.white.opacity(0.78))
-                            .lineLimit(2)
-                            .fixedSize(horizontal: false, vertical: true)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.76)
                     }
 
                     Spacer(minLength: 8)
@@ -143,6 +143,8 @@ struct ContentView: View {
                 Text(model.risk.summary)
                     .font(.footnote)
                     .foregroundStyle(.white)
+                    .lineLimit(metrics.summaryLineLimit)
+                    .minimumScaleFactor(0.92)
                     .lineSpacing(2)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -342,6 +344,8 @@ private struct LayoutMetrics {
     var isNarrow: Bool { width <= 375 }
     var sectionSpacing: CGFloat { isNarrow ? 9 : 14 }
     var innerSpacing: CGFloat { isNarrow ? 10 : 12 }
+    var headerSpacing: CGFloat { isNarrow ? 8 : 12 }
+    var summaryLineLimit: Int { isNarrow ? 3 : 4 }
     var titleSize: CGFloat { isNarrow ? 24 : 32 }
     var headlineSize: CGFloat { isNarrow ? 20 : 24 }
     var refreshButtonSize: CGFloat { 44 }
