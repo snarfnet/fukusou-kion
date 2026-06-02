@@ -38,7 +38,7 @@ enum CountMode: String, Equatable {
 
     static var saved: CountMode {
         let rawValue = UserDefaults.standard.string(forKey: storageKey) ?? ""
-        return CountMode(rawValue: rawValue) ?? .storeTraffic
+        return CountMode(rawValue: rawValue) ?? .pedestrianTraffic
     }
 
     var title: String {
@@ -47,8 +47,8 @@ enum CountMode: String, Equatable {
 
     var guideText: String {
         self == .storeTraffic
-            ? "\u{9EC4}\u{8272}\u{3044}\u{7DDA}\u{3092}\u{4EBA}\u{304C}\u{8D8A}\u{3048}\u{308B}\u{3068}\u{3001}\u{5411}\u{304D}\u{306B}\u{5FDC}\u{3058}\u{3066}IN / OUT\u{306B}\u{5206}\u{3051}\u{3066}\u{6570}\u{3048}\u{307E}\u{3059}\u{3002}"
-            : "\u{30AB}\u{30E1}\u{30E9}\u{306B}\u{5165}\u{3063}\u{305F}\u{6B69}\u{884C}\u{8005}\u{3092}\u{901A}\u{884C}\u{91CF}\u{3068}\u{3057}\u{3066}\u{6570}\u{3048}\u{307E}\u{3059}\u{3002}IN / OUT\u{306B}\u{306F}\u{5206}\u{3051}\u{307E}\u{305B}\u{3093}\u{3002}"
+            ? "線を越えた向きに合わせてIN / OUTを記録します。"
+            : "画面に入った歩行者を通行量として数えます。"
     }
 }
 
@@ -177,8 +177,16 @@ final class CameraCounterViewModel: NSObject, ObservableObject {
         directionMode = directionMode == .leftToRightIn ? .rightToLeftIn : .leftToRightIn
     }
 
+    func setDirectionMode(_ mode: CountDirectionMode) {
+        directionMode = mode
+    }
+
     func toggleCountMode() {
         countMode = countMode == .storeTraffic ? .pedestrianTraffic : .storeTraffic
+    }
+
+    func setCountMode(_ mode: CountMode) {
+        countMode = mode
     }
 
     private func configureCoreMLModel() {

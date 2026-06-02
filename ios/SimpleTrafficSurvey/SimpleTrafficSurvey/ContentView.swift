@@ -33,6 +33,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("簡易歩行者交通量調査")
                     .font(.system(size: 24, weight: .heavy, design: .rounded))
+                ModePill(text: "現在モード: \(viewModel.countMode.title)", color: viewModel.countMode == .storeTraffic ? .mint : .yellow)
                 Text("カウントライン通過で自動加算")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.62))
@@ -193,7 +194,7 @@ struct ContentView: View {
         case .storeTraffic:
             return viewModel.directionMode.guideText
         case .pedestrianTraffic:
-            return "\u{901A}\u{884C}\u{91CF}\u{30E2}\u{30FC}\u{30C9}\u{3067}\u{306F}\u{4E2D}\u{592E}\u{7DDA}\u{306F}\u{4F7F}\u{308F}\u{305A}\u{3001}\u{753B}\u{9762}\u{306B}\u{5165}\u{3063}\u{305F}\u{6B69}\u{884C}\u{8005}\u{3092}TOTAL\u{306B}\u{8A18}\u{9332}\u{3057}\u{307E}\u{3059}\u{3002}"
+            return "画面に入った歩行者をTOTALに記録します。"
         }
     }
 
@@ -243,7 +244,7 @@ struct ContentView: View {
 
                 Spacer()
 
-                Text("Vision + Core ML")
+                Text("歩行者検出")
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.74))
                     .padding(.horizontal, 9)
@@ -331,26 +332,38 @@ struct ContentView: View {
 
     private var controlDeck: some View {
         VStack(spacing: 10) {
-            Button {
-                viewModel.toggleCountMode()
-            } label: {
-                Label(
-                    "\u{8A08}\u{6E2C}\u{30E2}\u{30FC}\u{30C9}: \(viewModel.countMode.title)",
-                    systemImage: "slider.horizontal.3"
-                )
+            HStack(spacing: 10) {
+                Button {
+                    viewModel.setCountMode(.pedestrianTraffic)
+                } label: {
+                    Label("計測モード 通行量", systemImage: "figure.walk")
+                }
+                .buttonStyle(PanelButtonStyle(tint: viewModel.countMode == .pedestrianTraffic ? .yellow : .white.opacity(0.52)))
+
+                Button {
+                    viewModel.setCountMode(.storeTraffic)
+                } label: {
+                    Label("計測モード 入退店", systemImage: "arrow.left.arrow.right")
+                }
+                .buttonStyle(PanelButtonStyle(tint: viewModel.countMode == .storeTraffic ? .mint : .white.opacity(0.52)))
             }
-            .buttonStyle(PanelButtonStyle(tint: .yellow))
 
             if viewModel.countMode == .storeTraffic {
-                Button {
-                    viewModel.toggleDirectionMode()
-                } label: {
-                    Label(
-                        viewModel.directionMode == .leftToRightIn ? "IN/OUT方向: 左→右 IN" : "IN/OUT方向: 右→左 IN",
-                        systemImage: "arrow.left.arrow.right"
-                    )
+                HStack(spacing: 10) {
+                    Button {
+                        viewModel.setDirectionMode(.leftToRightIn)
+                    } label: {
+                        Label("左→右 IN", systemImage: "arrow.right")
+                    }
+                    .buttonStyle(PanelButtonStyle(tint: viewModel.directionMode == .leftToRightIn ? .mint : .white.opacity(0.52)))
+
+                    Button {
+                        viewModel.setDirectionMode(.rightToLeftIn)
+                    } label: {
+                        Label("右→左 IN", systemImage: "arrow.left")
+                    }
+                    .buttonStyle(PanelButtonStyle(tint: viewModel.directionMode == .rightToLeftIn ? .mint : .white.opacity(0.52)))
                 }
-                .buttonStyle(PanelButtonStyle(tint: .mint))
             }
 
             HStack(spacing: 10) {
@@ -566,6 +579,22 @@ private struct StatusPill: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 7)
         .background(.white.opacity(0.08), in: Capsule())
+    }
+}
+
+private struct ModePill: View {
+    let text: String
+    let color: Color
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 12, weight: .black, design: .rounded))
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
+            .foregroundStyle(color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(.black.opacity(0.48), in: Capsule())
     }
 }
 
