@@ -13,6 +13,16 @@ How to test:
 5. Adjust 候補判定ライン to test the threshold.
 6. When confidence exceeds the threshold, the candidate label and log update.
 
+Review samples:
+
+The repository includes a printable sample sheet at:
+
+```text
+AppStore/ReviewSamples/review_sample_sheet.png
+```
+
+Print the sheet or show it on another device, then point the app camera at each sample. The two candidate samples should be used to confirm candidate/review-needed behavior. The negative controls are included to show the app does not present every long object as proof.
+
 No account is required. No network connection is required for the core app flow. Camera frames are processed on device.
 
 Known limitation:
