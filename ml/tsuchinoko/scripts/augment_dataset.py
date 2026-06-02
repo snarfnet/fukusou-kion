@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PROCESSED = ROOT / "processed"
 AUGMENTED = ROOT / "augmented"
 LABELS = ["tsuchinoko_candidate", "not_tsuchinoko"]
-TRAIN_VARIANTS_PER_IMAGE = 240
-VAL_VARIANTS_PER_IMAGE = 48
+TRAIN_VARIANTS_PER_IMAGE = 30
+VAL_VARIANTS_PER_IMAGE = 16
 OUTPUT_SIZE = (512, 384)
 
 
@@ -59,13 +59,13 @@ def augment(image: Image.Image, seed: int) -> Image.Image:
     output = ImageEnhance.Contrast(output).enhance(rng.uniform(0.62, 1.55))
     output = ImageEnhance.Color(output).enhance(rng.uniform(0.38, 1.38))
 
-    if rng.random() < 0.45:
+    if rng.random() < 0.12:
         output = output.filter(ImageFilter.GaussianBlur(radius=rng.uniform(0.2, 1.35)))
-    if rng.random() < 0.72:
+    if rng.random() < 0.18:
         output = add_noise(output, rng)
     if rng.random() < 0.32:
         output = ImageOps.grayscale(output).convert("RGB")
-    if rng.random() < 0.18:
+    if rng.random() < 0.08:
         output = ImageOps.autocontrast(output, cutoff=rng.uniform(0.0, 1.8))
 
     return output
@@ -94,7 +94,7 @@ def main() -> None:
                     seed = int(hashlib.sha256(seed_text.encode("utf-8")).hexdigest()[:8], 16)
                     augmented = augment(image, seed)
                     out_path = out_dir / f"{source.stem}_aug_{index:03d}.jpg"
-                    augmented.save(out_path, "JPEG", quality=84, optimize=True)
+                    augmented.save(out_path, "JPEG", quality=72)
                     total += 1
     print(f"augmented images: {total}")
 
