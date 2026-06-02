@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Typhoon Watch Desk</title>
+  <link rel="stylesheet" href="typhoon-watch.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Typhoon Intelligence</p>
+        <h1>Typhoon Watch</h1>
+      </div>
+      <div class="top-actions">
+        <button id="refreshButton" class="icon-button" type="button" title="最新データを取得">↻</button>
+        <a class="text-button" href="https://www.jma.go.jp/bosai/map.html#contents=typhoon" target="_blank" rel="noreferrer">気象庁</a>
+      </div>
+    </header>
+
+    <section class="control-strip" aria-label="地点と表示の切り替え">
+      <label>
+        <span>監視地点</span>
+        <select id="regionSelect">
+          <option value="okinawa">沖縄本島</option>
+          <option value="miyako">宮古島</option>
+          <option value="kagoshima">鹿児島</option>
+          <option value="tokyo">東京</option>
+          <option value="osaka">大阪</option>
+          <option value="sendai">仙台</option>
+        </select>
+      </label>
+      <label>
+        <span>表示</span>
+        <select id="viewSelect">
+          <option value="japan">日本周辺</option>
+          <option value="wide">西太平洋</option>
+        </select>
+      </label>
+      <label class="toggle">
+        <input id="forecastToggle" type="checkbox" checked>
+        <span>予報円を表示</span>
+      </label>
+      <label class="toggle">
+        <input id="riskToggle" type="checkbox" checked>
+        <span>地点リスク</span>
+      </label>
+    </section>
+
+    <section class="dashboard-grid">
+      <aside class="status-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Risk</p>
+          <h2 id="riskTitle">読み込み中</h2>
+        </div>
+        <div class="risk-meter" aria-hidden="true">
+          <div id="riskFill"></div>
+        </div>
+        <p id="riskSummary" class="summary-text">データを取得しています。</p>
+        <div id="metricGrid" class="metric-grid"></div>
+        <div class="advice-box">
+          <p class="eyebrow">Action</p>
+          <ul id="adviceList"></ul>
+        </div>
+      </aside>
+
+      <section class="map-panel">
+        <div class="map-head">
+          <div>
+            <p class="eyebrow">Track & Forecast</p>
+            <h2 id="stormTitle">台風データ</h2>
+          </div>
+          <div id="sourceBadge" class="source-badge">source pending</div>
+        </div>
+        <div class="map-wrap">
+          <canvas id="trackCanvas" width="980" height="700" aria-label="台風進路図"></canvas>
+          <div id="mapTooltip" class="map-tooltip" hidden></div>
+        </div>
+      </section>
+
+      <aside class="data-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Feeds</p>
+          <h2>データ元</h2>
+        </div>
+        <div id="sourceList" class="source-list"></div>
+        <div class="image-stack">
+          <a href="https://www.jma.go.jp/bosai/map.html#contents=himawari" target="_blank" rel="noreferrer">
+            <span>ひまわり衛星</span>
+            <strong>雲画像</strong>
+          </a>
+          <a href="https://www.jma.go.jp/bosai/map.html#contents=typhoon" target="_blank" rel="noreferrer">
+            <span>気象庁</span>
+            <strong>台風進路図</strong>
+          </a>
+          <a href="https://agora.ex.nii.ac.jp/digital-typhoon/" target="_blank" rel="noreferrer">
+            <span>Digital Typhoon</span>
+            <strong>過去・現在データ</strong>
+          </a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="storm-table-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Timeline</p>
+          <h2>観測・予報リスト</h2>
+        </div>
+        <p id="updatedAt" class="updated-at"></p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>時刻</th>
+              <th>位置</th>
+              <th>中心気圧</th>
+              <th>最大風速</th>
+              <th>監視地点まで</th>
+            </tr>
+          </thead>
+          <tbody id="trackTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="typhoon-watch.js"></script>
+</body>
+</html>
