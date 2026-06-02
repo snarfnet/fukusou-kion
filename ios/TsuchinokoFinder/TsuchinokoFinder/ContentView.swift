@@ -170,7 +170,7 @@ struct ContentView: View {
                         .foregroundStyle(.cyan)
                 }
 
-                Slider(value: $viewModel.threshold, in: 0.70...0.99)
+                Slider(value: $viewModel.threshold, in: 0.90...0.99)
                     .tint(.cyan)
             }
         }

@@ -10,6 +10,14 @@ struct CandidateEvent: Identifiable {
     let confidence: Double
 }
 
+private struct CandidateFrameAnalysis {
+    let shapeScore: Double
+    let objectArea: Double
+    let aspectRatio: Double
+
+    static let unavailable = CandidateFrameAnalysis(shapeScore: 0.35, objectArea: 1, aspectRatio: 1)
+}
+
 final class CandidateDetectorViewModel: NSObject, ObservableObject {
     @Published var isScanning = false
     @Published var isCameraReady = false
@@ -32,10 +40,10 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     @Published var recentEvents: [CandidateEvent] = []
     @Published var threshold: Double = {
         let saved = UserDefaults.standard.double(forKey: "tsuchinokoThreshold")
-        return saved == 0 ? 0.92 : saved
+        return saved == 0 ? 0.97 : max(saved, 0.90)
     }() {
         didSet {
-            let clamped = min(max(threshold, 0.70), 0.99)
+            let clamped = min(max(threshold, 0.90), 0.99)
             if threshold != clamped {
                 threshold = clamped
                 return
@@ -55,10 +63,12 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     private var lastNotificationAt = Date.distantPast
     private var lastFrameSignature: [UInt8]?
     private var lastMotionScore = 0.0
+    private var latestFrameAnalysis = CandidateFrameAnalysis.unavailable
     private var candidateStreak = 0
     private let inferenceFrameStride = 15
-    private let requiredCandidateStreak = 3
-    private let minimumMotionScore = 0.012
+    private let requiredCandidateStreak = 5
+    private let minimumMotionScore = 0.018
+    private let minimumShapeScore = 0.62
 
     var thresholdLabel: String {
         "\(Int(threshold * 100))%"
@@ -119,6 +129,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         candidateStreak = 0
         lastFrameSignature = nil
         lastMotionScore = 0
+        latestFrameAnalysis = .unavailable
         statusText = isScanning ? Copy.scanning : Copy.resetDone
     }
 
@@ -197,6 +208,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         guard frameIndex % inferenceFrameStride == 0, !isProcessingFrame else { return }
 
         lastMotionScore = motionScore(for: pixelBuffer)
+        latestFrameAnalysis = candidateFrameAnalysis(for: pixelBuffer)
         isProcessingFrame = true
         defer { isProcessingFrame = false }
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right)
@@ -222,17 +234,23 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         }
 
         let confidence = Double(candidate.confidence)
+        let frameAnalysis = latestFrameAnalysis
+        let calibratedConfidence = candidateScore(rawConfidence: confidence, frameAnalysis: frameAnalysis)
         DispatchQueue.main.async {
             let hasEnoughMotion = self.lastMotionScore >= self.minimumMotionScore
-            let isStrongCandidate = confidence >= self.threshold && hasEnoughMotion
+            let hasCandidateShape = frameAnalysis.shapeScore >= self.minimumShapeScore
+            let isStrongCandidate = calibratedConfidence >= self.threshold && hasEnoughMotion && hasCandidateShape
             self.candidateStreak = isStrongCandidate ? min(self.candidateStreak + 1, self.requiredCandidateStreak) : 0
-            self.candidateConfidence = self.displayConfidence(for: confidence)
+            self.candidateConfidence = self.displayConfidence(for: calibratedConfidence, rawConfidence: confidence, frameAnalysis: frameAnalysis)
 
             if self.candidateStreak >= self.requiredCandidateStreak {
                 self.candidateLabel = Copy.tsuchinokoCandidate
                 self.statusText = Copy.candidateDetected
                 self.appendEventIfNeeded(confidence: self.candidateConfidence)
-            } else if confidence >= 0.55 {
+            } else if confidence >= 0.82 && !hasCandidateShape {
+                self.candidateLabel = Copy.noCandidate
+                self.statusText = Copy.shapeRejected
+            } else if calibratedConfidence >= 0.58 {
                 self.candidateLabel = Copy.reviewNeeded
                 self.statusText = Copy.confirmingCandidate
             } else {
@@ -242,11 +260,24 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         }
     }
 
-    private func displayConfidence(for rawConfidence: Double) -> Double {
+    private func candidateScore(rawConfidence: Double, frameAnalysis: CandidateFrameAnalysis) -> Double {
+        let areaPenalty = frameAnalysis.objectArea > 0.36 ? 0.35 : 1
+        let score = rawConfidence * frameAnalysis.shapeScore * areaPenalty
+        return min(max(score, 0), 0.99)
+    }
+
+    private func displayConfidence(
+        for calibratedConfidence: Double,
+        rawConfidence: Double,
+        frameAnalysis: CandidateFrameAnalysis
+    ) -> Double {
         guard candidateStreak >= requiredCandidateStreak else {
-            return min(rawConfidence * 0.72, threshold - 0.01)
+            if rawConfidence >= 0.82 && frameAnalysis.shapeScore < minimumShapeScore {
+                return min(calibratedConfidence, 0.49)
+            }
+            return min(calibratedConfidence, threshold - 0.01)
         }
-        return rawConfidence
+        return calibratedConfidence
     }
 
     private func motionScore(for pixelBuffer: CVPixelBuffer) -> Double {
@@ -297,6 +328,128 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         }
 
         return signature
+    }
+
+    private func candidateFrameAnalysis(for pixelBuffer: CVPixelBuffer) -> CandidateFrameAnalysis {
+        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
+
+        guard
+            CVPixelBufferGetPixelFormatType(pixelBuffer) == kCVPixelFormatType_32BGRA,
+            let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
+        else {
+            return .unavailable
+        }
+
+        let width = CVPixelBufferGetWidth(pixelBuffer)
+        let height = CVPixelBufferGetHeight(pixelBuffer)
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        let pointer = baseAddress.assumingMemoryBound(to: UInt8.self)
+        let columns = 48
+        let rows = 36
+        let cellCount = columns * rows
+        var redValues = Array(repeating: 0.0, count: cellCount)
+        var greenValues = Array(repeating: 0.0, count: cellCount)
+        var blueValues = Array(repeating: 0.0, count: cellCount)
+        var brightnessValues = Array(repeating: 0.0, count: cellCount)
+
+        for row in 0..<rows {
+            let y = min(height - 1, max(0, ((row * 2 + 1) * height) / (rows * 2)))
+            for column in 0..<columns {
+                let x = min(width - 1, max(0, ((column * 2 + 1) * width) / (columns * 2)))
+                let offset = y * bytesPerRow + x * 4
+                let blue = Double(pointer[offset])
+                let green = Double(pointer[offset + 1])
+                let red = Double(pointer[offset + 2])
+                let index = row * columns + column
+                redValues[index] = red
+                greenValues[index] = green
+                blueValues[index] = blue
+                brightnessValues[index] = (red + green + blue) / 3
+            }
+        }
+
+        let borderIndexes = (0..<cellCount).filter { index in
+            let row = index / columns
+            let column = index % columns
+            return row == 0 || row == rows - 1 || column == 0 || column == columns - 1
+        }
+        guard !borderIndexes.isEmpty else { return .unavailable }
+
+        let borderRed = borderIndexes.reduce(0) { $0 + redValues[$1] } / Double(borderIndexes.count)
+        let borderGreen = borderIndexes.reduce(0) { $0 + greenValues[$1] } / Double(borderIndexes.count)
+        let borderBlue = borderIndexes.reduce(0) { $0 + blueValues[$1] } / Double(borderIndexes.count)
+        let borderBrightness = borderIndexes.reduce(0) { $0 + brightnessValues[$1] } / Double(borderIndexes.count)
+
+        var maskCount = 0
+        var minColumn = columns
+        var maxColumn = 0
+        var minRow = rows
+        var maxRow = 0
+
+        for row in 1..<(rows - 1) {
+            for column in 1..<(columns - 1) {
+                let index = row * columns + column
+                let colorDistance = abs(redValues[index] - borderRed)
+                    + abs(greenValues[index] - borderGreen)
+                    + abs(blueValues[index] - borderBlue)
+                let horizontalEdge = abs(brightnessValues[index] - brightnessValues[index - 1])
+                let verticalEdge = abs(brightnessValues[index] - brightnessValues[index - columns])
+                let brightnessDistance = abs(brightnessValues[index] - borderBrightness)
+                let isForeground = colorDistance > 72 || brightnessDistance > 34 || horizontalEdge + verticalEdge > 58
+
+                if isForeground {
+                    maskCount += 1
+                    minColumn = min(minColumn, column)
+                    maxColumn = max(maxColumn, column)
+                    minRow = min(minRow, row)
+                    maxRow = max(maxRow, row)
+                }
+            }
+        }
+
+        guard maskCount > 10, minColumn <= maxColumn, minRow <= maxRow else {
+            return CandidateFrameAnalysis(shapeScore: 0.18, objectArea: 0, aspectRatio: 1)
+        }
+
+        let objectArea = Double(maskCount) / Double(cellCount)
+        let boxWidth = maxColumn - minColumn + 1
+        let boxHeight = maxRow - minRow + 1
+        let longSide = Double(max(boxWidth, boxHeight))
+        let shortSide = Double(max(1, min(boxWidth, boxHeight)))
+        let aspectRatio = longSide / shortSide
+        let fillRatio = Double(maskCount) / Double(boxWidth * boxHeight)
+        let edgeTouchCount = [
+            minColumn <= 1,
+            maxColumn >= columns - 2,
+            minRow <= 1,
+            maxRow >= rows - 2
+        ].filter { $0 }.count
+
+        let areaScore = scoreBand(objectArea, min: 0.018, idealMin: 0.045, idealMax: 0.24, max: 0.36)
+        let aspectScore = scoreBand(aspectRatio, min: 1.45, idealMin: 1.85, idealMax: 5.8, max: 8.5)
+        let fillScore = scoreBand(fillRatio, min: 0.12, idealMin: 0.20, idealMax: 0.66, max: 0.84)
+        let edgeScore: Double = edgeTouchCount >= 2 ? 0.35 : (edgeTouchCount == 1 ? 0.72 : 1)
+        let score = areaScore * aspectScore * fillScore * edgeScore
+
+        return CandidateFrameAnalysis(
+            shapeScore: min(max(score, 0), 1),
+            objectArea: objectArea,
+            aspectRatio: aspectRatio
+        )
+    }
+
+    private func scoreBand(_ value: Double, min: Double, idealMin: Double, idealMax: Double, max: Double) -> Double {
+        if value < min || value > max {
+            return 0
+        }
+        if value >= idealMin && value <= idealMax {
+            return 1
+        }
+        if value < idealMin {
+            return (value - min) / (idealMin - min)
+        }
+        return (max - value) / (max - idealMax)
     }
 
     private func appendEventIfNeeded(confidence: Double) {
@@ -366,6 +519,7 @@ private enum Copy {
     static let reviewNeeded = "\u{8981}\u{78BA}\u{8A8D}"
     static let candidateDetected = "\u{5019}\u{88DC}\u{3092}\u{691C}\u{77E5}"
     static let confirmingCandidate = "\u{9023}\u{7D9A}\u{78BA}\u{8A8D}\u{4E2D}"
+    static let shapeRejected = "\u{5F62}\u{72B6}\u{304C}\u{5019}\u{88DC}\u{5916}"
     static let notificationOff = "通知はオフ"
     static let notificationOn = "通知はオン"
     static let notificationDenied = "通知が許可されていません"
