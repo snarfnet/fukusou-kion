@@ -11,9 +11,7 @@ How to test:
 3. Tap 開始.
 4. Point the camera at the ground, grass, a trail, or printed sample imagery.
 5. Adjust 候補判定ライン to test the threshold.
-6. When confidence exceeds the threshold, the candidate label and log update.
-
-The app also includes an in-app sample flow. Tap サンプル確認 to run the bundled review samples through the same candidate check without needing to aim the camera at an external image.
+6. When the app sees repeated candidate-like signals above the threshold, the candidate label and log update.
 
 Review samples:
 
@@ -29,4 +27,4 @@ No account is required. No network connection is required for the core app flow.
 
 Known limitation:
 
-The bundled model is a prototype and may classify branches, roots, hoses, ordinary snakes, or shadows as candidates. The UI presents all results as candidates that need human review.
+The bundled model is a prototype. The UI treats results as candidate signals that need human review, and the app requires repeated candidate-like signals before logging a candidate.

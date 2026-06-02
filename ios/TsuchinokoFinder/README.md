@@ -12,7 +12,7 @@ The app must not claim that a real tsuchinoko was found. It shows a candidate si
 - Candidate highlight overlay
 - Recent candidate log
 - Camera permission guidance
-- Bundled sample check flow for App Review and demos
+- Printable review sample sheet for App Review and demos
 
 ## App Store Positioning
 

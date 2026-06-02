@@ -1,8 +1,6 @@
 import AVFoundation
 import CoreML
 import Foundation
-import ImageIO
-import UIKit
 import UserNotifications
 import Vision
 
@@ -20,7 +18,6 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     @Published var statusText = Copy.preparing
     @Published var candidateConfidence = 0.0
     @Published var candidateLabel = Copy.noCandidate
-    @Published var sampleText = Copy.noSample
     @Published var notificationStatusText = Copy.notificationOff
     @Published var notificationEnabled: Bool = UserDefaults.standard.bool(forKey: "tsuchinokoNotificationEnabled") {
         didSet {
@@ -35,10 +32,10 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     @Published var recentEvents: [CandidateEvent] = []
     @Published var threshold: Double = {
         let saved = UserDefaults.standard.double(forKey: "tsuchinokoThreshold")
-        return saved == 0 ? 0.76 : saved
+        return saved == 0 ? 0.92 : saved
     }() {
         didSet {
-            let clamped = min(max(threshold, 0.55), 0.95)
+            let clamped = min(max(threshold, 0.70), 0.99)
             if threshold != clamped {
                 threshold = clamped
                 return
@@ -56,14 +53,12 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     private var isProcessingFrame = false
     private var lastCandidateAt = Date.distantPast
     private var lastNotificationAt = Date.distantPast
-    private var sampleIndex = 0
+    private var lastFrameSignature: [UInt8]?
+    private var lastMotionScore = 0.0
+    private var candidateStreak = 0
     private let inferenceFrameStride = 15
-    private let sampleNames = [
-        "candidate_forest_path",
-        "candidate_gravel_road",
-        "negative_branch",
-        "negative_hose",
-    ]
+    private let requiredCandidateStreak = 3
+    private let minimumMotionScore = 0.012
 
     var thresholdLabel: String {
         "\(Int(threshold * 100))%"
@@ -74,7 +69,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
     }
 
     var hasCandidate: Bool {
-        candidateConfidence >= threshold
+        candidateStreak >= requiredCandidateStreak && candidateConfidence >= threshold
     }
 
     override init() {
@@ -121,43 +116,10 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         recentEvents = []
         candidateConfidence = 0
         candidateLabel = Copy.noCandidate
-        sampleText = Copy.noSample
+        candidateStreak = 0
+        lastFrameSignature = nil
+        lastMotionScore = 0
         statusText = isScanning ? Copy.scanning : Copy.resetDone
-    }
-
-    func runNextSample() {
-        loadModel()
-        guard let visionRequest else {
-            statusText = Copy.modelUnavailable
-            return
-        }
-
-        let sampleName = sampleNames[sampleIndex % sampleNames.count]
-        sampleIndex += 1
-
-        guard
-            let url = sampleURL(for: sampleName),
-            let cgImage = downsampledCGImage(at: url)
-        else {
-            statusText = Copy.sampleMissing
-            return
-        }
-
-        DispatchQueue.main.async {
-            self.sampleText = "\(Copy.samplePrefix) \(self.sampleDisplayName(for: sampleName))"
-            self.statusText = Copy.sampleRunning
-        }
-
-        videoQueue.async {
-            let handler = VNImageRequestHandler(cgImage: cgImage, orientation: .up)
-            do {
-                try handler.perform([visionRequest])
-            } catch {
-                DispatchQueue.main.async {
-                    self.statusText = Copy.analysisFailed
-                }
-            }
-        }
     }
 
     private func loadModel() {
@@ -234,6 +196,7 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         frameIndex += 1
         guard frameIndex % inferenceFrameStride == 0, !isProcessingFrame else { return }
 
+        lastMotionScore = motionScore(for: pixelBuffer)
         isProcessingFrame = true
         defer { isProcessingFrame = false }
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right)
@@ -260,20 +223,80 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
 
         let confidence = Double(candidate.confidence)
         DispatchQueue.main.async {
-            self.candidateConfidence = confidence
+            let hasEnoughMotion = self.lastMotionScore >= self.minimumMotionScore
+            let isStrongCandidate = confidence >= self.threshold && hasEnoughMotion
+            self.candidateStreak = isStrongCandidate ? min(self.candidateStreak + 1, self.requiredCandidateStreak) : 0
+            self.candidateConfidence = self.displayConfidence(for: confidence)
 
-            if confidence >= self.threshold {
+            if self.candidateStreak >= self.requiredCandidateStreak {
                 self.candidateLabel = Copy.tsuchinokoCandidate
                 self.statusText = Copy.candidateDetected
-                self.appendEventIfNeeded(confidence: confidence)
-            } else if confidence >= 0.45 {
+                self.appendEventIfNeeded(confidence: self.candidateConfidence)
+            } else if confidence >= 0.55 {
                 self.candidateLabel = Copy.reviewNeeded
-                self.statusText = Copy.motionToReview
+                self.statusText = Copy.confirmingCandidate
             } else {
                 self.candidateLabel = Copy.noCandidate
                 self.statusText = self.isScanning ? Copy.scanning : self.statusText
             }
         }
+    }
+
+    private func displayConfidence(for rawConfidence: Double) -> Double {
+        guard candidateStreak >= requiredCandidateStreak else {
+            return min(rawConfidence * 0.72, threshold - 0.01)
+        }
+        return rawConfidence
+    }
+
+    private func motionScore(for pixelBuffer: CVPixelBuffer) -> Double {
+        guard let signature = frameSignature(for: pixelBuffer) else {
+            return 1
+        }
+        defer { lastFrameSignature = signature }
+        guard let previous = lastFrameSignature, previous.count == signature.count else {
+            return 1
+        }
+
+        let total = zip(previous, signature).reduce(0) { partial, pair in
+            partial + abs(Int(pair.0) - Int(pair.1))
+        }
+        return Double(total) / Double(signature.count * 255)
+    }
+
+    private func frameSignature(for pixelBuffer: CVPixelBuffer) -> [UInt8]? {
+        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
+
+        guard
+            CVPixelBufferGetPixelFormatType(pixelBuffer) == kCVPixelFormatType_32BGRA,
+            let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
+        else {
+            return nil
+        }
+
+        let width = CVPixelBufferGetWidth(pixelBuffer)
+        let height = CVPixelBufferGetHeight(pixelBuffer)
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        let pointer = baseAddress.assumingMemoryBound(to: UInt8.self)
+        let columns = 12
+        let rows = 16
+        var signature: [UInt8] = []
+        signature.reserveCapacity(columns * rows)
+
+        for row in 0..<rows {
+            let y = min(height - 1, max(0, (row * height) / rows))
+            for column in 0..<columns {
+                let x = min(width - 1, max(0, (column * width) / columns))
+                let offset = y * bytesPerRow + x * 4
+                let blue = Int(pointer[offset])
+                let green = Int(pointer[offset + 1])
+                let red = Int(pointer[offset + 2])
+                signature.append(UInt8((red + green + blue) / 3))
+            }
+        }
+
+        return signature
     }
 
     private func appendEventIfNeeded(confidence: Double) {
@@ -317,41 +340,6 @@ final class CandidateDetectorViewModel: NSObject, ObservableObject {
         UNUserNotificationCenter.current().add(request)
     }
 
-    private func sampleURL(for name: String) -> URL? {
-        Bundle.main.url(forResource: name, withExtension: "png", subdirectory: "ReviewSamples")
-            ?? Bundle.main.url(forResource: name, withExtension: "png")
-    }
-
-    private func downsampledCGImage(at url: URL, maxPixelSize: CGFloat = 1024) -> CGImage? {
-        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else {
-            return nil
-        }
-
-        let options = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceShouldCacheImmediately: false,
-            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
-        ] as CFDictionary
-
-        return CGImageSourceCreateThumbnailAtIndex(source, 0, options)
-    }
-
-    private func sampleDisplayName(for name: String) -> String {
-        switch name {
-        case "candidate_forest_path":
-            return Copy.sampleCandidateForest
-        case "candidate_gravel_road":
-            return Copy.sampleCandidateGravel
-        case "negative_branch":
-            return Copy.sampleNegativeBranch
-        case "negative_hose":
-            return Copy.sampleNegativeHose
-        default:
-            return name
-        }
-    }
 }
 
 extension CandidateDetectorViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -377,15 +365,7 @@ private enum Copy {
     static let tsuchinokoCandidate = "\u{30C4}\u{30C1}\u{30CE}\u{30B3}\u{5019}\u{88DC}"
     static let reviewNeeded = "\u{8981}\u{78BA}\u{8A8D}"
     static let candidateDetected = "\u{5019}\u{88DC}\u{3092}\u{691C}\u{77E5}"
-    static let motionToReview = "\u{8981}\u{78BA}\u{8A8D}\u{306E}\u{52D5}\u{4F53}"
-    static let noSample = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{672A}\u{5B9F}\u{884C}"
-    static let samplePrefix = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}"
-    static let sampleRunning = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{89E3}\u{6790}\u{4E2D}"
-    static let sampleMissing = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{304C}\u{898B}\u{3064}\u{304B}\u{308A}\u{307E}\u{305B}\u{3093}"
-    static let sampleCandidateForest = "\u{5019}\u{88DC}\u{30FB}\u{5C71}\u{9053}"
-    static let sampleCandidateGravel = "\u{5019}\u{88DC}\u{30FB}\u{7802}\u{5229}\u{9053}"
-    static let sampleNegativeBranch = "\u{78BA}\u{8A8D}\u{7528}\u{30FB}\u{679D}"
-    static let sampleNegativeHose = "\u{78BA}\u{8A8D}\u{7528}\u{30FB}\u{30DB}\u{30FC}\u{30B9}"
+    static let confirmingCandidate = "\u{9023}\u{7D9A}\u{78BA}\u{8A8D}\u{4E2D}"
     static let notificationOff = "通知はオフ"
     static let notificationOn = "通知はオン"
     static let notificationDenied = "通知が許可されていません"

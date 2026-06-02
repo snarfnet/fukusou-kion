@@ -170,7 +170,7 @@ struct ContentView: View {
                         .foregroundStyle(.cyan)
                 }
 
-                Slider(value: $viewModel.threshold, in: 0.55...0.95)
+                Slider(value: $viewModel.threshold, in: 0.70...0.99)
                     .tint(.cyan)
             }
         }
@@ -202,18 +202,6 @@ struct ContentView: View {
                 .buttonStyle(PanelButtonStyle(tint: .white))
             }
 
-            Button {
-                viewModel.runNextSample()
-            } label: {
-                Label(UIStrings.sampleCheck, systemImage: "photo.on.rectangle.angled")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(PanelButtonStyle(tint: .green))
-
-            Text(viewModel.sampleText)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
-                .foregroundStyle(.white.opacity(0.58))
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -355,12 +343,11 @@ private enum UIStrings {
     static let cameraPermission = "\u{30AB}\u{30E1}\u{30E9}\u{306E}\u{4F7F}\u{7528}\u{3092}\u{8A31}\u{53EF}\u{3057}\u{3066}\u{304F}\u{3060}\u{3055}\u{3044}"
     static let openSettings = "\u{8A2D}\u{5B9A}\u{3092}\u{958B}\u{304F}"
     static let onDevice = "\u{7AEF}\u{672B}\u{5185}\u{89E3}\u{6790}"
-    static let confidence = "\u{4FE1}\u{983C}\u{5EA6}"
+    static let confidence = "\u{5019}\u{88DC}\u{30B9}\u{30B3}\u{30A2}"
     static let threshold = "\u{5019}\u{88DC}\u{5224}\u{5B9A}\u{30E9}\u{30A4}\u{30F3}"
     static let start = "\u{958B}\u{59CB}"
     static let pause = "\u{505C}\u{6B62}"
     static let reset = "\u{30EA}\u{30BB}\u{30C3}\u{30C8}"
-    static let sampleCheck = "\u{30B5}\u{30F3}\u{30D7}\u{30EB}\u{78BA}\u{8A8D}"
     static let notificationTitle = "通知"
     static let notificationToggle = "候補を検知したら通知"
     static let howToUse = "\u{4F7F}\u{3044}\u{65B9}"
