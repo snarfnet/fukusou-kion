@@ -62,6 +62,7 @@ struct ContentView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.76)
                     }
+                    .layoutPriority(1)
 
                     Spacer(minLength: 8)
 
@@ -76,14 +77,19 @@ struct ContentView: View {
                     .accessibilityLabel("更新")
                 }
 
-                HStack(spacing: 8) {
-                    Label(model.statusText, systemImage: model.isLoading ? "arrow.triangle.2.circlepath" : "checkmark.seal.fill")
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.72)
-                    Spacer(minLength: 6)
-                    Text(model.storm.updatedAt.compactTime)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.72)
+                Group {
+                    if metrics.isNarrow {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Label(model.statusText, systemImage: model.isLoading ? "arrow.triangle.2.circlepath" : "checkmark.seal.fill")
+                            Text(model.storm.updatedAt.compactTime)
+                        }
+                    } else {
+                        HStack(spacing: 8) {
+                            Label(model.statusText, systemImage: model.isLoading ? "arrow.triangle.2.circlepath" : "checkmark.seal.fill")
+                            Spacer(minLength: 6)
+                            Text(model.storm.updatedAt.compactTime)
+                        }
+                    }
                 }
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white.opacity(0.78))
@@ -321,11 +327,13 @@ struct ContentView: View {
                         Text("\(point.pressure.map(String.init) ?? "--") hPa")
                             .font(.caption.weight(.bold))
                             .lineLimit(1)
+                            .minimumScaleFactor(0.78)
 
                         Text("\(point.wind.map(String.init) ?? "--") kt")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(.cyan.opacity(0.9))
                             .lineLimit(1)
+                            .minimumScaleFactor(0.78)
                     }
                 }
             } else {
@@ -507,19 +515,20 @@ private struct MetricTile: View {
     let value: String
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(.white.opacity(0.58))
-                .frame(minWidth: 58, alignment: .leading)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
             Text(value)
                 .font(.subheadline.weight(.black))
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
-            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(minHeight: 54, alignment: .center)
         .padding(.horizontal, 10)
         .padding(.vertical, 9)
         .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
