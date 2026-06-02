@@ -6,8 +6,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             GeometryReader { proxy in
-                let safeWidth = max(280, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
-                let contentWidth = min(430, max(260, safeWidth - 24))
+                let safeWidth = max(260, proxy.size.width - proxy.safeAreaInsets.leading - proxy.safeAreaInsets.trailing)
+                let contentWidth = min(430, max(248, safeWidth - 36))
                 let metrics = LayoutMetrics(width: contentWidth, height: proxy.size.height)
 
                 ZStack {
@@ -46,61 +46,72 @@ struct ContentView: View {
     }
 
     private func header(_ metrics: LayoutMetrics) -> some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Typhoon Watch")
-                    .font(.system(size: metrics.titleSize, weight: .black, design: .serif))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.76)
+        CompactPanel(metrics: metrics, style: .hero) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .top, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("台風を観測")
+                            .font(.system(size: metrics.titleSize, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
 
-                Text(model.storm.name)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.78))
-                    .lineLimit(2)
+                        Text(model.storm.name)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.78))
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    Button {
+                        Task { await model.refresh() }
+                    } label: {
+                        Image(systemName: model.isLoading ? "waveform" : "arrow.clockwise")
+                            .font(.headline.weight(.bold))
+                            .frame(width: metrics.refreshButtonSize, height: metrics.refreshButtonSize)
+                            .background(Color.white.opacity(0.13), in: Circle())
+                    }
+                    .accessibilityLabel("更新")
+                }
+
+                HStack(spacing: 8) {
+                    Label(model.statusText, systemImage: model.isLoading ? "arrow.triangle.2.circlepath" : "checkmark.seal.fill")
+                    Spacer(minLength: 6)
+                    Text(model.storm.updatedAt.compactTime)
+                }
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white.opacity(0.78))
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
             }
-
-            Spacer()
-
-            Button {
-                Task { await model.refresh() }
-            } label: {
-                Image(systemName: model.isLoading ? "waveform" : "arrow.clockwise")
-                    .font(.headline.weight(.bold))
-                    .frame(width: metrics.refreshButtonSize, height: metrics.refreshButtonSize)
-                    .background(.ultraThinMaterial, in: Circle())
-            }
-            .accessibilityLabel("更新")
         }
     }
 
     private func riskDeck(_ metrics: LayoutMetrics) -> some View {
         CompactPanel(metrics: metrics) {
-            VStack(alignment: .leading, spacing: 12) {
-                VStack(alignment: .leading, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("現在の判断")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(.cyan.opacity(0.9))
-                        Text("\(model.selectedRegion.name) \(model.risk.level.rawValue)")
-                            .font(.title2.weight(.black))
-                            .foregroundStyle(.white)
-                            .lineLimit(2)
-                            .minimumScaleFactor(0.76)
-                    }
-                    Text(model.statusText)
+            VStack(alignment: .leading, spacing: metrics.innerSpacing) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("現在の判断")
                         .font(.caption.weight(.bold))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
+                        .foregroundStyle(.cyan.opacity(0.9))
+                    Text("\(model.selectedRegion.name) \(model.risk.level.rawValue)")
+                        .font(.system(size: metrics.headlineSize, weight: .black, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.72)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color(hex: model.risk.level.colorHex).opacity(0.22), in: Capsule())
-                        .foregroundStyle(Color(hex: model.risk.level.colorHex))
                 }
 
+                Text(model.risk.summary)
+                    .font(.footnote)
+                    .foregroundStyle(.white)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 Menu {
-                    Picker("監視地点", selection: $model.selectedRegion) {
+                    Picker("地域を選択", selection: $model.selectedRegion) {
                         ForEach(AppData.regions) { region in
                             Text(region.name).tag(region)
                         }
@@ -122,22 +133,17 @@ struct ContentView: View {
                     .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
                     .foregroundStyle(.white)
                 }
+                .accessibilityLabel("地域を選択")
 
                 ProgressView(value: min(model.risk.score, 100), total: 100)
                     .tint(Color(hex: model.risk.level.colorHex))
                     .scaleEffect(x: 1, y: 1.6, anchor: .center)
 
-                Text(model.risk.summary)
-                    .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.78))
-                    .lineSpacing(2)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
+                LazyVGrid(columns: metrics.metricColumns, spacing: 8) {
                     MetricTile(title: "最接近", value: model.risk.closestAt?.compactTime ?? "不明")
                     MetricTile(title: "最短距離", value: "\(Int(model.risk.closestKm.rounded())) km")
                     MetricTile(title: "最大風速", value: model.risk.maxWind.map { "\($0) kt" } ?? "不明")
-                    MetricTile(title: "更新", value: model.storm.updatedAt.compactTime)
+                    MetricTile(title: "データ", value: model.statusText)
                 }
             }
         }
@@ -146,12 +152,12 @@ struct ContentView: View {
     private func trackCard(_ metrics: LayoutMetrics) -> some View {
         CompactPanel(metrics: metrics) {
             VStack(alignment: .leading, spacing: 10) {
-                HStack {
+                HStack(spacing: 8) {
                     Label("進路", systemImage: "scope")
                         .font(.headline.weight(.black))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                    Spacer()
+                    Spacer(minLength: 6)
                     Text(model.storm.source)
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(.white.opacity(0.64))
@@ -166,13 +172,14 @@ struct ContentView: View {
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: metrics.actionMinWidth), spacing: 8)], spacing: 8) {
                     ForEach(model.risk.actions, id: \.self) { action in
-                        Text(action)
+                        Label(action, systemImage: "checkmark.circle.fill")
                             .font(.caption2.weight(.bold))
-                            .lineLimit(2)
-                            .minimumScaleFactor(0.72)
+                            .lineLimit(3)
+                            .minimumScaleFactor(0.74)
+                            .labelStyle(.titleAndIcon)
                             .padding(.horizontal, 9)
                             .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
                             .foregroundStyle(.white.opacity(0.88))
                     }
@@ -188,23 +195,33 @@ struct ContentView: View {
                     .font(.headline.weight(.black))
                     .foregroundStyle(.white)
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(AppData.feeds) { feed in
-                            Link(destination: URL(string: feed.url)!) {
-                                VStack(alignment: .leading, spacing: 4) {
+                VStack(spacing: 8) {
+                    ForEach(AppData.feeds.prefix(metrics.feedLimit)) { feed in
+                        Link(destination: URL(string: feed.url)!) {
+                            HStack(spacing: 10) {
+                                Image(systemName: "arrow.up.forward.app")
+                                    .font(.caption.weight(.black))
+                                    .frame(width: 26, height: 26)
+                                    .background(Color.white.opacity(0.1), in: Circle())
+
+                                VStack(alignment: .leading, spacing: 3) {
                                     Text(feed.name)
                                         .font(.subheadline.weight(.black))
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.78)
                                     Text(feed.detail)
                                         .font(.caption2)
                                         .foregroundStyle(.white.opacity(0.62))
                                         .lineLimit(2)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
-                                .frame(width: metrics.feedWidth, alignment: .leading)
-                                .padding(10)
-                                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
-                                .foregroundStyle(.white)
+
+                                Spacer(minLength: 4)
                             }
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+                            .foregroundStyle(.white)
                         }
                     }
                 }
@@ -227,30 +244,45 @@ struct ContentView: View {
     }
 
     private func timelineRow(_ point: TyphoonPoint, metrics: LayoutMetrics) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
                 Text(point.time.compactTime)
                     .font(.caption.weight(.bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.78)
 
-                Spacer(minLength: 6)
+                if point.isForecast {
+                    Text("予報")
+                        .font(.caption2.weight(.black))
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(Color(hex: 0xF2B84B).opacity(0.22), in: Capsule())
+                        .foregroundStyle(Color(hex: 0xF2B84B))
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            HStack(spacing: 10) {
+                Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.72))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+
+                Spacer(minLength: 0)
 
                 Text("\(point.pressure.map(String.init) ?? "--") hPa")
                     .font(.caption.weight(.bold))
                     .lineLimit(1)
+                    .minimumScaleFactor(0.78)
 
                 Text("\(point.wind.map(String.init) ?? "--") kt")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.cyan.opacity(0.9))
                     .lineLimit(1)
+                    .minimumScaleFactor(0.78)
             }
-
-            Text("\(point.latitude, specifier: "%.1f")N \(point.longitude, specifier: "%.1f")E")
-                .font(.caption)
-                .foregroundStyle(.white.opacity(0.72))
-                .lineLimit(1)
-                .minimumScaleFactor(0.82)
         }
         .foregroundStyle(.white)
         .padding(.vertical, metrics.timelineVerticalPadding)
@@ -264,20 +296,27 @@ private struct LayoutMetrics {
     let height: CGFloat
 
     var isNarrow: Bool { width <= 375 }
-    var screenPadding: CGFloat { isNarrow ? 10 : 16 }
-    var sectionSpacing: CGFloat { isNarrow ? 10 : 14 }
-    var titleSize: CGFloat { isNarrow ? 28 : 34 }
-    var refreshButtonSize: CGFloat { isNarrow ? 38 : 42 }
-    var panelPadding: CGFloat { isNarrow ? 10 : 14 }
+    var sectionSpacing: CGFloat { isNarrow ? 9 : 14 }
+    var innerSpacing: CGFloat { isNarrow ? 10 : 12 }
+    var titleSize: CGFloat { isNarrow ? 24 : 32 }
+    var headlineSize: CGFloat { isNarrow ? 20 : 24 }
+    var refreshButtonSize: CGFloat { isNarrow ? 40 : 44 }
+    var panelPadding: CGFloat { isNarrow ? 11 : 14 }
     var panelCornerRadius: CGFloat { isNarrow ? 10 : 12 }
     var mapHeight: CGFloat {
-        let availableWidth = width - screenPadding * 2 - panelPadding * 2
+        let availableWidth = width - panelPadding * 2
         let ratio = isNarrow ? 0.62 : 0.72
-        return min(isNarrow ? 220 : 280, max(isNarrow ? 168 : 220, availableWidth * ratio))
+        return min(isNarrow ? 190 : 280, max(isNarrow ? 154 : 220, availableWidth * ratio))
     }
-    var actionMinWidth: CGFloat { isNarrow ? 118 : 132 }
-    var feedWidth: CGFloat { isNarrow ? 124 : 142 }
+    var actionMinWidth: CGFloat { isNarrow ? width - panelPadding * 2 : 132 }
+    var feedLimit: Int { isNarrow ? 4 : 6 }
     var timelineVerticalPadding: CGFloat { isNarrow ? 6 : 7 }
+    var metricColumns: [GridItem] {
+        if isNarrow {
+            return [GridItem(.flexible(), spacing: 8)]
+        }
+        return Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
+    }
 }
 
 private struct TrackMap: View {
@@ -353,11 +392,18 @@ private struct TrackMap: View {
 }
 
 private struct CompactPanel<Content: View>: View {
+    enum Style {
+        case standard
+        case hero
+    }
+
     let metrics: LayoutMetrics
+    let style: Style
     let content: Content
 
-    init(metrics: LayoutMetrics, @ViewBuilder content: () -> Content) {
+    init(metrics: LayoutMetrics, style: Style = .standard, @ViewBuilder content: () -> Content) {
         self.metrics = metrics
+        self.style = style
         self.content = content()
     }
 
@@ -368,7 +414,8 @@ private struct CompactPanel<Content: View>: View {
             .background {
                 ZStack {
                     RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous)
-                        .fill(.ultraThinMaterial)
+                        .fill(style == .hero ? Color(hex: 0x0A3E46).opacity(0.84) : Color.white.opacity(0.08))
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: metrics.panelCornerRadius, style: .continuous))
 
                     Image("RadarPanelTexture")
                         .resizable()
@@ -391,18 +438,21 @@ private struct MetricTile: View {
     let value: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(title)
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(.white.opacity(0.58))
+                .frame(minWidth: 58, alignment: .leading)
             Text(value)
                 .font(.subheadline.weight(.black))
                 .foregroundStyle(.white)
                 .lineLimit(1)
-                .minimumScaleFactor(0.78)
+                .minimumScaleFactor(0.72)
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 9)
         .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
     }
 }
