@@ -32,7 +32,7 @@ targets:
     info:
       path: SimpleVehicleCounter/Resources/Info.plist
       properties:
-        CFBundleDisplayName: "簡易車両カウンター"
+        CFBundleDisplayName: "簡易車両交通量調査"
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true

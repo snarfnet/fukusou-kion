@@ -3,6 +3,7 @@ import UIKit
 
 struct ContentView: View {
     @StateObject private var viewModel = BicycleCounterViewModel()
+    @State private var radarSweep = false
 
     var body: some View {
         ZStack {
@@ -25,13 +26,14 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             viewModel.requestCameraAccess()
+            radarSweep = true
         }
     }
 
     private var header: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("簡易自転車カウンター")
+                Text("簡易自転車交通量調査")
                     .font(.system(size: 24, weight: .heavy, design: .rounded))
                 Text("ライン通過で自転車を自動カウント")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -97,16 +99,49 @@ struct ContentView: View {
         let linePosition = max(0, min(size.width, size.width * viewModel.lineX))
 
         return ZStack {
+            ForEach([0.30, 0.48, 0.66], id: \.self) { scale in
+                Circle()
+                    .stroke(Color.red.opacity(0.18), lineWidth: 1)
+                    .frame(width: size.height * scale, height: size.height * scale)
+                    .position(x: linePosition, y: size.height / 2)
+            }
+
+            Circle()
+                .trim(from: 0, to: 0.18)
+                .stroke(
+                    AngularGradient(
+                        colors: [.red.opacity(0), .red.opacity(0.7), .white.opacity(0.8)],
+                        center: .center
+                    ),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                )
+                .frame(width: size.height * 0.66, height: size.height * 0.66)
+                .rotationEffect(.degrees(radarSweep ? 360 : 0))
+                .animation(.linear(duration: 2.6).repeatForever(autoreverses: false), value: radarSweep)
+                .position(x: linePosition, y: size.height / 2)
+
             Rectangle()
-                .fill(.yellow)
-                .frame(width: 3)
-                .shadow(color: .yellow.opacity(0.8), radius: 8)
+                .fill(.red.opacity(0.22))
+                .frame(width: 42)
+                .blur(radius: 12)
+                .position(x: linePosition, y: size.height / 2)
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [.clear, .red.opacity(0.95), .white, .red.opacity(0.95), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: 4)
+                .shadow(color: .red.opacity(0.95), radius: 14)
                 .position(x: linePosition, y: size.height / 2)
 
             VStack(spacing: 4) {
-                Text("COUNT LINE")
+                Text("SCAN LINE")
                     .font(.system(size: 10, weight: .black, design: .monospaced))
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.red)
                 Text("ドラッグで移動")
                     .font(.system(size: 10, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.76))
@@ -131,7 +166,7 @@ struct ContentView: View {
             ForEach(viewModel.detections) { detection in
                 let rect = mappedRect(detection.rect, in: size)
                 RoundedRectangle(cornerRadius: 4)
-                    .stroke(.yellow, lineWidth: 2)
+                    .stroke(.red, lineWidth: 2)
                     .frame(width: rect.width, height: rect.height)
                     .position(x: rect.midX, y: rect.midY)
                     .overlay {
@@ -140,7 +175,7 @@ struct ContentView: View {
                             .foregroundStyle(.black)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
-                            .background(.yellow, in: Capsule())
+                            .background(.red, in: Capsule())
                             .position(x: rect.minX + 20, y: rect.minY + 10)
                     }
             }
@@ -176,11 +211,11 @@ struct ContentView: View {
             HStack(spacing: 10) {
                 Image(systemName: "bicycle")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.red)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Core MLで自転車を見つけ、黄色い線の通過を数えます")
+                    Text("赤い線を自転車が越えると1台として数えます")
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
-                    Text("YOLOのbicycle検出を使い、車や歩行者を拾いにくくします。")
+                    Text("自転車の通過を確認し、中央線を越えた台数を記録します。")
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.68))
                 }
@@ -193,11 +228,11 @@ struct ContentView: View {
                     Spacer()
                     Text(viewModel.distanceLabel)
                         .font(.system(size: 12, weight: .black, design: .rounded))
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(.red)
                 }
 
                 Slider(value: $viewModel.recognitionDistance, in: 0...1)
-                    .tint(.yellow)
+                    .tint(.red)
 
                 HStack {
                     Text("近距離")
@@ -212,7 +247,7 @@ struct ContentView: View {
         .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(.yellow.opacity(0.22), lineWidth: 1)
+                .stroke(.red.opacity(0.22), lineWidth: 1)
         )
     }
 
@@ -240,7 +275,7 @@ struct ContentView: View {
 
                     DigitWindow(value: viewModel.count)
 
-                    CountBadge(title: "自転車", value: viewModel.count, color: .yellow)
+                    CountBadge(title: "自転車", value: viewModel.count, color: .red)
                 }
                 .padding(16)
             }
@@ -253,7 +288,7 @@ struct ContentView: View {
                 ClickButton(isRunning: viewModel.isRunning) {
                     viewModel.isRunning ? viewModel.pauseCounting() : viewModel.startCounting()
                 }
-                ManualButton(label: "+1", systemImage: "plus.circle.fill", tint: .yellow) {
+                ManualButton(label: "+1", systemImage: "plus.circle.fill", tint: .red) {
                     viewModel.adjust(amount: 1)
                 }
             }
@@ -294,7 +329,7 @@ struct ContentView: View {
                     HStack {
                         Text("自転車")
                             .font(.system(size: 12, weight: .black, design: .monospaced))
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(.red)
                         Text(event.timestamp, style: .time)
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white.opacity(0.72))

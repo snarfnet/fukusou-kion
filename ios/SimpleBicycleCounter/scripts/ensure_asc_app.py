@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("BUNDLE_ID", "com.tokyonasu.simplebicyclecounter")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "SimpleBicycleCounter")
-APP_NAME = os.environ.get("APP_NAME", "\u7C21\u6613\u81EA\u8EE2\u8ECA\u30AB\u30A6\u30F3\u30BF\u30FC")
+APP_NAME = os.environ.get("APP_NAME", "\u7C21\u6613\u81EA\u8EE2\u8ECA\u4EA4\u901A\u91CF\u8ABF\u67FB")
 APP_SKU = os.environ.get("APP_SKU", "simple-bicycle-counter-ios")
 
 
