@@ -5,6 +5,7 @@
 ## 事前条件
 
 - GitHub Actions `GemstoneDictionary iOS Build` が成功している
+- `DEVICE_BUILD_AND_TESTFLIGHT.md` に沿ってiPhone実機へ入れられる
 - iPhone実機にDebugまたはTestFlightビルドを入れる
 - 白い紙、10円玉、翡翠または緑系の石、ターコイズまたは青緑系の石を用意する
 - 室内の明るい場所と、自然光に近い明るさの2条件で確認する

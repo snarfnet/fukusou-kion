@@ -41,6 +41,7 @@ jobs:
             -project GemstoneDictionary.xcodeproj \
             -scheme GemstoneDictionary \
             -configuration Debug \
+            -derivedDataPath build/DerivedData \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             build
@@ -58,6 +59,14 @@ jobs:
             -project GemstoneDictionary.xcodeproj \
             -scheme GemstoneDictionary \
             -configuration Debug \
+            -derivedDataPath build/DerivedData \
             -destination "platform=iOS Simulator,name=$DEVICE_NAME" \
             CODE_SIGNING_ALLOWED=NO \
             test
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: GemstoneDictionary-simulator-app
+          path: ios/GemstoneDictionary/build/DerivedData/Build/Products/Debug-iphonesimulator/GemstoneDictionary.app
+          if-no-files-found: error

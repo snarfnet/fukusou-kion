@@ -73,6 +73,7 @@ bash scripts/build_mac.sh
 ## CI
 
 [gemstone-dictionary-ios-build.yml](../../.github/workflows/gemstone-dictionary-ios-build.yml) で、静的チェックとシミュレータ向けのXcodeビルドを実行します。
+成功したrunには `GemstoneDictionary-simulator-app` artifact が残ります。これはシミュレータ確認用です。iPhone実機へ入れる手順は [DEVICE_BUILD_AND_TESTFLIGHT.md](DEVICE_BUILD_AND_TESTFLIGHT.md) にまとめています。
 
 ## 実機確認
 

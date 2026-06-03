@@ -58,7 +58,9 @@
 - 静的検証スクリプトあり
 - GitHub ActionsのiOSビルドCIあり
 - GitHub ActionsのUIテストCIあり
+- GitHub Actionsのシミュレータ用artifactあり
 - iPhone実機で完成判定するための `REAL_DEVICE_QA.md` あり
+- iPhone実機ビルドとTestFlight手順の `DEVICE_BUILD_AND_TESTFLIGHT.md` あり
 
 ## 検証済み
 
@@ -77,6 +79,7 @@
 - GitHub Actionsワークフロー
 - GitHub Actions `GemstoneDictionary iOS Build` の成功
 - UIテストターゲットとスキーム設定
+- シミュレータ用artifactのアップロード設定
 - 実機QAシート
 
 ## 未検証
