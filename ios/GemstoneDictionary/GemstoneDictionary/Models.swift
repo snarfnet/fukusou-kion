@@ -61,6 +61,27 @@ struct ScanMetrics {
             : "基準物からの推定です。石と基準物を同じ高さで写すほど近い値になります。"
     }
 
+    var sizeConfidenceLabel: String {
+        switch coverageScore {
+        case 42...100: return "高め"
+        case 24..<42: return "中くらい"
+        default: return "低め"
+        }
+    }
+
+    var sizeConfidenceNote: String {
+        if estimatedMillimeters == nil {
+            return "基準物なしのため、実寸ではなく画面内の見かけサイズです。"
+        }
+        if coverageScore >= 42 {
+            return "石が十分大きく写っています。基準物と同じ高さなら推定値が安定しやすい状態です。"
+        }
+        if coverageScore >= 24 {
+            return "使える目安です。石と基準物をもう少し大きく、同じ高さで写すと安定します。"
+        }
+        return "石が小さく写っています。画面中央に大きく入れ、基準物を横に置いて撮り直してください。"
+    }
+
     var captureQualityWarnings: [String] {
         var warnings: [String] = []
         if brightness < 24 {

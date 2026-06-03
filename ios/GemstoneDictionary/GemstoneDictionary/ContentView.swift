@@ -10,6 +10,7 @@ private struct ScanHistoryEntry: Identifiable {
     let score: Int
     let levelLabel: String
     let sizeLabel: String
+    let sizeConfidenceLabel: String
     let referenceLabel: String
 }
 
@@ -19,6 +20,7 @@ private struct StoredScanHistoryEntry: Codable {
     let score: Int
     let levelLabel: String
     let sizeLabel: String
+    let sizeConfidenceLabel: String?
     let referenceLabel: String?
 }
 
@@ -513,6 +515,19 @@ struct ContentView: View {
                 .font(.footnote)
                 .foregroundStyle(AppStyle.muted)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Label("サイズ信頼度: \(metrics.sizeConfidenceLabel)", systemImage: "ruler.fill")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(metrics.coverageScore >= 42 ? AppStyle.jade : (metrics.coverageScore >= 24 ? AppStyle.gold : AppStyle.garnet))
+                Text(metrics.sizeConfidenceNote)
+                    .font(.caption)
+                    .foregroundStyle(AppStyle.muted)
+                    .lineSpacing(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(10)
+            .background(.white.opacity(0.58), in: RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppStyle.line))
         }
     }
 
@@ -701,6 +716,7 @@ struct ContentView: View {
                                 MiniInfoLabel(title: "一致", value: "\(entry.score)%")
                                 MiniInfoLabel(title: "レベル", value: entry.levelLabel)
                                 MiniInfoLabel(title: "サイズ", value: entry.sizeLabel)
+                                MiniInfoLabel(title: "信頼度", value: entry.sizeConfidenceLabel)
                             }
                             Text("基準物: \(entry.referenceLabel)")
                                 .font(.caption2.weight(.semibold))
@@ -1194,6 +1210,7 @@ struct ContentView: View {
            latest.gemstone.id == candidate.gemstone.id,
            latest.score == candidate.score,
            latest.sizeLabel == metrics.sizeLabel,
+           latest.sizeConfidenceLabel == metrics.sizeConfidenceLabel,
            latest.referenceLabel == reference.rawValue {
             return
         }
@@ -1205,6 +1222,7 @@ struct ContentView: View {
                 score: candidate.score,
                 levelLabel: metrics.levelLabel,
                 sizeLabel: metrics.sizeLabel,
+                sizeConfidenceLabel: metrics.sizeConfidenceLabel,
                 referenceLabel: reference.rawValue
             ),
             at: 0
@@ -1234,6 +1252,7 @@ struct ContentView: View {
             "透明度: \(candidate.gemstone.shortTransparency)",
             "サイズ: \(size)",
             "基準物: \(referenceLabel)",
+            "サイズ信頼度: \(metrics?.sizeConfidenceLabel ?? "-")",
             "相場目安: \(candidate.gemstone.marketPrice)",
             "注意: 写真判定は目安です。高額品は鑑別書で確認してください。"
         ].joined(separator: "\n")
@@ -1248,6 +1267,7 @@ struct ContentView: View {
             "透明度: \(entry.gemstone.shortTransparency)",
             "サイズ: \(entry.sizeLabel)",
             "基準物: \(entry.referenceLabel)",
+            "サイズ信頼度: \(entry.sizeConfidenceLabel)",
             "相場目安: \(entry.gemstone.marketPrice)",
             "注意: 写真判定は目安です。高額品は鑑別書で確認してください。"
         ].joined(separator: "\n")
@@ -1270,6 +1290,7 @@ struct ContentView: View {
                 score: item.score,
                 levelLabel: item.levelLabel,
                 sizeLabel: item.sizeLabel,
+                sizeConfidenceLabel: item.sizeConfidenceLabel ?? "未記録",
                 referenceLabel: item.referenceLabel ?? "基準なし"
             )
         }
@@ -1283,6 +1304,7 @@ struct ContentView: View {
                 score: $0.score,
                 levelLabel: $0.levelLabel,
                 sizeLabel: $0.sizeLabel,
+                sizeConfidenceLabel: $0.sizeConfidenceLabel,
                 referenceLabel: $0.referenceLabel
             )
         }
