@@ -10,6 +10,7 @@ private struct ScanHistoryEntry: Identifiable {
     let score: Int
     let levelLabel: String
     let sizeLabel: String
+    let referenceLabel: String
 }
 
 private struct StoredScanHistoryEntry: Codable {
@@ -18,6 +19,7 @@ private struct StoredScanHistoryEntry: Codable {
     let score: Int
     let levelLabel: String
     let sizeLabel: String
+    let referenceLabel: String?
 }
 
 private struct GlossaryTerm: Identifiable {
@@ -700,6 +702,9 @@ struct ContentView: View {
                                 MiniInfoLabel(title: "レベル", value: entry.levelLabel)
                                 MiniInfoLabel(title: "サイズ", value: entry.sizeLabel)
                             }
+                            Text("基準物: \(entry.referenceLabel)")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(AppStyle.muted)
                             Text(entry.gemstone.marketPrice)
                                 .font(.caption)
                                 .foregroundStyle(AppStyle.muted)
@@ -1188,7 +1193,8 @@ struct ContentView: View {
         if let latest = scanHistory.first,
            latest.gemstone.id == candidate.gemstone.id,
            latest.score == candidate.score,
-           latest.sizeLabel == metrics.sizeLabel {
+           latest.sizeLabel == metrics.sizeLabel,
+           latest.referenceLabel == reference.rawValue {
             return
         }
 
@@ -1198,7 +1204,8 @@ struct ContentView: View {
                 gemstone: candidate.gemstone,
                 score: candidate.score,
                 levelLabel: metrics.levelLabel,
-                sizeLabel: metrics.sizeLabel
+                sizeLabel: metrics.sizeLabel,
+                referenceLabel: reference.rawValue
             ),
             at: 0
         )
@@ -1218,6 +1225,7 @@ struct ContentView: View {
     private func shareText(for candidate: StoneCandidate, metrics: ScanMetrics?) -> String {
         let level = metrics?.levelLabel ?? "-"
         let size = metrics?.sizeLabel ?? "未計測"
+        let referenceLabel = reference.rawValue
         return [
             "天然石判定メモ",
             "候補: \(candidate.gemstone.name) / \(candidate.gemstone.englishName)",
@@ -1225,6 +1233,7 @@ struct ContentView: View {
             "レベル候補: \(level)",
             "透明度: \(candidate.gemstone.shortTransparency)",
             "サイズ: \(size)",
+            "基準物: \(referenceLabel)",
             "相場目安: \(candidate.gemstone.marketPrice)",
             "注意: 写真判定は目安です。高額品は鑑別書で確認してください。"
         ].joined(separator: "\n")
@@ -1238,6 +1247,7 @@ struct ContentView: View {
             "レベル候補: \(entry.levelLabel)",
             "透明度: \(entry.gemstone.shortTransparency)",
             "サイズ: \(entry.sizeLabel)",
+            "基準物: \(entry.referenceLabel)",
             "相場目安: \(entry.gemstone.marketPrice)",
             "注意: 写真判定は目安です。高額品は鑑別書で確認してください。"
         ].joined(separator: "\n")
@@ -1259,7 +1269,8 @@ struct ContentView: View {
                 gemstone: stone,
                 score: item.score,
                 levelLabel: item.levelLabel,
-                sizeLabel: item.sizeLabel
+                sizeLabel: item.sizeLabel,
+                referenceLabel: item.referenceLabel ?? "基準なし"
             )
         }
     }
@@ -1271,7 +1282,8 @@ struct ContentView: View {
                 gemstoneID: $0.gemstone.id,
                 score: $0.score,
                 levelLabel: $0.levelLabel,
-                sizeLabel: $0.sizeLabel
+                sizeLabel: $0.sizeLabel,
+                referenceLabel: $0.referenceLabel
             )
         }
         if let data = try? JSONEncoder().encode(stored) {
