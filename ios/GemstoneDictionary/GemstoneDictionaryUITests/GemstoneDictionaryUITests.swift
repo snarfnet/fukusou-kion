@@ -9,7 +9,7 @@ final class GemstoneDictionaryUITests: XCTestCase {
         let app = launchApp(useTaQuery: true)
         openTab(index: 1, in: app)
 
-        XCTAssertTrue(app.staticTexts["ターコイズ"].waitForExistence(timeout: 8))
+        XCTAssertTrue(findStaticText("ターコイズ", in: app))
     }
 
     func testDictionarySearchJadeFindsJadeite() throws {
@@ -50,5 +50,19 @@ final class GemstoneDictionaryUITests: XCTestCase {
         let tab = app.tabBars.buttons.element(boundBy: index)
         XCTAssertTrue(tab.waitForExistence(timeout: 8))
         tab.tap()
+    }
+
+    private func findStaticText(_ label: String, in app: XCUIApplication) -> Bool {
+        let text = app.staticTexts[label]
+        if text.waitForExistence(timeout: 4) {
+            return true
+        }
+        for _ in 0..<8 {
+            app.swipeUp()
+            if text.waitForExistence(timeout: 2) {
+                return true
+            }
+        }
+        return false
     }
 }
