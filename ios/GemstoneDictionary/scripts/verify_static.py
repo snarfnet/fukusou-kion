@@ -150,8 +150,10 @@ def main() -> int:
     info_plist = APP / "Resources" / "Info.plist"
 
     results = []
-    blocks = extract_gemstone_blocks(models)
-    gemstone_count = models.count("Gemstone(")
+    all_blocks = extract_gemstone_blocks(models)
+    blocks = [block for block in all_blocks if string_field(block, "id")]
+    supplemental_count = len(re.findall(r"^\s*supplementalStone\(", models, re.M))
+    gemstone_count = len(blocks) + supplemental_count
     required_string_fields = [
         "id",
         "name",
@@ -170,8 +172,8 @@ def main() -> int:
     required_array_fields = ["aliases", "colors", "priceFactors", "identificationTips", "treatments"]
     valid_groups = set("あかさたなはまやらわ")
 
-    results.append(check("100種類以上の天然石データ", gemstone_count >= 100, f"{gemstone_count} entries"))
-    results.append(check("Gemstoneブロック解析", len(blocks) == gemstone_count, f"{len(blocks)} blocks"))
+    results.append(check("150種類以上の天然石データ", gemstone_count >= 150, f"{gemstone_count} entries"))
+    results.append(check("Gemstoneブロック解析", len(blocks) + 1 == len(all_blocks), f"{len(blocks)} literal blocks, {supplemental_count} supplemental"))
     missing_detail = []
     invalid_groups = []
     for block in blocks:
@@ -265,7 +267,7 @@ def main() -> int:
     if scheme.exists():
         ET.parse(scheme)
         results.append(check("共有スキームXML", True))
-    results.append(check("README更新", "ライブカメラ判定" in readme and "100種類以上" in readme))
+    results.append(check("README更新", "ライブカメラ判定" in readme and "150種類以上" in readme))
     results.append(check("README判定根拠", "判定の根拠" in readme and "色相" in readme and "市場価格" in readme))
     results.append(check("README判定確度", "判定確度" in readme and "中くらい" in readme and "撮り直し" in readme))
     results.append(check("READMEサンプル判定", "サンプルで試す" in readme and "翡翠とターコイズ" in readme and "実機カメラがない環境" in readme))
@@ -291,7 +293,7 @@ def main() -> int:
     results.append(check("README相場データ", "MARKET_DATA_NOTES.md" in readme and "International Gem Society" in readme))
     results.append(check("README実機QA", "REAL_DEVICE_QA.md" in readme and "iPhone実機" in readme and "10円玉基準" in readme))
     results.append(check("README実機ビルド手順", "DEVICE_BUILD_AND_TESTFLIGHT.md" in readme and "GemstoneDictionary-simulator-app" in readme))
-    results.append(check("README相場一覧", "100種類以上の相場一覧" in readme and "市場価格" in readme))
+    results.append(check("README相場一覧", "150種類以上の相場一覧" in readme and "市場価格" in readme))
     results.append(check("README相場購入前", "買う前に見る項目" in readme and "無処理/安定化/染色/再生品" in readme))
     results.append(check("README用語集", "鑑別・相場の用語集" in readme and "A貨翡翠" in readme and "カラット" in readme))
     results.append(check("相場更新メモ", market_notes_path.exists() and "GIA Jadeite Jade Quality Factors" in market_notes and "International Gem Society Gem Price Guide" in market_notes and "固定価格" in market_notes))
@@ -321,7 +323,7 @@ def main() -> int:
     results.append(check("QA鑑別メモ", "鑑別・ランク確認メモ" in qa and "硬度" in qa and "屈折率" in qa))
     results.append(check("QAランク目安", "ランク目安" in qa and "鑑定ランク" in qa))
     results.append(check("QA相場更新", "相場更新" in qa and "MARKET_DATA_NOTES.md" in qa))
-    results.append(check("QA相場一覧", "100種類以上の相場一覧" in qa and "市場価格" in qa and "詳細へ移動" in qa))
+    results.append(check("QA相場一覧", "150種類以上の相場一覧" in qa and "市場価格" in qa and "詳細へ移動" in qa))
     results.append(check("QA相場購入前", "買う前に見る項目" in qa and "処理、証明、品質、価格" in qa and "無処理/安定化/染色/再生品" in qa))
     results.append(check("QA用語集", "鑑別・相場の用語集" in qa and "A貨翡翠" in qa and "屈折率" in qa and "鑑別書" in qa))
     results.append(check("実機QAシート", real_device_qa_path.exists() and "実機QAシート" in real_device_qa and "合格条件" in real_device_qa and "10円玉" in real_device_qa and "完成判断" in real_device_qa))

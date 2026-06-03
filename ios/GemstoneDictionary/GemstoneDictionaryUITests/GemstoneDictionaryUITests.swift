@@ -19,12 +19,19 @@ final class GemstoneDictionaryUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
     }
 
+    func testSupplementalCatalogSearchFindsDanburite() throws {
+        let app = launchApp(dictionaryQuery: "danburite")
+        openTab(index: 1, in: app)
+
+        XCTAssertTrue(app.staticTexts["ダンビュライト"].waitForExistence(timeout: 8))
+    }
+
     func testMarketListAndDemoSampleAreReachable() throws {
         let app = launchApp()
 
         openTab(index: 2, in: app)
         XCTAssertTrue(app.descendants(matching: .any)["marketPriceList"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "101")).firstMatch.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "155")).firstMatch.waitForExistence(timeout: 8))
 
         openTab(index: 0, in: app)
         let sampleButton = app.descendants(matching: .any)["demoSample-jadeite"]
