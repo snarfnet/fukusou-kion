@@ -39,6 +39,8 @@ final class GemstoneDictionaryUITests: XCTestCase {
         sampleButton.tap()
         XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "市場価格")).firstMatch.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "サイズ信頼度")).firstMatch.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "見かけサイズ")).firstMatch.waitForExistence(timeout: 8))
     }
 
     private func launchApp(dictionaryQuery: String? = nil, useTaQuery: Bool = false) -> XCUIApplication {
