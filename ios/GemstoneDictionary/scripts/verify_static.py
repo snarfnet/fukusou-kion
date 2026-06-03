@@ -337,7 +337,7 @@ def main() -> int:
         results.append(check("GitHub ActionsビルドCI", "xcodebuild" in workflow_text and "GemstoneDictionary.xcodeproj" in workflow_text))
         results.append(check("GitHub Actions静的検証", "scripts/verify_static.py" in workflow_text))
         results.append(check("GitHub Actions UIテスト", "xcodebuild" in workflow_text and " test" in workflow_text and "simctl list devices available" in workflow_text))
-        results.append(check("GitHub Actions artifact", "actions/upload-artifact@v4" in workflow_text and "GemstoneDictionary-simulator-app" in workflow_text and "GemstoneDictionary.app" in workflow_text))
+        results.append(check("GitHub Actions artifact", "actions/upload-artifact@v7" in workflow_text and "GemstoneDictionary-simulator-app" in workflow_text and "GemstoneDictionary.app" in workflow_text))
     else:
         results.append(check("GitHub ActionsビルドCI", False))
 
