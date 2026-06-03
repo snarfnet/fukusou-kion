@@ -132,6 +132,8 @@ def main() -> int:
     live = read(APP / "LiveCameraScanner.swift")
     picker = read(APP / "ImagePicker.swift")
     project = read(ROOT / "project.yml")
+    ui_tests_path = ROOT / "GemstoneDictionaryUITests" / "GemstoneDictionaryUITests.swift"
+    ui_tests = read(ui_tests_path) if ui_tests_path.exists() else ""
     readme = read(ROOT / "README.md")
     qa_checklist = ROOT / "QA_CHECKLIST.md"
     completion_audit = ROOT / "COMPLETION_AUDIT.md"
@@ -239,6 +241,9 @@ def main() -> int:
     results.append(check("写真選択", "PhotosPicker" in content))
     results.append(check("カメラ権限説明", "NSCameraUsageDescription" in project))
     results.append(check("写真権限説明", "NSPhotoLibraryUsageDescription" in project))
+    results.append(check("UIテストターゲット設定", "GemstoneDictionaryUITests" in project and "bundle.ui-testing" in project))
+    results.append(check("UIテスト要件", ui_tests_path.exists() and "testDictionarySearchTaFindsTurquoise" in ui_tests and "testDictionarySearchJadeFindsJadeite" in ui_tests and "testMarketListAndDemoSampleAreReachable" in ui_tests and "UITEST_DICTIONARY_QUERY" in content))
+    results.append(check("UIテスト文字化け置換文字なし", ui_tests_path.exists() and "\ufffd" not in ui_tests))
     results.append(check("Xcodeプロジェクト同梱", xcodeproj.exists()))
     results.append(check("共有スキーム同梱", scheme.exists()))
     if xcodeproj.exists():
@@ -253,6 +258,7 @@ def main() -> int:
         ])))
         results.append(check("Xcodeプロジェクトのリソース参照", "Assets.xcassets" in pbx and "PrivacyInfo.xcprivacy" in pbx))
         results.append(check("XcodeプロジェクトのInfo.plist参照", "GemstoneDictionary/Resources/Info.plist" in pbx))
+        results.append(check("XcodeプロジェクトのUIテスト参照", "GemstoneDictionaryUITests" in pbx and "GemstoneDictionaryUITests.swift" in pbx and "com.apple.product-type.bundle.ui-testing" in pbx))
         results.append(check("Xcodeプロジェクト構文の括弧", balanced_pbx(pbx)))
     if scheme.exists():
         ET.parse(scheme)
@@ -326,6 +332,7 @@ def main() -> int:
         workflow_text = read(workflow)
         results.append(check("GitHub ActionsビルドCI", "xcodebuild" in workflow_text and "GemstoneDictionary.xcodeproj" in workflow_text))
         results.append(check("GitHub Actions静的検証", "scripts/verify_static.py" in workflow_text))
+        results.append(check("GitHub Actions UIテスト", "xcodebuild" in workflow_text and " test" in workflow_text and "simctl list devices available" in workflow_text))
     else:
         results.append(check("GitHub ActionsビルドCI", False))
 

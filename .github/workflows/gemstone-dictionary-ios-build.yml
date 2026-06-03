@@ -44,3 +44,20 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: UI tests
+        run: |
+          DEVICE_NAME=$(xcrun simctl list devices available | sed -n 's/.*\(iPhone [^(]*\) (.*/\1/p' | head -1 | xargs)
+          if [ -z "$DEVICE_NAME" ]; then
+            echo "No available iPhone simulator found"
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Using simulator: $DEVICE_NAME"
+          xcodebuild \
+            -project GemstoneDictionary.xcodeproj \
+            -scheme GemstoneDictionary \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,name=$DEVICE_NAME" \
+            CODE_SIGNING_ALLOWED=NO \
+            test

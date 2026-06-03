@@ -38,7 +38,7 @@ private struct DemoStoneSample: Identifiable {
 struct ContentView: View {
     @StateObject private var liveScanner = LiveCameraScannerViewModel()
     @State private var selectedStone = GemstoneDatabase.stones[0]
-    @State private var query = ""
+    @State private var query = ProcessInfo.processInfo.environment["UITEST_DICTIONARY_QUERY"] ?? ""
     @State private var activeGroup = "すべて"
     @State private var activeColor = "すべて"
     @State private var activeRank = "すべて"
@@ -138,6 +138,7 @@ struct ContentView: View {
                 Label("判定", systemImage: "camera.viewfinder")
             }
             .tag(0)
+            .accessibilityIdentifier("scanTab")
 
             NavigationStack {
                 dictionaryView
@@ -148,6 +149,7 @@ struct ContentView: View {
                 Label("辞典", systemImage: "text.book.closed")
             }
             .tag(1)
+            .accessibilityIdentifier("dictionaryTab")
 
             NavigationStack {
                 marketGuide
@@ -158,6 +160,7 @@ struct ContentView: View {
                 Label("相場", systemImage: "chart.line.uptrend.xyaxis")
             }
             .tag(2)
+            .accessibilityIdentifier("marketTab")
         }
         .tint(AppStyle.jade)
         .sheet(isPresented: $showingCamera) {
@@ -300,6 +303,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PrimaryButtonStyle())
+                .accessibilityIdentifier("liveScanButton")
 
                 Button {
                     stopLiveScanning()
@@ -309,12 +313,14 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(SecondaryButtonStyle())
+                .accessibilityIdentifier("cameraCaptureButton")
 
                 PhotosPicker(selection: $selectedPhoto, matching: .images) {
                     Label("写真", systemImage: "photo.on.rectangle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(SecondaryButtonStyle())
+                .accessibilityIdentifier("photoPickerButton")
             }
 
             demoSampleSection
@@ -367,6 +373,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(DemoSampleButtonStyle(color: Color(sample.primary)))
+                    .accessibilityIdentifier("demoSample-\(sample.id)")
                 }
             }
         }
@@ -828,6 +835,7 @@ struct ContentView: View {
             }
             .listStyle(.plain)
             .searchable(text: $query, prompt: "た、ターコイズ、翡翠、jade")
+            .accessibilityIdentifier("dictionarySearchList")
         }
         .background(AppStyle.background.ignoresSafeArea())
     }
@@ -1017,6 +1025,7 @@ struct ContentView: View {
         .padding(16)
         .background(AppStyle.panel, in: RoundedRectangle(cornerRadius: 8))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppStyle.line))
+        .accessibilityIdentifier("marketPriceList")
     }
 
     private var marketPriceRows: [Gemstone] {

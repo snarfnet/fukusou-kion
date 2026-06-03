@@ -1,0 +1,51 @@
+import XCTest
+
+final class GemstoneDictionaryUITests: XCTestCase {
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
+
+    func testDictionarySearchTaFindsTurquoise() throws {
+        let app = launchApp(dictionaryQuery: "た")
+        openTab(index: 1, in: app)
+
+        XCTAssertTrue(app.staticTexts["ターコイズ"].waitForExistence(timeout: 8))
+    }
+
+    func testDictionarySearchJadeFindsJadeite() throws {
+        let app = launchApp(dictionaryQuery: "jade")
+        openTab(index: 1, in: app)
+
+        XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
+    }
+
+    func testMarketListAndDemoSampleAreReachable() throws {
+        let app = launchApp()
+
+        openTab(index: 2, in: app)
+        XCTAssertTrue(app.descendants(matching: .any)["marketPriceList"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "101")).firstMatch.waitForExistence(timeout: 8))
+
+        openTab(index: 0, in: app)
+        let sampleButton = app.descendants(matching: .any)["demoSample-jadeite"]
+        XCTAssertTrue(sampleButton.waitForExistence(timeout: 8))
+        sampleButton.tap()
+        XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "市場価格")).firstMatch.waitForExistence(timeout: 8))
+    }
+
+    private func launchApp(dictionaryQuery: String? = nil) -> XCUIApplication {
+        let app = XCUIApplication()
+        if let dictionaryQuery {
+            app.launchEnvironment["UITEST_DICTIONARY_QUERY"] = dictionaryQuery
+        }
+        app.launch()
+        return app
+    }
+
+    private func openTab(index: Int, in app: XCUIApplication) {
+        let tab = app.tabBars.buttons.element(boundBy: index)
+        XCTAssertTrue(tab.waitForExistence(timeout: 8))
+        tab.tap()
+    }
+}

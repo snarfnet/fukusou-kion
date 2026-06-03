@@ -21,6 +21,20 @@
                ReferencedContainer = "container:GemstoneDictionary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B20000000000000000000010"
+               BuildableName = "GemstoneDictionaryUITests.xctest"
+               BlueprintName = "GemstoneDictionaryUITests"
+               ReferencedContainer = "container:GemstoneDictionary.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -29,6 +43,27 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B20000000000000000000010"
+               BuildableName = "GemstoneDictionaryUITests.xctest"
+               BlueprintName = "GemstoneDictionaryUITests"
+               ReferencedContainer = "container:GemstoneDictionary.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B10000000000000000000010"
+            BuildableName = "GemstoneDictionary.app"
+            BlueprintName = "GemstoneDictionary"
+            ReferencedContainer = "container:GemstoneDictionary.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

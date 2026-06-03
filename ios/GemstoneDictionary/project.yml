@@ -46,4 +46,17 @@ targets:
           - UIInterfaceOrientationPortrait
         UIUserInterfaceStyle: Light
     scheme:
-      testTargets: []
+      testTargets:
+        - GemstoneDictionaryUITests
+  GemstoneDictionaryUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - GemstoneDictionaryUITests
+    dependencies:
+      - target: GemstoneDictionary
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.gemstonedictionary.uitests
+        TEST_TARGET_NAME: GemstoneDictionary

@@ -57,6 +57,7 @@
 - App Store説明文、プライバシーポリシー、TestFlightメモ、スクリーンショット案あり
 - 静的検証スクリプトあり
 - GitHub ActionsのiOSビルドCIあり
+- GitHub ActionsのUIテストCIあり
 - iPhone実機で完成判定するための `REAL_DEVICE_QA.md` あり
 
 ## 検証済み
@@ -75,6 +76,7 @@
 - AppIcon、PrivacyInfo、JSON、plist
 - GitHub Actionsワークフロー
 - GitHub Actions `GemstoneDictionary iOS Build` の成功
+- UIテストターゲットとスキーム設定
 - 実機QAシート
 
 ## 未検証
