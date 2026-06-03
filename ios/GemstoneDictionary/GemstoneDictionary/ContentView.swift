@@ -38,7 +38,7 @@ private struct DemoStoneSample: Identifiable {
 struct ContentView: View {
     @StateObject private var liveScanner = LiveCameraScannerViewModel()
     @State private var selectedStone = GemstoneDatabase.stones[0]
-    @State private var query = ProcessInfo.processInfo.environment["UITEST_DICTIONARY_QUERY"] ?? ""
+    @State private var query = Self.initialDictionaryQuery()
     @State private var activeGroup = "すべて"
     @State private var activeColor = "すべて"
     @State private var activeRank = "すべて"
@@ -73,6 +73,14 @@ struct ContentView: View {
             matrix: UIColor(red: 0.22, green: 0.18, blue: 0.13, alpha: 1)
         )
     ]
+
+    private static func initialDictionaryQuery() -> String {
+        let environment = ProcessInfo.processInfo.environment
+        if environment["UITEST_DICTIONARY_QUERY_TA"] == "1" {
+            return "た"
+        }
+        return environment["UITEST_DICTIONARY_QUERY"] ?? ""
+    }
 
     var filteredStones: [Gemstone] {
         let text = normalized(query)

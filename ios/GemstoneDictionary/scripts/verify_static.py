@@ -242,7 +242,7 @@ def main() -> int:
     results.append(check("カメラ権限説明", "NSCameraUsageDescription" in project))
     results.append(check("写真権限説明", "NSPhotoLibraryUsageDescription" in project))
     results.append(check("UIテストターゲット設定", "GemstoneDictionaryUITests" in project and "bundle.ui-testing" in project))
-    results.append(check("UIテスト要件", ui_tests_path.exists() and "testDictionarySearchTaFindsTurquoise" in ui_tests and "testDictionarySearchJadeFindsJadeite" in ui_tests and "testMarketListAndDemoSampleAreReachable" in ui_tests and "UITEST_DICTIONARY_QUERY" in content))
+    results.append(check("UIテスト要件", ui_tests_path.exists() and "testDictionarySearchTaFindsTurquoise" in ui_tests and "testDictionarySearchJadeFindsJadeite" in ui_tests and "testMarketListAndDemoSampleAreReachable" in ui_tests and "UITEST_DICTIONARY_QUERY" in content and "UITEST_DICTIONARY_QUERY_TA" in content and "UITEST_DICTIONARY_QUERY_TA" in ui_tests))
     results.append(check("UIテスト文字化け置換文字なし", ui_tests_path.exists() and "\ufffd" not in ui_tests))
     results.append(check("Xcodeプロジェクト同梱", xcodeproj.exists()))
     results.append(check("共有スキーム同梱", scheme.exists()))

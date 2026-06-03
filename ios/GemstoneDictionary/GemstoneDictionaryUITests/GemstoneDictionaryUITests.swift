@@ -6,7 +6,7 @@ final class GemstoneDictionaryUITests: XCTestCase {
     }
 
     func testDictionarySearchTaFindsTurquoise() throws {
-        let app = launchApp(dictionaryQuery: "た")
+        let app = launchApp(useTaQuery: true)
         openTab(index: 1, in: app)
 
         XCTAssertTrue(app.staticTexts["ターコイズ"].waitForExistence(timeout: 8))
@@ -34,8 +34,11 @@ final class GemstoneDictionaryUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "市場価格")).firstMatch.waitForExistence(timeout: 8))
     }
 
-    private func launchApp(dictionaryQuery: String? = nil) -> XCUIApplication {
+    private func launchApp(dictionaryQuery: String? = nil, useTaQuery: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
+        if useTaQuery {
+            app.launchEnvironment["UITEST_DICTIONARY_QUERY_TA"] = "1"
+        }
         if let dictionaryQuery {
             app.launchEnvironment["UITEST_DICTIONARY_QUERY"] = dictionaryQuery
         }
