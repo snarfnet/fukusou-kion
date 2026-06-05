@@ -70,4 +70,5 @@ jobs:
       - name: Submit for App Review
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
-        run: python3 scripts/submit_production.py
+          PYTHONUNBUFFERED: "1"
+        run: python3 -u scripts/submit_production.py
