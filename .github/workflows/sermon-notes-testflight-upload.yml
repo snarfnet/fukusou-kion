@@ -15,16 +15,6 @@ on:
         description: "Optional App Store Connect app ID. Leave blank to resolve or create by bundle ID."
         required: false
         default: ""
-  push:
-    branches:
-      - codex/sermon-notes-github-build
-    paths:
-      - ".github/workflows/sermon-notes-testflight-upload.yml"
-      - "ios/SermonNotes/project.yml"
-      - "ios/SermonNotes/exportOptions.plist"
-      - "ios/SermonNotes/SermonNotes/**"
-      - "ios/SermonNotes/scripts/**"
-
 concurrency:
   group: sermon-notes-testflight-upload
   cancel-in-progress: true

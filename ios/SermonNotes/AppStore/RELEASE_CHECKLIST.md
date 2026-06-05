@@ -21,6 +21,12 @@ GitHub Actionsで `SermonNotes TestFlight Upload` を手動実行します。
 - build_number: 空欄でOK
 - app_id: App Store ConnectのApp IDが分かる場合だけ入力
 
+App Store Connect APIキーでアプリ作成が許可されない場合があります。その場合は、App Store Connectで次のアプリを手動作成してから再実行します。
+
+- 名前: 教会ノート
+- Bundle ID: `com.tokyonasu.sermonnotes`
+- SKU: `sermon-notes-ios`
+
 ## App Store Connect設定
 
 - 名前: 教会ノート
