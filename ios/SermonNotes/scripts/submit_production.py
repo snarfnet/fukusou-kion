@@ -302,7 +302,7 @@ def ensure_review_detail(version_id):
 
 
 def wait_for_build():
-    for index in range(90):
+    for index in range(10):
         response, body = response_json(
             "GET",
             f"/builds?filter[app]={APP_ID}&filter[version]={BUILD_NUMBER}&filter[processingState]=VALID&limit=1",
@@ -311,7 +311,7 @@ def wait_for_build():
             build_id = body["data"][0]["id"]
             print(f"Build ready: {build_id}")
             return build_id
-        print(f"Waiting for build {BUILD_NUMBER}... {index + 1}/90")
+        print(f"Waiting for build {BUILD_NUMBER}... {index + 1}/10")
         time.sleep(30)
     raise RuntimeError(f"Build {BUILD_NUMBER} did not finish processing.")
 
@@ -413,7 +413,7 @@ def submit_for_review(version_id):
             raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
         submission_id = body["data"]["id"]
 
-    for attempt in range(1, 21):
+    for attempt in range(1, 6):
         response, _ = response_json("POST", "/reviewSubmissionItems", json={
             "data": {
                 "type": "reviewSubmissionItems",
@@ -423,7 +423,9 @@ def submit_for_review(version_id):
                 },
             }
         })
-        print(f"Review item {attempt}/20: {response.status_code}")
+        print(f"Review item {attempt}/5: {response.status_code}")
+        if response.status_code != 201:
+            print(response.text[:2000])
         if response.status_code == 201:
             break
         if response.status_code == 409 and "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
@@ -463,7 +465,7 @@ def main():
     build_id = wait_for_build()
     upload_screenshots(version_id)
     print("Waiting for screenshot processing...")
-    time.sleep(300)
+    time.sleep(90)
     assign_build(version_id, build_id)
     submit_for_review(version_id)
 
