@@ -15,6 +15,11 @@
 		B10000000000000000000106 /* LiveCameraScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000206 /* LiveCameraScanner.swift */; };
 		B10000000000000000000107 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000207 /* Assets.xcassets */; };
 		B10000000000000000000108 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000208 /* PrivacyInfo.xcprivacy */; };
+		B10000000000000000000109 /* GemstoneExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000210 /* GemstoneExtensions.swift */; };
+		B10000000000000000000110 /* BirthstoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000211 /* BirthstoneView.swift */; };
+		B10000000000000000000111 /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000212 /* CollectionView.swift */; };
+		B10000000000000000000112 /* CompatibilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000213 /* CompatibilityView.swift */; };
+		B10000000000000000000113 /* PowerStoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000214 /* PowerStoneView.swift */; };
 		B20000000000000000000101 /* GemstoneDictionaryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000201 /* GemstoneDictionaryUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +43,11 @@
 		B10000000000000000000207 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B10000000000000000000208 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B10000000000000000000209 /* GemstoneDictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GemstoneDictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000210 /* GemstoneExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GemstoneExtensions.swift; sourceTree = "<group>"; };
+		B10000000000000000000211 /* BirthstoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthstoneView.swift; sourceTree = "<group>"; };
+		B10000000000000000000212 /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
+		B10000000000000000000213 /* CompatibilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatibilityView.swift; sourceTree = "<group>"; };
+		B10000000000000000000214 /* PowerStoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerStoneView.swift; sourceTree = "<group>"; };
 		B20000000000000000000201 /* GemstoneDictionaryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GemstoneDictionaryUITests.swift; sourceTree = "<group>"; };
 		B20000000000000000000209 /* GemstoneDictionaryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GemstoneDictionaryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -78,10 +88,23 @@
 				B10000000000000000000204 /* ImageClassifier.swift */,
 				B10000000000000000000205 /* ImagePicker.swift */,
 				B10000000000000000000206 /* LiveCameraScanner.swift */,
+				B10000000000000000000210 /* GemstoneExtensions.swift */,
+				B10000000000000000000004 /* Views */,
 				B10000000000000000000208 /* PrivacyInfo.xcprivacy */,
 				B10000000000000000000207 /* Assets.xcassets */,
 			);
 			path = GemstoneDictionary;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000211 /* BirthstoneView.swift */,
+				B10000000000000000000212 /* CollectionView.swift */,
+				B10000000000000000000213 /* CompatibilityView.swift */,
+				B10000000000000000000214 /* PowerStoneView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B10000000000000000000003 /* Products */ = {
@@ -208,6 +231,11 @@
 				B10000000000000000000104 /* ImageClassifier.swift in Sources */,
 				B10000000000000000000105 /* ImagePicker.swift in Sources */,
 				B10000000000000000000106 /* LiveCameraScanner.swift in Sources */,
+				B10000000000000000000109 /* GemstoneExtensions.swift in Sources */,
+				B10000000000000000000110 /* BirthstoneView.swift in Sources */,
+				B10000000000000000000111 /* CollectionView.swift in Sources */,
+				B10000000000000000000112 /* CompatibilityView.swift in Sources */,
+				B10000000000000000000113 /* PowerStoneView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

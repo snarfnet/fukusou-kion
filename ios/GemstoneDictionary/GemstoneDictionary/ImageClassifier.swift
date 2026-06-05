@@ -20,6 +20,25 @@ enum SizeReference: String, CaseIterable, Identifiable {
 }
 
 enum ImageClassifier {
+    private struct PixelSample {
+        let x: Int
+        let y: Int
+        let red: Double
+        let green: Double
+        let blue: Double
+        let hue: Double
+        let saturation: Double
+        let brightness: Double
+    }
+
+    private struct BackgroundProfile {
+        let red: Double
+        let green: Double
+        let blue: Double
+        let saturation: Double
+        let brightness: Double
+    }
+
     static func classify(_ image: UIImage, reference: SizeReference) -> (metrics: ScanMetrics, candidates: [StoneCandidate]) {
         let metrics = analyze(image, reference: reference)
         let candidates = GemstoneDatabase.stones
@@ -68,16 +87,8 @@ enum ImageClassifier {
             return ScanMetrics(hue: 0, saturation: 0, brightness: 0, clarityScore: 0, levelScore: 0, coverageScore: 0, estimatedMillimeters: nil)
         }
 
-        var hueX = 0.0
-        var hueY = 0.0
-        var saturationTotal = 0.0
-        var brightnessTotal = 0.0
-        var count = 0.0
-        var coloredCount = 0.0
-        var minX = width
-        var minY = height
-        var maxX = 0
-        var maxY = 0
+        var samples: [PixelSample] = []
+        samples.reserveCapacity((width / 2) * (height / 2))
 
         for y in stride(from: 0, to: height, by: 2) {
             for x in stride(from: 0, to: width, by: 2) {
@@ -86,29 +97,84 @@ enum ImageClassifier {
                 let green = CGFloat(pixels[offset + 1]) / 255
                 let blue = CGFloat(pixels[offset + 2]) / 255
                 let hsb = hsbFromRGB(red: red, green: green, blue: blue)
-                let radians = hsb.hue * .pi / 180
-                hueX += cos(radians) * max(hsb.saturation, 1)
-                hueY += sin(radians) * max(hsb.saturation, 1)
-                saturationTotal += hsb.saturation
-                brightnessTotal += hsb.brightness
-                count += 1
-
-                if hsb.saturation > 18, hsb.brightness > 15, hsb.brightness < 92 {
-                    coloredCount += 1
-                    minX = min(minX, x)
-                    minY = min(minY, y)
-                    maxX = max(maxX, x)
-                    maxY = max(maxY, y)
-                }
+                samples.append(
+                    PixelSample(
+                        x: x,
+                        y: y,
+                        red: Double(red),
+                        green: Double(green),
+                        blue: Double(blue),
+                        hue: hsb.hue,
+                        saturation: hsb.saturation,
+                        brightness: hsb.brightness
+                    )
+                )
             }
+        }
+
+        let background = backgroundProfile(from: samples, width: width, height: height)
+        var foreground: [PixelSample] = []
+        foreground.reserveCapacity(samples.count / 3)
+        var minX = width
+        var minY = height
+        var maxX = 0
+        var maxY = 0
+
+        for sample in samples where isForeground(sample, background: background, width: width, height: height) {
+            foreground.append(sample)
+            minX = min(minX, sample.x)
+            minY = min(minY, sample.y)
+            maxX = max(maxX, sample.x)
+            maxY = max(maxY, sample.y)
+        }
+
+        if foreground.count < 70 {
+            foreground.removeAll(keepingCapacity: true)
+            minX = width
+            minY = height
+            maxX = 0
+            maxY = 0
+            for sample in samples where isFallbackForeground(sample, width: width, height: height) {
+                foreground.append(sample)
+                minX = min(minX, sample.x)
+                minY = min(minY, sample.y)
+                maxX = max(maxX, sample.x)
+                maxY = max(maxY, sample.y)
+            }
+        }
+
+        let measuredSamples = foreground.isEmpty ? samples : foreground
+        var hueX = 0.0
+        var hueY = 0.0
+        var hueWeightTotal = 0.0
+        var saturationTotal = 0.0
+        var brightnessTotal = 0.0
+        var sampleWeightTotal = 0.0
+
+        for sample in measuredSamples {
+            let contrast = colorDistance(sample, background: background)
+            let center = centerWeight(x: sample.x, y: sample.y, width: width, height: height)
+            let sampleWeight = max(0.2, center + contrast)
+            let hueWeight = max(0, sample.saturation - 8) * sampleWeight
+            let radians = sample.hue * .pi / 180
+            hueX += cos(radians) * hueWeight
+            hueY += sin(radians) * hueWeight
+            hueWeightTotal += hueWeight
+            saturationTotal += sample.saturation * sampleWeight
+            brightnessTotal += sample.brightness * sampleWeight
+            sampleWeightTotal += sampleWeight
         }
 
         var hue = atan2(hueY, hueX) * 180 / .pi
         if hue < 0 { hue += 360 }
-        let saturation = saturationTotal / max(count, 1)
-        let brightness = brightnessTotal / max(count, 1)
-        let coverage = coloredCount / max(count, 1)
-        let bounding = coloredCount > 0 ? max(Double(maxX - minX) / Double(width), Double(maxY - minY) / Double(height)) : 0
+        if hueWeightTotal == 0 {
+            hue = 0
+        }
+
+        let saturation = saturationTotal / max(sampleWeightTotal, 1)
+        let brightness = brightnessTotal / max(sampleWeightTotal, 1)
+        let coverage = Double(foreground.count) / max(Double(samples.count), 1)
+        let bounding = foreground.isEmpty ? 0 : max(Double(maxX - minX) / Double(width), Double(maxY - minY) / Double(height))
         let clarity = Int(min(100, max(8, brightness * 0.72 + saturation * 0.32)))
         let level = Int(min(100, max(10, Double(clarity) * 0.55 + saturation * 0.45 + coverage * 8)))
         let coverageScore = Int(min(100, max(0, bounding * 100)))
@@ -145,6 +211,53 @@ enum ImageClassifier {
 
         let saturation = maxValue == 0 ? 0 : delta / maxValue
         return (Double(hue), Double(saturation * 100), Double(maxValue * 100))
+    }
+
+    private static func backgroundProfile(from samples: [PixelSample], width: Int, height: Int) -> BackgroundProfile {
+        let border = samples.filter { sample in
+            sample.x < 18 || sample.y < 18 || sample.x > width - 20 || sample.y > height - 20
+        }
+        let source = border.isEmpty ? samples : border
+        let count = Double(max(source.count, 1))
+        return BackgroundProfile(
+            red: source.reduce(0) { $0 + $1.red } / count,
+            green: source.reduce(0) { $0 + $1.green } / count,
+            blue: source.reduce(0) { $0 + $1.blue } / count,
+            saturation: source.reduce(0) { $0 + $1.saturation } / count,
+            brightness: source.reduce(0) { $0 + $1.brightness } / count
+        )
+    }
+
+    private static func isForeground(_ sample: PixelSample, background: BackgroundProfile, width: Int, height: Int) -> Bool {
+        let x = Double(sample.x) / Double(width)
+        let y = Double(sample.y) / Double(height)
+        let inGuide = abs(x - 0.5) < 0.43 && abs(y - 0.5) < 0.43
+        guard inGuide, sample.brightness > 5, sample.brightness < 98 else { return false }
+
+        let colorContrast = colorDistance(sample, background: background)
+        let brightnessContrast = abs(sample.brightness - background.brightness)
+        let saturationLift = sample.saturation - background.saturation
+        return colorContrast > 0.16 || brightnessContrast > 16 || saturationLift > 7 || sample.saturation > 34
+    }
+
+    private static func isFallbackForeground(_ sample: PixelSample, width: Int, height: Int) -> Bool {
+        let x = Double(sample.x) / Double(width)
+        let y = Double(sample.y) / Double(height)
+        let centerDistance = abs(x - 0.5) + abs(y - 0.5)
+        return centerDistance < 0.54 && sample.brightness > 7 && sample.brightness < 97 && sample.saturation > 10
+    }
+
+    private static func centerWeight(x: Int, y: Int, width: Int, height: Int) -> Double {
+        let dx = abs(Double(x) / Double(width) - 0.5)
+        let dy = abs(Double(y) / Double(height) - 0.5)
+        return max(0.15, 1.0 - (dx + dy) * 1.35)
+    }
+
+    private static func colorDistance(_ sample: PixelSample, background: BackgroundProfile) -> Double {
+        let red = sample.red - background.red
+        let green = sample.green - background.green
+        let blue = sample.blue - background.blue
+        return sqrt(red * red + green * green + blue * blue)
     }
 
     private static func score(_ stone: Gemstone, metrics: ScanMetrics) -> Int {

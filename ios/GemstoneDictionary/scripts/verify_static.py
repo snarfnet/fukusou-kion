@@ -225,6 +225,7 @@ def main() -> int:
     results.append(check("撮影品質アドバイス", "captureQualityWarnings" in models and "captureQualityAdvice" in content and "撮影アドバイス" in content and "brightness < 24" in models and "coverageScore < 24" in models))
     results.append(check("フレーミングガイド", "framingGuideOverlay" in content and "基準物" in content and "reference.millimeters" in content and "allowsHitTesting(false)" in content))
     results.append(check("判定根拠表示", "classificationInsight" in content and "classificationEvidence" in content and "判定の根拠" in content and "鑑別書" in content))
+    results.append(check("写真判定の前処理更新", "BackgroundProfile" in classifier and "isForeground" in classifier and "isFallbackForeground" in classifier and "colorDistance" in classifier and "foreground.count < 70" in classifier))
     results.append(check("似ている石比較", "similarStoneSection" in content and "similarStones" in content and "similarityNote" in content and "hueCenter" in models and "saturationCenter" in models))
     results.append(check("迷いやすい石比較", "confusingStoneSection" in content and "confusingStones" in content and "confusingStoneIDs" in content and "confusingCue" in content and "迷いやすい石" in content and "jadeite" in content and "nephrite" in content and "turquoise" in content and "amazonite" in content))
     results.append(check("購入前チェック", "purchaseChecklistSection" in content and "purchaseChecklistItems" in content and "返品条件" in content and "stone.treatments.prefix" in content))
@@ -267,6 +268,7 @@ def main() -> int:
         results.append(check("Xcodeプロジェクトのリソース参照", "Assets.xcassets" in pbx and "PrivacyInfo.xcprivacy" in pbx))
         results.append(check("XcodeプロジェクトのInfo.plist参照", "GemstoneDictionary/Resources/Info.plist" in pbx))
         results.append(check("XcodeプロジェクトのUIテスト参照", "GemstoneDictionaryUITests" in pbx and "GemstoneDictionaryUITests.swift" in pbx and "com.apple.product-type.bundle.ui-testing" in pbx))
+        results.append(check("Xcodeプロジェクトの追加View参照", "GemstoneExtensions.swift in Sources" in pbx and "BirthstoneView.swift in Sources" in pbx and "CollectionView.swift in Sources" in pbx and "CompatibilityView.swift in Sources" in pbx and "PowerStoneView.swift in Sources" in pbx))
         results.append(check("Xcodeプロジェクト構文の括弧", balanced_pbx(pbx)))
     if scheme.exists():
         ET.parse(scheme)
@@ -349,7 +351,7 @@ def main() -> int:
     else:
         results.append(check("GitHub ActionsビルドCI", False))
 
-    for swift_file in APP.glob("*.swift"):
+    for swift_file in APP.rglob("*.swift"):
         text = read(swift_file)
         odd_quote_lines = []
         for line_no, line in enumerate(text.splitlines(), 1):

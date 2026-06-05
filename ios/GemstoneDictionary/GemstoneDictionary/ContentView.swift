@@ -173,6 +173,38 @@ struct ContentView: View {
             }
             .tag(2)
             .accessibilityIdentifier("marketTab")
+
+            NavigationStack {
+                BirthstoneView()
+            }
+            .tabItem {
+                Label("誕生石", systemImage: "moon.stars.fill")
+            }
+            .tag(3)
+
+            NavigationStack {
+                CompatibilityView()
+            }
+            .tabItem {
+                Label("相性", systemImage: "arrow.triangle.2.circlepath")
+            }
+            .tag(4)
+
+            NavigationStack {
+                CollectionView()
+            }
+            .tabItem {
+                Label("コレクション", systemImage: "tray.full.fill")
+            }
+            .tag(5)
+
+            NavigationStack {
+                PowerStoneView()
+            }
+            .tabItem {
+                Label("効果", systemImage: "sparkles")
+            }
+            .tag(6)
         }
         .tint(AppStyle.jade)
         .sheet(isPresented: $showingCamera) {
