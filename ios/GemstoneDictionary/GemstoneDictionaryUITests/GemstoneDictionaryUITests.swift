@@ -34,7 +34,7 @@ final class GemstoneDictionaryUITests: XCTestCase {
         let sampleButton = app.descendants(matching: .any)["demoSample-jadeite"]
         XCTAssertTrue(sampleButton.waitForExistence(timeout: 8))
         sampleButton.tap()
-        XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
+        XCTAssertTrue(findStaticText("翡翠", in: app))
         XCTAssertTrue(findStaticTextContaining("市場価格", in: app))
         XCTAssertTrue(findStaticTextContaining("サイズ信頼度", in: app))
         XCTAssertTrue(findStaticTextContaining("見かけサイズ", in: app))
