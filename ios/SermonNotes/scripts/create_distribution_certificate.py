@@ -37,7 +37,7 @@ def generate_csr():
 
 def create_certificate():
     csr_content = CSR_PATH.read_text(encoding="utf-8")
-    for attempt in range(2):
+    for attempt in range(8):
         last_error = None
         for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
             payload = {
@@ -56,7 +56,7 @@ def create_certificate():
             except Exception as error:
                 last_error = error
                 print(f"Certificate create failed for {certificate_type}: {error}")
-        if attempt == 0:
+        if attempt < 7:
             prune_distribution_certificate()
             continue
         raise RuntimeError(last_error)
