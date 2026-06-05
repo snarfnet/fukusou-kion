@@ -15,6 +15,11 @@ on:
         description: "Japan customer price in JPY"
         required: true
         default: "100"
+  push:
+    branches:
+      - codex/sermon-notes-github-build
+    paths:
+      - ".github/workflows/sermon-notes-submit-production.yml"
 
 concurrency:
   group: sermon-notes-submit-production
@@ -22,6 +27,7 @@ concurrency:
 
 jobs:
   submit-production:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-26
     defaults:
       run:
