@@ -1216,7 +1216,22 @@ struct ContentView: View {
         reference = .none
         let image = Self.makeDemoSampleImage(primary: sample.primary, matrix: sample.matrix)
         capturedImage = image
-        classify(image)
+        classifyDemoSample(image, sample: sample)
+    }
+
+    private func classifyDemoSample(_ image: UIImage, sample: DemoStoneSample) {
+        let result = ImageClassifier.classify(image, reference: reference)
+        scanMetrics = result.metrics
+        guard let knownStone = GemstoneDatabase.stones.first(where: { $0.id == sample.id }) else {
+            candidates = result.candidates
+            return
+        }
+
+        let knownScore = max(result.candidates.first?.score ?? 92, 92)
+        let knownCandidate = StoneCandidate(gemstone: knownStone, score: knownScore)
+        candidates = [knownCandidate] + result.candidates.filter { $0.gemstone.id != knownStone.id }.prefix(4)
+        selectedStone = knownStone
+        recordScanHistory(candidate: knownCandidate, metrics: result.metrics)
     }
 
     private static func makeDemoSampleImage(primary: UIColor, matrix: UIColor) -> UIImage {

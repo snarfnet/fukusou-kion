@@ -213,6 +213,7 @@ def main() -> int:
     results.append(check("候補カード詳細表示", "MiniInfoLabel" in content and "shortTransparency" in content and "candidate.gemstone.marketPrice" in content))
     results.append(check("判定確度表示", "candidateConfidenceSection" in content and "confidenceTitle" in content and "confidenceMessage" in content and "判定確度" in content and "高め" in content and "中くらい" in content and "低め" in content))
     results.append(check("サンプル判定", "DemoStoneSample" in content and "demoSampleSection" in content and "runDemoSample" in content and "makeDemoSampleImage" in content and "翡翠サンプル" in content and "ターコイズサンプル" in content))
+    results.append(check("サンプル判定の既知候補", "classifyDemoSample" in content and "knownCandidate" in content and "sample.id" in content))
     results.append(check("候補の手動履歴保存", "saveCandidateToHistory" in content and "履歴保存" in content and "clock.badge.checkmark" in content and "recordScanHistory(candidate: candidate" in content))
     results.append(check("判定履歴", "ScanHistoryEntry" in content and "scanHistorySection" in content and "recordScanHistory" in content and "最近の判定" in content and "clock.arrow.circlepath" in content))
     results.append(check("判定履歴の基準物保存", "referenceLabel" in content and "reference.rawValue" in content and "基準物: \\(entry.referenceLabel)" in content))
