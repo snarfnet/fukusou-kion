@@ -1,0 +1,48 @@
+name: SermonNotes iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/sermon-notes
+      - codex/sermon-notes-github-build
+    paths:
+      - ".github/workflows/sermon-notes-ios-build.yml"
+      - "ios/SermonNotes/project.yml"
+      - "ios/SermonNotes/SermonNotes/**"
+      - "ios/SermonNotes/scripts/**"
+
+concurrency:
+  group: sermon-notes-ios-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/SermonNotes
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project SermonNotes.xcodeproj \
+            -scheme SermonNotes \
+            -configuration Debug \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO
