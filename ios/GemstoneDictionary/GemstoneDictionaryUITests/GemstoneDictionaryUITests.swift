@@ -35,9 +35,9 @@ final class GemstoneDictionaryUITests: XCTestCase {
         XCTAssertTrue(sampleButton.waitForExistence(timeout: 8))
         sampleButton.tap()
         XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "市場価格")).firstMatch.waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "サイズ信頼度")).firstMatch.waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "見かけサイズ")).firstMatch.waitForExistence(timeout: 8))
+        XCTAssertTrue(findStaticTextContaining("市場価格", in: app))
+        XCTAssertTrue(findStaticTextContaining("サイズ信頼度", in: app))
+        XCTAssertTrue(findStaticTextContaining("見かけサイズ", in: app))
     }
 
     private func launchApp(initialTab: Int = 0, dictionaryQuery: String? = nil, useTaQuery: Bool = false) -> XCUIApplication {
@@ -59,6 +59,21 @@ final class GemstoneDictionaryUITests: XCTestCase {
             return true
         }
         for _ in 0..<8 {
+            app.swipeUp()
+            if text.waitForExistence(timeout: 2) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func findStaticTextContaining(_ label: String, in app: XCUIApplication) -> Bool {
+        let predicate = NSPredicate(format: "label CONTAINS %@", label)
+        let text = app.staticTexts.containing(predicate).firstMatch
+        if text.waitForExistence(timeout: 4) {
+            return true
+        }
+        for _ in 0..<10 {
             app.swipeUp()
             if text.waitForExistence(timeout: 2) {
                 return true
