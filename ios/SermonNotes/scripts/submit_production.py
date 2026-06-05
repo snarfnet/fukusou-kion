@@ -233,7 +233,46 @@ def ensure_release_prerequisites(version_id):
     })
     print(f"Version attributes: {response.status_code}")
     ensure_price()
+    ensure_no_data_collected()
     ensure_review_detail(version_id)
+
+
+def ensure_no_data_collected():
+    response, body = response_json("GET", f"/apps/{APP_ID}/dataUsages?include=category,grouping,purpose,dataProtection&limit=500")
+    if response.status_code == 200:
+        for usage in body.get("data", []):
+            delete_response, _ = response_json("DELETE", f"/appDataUsages/{usage['id']}")
+            print(f"Delete app data usage {usage['id']}: {delete_response.status_code}")
+
+    payload = {
+        "data": {
+            "type": "appDataUsages",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "dataProtection": {
+                    "data": {
+                        "type": "appDataUsageDataProtections",
+                        "id": "DATA_NOT_COLLECTED",
+                    }
+                },
+            },
+        }
+    }
+    response, _ = response_json("POST", "/appDataUsages", json=payload)
+    print(f"No data collected usage: {response.status_code}")
+
+    response, body = response_json("GET", f"/apps/{APP_ID}/dataUsagePublishState")
+    if response.status_code == 200 and body.get("data"):
+        state_id = body["data"]["id"]
+        payload = {
+            "data": {
+                "type": "appDataUsagesPublishState",
+                "id": state_id,
+                "attributes": {"published": True},
+            }
+        }
+        response, _ = response_json("PATCH", f"/appDataUsagesPublishState/{state_id}", json=payload)
+        print(f"App data usage publish: {response.status_code}")
 
 
 def ensure_price():
@@ -406,13 +445,17 @@ def submit_for_review(version_id):
             "data": {
                 "type": "reviewSubmissions",
                 "attributes": {"platform": "IOS"},
-                "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": APP_ID}},
+                    "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
+                },
             }
         })
         if response.status_code not in (200, 201):
             raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
         submission_id = body["data"]["id"]
 
+    item_added = False
     for attempt in range(1, 6):
         response, _ = response_json("POST", "/reviewSubmissionItems", json={
             "data": {
@@ -427,6 +470,7 @@ def submit_for_review(version_id):
         if response.status_code != 201:
             print(response.text[:2000])
         if response.status_code == 201:
+            item_added = True
             break
         if response.status_code == 409 and "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
             time.sleep(60)
@@ -435,10 +479,13 @@ def submit_for_review(version_id):
             match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", response.text)
             if match:
                 submission_id = match.group(1)
+                item_added = True
                 break
         if response.status_code not in (200, 201, 409):
             raise RuntimeError(f"Review item failed {response.status_code}: {response.text[:1000]}")
         time.sleep(30)
+    if not item_added:
+        raise RuntimeError("Review submission item was not added.")
 
     for attempt in range(1, 6):
         response, body = response_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
