@@ -37,25 +37,45 @@ def generate_csr():
 
 def create_certificate():
     csr_content = CSR_PATH.read_text(encoding="utf-8")
-    last_error = None
-    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
-        payload = {
-            "data": {
-                "type": "certificates",
-                "attributes": {
-                    "certificateType": certificate_type,
-                    "csrContent": csr_content,
-                },
+    for attempt in range(2):
+        last_error = None
+        for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
+            payload = {
+                "data": {
+                    "type": "certificates",
+                    "attributes": {
+                        "certificateType": certificate_type,
+                        "csrContent": csr_content,
+                    },
+                }
             }
-        }
+            try:
+                certificate = api_json("POST", "/certificates", data=json_body(payload))["data"]
+                print(f"Created certificate: {certificate['id']} ({certificate_type})")
+                return certificate
+            except Exception as error:
+                last_error = error
+                print(f"Certificate create failed for {certificate_type}: {error}")
+        if attempt == 0:
+            prune_distribution_certificate()
+            continue
+        raise RuntimeError(last_error)
+
+
+def prune_distribution_certificate():
+    certificates = []
+    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
         try:
-            certificate = api_json("POST", "/certificates", data=json_body(payload))["data"]
-            print(f"Created certificate: {certificate['id']} ({certificate_type})")
-            return certificate
+            body = api_json("GET", f"/certificates?filter[certificateType]={certificate_type}&limit=20")
+            certificates.extend(body.get("data", []))
         except Exception as error:
-            last_error = error
-            print(f"Certificate create failed for {certificate_type}: {error}")
-    raise RuntimeError(last_error)
+            print(f"Certificate list failed for {certificate_type}: {error}")
+    if not certificates:
+        raise RuntimeError("Certificate limit reached, but no distribution certificate was found to prune.")
+    certificates.sort(key=lambda item: item.get("attributes", {}).get("expirationDate", ""))
+    certificate = certificates[0]
+    api_json("DELETE", f"/certificates/{certificate['id']}")
+    print(f"Deleted existing distribution certificate to free a slot: {certificate['id']}")
 
 
 def import_certificate(certificate):
