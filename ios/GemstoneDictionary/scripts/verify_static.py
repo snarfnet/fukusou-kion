@@ -251,6 +251,7 @@ def main() -> int:
     results.append(check("写真権限説明", "NSPhotoLibraryUsageDescription" in project))
     results.append(check("UIテストターゲット設定", "GemstoneDictionaryUITests" in project and "bundle.ui-testing" in project))
     results.append(check("UIテスト要件", ui_tests_path.exists() and "testDictionarySearchTaFindsTurquoise" in ui_tests and "testDictionarySearchJadeFindsJadeite" in ui_tests and "testMarketListAndDemoSampleAreReachable" in ui_tests and "UITEST_DICTIONARY_QUERY" in content and "UITEST_DICTIONARY_QUERY_TA" in content and "UITEST_DICTIONARY_QUERY_TA" in ui_tests))
+    results.append(check("UIテスト初期タブ指定", "initialSelectedTab" in content and "UITEST_INITIAL_TAB" in content and "UITEST_INITIAL_TAB" in ui_tests and "openTab(index" not in ui_tests))
     results.append(check("UIテストサイズ信頼度", ui_tests_path.exists() and "サイズ信頼度" in ui_tests and "見かけサイズ" in ui_tests and "demoSample-jadeite" in ui_tests))
     results.append(check("UIテスト文字化け置換文字なし", ui_tests_path.exists() and "\ufffd" not in ui_tests))
     results.append(check("Xcodeプロジェクト同梱", xcodeproj.exists()))

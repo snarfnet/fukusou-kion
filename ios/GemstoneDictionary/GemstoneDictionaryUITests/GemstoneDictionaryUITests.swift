@@ -6,34 +6,31 @@ final class GemstoneDictionaryUITests: XCTestCase {
     }
 
     func testDictionarySearchTaFindsTurquoise() throws {
-        let app = launchApp(useTaQuery: true)
-        openTab(index: 1, in: app)
+        let app = launchApp(initialTab: 1, useTaQuery: true)
 
         XCTAssertTrue(findStaticText("ターコイズ", in: app))
     }
 
     func testDictionarySearchJadeFindsJadeite() throws {
-        let app = launchApp(dictionaryQuery: "jade")
-        openTab(index: 1, in: app)
+        let app = launchApp(initialTab: 1, dictionaryQuery: "jade")
 
         XCTAssertTrue(app.staticTexts["翡翠"].waitForExistence(timeout: 8))
     }
 
     func testSupplementalCatalogSearchFindsDanburite() throws {
-        let app = launchApp(dictionaryQuery: "danburite")
-        openTab(index: 1, in: app)
+        let app = launchApp(initialTab: 1, dictionaryQuery: "danburite")
 
         XCTAssertTrue(app.staticTexts["ダンビュライト"].waitForExistence(timeout: 8))
     }
 
     func testMarketListAndDemoSampleAreReachable() throws {
-        let app = launchApp()
-
-        openTab(index: 2, in: app)
+        let app = launchApp(initialTab: 2)
         XCTAssertTrue(app.descendants(matching: .any)["marketPriceList"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "155")).firstMatch.waitForExistence(timeout: 8))
 
-        openTab(index: 0, in: app)
+        app.terminate()
+        app.launchEnvironment["UITEST_INITIAL_TAB"] = "0"
+        app.launch()
         let sampleButton = app.descendants(matching: .any)["demoSample-jadeite"]
         XCTAssertTrue(sampleButton.waitForExistence(timeout: 8))
         sampleButton.tap()
@@ -43,8 +40,9 @@ final class GemstoneDictionaryUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "見かけサイズ")).firstMatch.waitForExistence(timeout: 8))
     }
 
-    private func launchApp(dictionaryQuery: String? = nil, useTaQuery: Bool = false) -> XCUIApplication {
+    private func launchApp(initialTab: Int = 0, dictionaryQuery: String? = nil, useTaQuery: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
+        app.launchEnvironment["UITEST_INITIAL_TAB"] = "\(initialTab)"
         if useTaQuery {
             app.launchEnvironment["UITEST_DICTIONARY_QUERY_TA"] = "1"
         }
@@ -53,12 +51,6 @@ final class GemstoneDictionaryUITests: XCTestCase {
         }
         app.launch()
         return app
-    }
-
-    private func openTab(index: Int, in app: XCUIApplication) {
-        let tab = app.tabBars.buttons.element(boundBy: index)
-        XCTAssertTrue(tab.waitForExistence(timeout: 8))
-        tab.tap()
     }
 
     private func findStaticText(_ label: String, in app: XCUIApplication) -> Bool {

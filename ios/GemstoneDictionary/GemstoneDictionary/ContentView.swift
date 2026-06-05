@@ -53,7 +53,7 @@ struct ContentView: View {
     @State private var candidates: [StoneCandidate] = []
     @State private var showingCamera = false
     @State private var liveMode = false
-    @State private var selectedTab = 0
+    @State private var selectedTab = Self.initialSelectedTab()
     @State private var liveStableCandidateID: String?
     @State private var liveStableCount = 0
     @State private var scanHistory: [ScanHistoryEntry] = []
@@ -84,6 +84,14 @@ struct ContentView: View {
             return "た"
         }
         return environment["UITEST_DICTIONARY_QUERY"] ?? ""
+    }
+
+    private static func initialSelectedTab() -> Int {
+        guard let value = ProcessInfo.processInfo.environment["UITEST_INITIAL_TAB"],
+              let tab = Int(value) else {
+            return 0
+        }
+        return tab
     }
 
     var filteredStones: [Gemstone] {
