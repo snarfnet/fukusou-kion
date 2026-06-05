@@ -438,14 +438,15 @@ def submit_for_review(version_id):
             raise RuntimeError(f"Review item failed {response.status_code}: {response.text[:1000]}")
         time.sleep(30)
 
-    for attempt in range(1, 31):
+    for attempt in range(1, 6):
         response, body = response_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
             "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
         })
-        print(f"Review submit {attempt}/30: {response.status_code}")
+        print(f"Review submit {attempt}/5: {response.status_code}")
         if response.status_code == 200:
             print(f"Submitted for App Review: {body['data']['attributes']['state']}")
             return
+        print(response.text[:2000])
         time.sleep(60)
     raise RuntimeError(f"Review submit failed: {response.status_code} {response.text[:1000]}")
 
