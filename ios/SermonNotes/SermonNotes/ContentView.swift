@@ -100,15 +100,6 @@ private struct NotesHomeView: View {
                 .padding(.bottom, 24)
             }
             .navigationTitle("教会ノート")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        editingNote = SermonNote()
-                    } label: {
-                        Image(systemName: "square.and.pencil")
-                    }
-                }
-            }
             .sheet(isPresented: $showingEditor) {
                 NoteEditorView(note: SermonNote())
             }
