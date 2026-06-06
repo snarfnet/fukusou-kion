@@ -50,14 +50,14 @@ jobs:
           DEVICE_ID=$(
             xcrun simctl list devices available |
               grep -E "^[[:space:]]+iPhone SE.*\\([0-9A-F-]{36}\\)" |
-              sed -E 's/.*\\(([0-9A-F-]{36})\\).*/\1/' |
+              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' |
               head -n 1
           )
           if [ -z "$DEVICE_ID" ]; then
             DEVICE_ID=$(
               xcrun simctl list devices available |
                 grep -E "^[[:space:]]+iPhone (16e|17e).*\\([0-9A-F-]{36}\\)" |
-                sed -E 's/.*\\(([0-9A-F-]{36})\\).*/\1/' |
+                sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' |
                 head -n 1
             )
           fi
@@ -84,7 +84,7 @@ jobs:
           DEVICE_ID=$(
             xcrun simctl list devices available |
               grep -E "^[[:space:]]+iPad.*\\([0-9A-F-]{36}\\)" |
-              sed -E 's/.*\\(([0-9A-F-]{36})\\).*/\1/' |
+              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' |
               head -n 1
           )
           if [ -z "$DEVICE_ID" ]; then
