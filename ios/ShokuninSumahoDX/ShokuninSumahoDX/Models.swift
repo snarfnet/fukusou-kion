@@ -34,14 +34,14 @@ enum CraftTool: String, CaseIterable, Identifiable {
     }
 }
 
-enum ConverterKind: String, CaseIterable, Identifiable {
+enum ConverterKind: String, CaseIterable, Identifiable, Codable {
     case length = "長さ"
     case area = "面積"
 
     var id: String { rawValue }
 }
 
-enum CraftUnit: String, CaseIterable, Identifiable {
+enum CraftUnit: String, CaseIterable, Identifiable, Codable {
     case meter = "m"
     case centimeter = "cm"
     case millimeter = "mm"
@@ -142,7 +142,7 @@ struct ConversionFavorite: Identifiable, Codable, Hashable {
     var to: CraftUnit
 }
 
-enum MaterialKind: String, CaseIterable, Identifiable {
+enum MaterialKind: String, CaseIterable, Identifiable, Codable {
     case flooring = "床材"
     case wallpaper = "壁紙"
     case paint = "塗料"
