@@ -72,6 +72,7 @@ struct ContentView: View {
                                 NotesTool(notes: $notes, stampsBySite: $stampsBySite)
                             }
                         }
+                        .accessibilityIdentifier("tool-content-\(tool.testID)")
                         .padding(16)
                         .padding(.bottom, 24)
                     }
@@ -171,6 +172,7 @@ private struct ToolTabs: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(item.rawValue)
+                    .accessibilityIdentifier("tool-tab-\(item.testID)")
                 }
             }
             .padding(.horizontal, 16)

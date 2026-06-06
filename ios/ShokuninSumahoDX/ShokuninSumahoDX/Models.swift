@@ -19,6 +19,20 @@ enum CraftTool: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    var testID: String {
+        switch self {
+        case .angle: "angle"
+        case .level: "level"
+        case .convert: "convert"
+        case .slope: "slope"
+        case .material: "material"
+        case .checklist: "checklist"
+        case .photo: "photo"
+        case .centerGuide: "center-guide"
+        case .notes: "notes"
+        }
+    }
+
     var symbol: String {
         switch self {
         case .angle: "angle"
