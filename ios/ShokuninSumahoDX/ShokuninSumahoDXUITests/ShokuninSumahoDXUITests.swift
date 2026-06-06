@@ -27,15 +27,7 @@ final class ShokuninSumahoDXUITests: XCTestCase {
 
         let tools = ["角度", "水平", "変換", "勾配", "材料", "点検", "写真", "中心線", "履歴"]
         for tool in tools {
-            let button = app.buttons[tool].firstMatch
-            var attempts = 0
-            while (!button.exists || !button.isHittable) && attempts < 6 {
-                tabBar.swipeLeft()
-                attempts += 1
-            }
-            XCTAssertTrue(button.exists, "\(tool) tab should exist")
-            XCTAssertTrue(button.isHittable, "\(tool) tab should be hittable")
-            button.tap()
+            tapTab(tool, app: app, tabBar: tabBar)
             XCTAssertTrue(app.staticTexts[expectedTitles[tool] ?? tool].waitForExistence(timeout: 3), "\(tool) content should be visible after tapping")
         }
     }
@@ -58,5 +50,28 @@ final class ShokuninSumahoDXUITests: XCTestCase {
         XCTAssertTrue(horizontalButton.isHittable)
         horizontalButton.tap()
         XCTAssertTrue(app.buttons["測定を保存"].firstMatch.waitForExistence(timeout: 4))
+    }
+
+    private func tapTab(_ title: String, app: XCUIApplication, tabBar: XCUIElement) {
+        for _ in 0..<8 {
+            let button = app.buttons[title].firstMatch
+            if button.exists, isFullyVisible(button, inside: tabBar) {
+                button.tap()
+                return
+            }
+            tabBar.swipeLeft()
+        }
+        XCTFail("\(title) tab should be visible and tappable")
+    }
+
+    private func isFullyVisible(_ element: XCUIElement, inside container: XCUIElement) -> Bool {
+        guard element.exists, container.exists else { return false }
+        let frame = element.frame
+        let containerFrame = container.frame
+        guard frame.width > 1, frame.height > 1 else { return false }
+        return frame.minX >= containerFrame.minX &&
+            frame.maxX <= containerFrame.maxX &&
+            frame.minY >= containerFrame.minY &&
+            frame.maxY <= containerFrame.maxY
     }
 }
