@@ -125,8 +125,19 @@ def update_review_detail(version_id):
 
 
 def ensure_jpy_price(app_id):
-    points = list_all(f"/apps/{app_id}/appPricePoints?filter[territory]=JPN&filter[customerPrice]={TARGET_JPY_PRICE}&limit=20")
-    if not points:
+    points = list_all(
+        f"/apps/{app_id}/appPricePoints"
+        "?filter[territory]=JPN"
+        "&fields[appPricePoints]=customerPrice"
+        "&limit=200"
+    )
+    target = None
+    for point in points:
+        customer_price = str(point.get("attributes", {}).get("customerPrice", "")).rstrip("0").rstrip(".")
+        if customer_price == TARGET_JPY_PRICE:
+            target = point
+            break
+    if not target:
         print(f"Price skipped: JPN customer price {TARGET_JPY_PRICE} was not found. Set it manually in Pricing and Availability.")
         return
 
@@ -145,7 +156,7 @@ def ensure_jpy_price(app_id):
             "id": price_id,
             "attributes": {"startDate": date.today().isoformat()},
             "relationships": {
-                "appPricePoint": {"data": {"type": "appPricePoints", "id": points[0]["id"]}},
+                "appPricePoint": {"data": {"type": "appPricePoints", "id": target["id"]}},
             },
         }],
     }
