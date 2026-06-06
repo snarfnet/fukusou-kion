@@ -17,7 +17,7 @@ final class ShokuninSumahoDXUITests: XCTestCase {
         for toolID in ["angle", "level", "convert", "slope", "material", "checklist", "photo", "center-guide", "notes"] {
             tapTab(toolID, app: app, tabBar: tabBar)
             XCTAssertTrue(
-                app.otherElements["tool-content-\(toolID)"].waitForExistence(timeout: 3),
+                app.scrollViews["tool-content-\(toolID)"].waitForExistence(timeout: 3),
                 "\(toolID) content should be visible after tapping"
             )
         }

@@ -72,10 +72,10 @@ struct ContentView: View {
                                 NotesTool(notes: $notes, stampsBySite: $stampsBySite)
                             }
                         }
-                        .accessibilityIdentifier("tool-content-\(tool.testID)")
                         .padding(16)
                         .padding(.bottom, 24)
                     }
+                    .accessibilityIdentifier("tool-content-\(tool.testID)")
                     .scrollDismissesKeyboard(.interactively)
                 }
             }
