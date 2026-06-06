@@ -76,6 +76,8 @@ jobs:
             -derivedDataPath build/CompactDerivedData \
             CODE_SIGNING_ALLOWED=NO
           mkdir -p build/screenshots
+          xcrun simctl launch "$DEVICE_ID" com.tokyonasu.shokuninsumahodx
+          sleep 3
           xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/compact-iphone.png
           xcrun simctl shutdown "$DEVICE_ID" || true
 
@@ -102,6 +104,8 @@ jobs:
             -derivedDataPath build/IPadDerivedData \
             CODE_SIGNING_ALLOWED=NO
           mkdir -p build/screenshots
+          xcrun simctl launch "$DEVICE_ID" com.tokyonasu.shokuninsumahodx
+          sleep 3
           xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/ipad.png
           xcrun simctl shutdown "$DEVICE_ID" || true
 
