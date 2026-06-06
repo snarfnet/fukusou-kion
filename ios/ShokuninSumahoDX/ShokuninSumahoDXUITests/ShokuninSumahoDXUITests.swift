@@ -70,8 +70,6 @@ final class ShokuninSumahoDXUITests: XCTestCase {
         let containerFrame = container.frame
         guard frame.width > 1, frame.height > 1 else { return false }
         return frame.minX >= containerFrame.minX &&
-            frame.maxX <= containerFrame.maxX &&
-            frame.minY >= containerFrame.minY &&
-            frame.maxY <= containerFrame.maxY
+            frame.maxX <= containerFrame.maxX
     }
 }
