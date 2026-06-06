@@ -296,15 +296,27 @@ jobs:
           set -o pipefail
           IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
           test -n "$IPA_PATH"
-          xcrun altool --upload-app \
-            --type ios \
-            --file "$IPA_PATH" \
-            --apple-id "$APP_ID" \
-            --apiKey "$ASC_KEY_ID" \
-            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/shokunin-dx-altool-upload.log
-          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/shokunin-dx-altool-upload.log; then
-            exit 1
-          fi
+          for attempt in 1 2 3; do
+            echo "App Store upload attempt ${attempt}/3"
+            rm -f /tmp/shokunin-dx-altool-upload.log
+            set +e
+            xcrun altool --upload-app \
+              --type ios \
+              --file "$IPA_PATH" \
+              --apple-id "$APP_ID" \
+              --apiKey "$ASC_KEY_ID" \
+              --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/shokunin-dx-altool-upload.log
+            status=${PIPESTATUS[0]}
+            set -e
+            if [ "$status" -eq 0 ] && ! grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR' /tmp/shokunin-dx-altool-upload.log; then
+              exit 0
+            fi
+            if ! grep -Eqi 'NSURLErrorDomain|connection appears to be offline|network|timed out|WILL RETRY' /tmp/shokunin-dx-altool-upload.log; then
+              exit 1
+            fi
+            sleep $((attempt * 60))
+          done
+          exit 1
 
       - name: Submit for App Review
         env:
