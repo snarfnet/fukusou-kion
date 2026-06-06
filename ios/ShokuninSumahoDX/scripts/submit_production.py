@@ -412,30 +412,72 @@ def assign_build(version_id, build_id):
     print(f"Build assigned: {response.status_code}")
 
 
-def submit_for_review(version_id):
-    response, body = response_json("POST", "/reviewSubmissions", json={
-        "data": {
-            "type": "reviewSubmissions",
-            "attributes": {"platform": "IOS"},
-            "relationships": {
-                "app": {"data": {"type": "apps", "id": APP_ID}},
-                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
-            },
-        }
-    })
-    if response.status_code not in (200, 201, 409):
-        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
-    submission_id = body.get("data", {}).get("id")
-    if not submission_id:
-        response, body = response_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
-        for submission in body.get("data", []):
-            if submission.get("attributes", {}).get("state") in ("READY_FOR_REVIEW", "WAITING_FOR_REVIEW"):
-                submission_id = submission["id"]
-                break
-    if not submission_id:
-        raise RuntimeError("Review submission was not created or found.")
+def cancel_open_review_submissions():
+    response, body = response_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    if response.status_code != 200:
+        return
+    for submission in body.get("data", []):
+        state = submission.get("attributes", {}).get("state")
+        if state in ("UNRESOLVED_ISSUES", "WAITING_FOR_REVIEW"):
+            response, _ = response_json("PATCH", f"/reviewSubmissions/{submission['id']}", json={
+                "data": {
+                    "type": "reviewSubmissions",
+                    "id": submission["id"],
+                    "attributes": {"canceled": True},
+                }
+            })
+            print(f"Canceled review submission {submission['id']}: {response.status_code}")
+            for attempt in range(12):
+                response, detail = response_json("GET", f"/reviewSubmissions/{submission['id']}")
+                current_state = detail.get("data", {}).get("attributes", {}).get("state")
+                if current_state == "COMPLETE":
+                    break
+                print(f"Waiting for review cancellation {attempt + 1}/12: {current_state}")
+                time.sleep(10)
 
-    for attempt in range(1, 6):
+
+def ready_review_submission_id():
+    response, body = response_json("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    if response.status_code != 200:
+        return None
+    for submission in body.get("data", []):
+        if submission.get("attributes", {}).get("state") == "READY_FOR_REVIEW":
+            return submission["id"]
+    return None
+
+
+def finish_review_submission(submission_id):
+    for attempt in range(1, 31):
+        response, body = response_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
+            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+        })
+        if response.status_code == 200:
+            print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+            return
+        print(f"Review submit {attempt}/30: {response.status_code}")
+        print(response.text[:1000])
+        time.sleep(60)
+    raise RuntimeError(f"Review submit failed: {response.status_code} {response.text[:1000]}")
+
+
+def submit_for_review(version_id):
+    cancel_open_review_submissions()
+    submission_id = ready_review_submission_id()
+    if submission_id:
+        print(f"Using ready review submission: {submission_id}")
+    else:
+        response, body = response_json("POST", "/reviewSubmissions", json={
+            "data": {
+                "type": "reviewSubmissions",
+                "attributes": {"platform": "IOS"},
+                "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
+            }
+        })
+        if response.status_code not in (200, 201):
+            raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:2000]}")
+        submission_id = body["data"]["id"]
+
+    for attempt in range(1, 21):
         response, _ = response_json("POST", "/reviewSubmissionItems", json={
             "data": {
                 "type": "reviewSubmissionItems",
@@ -445,32 +487,27 @@ def submit_for_review(version_id):
                 },
             }
         })
-        print(f"Review item {attempt}/5: {response.status_code}")
+        print(f"Review item {attempt}/20: {response.status_code}")
         if response.status_code == 201:
             break
-        if response.status_code == 409 and "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
-            time.sleep(60)
-            continue
-        if response.status_code == 409 and "ITEM_PART_OF_ANOTHER_SUBMISSION" in response.text:
-            match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", response.text)
-            if match:
-                submission_id = match.group(1)
-                break
-        if response.status_code not in (200, 201, 409):
+        if response.status_code == 409:
+            if "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
+                print("Screenshots are still processing. Waiting before retry.")
+                time.sleep(60)
+                continue
+            if "ITEM_PART_OF_ANOTHER_SUBMISSION" in response.text:
+                match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", response.text)
+                if match:
+                    finish_review_submission(match.group(1))
+                    return
+            raise RuntimeError(f"Review item blocked: {response.text[:4000]}")
+        if response.status_code not in (200, 201):
             raise RuntimeError(f"Review item failed {response.status_code}: {response.text[:1000]}")
         time.sleep(30)
+    else:
+        raise RuntimeError(f"Review item failed after retries: {response.status_code} {response.text[:1000]}")
 
-    for attempt in range(1, 6):
-        response, body = response_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
-            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
-        })
-        print(f"Review submit {attempt}/5: {response.status_code}")
-        if response.status_code == 200:
-            print(f"Submitted for App Review: {body['data']['attributes']['state']}")
-            return
-        print(response.text[:1000])
-        time.sleep(60)
-    raise RuntimeError(f"Review submit failed: {response.status_code} {response.text[:1000]}")
+    finish_review_submission(submission_id)
 
 
 def main():
