@@ -1,11 +1,5 @@
 import Foundation
 
-enum AppStoreConfig {
-    static let originalAppAppleID = "6764789904"
-    static let originalBundleID = "com.snarfnet.shokuninwatch.ios"
-    static let deluxeAppAppleID = ""
-}
-
 enum CraftTool: String, CaseIterable, Identifiable {
     case angle = "角度"
     case level = "水平"

@@ -27,8 +27,8 @@ targets:
     info:
       path: ShokuninSumahoDX/Info.plist
       properties:
-        CFBundleName: "職人スマホDX"
-        CFBundleDisplayName: "職人スマホDX"
+        CFBundleName: "職人スマホSuper DX"
+        CFBundleDisplayName: "職人スマホSuper DX"
         CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"

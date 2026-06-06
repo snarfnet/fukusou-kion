@@ -9,7 +9,7 @@ final class ShokuninSumahoDXUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssertTrue(app.staticTexts["職人スマホDX"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["職人スマホSuper DX"].waitForExistence(timeout: 8))
 
         let tabBar = app.scrollViews["tool-tabs"]
         XCTAssertTrue(tabBar.waitForExistence(timeout: 5))
@@ -27,7 +27,7 @@ final class ShokuninSumahoDXUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssertTrue(app.staticTexts["職人スマホDX"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["職人スマホSuper DX"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.buttons["保存"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["保存"].firstMatch.tap()
 

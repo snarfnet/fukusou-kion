@@ -100,12 +100,9 @@ private struct AppHeader: View {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .top) {
                     headerTitle
-                    Spacer(minLength: 12)
-                    originalAppBadge
                 }
                 VStack(alignment: .leading, spacing: 10) {
                     headerTitle
-                    originalAppBadge
                 }
             }
 
@@ -128,7 +125,7 @@ private struct AppHeader: View {
 
     private var headerTitle: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text("職人スマホDX")
+            Text("職人スマホSuper DX")
                 .font(.system(.largeTitle, design: .rounded).weight(.black))
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
@@ -138,18 +135,6 @@ private struct AppHeader: View {
                 .minimumScaleFactor(0.82)
                 .foregroundStyle(.white.opacity(0.8))
         }
-    }
-
-    private var originalAppBadge: some View {
-        VStack(alignment: .trailing, spacing: 3) {
-            Text("元アプリ")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(.white.opacity(0.7))
-            Text(AppStoreConfig.originalAppAppleID)
-                .font(.caption.monospacedDigit().weight(.semibold))
-        }
-        .padding(10)
-        .background(.white.opacity(0.16), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -1379,7 +1364,7 @@ private enum PDFReport {
         try? renderer.writePDF(to: url) { context in
             context.beginPage()
             var y: CGFloat = 42
-            draw("職人スマホDX 測定レポート", size: 24, weight: .bold, y: &y)
+            draw("職人スマホSuper DX 測定レポート", size: 24, weight: .bold, y: &y)
             draw("OKスタンプ \(stamp.doneCount)/4", size: 18, weight: .bold, y: &y)
             draw("角度 \(stamp.angleOK ? "OK" : "-") / 水平 \(stamp.levelOK ? "OK" : "-") / 写真 \(stamp.photoDone ? "OK" : "-")", size: 13, weight: .regular, y: &y)
             y += 12

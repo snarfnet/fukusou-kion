@@ -1,0 +1,251 @@
+name: ShokuninSumahoDX Production Submit
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Marketing version"
+        required: true
+        default: "1.0"
+      build_number:
+        description: "Build number. Leave blank to use the GitHub run number."
+        required: false
+        default: ""
+      app_id:
+        description: "Optional App Store Connect app ID. Leave blank to resolve or create by bundle ID."
+        required: false
+        default: ""
+      price_jpy:
+        description: "Japan customer price in JPY"
+        required: true
+        default: "300"
+
+concurrency:
+  group: shokunin-sumaho-dx-production
+  cancel-in-progress: true
+
+jobs:
+  submit-production:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/ShokuninSumahoDX
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.shokuninsumahodx
+      APP_NAME: "職人スマホSuper DX"
+      APP_SKU: shokunin-sumaho-super-dx-ios
+      APP_ID: ${{ inputs.app_id || secrets.SHOKUNIN_SUMAHO_DX_APP_ID || '' }}
+      BUNDLE_NAME: ShokuninSumahoDX
+      PROFILE_NAME: "ShokuninSumahoDX App Store"
+      SHOKUNIN_DX_VERSION: ${{ inputs.version || '1.0' }}
+      SHOKUNIN_DX_BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
+      APP_PRICE_JPY: ${{ inputs.price_jpy || '300' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        shell: bash
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests pillow
+
+      - name: Create distribution certificate
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        shell: bash
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/shokunin-dx-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/shokunin-dx-cert.log >> "$GITHUB_ENV"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        shell: bash
+        run: |
+          . .venv/bin/activate
+          if [ -n "$APP_ID" ]; then
+            APP_ID_VALUE="$APP_ID"
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/shokunin-dx-ensure-app.log
+            APP_ID_VALUE="$(grep '^APP_ID=' /tmp/shokunin-dx-ensure-app.log | tail -1 | cut -d= -f2)"
+          fi
+          test -n "$APP_ID_VALUE"
+          echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Capture compact iPhone screenshot
+        shell: bash
+        run: |
+          DEVICE_ID=$(
+            xcrun simctl list devices available |
+              grep -E "^[[:space:]]+iPhone (16e|17e|SE).*\\([0-9A-F-]{36}\\)" |
+              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' |
+              head -n 1
+          )
+          test -n "$DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+          xcodebuild test \
+            -project ShokuninSumahoDX.xcodeproj \
+            -scheme ShokuninSumahoDX \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -derivedDataPath build/CompactDerivedData \
+            CODE_SIGNING_ALLOWED=NO
+          mkdir -p build/screenshots
+          xcrun simctl launch "$DEVICE_ID" com.tokyonasu.shokuninsumahodx
+          sleep 3
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/compact-iphone.png
+          xcrun simctl shutdown "$DEVICE_ID" || true
+
+      - name: Capture iPad screenshot
+        shell: bash
+        run: |
+          DEVICE_ID=$(
+            xcrun simctl list devices available |
+              grep -E "^[[:space:]]+iPad.*\\([0-9A-F-]{36}\\)" |
+              sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/' |
+              head -n 1
+          )
+          test -n "$DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+          xcodebuild test \
+            -project ShokuninSumahoDX.xcodeproj \
+            -scheme ShokuninSumahoDX \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -derivedDataPath build/IPadDerivedData \
+            CODE_SIGNING_ALLOWED=NO
+          mkdir -p build/screenshots
+          xcrun simctl launch "$DEVICE_ID" com.tokyonasu.shokuninsumahodx
+          sleep 3
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/ipad.png
+          xcrun simctl shutdown "$DEVICE_ID" || true
+
+      - name: Prepare App Store screenshots
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_appstore_screenshots.py
+
+      - name: Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        shell: bash
+        run: |
+          xcodebuild archive \
+            -project ShokuninSumahoDX.xcodeproj \
+            -scheme ShokuninSumahoDX \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/ShokuninSumahoDX.xcarchive \
+            MARKETING_VERSION="$SHOKUNIN_DX_VERSION" \
+            CURRENT_PROJECT_VERSION="$SHOKUNIN_DX_BUILD_NUMBER" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID"
+
+      - name: Export IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        shell: bash
+        run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" exportOptions.plist
+          xcodebuild -exportArchive \
+            -archivePath build/ShokuninSumahoDX.xcarchive \
+            -exportOptionsPlist exportOptions.plist \
+            -exportPath build/export \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload to App Store Connect
+        shell: bash
+        run: |
+          set -o pipefail
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apple-id "$APP_ID" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/shokunin-dx-altool-upload.log
+          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/shokunin-dx-altool-upload.log; then
+            exit 1
+          fi
+
+      - name: Submit for App Review
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_VERSION: ${{ env.SHOKUNIN_DX_VERSION }}
+          BUILD_NUMBER: ${{ env.SHOKUNIN_DX_BUILD_NUMBER }}
+        run: |
+          . .venv/bin/activate
+          python -u scripts/submit_production.py
+
+      - name: Upload IPA and screenshots artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shokunin-sumaho-dx-production-assets
+          path: |
+            ios/ShokuninSumahoDX/build/export/*.ipa
+            ios/ShokuninSumahoDX/MarketingAssets/Screenshots/*.png
