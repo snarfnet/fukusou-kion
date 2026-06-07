@@ -171,22 +171,6 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
-      - name: Upload to App Store Connect
-        shell: bash
-        run: |
-          set -o pipefail
-          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
-          test -n "$IPA_PATH"
-          xcrun altool --upload-app \
-            --type ios \
-            --file "$IPA_PATH" \
-            --apple-id "$APP_ID" \
-            --apiKey "$ASC_KEY_ID" \
-            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/ghost-follower-altool-upload.log
-          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/ghost-follower-altool-upload.log; then
-            exit 1
-          fi
-
       - name: Wait for TestFlight build processing
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -197,9 +181,3 @@ jobs:
         run: |
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
-
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ghost-follower-ipa
-          path: ios/GhostFollower/build/export/*.ipa
