@@ -380,7 +380,7 @@ function render() {
 }
 
 function setPerspectiveCell(cell, row, col) {
-  const topWidth = 1;
+  const topWidth = .66;
   const bottomWidth = 1;
   const rowTop = row / 8;
   const rowBottom = (row + 1) / 8;
@@ -415,21 +415,21 @@ function setPerspectiveCell(cell, row, col) {
 function createPerspectiveGrid() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "board-grid");
-  svg.setAttribute("viewBox", "0 0 1000 1000");
+  svg.setAttribute("viewBox", "0 0 1000 780");
   svg.setAttribute("preserveAspectRatio", "none");
-  const topWidth = 1;
+  const topWidth = .66;
   const bottomWidth = 1;
 
   for (let row = 0; row <= 8; row += 1) {
     const y = row / 8;
     const scale = topWidth + (bottomWidth - topWidth) * y;
-    addGridLine(svg, (1 - scale) * 500, y * 1000, (1 + scale) * 500, y * 1000);
+    addGridLine(svg, (1 - scale) * 500, y * 780, (1 + scale) * 500, y * 780);
   }
 
   for (let col = 0; col <= 8; col += 1) {
     const topX = (1 - topWidth) * 500 + col * topWidth * 1000 / 8;
     const bottomX = col * 1000 / 8;
-    addGridLine(svg, topX, 0, bottomX, 1000);
+    addGridLine(svg, topX, 0, bottomX, 780);
   }
 
   return svg;
@@ -658,7 +658,7 @@ function handleBoardPoint(clientX, clientY) {
   const y = (clientY - rect.top) / rect.height;
   if (x < 0 || x > 1 || y < 0 || y > 1) return;
   const row = Math.min(7, Math.max(0, Math.floor(y * 8)));
-  const topWidth = 1;
+  const topWidth = .66;
   const rowCenter = (row + .5) / 8;
   const scale = topWidth + (1 - topWidth) * rowCenter;
   const left = (1 - scale) / 2;

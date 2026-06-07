@@ -505,7 +505,7 @@ button:hover {
 
 .board {
   --board-size: min(78vh, 94%, 680px);
-  --board-depth: 1;
+  --board-depth: .78;
   position: relative;
   z-index: 1;
   width: var(--board-size);
@@ -518,13 +518,13 @@ button:hover {
     linear-gradient(180deg, rgba(255,255,255,.08), transparent 34%, rgba(0,0,0,.12)),
     linear-gradient(135deg, rgba(255,255,255,.1), transparent 40%),
     var(--table);
-  clip-path: none;
+  clip-path: polygon(17% 0, 83% 0, 100% 100%, 0 100%);
   box-shadow:
     0 46px 58px rgba(0,0,0,.52),
-    0 18px 0 #03120e,
-    0 24px 0 #010806,
-    inset 0 0 0 6px rgba(1, 10, 8, .96),
-    inset 0 0 0 10px rgba(255,255,255,.07);
+    0 18px 0 #041711,
+    0 27px 0 #010806,
+    inset 0 0 0 9px rgba(1, 10, 8, .96),
+    inset 0 0 0 14px rgba(255,255,255,.06);
   transform: translateY(-2%);
 }
 
@@ -538,7 +538,7 @@ button:hover {
   height: 22px;
   border-radius: 0 0 8px 8px;
   background: linear-gradient(180deg, #073126, #010806);
-  clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
   box-shadow: 0 16px 24px rgba(0,0,0,.38);
   pointer-events: none;
 }
@@ -547,10 +547,14 @@ button:hover {
   content: "";
   position: absolute;
   z-index: 2;
-  inset: 6px 9px;
-  border: 2px solid rgba(1, 10, 8, .82);
-  border-radius: 6px;
-  clip-path: none;
+  inset: 0;
+  border: 0;
+  border-radius: 8px;
+  clip-path: inherit;
+  box-shadow:
+    inset 0 0 0 10px rgba(1, 10, 8, .9),
+    inset 0 0 0 14px rgba(32, 105, 78, .5),
+    inset 0 0 28px rgba(0, 0, 0, .3);
   pointer-events: none;
 }
 
@@ -1057,7 +1061,7 @@ button:hover {
   }
 
   .board {
-    --board-size: min(76vh, 64vw, 350px);
+    --board-size: min(88vh, 64vw, 390px);
     transform: translateY(0);
   }
 
@@ -1108,7 +1112,7 @@ button:hover {
   }
 
   .board {
-    --board-size: min(74vh, 62vw, 340px);
+    --board-size: min(84vh, 62vw, 360px);
     transform: translateY(0);
   }
 }
@@ -1230,7 +1234,7 @@ button:hover {
   }
 
   .board {
-    --board-size: min(68vh, 52vw, 520px);
+    --board-size: min(72vh, 52vw, 540px);
     transform: translateY(0);
   }
 
