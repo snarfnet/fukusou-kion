@@ -23,7 +23,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build-smoke:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/TrackedBubbleApp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for simulator
+        run: |
+          xcodebuild build \
+            -project TrackedBubbleApp.xcodeproj \
+            -scheme TrackedBubbleApp \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            CODE_SIGNING_ALLOWED=NO
+
   upload-testflight:
+    needs: build-smoke
     runs-on: macos-26
     defaults:
       run:
