@@ -10,6 +10,7 @@ final class GhostStore: ObservableObject {
     private let productIDs = GhostStyle.allCases.compactMap(\.productID)
 
     func loadProducts() async {
+        guard !productIDs.isEmpty else { return }
         do {
             products = try await Product.products(for: productIDs)
             await refreshEntitlements()
@@ -31,7 +32,7 @@ final class GhostStore: ObservableObject {
     func purchase(_ style: GhostStyle) async {
         guard let productID = style.productID,
               let product = products.first(where: { $0.id == productID }) else {
-            purchaseMessage = "この幽霊はまだ販売準備中です。"
+            purchaseMessage = "この幽霊は同梱済みです。"
             return
         }
 

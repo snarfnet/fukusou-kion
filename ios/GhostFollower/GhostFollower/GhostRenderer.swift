@@ -3,7 +3,7 @@ import UIKit
 
 enum GhostRenderer {
     static func draw(in context: inout GraphicsContext, canvasSize: CGSize, point: PersonTrackPoint?, settings: GhostSettings, time: Double) {
-        guard let point, let uiImage = ghostImage(for: settings.facing) else { return }
+        guard let point, let uiImage = ghostImage(for: settings) else { return }
         let frame = ghostFrame(for: point, imageSize: uiImage.size, canvasSize: canvasSize, settings: settings, time: time)
         let image = Image(uiImage: uiImage)
 
@@ -18,7 +18,7 @@ enum GhostRenderer {
     }
 
     static func makeOverlayImage(size: CGSize, point: PersonTrackPoint?, settings: GhostSettings, time: Double) -> UIImage? {
-        guard let point, let image = ghostImage(for: settings.facing) else { return nil }
+        guard let point, let image = ghostImage(for: settings) else { return nil }
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { rendererContext in
             let cg = rendererContext.cgContext
@@ -36,13 +36,8 @@ enum GhostRenderer {
         return points.min { abs($0.time - seconds) < abs($1.time - seconds) }
     }
 
-    private static func ghostImage(for facing: GhostFacing) -> UIImage? {
-        switch facing {
-        case .front:
-            UIImage(named: "ghost_front")
-        case .side:
-            UIImage(named: "ghost_side")
-        }
+    private static func ghostImage(for settings: GhostSettings) -> UIImage? {
+        UIImage(named: settings.style.assetName(for: settings.facing))
     }
 
     private static func ghostFrame(

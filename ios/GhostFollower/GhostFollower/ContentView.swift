@@ -61,7 +61,7 @@ struct ContentView: View {
                             Text("動画を選んでください")
                                 .font(.headline)
                                 .foregroundStyle(.white)
-                            Text("歩いている人を検出し、背後に幽霊を追わせます。")
+                            Text("歩いている人を検出し、選んだ幽霊を追わせます。")
                                 .font(.subheadline)
                                 .foregroundStyle(.white.opacity(0.62))
                                 .multilineTextAlignment(.center)
@@ -154,41 +154,46 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("幽霊")
                 .font(.headline)
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                ForEach(GhostStyle.allCases) { style in
-                    Button {
-                        if store.canUse(style) {
-                            editor.settings.style = style
-                        } else {
-                            Task { await store.purchase(style) }
-                        }
-                    } label: {
-                        HStack {
-                            Circle()
-                                .fill(style.tint)
-                                .frame(width: 18, height: 18)
-                            VStack(alignment: .leading, spacing: 2) {
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(GhostStyle.allCases) { style in
+                        Button {
+                            if store.canUse(style) {
+                                editor.settings.style = style
+                            } else {
+                                Task { await store.purchase(style) }
+                            }
+                        } label: {
+                            VStack(spacing: 8) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(style.assetName(for: editor.settings.facing))
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 72, height: 92)
+                                        .padding(6)
+                                        .background(Color.black.opacity(0.35))
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    if editor.settings.style == style {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
                                 Text(style.displayName)
-                                    .font(.subheadline.weight(.semibold))
-                                Text(store.canUse(style) ? "使用可" : store.displayPrice(for: style))
-                                    .font(.caption2)
-                                    .foregroundStyle(.white.opacity(0.58))
+                                    .font(.caption.weight(.semibold))
+                                    .lineLimit(1)
                             }
-                            Spacer()
-                            if editor.settings.style == style {
-                                Image(systemName: "checkmark")
-                            } else if !store.canUse(style) {
-                                Image(systemName: "lock.fill")
-                            }
+                            .foregroundStyle(.white)
+                            .frame(width: 92)
+                            .padding(8)
+                            .background(editor.settings.style == style ? Color.white.opacity(0.16) : Color.white.opacity(0.07))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
-                        .foregroundStyle(.white)
-                        .padding(10)
-                        .frame(minHeight: 58)
-                        .background(editor.settings.style == style ? Color.white.opacity(0.16) : Color.white.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
+                .padding(.vertical, 2)
             }
         }
         .panelStyle()
