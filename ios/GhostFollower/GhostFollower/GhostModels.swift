@@ -72,7 +72,7 @@ enum GhostStyle: String, CaseIterable, Identifiable, Codable {
 struct GhostSettings: Codable, Equatable {
     var style: GhostStyle = .wetWoman
     var facing: GhostFacing = .front
-    var opacity: Double = 0.86
+    var opacity: Double = 0.72
     var scale: Double = 0.82
     var horizontalOffset: Double = -0.52
     var verticalOffset: Double = -0.08
