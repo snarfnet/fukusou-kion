@@ -1,0 +1,204 @@
+name: GhostFollower TestFlight Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Marketing version"
+        required: true
+        default: "1.0"
+      build_number:
+        description: "Build number. Leave blank to use the GitHub run number."
+        required: false
+        default: ""
+      app_id:
+        description: "Optional App Store Connect app ID. Leave blank to resolve or create by bundle ID."
+        required: false
+        default: ""
+  push:
+    branches:
+      - codex/ghost-follower-testflight
+    paths:
+      - ".github/workflows/ghost-follower-testflight.yml"
+      - "ios/GhostFollower/**"
+
+concurrency:
+  group: ghost-follower-testflight
+  cancel-in-progress: true
+
+jobs:
+  upload-testflight:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/GhostFollower
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.ghostfollower
+      APP_NAME: "Ghost Follower"
+      APP_SKU: ghost-follower-ios
+      APP_ID: ${{ inputs.app_id || secrets.GHOST_FOLLOWER_APP_ID || '' }}
+      BUNDLE_NAME: GhostFollower
+      PROFILE_NAME: "GhostFollower App Store"
+      GHOST_FOLLOWER_VERSION: ${{ inputs.version || '1.0' }}
+      GHOST_FOLLOWER_BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        shell: bash
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Create distribution certificate
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        shell: bash
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/ghost-follower-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/ghost-follower-cert.log >> "$GITHUB_ENV"
+          grep '^ASC_CERTIFICATE_ID=' /tmp/ghost-follower-cert.log >> "$GITHUB_ENV"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        shell: bash
+        run: |
+          . .venv/bin/activate
+          if [ -n "$APP_ID" ]; then
+            APP_ID_VALUE="$APP_ID"
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/ghost-follower-ensure-app.log
+            APP_ID_VALUE="$(grep '^APP_ID=' /tmp/ghost-follower-ensure-app.log | tail -1 | cut -d= -f2)"
+            if [ -z "$APP_ID_VALUE" ]; then
+              echo "App Store Connect app record was not found or created."
+              echo "Create app 'Ghost Follower' with Bundle ID com.tokyonasu.ghostfollower and SKU ghost-follower-ios, then rerun this workflow."
+              exit 1
+            fi
+          fi
+          echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+          export APP_ID="$APP_ID_VALUE"
+          python scripts/resolve_app_bundle.py | tee /tmp/ghost-follower-app-bundle.log
+          grep '^APP_BUNDLE_ID=' /tmp/ghost-follower-app-bundle.log >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        shell: bash
+        run: |
+          xcodebuild archive \
+            -project GhostFollower.xcodeproj \
+            -scheme GhostFollower \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/GhostFollower.xcarchive \
+            MARKETING_VERSION="$GHOST_FOLLOWER_VERSION" \
+            CURRENT_PROJECT_VERSION="$GHOST_FOLLOWER_BUILD_NUMBER" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID"
+
+      - name: Export IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        shell: bash
+        run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" export_options.plist
+          xcodebuild -exportArchive \
+            -archivePath build/GhostFollower.xcarchive \
+            -exportOptionsPlist export_options.plist \
+            -exportPath build/export \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload to App Store Connect
+        shell: bash
+        run: |
+          set -o pipefail
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apple-id "$APP_ID" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/ghost-follower-altool-upload.log
+          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/ghost-follower-altool-upload.log; then
+            exit 1
+          fi
+
+      - name: Wait for TestFlight build processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_ID: ${{ env.APP_ID }}
+          BUILD_NUMBER: ${{ env.GHOST_FOLLOWER_BUILD_NUMBER }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_testflight_build.py
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghost-follower-ipa
+          path: ios/GhostFollower/build/export/*.ipa
