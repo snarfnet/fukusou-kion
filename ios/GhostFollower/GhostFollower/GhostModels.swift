@@ -21,21 +21,31 @@ enum GhostStyle: String, CaseIterable, Identifiable, Codable {
 
     var displayName: String {
         switch self {
-        case .wetWoman: "濡れ女"
-        case .facelessWoman: "顔なし女"
-        case .monk: "亡霊僧"
-        case .paleWoman: "白装束"
-        case .child: "童霊"
+        case .wetWoman:
+            return "濡れ女"
+        case .facelessWoman:
+            return "顔なし女"
+        case .monk:
+            return "亡霊僧"
+        case .paleWoman:
+            return "白装束"
+        case .child:
+            return "童霊"
         }
     }
 
     var shortName: String {
         switch self {
-        case .wetWoman: "濡"
-        case .facelessWoman: "無"
-        case .monk: "僧"
-        case .paleWoman: "白"
-        case .child: "童"
+        case .wetWoman:
+            return "濡"
+        case .facelessWoman:
+            return "無"
+        case .monk:
+            return "僧"
+        case .paleWoman:
+            return "白"
+        case .child:
+            return "童"
         }
     }
 
@@ -43,12 +53,18 @@ enum GhostStyle: String, CaseIterable, Identifiable, Codable {
 
     func assetName(for facing: GhostFacing) -> String {
         let suffix = facing == .front ? "front" : "side"
+
         switch self {
-        case .wetWoman: "ghost_wet_\(suffix)"
-        case .facelessWoman: "ghost_faceless_\(suffix)"
-        case .monk: "ghost_monk_\(suffix)"
-        case .paleWoman: "ghost_pale_\(suffix)"
-        case .child: "ghost_child_\(suffix)"
+        case .wetWoman:
+            return "ghost_wet_\(suffix)"
+        case .facelessWoman:
+            return "ghost_faceless_\(suffix)"
+        case .monk:
+            return "ghost_monk_\(suffix)"
+        case .paleWoman:
+            return "ghost_pale_\(suffix)"
+        case .child:
+            return "ghost_child_\(suffix)"
         }
     }
 }
@@ -71,8 +87,10 @@ enum GhostFacing: String, CaseIterable, Identifiable, Codable {
 
     var displayName: String {
         switch self {
-        case .front: "正面"
-        case .side: "横向き"
+        case .front:
+            return "正面"
+        case .side:
+            return "横向き"
         }
     }
 }
@@ -101,8 +119,10 @@ enum EditorPhase: Equatable {
 
     var isBusy: Bool {
         switch self {
-        case .loading, .analyzing, .exporting: true
-        default: false
+        case .loading, .analyzing, .exporting:
+            return true
+        default:
+            return false
         }
     }
 }
