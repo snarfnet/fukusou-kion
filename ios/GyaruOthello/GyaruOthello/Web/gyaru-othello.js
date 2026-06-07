@@ -353,6 +353,11 @@ function render() {
       cell.setAttribute("aria-label", `${notation(row, col)} ${cellLabel(board[row][col])}`);
       cell.dataset.row = row;
       cell.dataset.col = col;
+      setPerspectiveCell(cell, row, col);
+      cell.addEventListener("click", (event) => {
+        event.stopPropagation();
+        handleCellSelection(cell);
+      });
       const key = `${row}-${col}`;
       if (legalKeys.has(key)) cell.classList.add("legal");
       if (lastMoveKey === key) cell.classList.add("hint");
@@ -364,6 +369,7 @@ function render() {
       boardEl.appendChild(cell);
     }
   }
+  boardEl.appendChild(createPerspectiveGrid());
 
   const score = count();
   blackScoreEl.textContent = score.black;
@@ -371,6 +377,71 @@ function render() {
   turnStoneEl.className = `stone ${turn === BLACK ? "black" : "white"}`;
   turnTextEl.textContent = turn === BLACK ? "あなたの番" : `${activeOpponent.name}の番`;
   renderMoveLog();
+}
+
+function setPerspectiveCell(cell, row, col) {
+  const topWidth = 0.52;
+  const bottomWidth = 1;
+  const rowTop = row / 8;
+  const rowBottom = (row + 1) / 8;
+  const topScale = topWidth + (bottomWidth - topWidth) * rowTop;
+  const bottomScale = topWidth + (bottomWidth - topWidth) * rowBottom;
+  const x1 = (1 - topScale) / 2 + (col * topScale) / 8;
+  const x2 = (1 - topScale) / 2 + ((col + 1) * topScale) / 8;
+  const x3 = (1 - bottomScale) / 2 + ((col + 1) * bottomScale) / 8;
+  const x4 = (1 - bottomScale) / 2 + (col * bottomScale) / 8;
+  const y1 = rowTop;
+  const y2 = rowBottom;
+  const centerX = (x1 + x2 + x3 + x4) / 4;
+  const centerY = (y1 + y2) / 2;
+  const left = Math.min(x1, x4);
+  const right = Math.max(x2, x3);
+
+  cell.style.setProperty("--left", `${left * 100}%`);
+  cell.style.setProperty("--top", `${y1 * 100}%`);
+  cell.style.setProperty("--width", `${(right - left) * 100}%`);
+  cell.style.setProperty("--height", `${(y2 - y1) * 100}%`);
+  cell.style.setProperty("--x1", `${x1 * 100}%`);
+  cell.style.setProperty("--x2", `${x2 * 100}%`);
+  cell.style.setProperty("--x3", `${x3 * 100}%`);
+  cell.style.setProperty("--x4", `${x4 * 100}%`);
+  cell.style.setProperty("--y1", `${y1 * 100}%`);
+  cell.style.setProperty("--y2", `${y2 * 100}%`);
+  cell.style.setProperty("--cx", `${((centerX - left) / (right - left)) * 100}%`);
+  cell.style.setProperty("--cy", `${((centerY - y1) / (y2 - y1)) * 100}%`);
+  cell.style.zIndex = String(row + 1);
+}
+
+function createPerspectiveGrid() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "board-grid");
+  svg.setAttribute("viewBox", "0 0 1000 720");
+  svg.setAttribute("preserveAspectRatio", "none");
+  const topWidth = 0.52;
+  const bottomWidth = 1;
+
+  for (let row = 0; row <= 8; row += 1) {
+    const y = row / 8;
+    const scale = topWidth + (bottomWidth - topWidth) * y;
+    addGridLine(svg, (1 - scale) * 500, y * 720, (1 + scale) * 500, y * 720);
+  }
+
+  for (let col = 0; col <= 8; col += 1) {
+    const topX = (1 - topWidth) * 500 + col * topWidth * 1000 / 8;
+    const bottomX = col * 1000 / 8;
+    addGridLine(svg, topX, 0, bottomX, 720);
+  }
+
+  return svg;
+}
+
+function addGridLine(svg, x1, y1, x2, y2) {
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", x1);
+  line.setAttribute("y1", y1);
+  line.setAttribute("x2", x2);
+  line.setAttribute("y2", y2);
+  svg.appendChild(line);
 }
 
 function cellLabel(cell) {
@@ -574,14 +645,41 @@ function newGame() {
   render();
 }
 
-boardEl.addEventListener("click", (event) => {
-  const cell = event.target.closest(".cell");
+function handleCellSelection(cell) {
   if (!cell || locked || turn !== BLACK) return;
   const row = Number(cell.dataset.row);
   const col = Number(cell.dataset.col);
+  playPlayerMove(row, col);
+}
+
+function handleBoardPoint(clientX, clientY) {
+  const rect = boardEl.getBoundingClientRect();
+  const x = (clientX - rect.left) / rect.width;
+  const y = (clientY - rect.top) / rect.height;
+  if (x < 0 || x > 1 || y < 0 || y > 1) return;
+  const row = Math.min(7, Math.max(0, Math.floor(y * 8)));
+  const topWidth = 0.52;
+  const rowCenter = (row + .5) / 8;
+  const scale = topWidth + (1 - topWidth) * rowCenter;
+  const left = (1 - scale) / 2;
+  const col = Math.min(7, Math.max(0, Math.floor(((x - left) / scale) * 8)));
+  playPlayerMove(row, col);
+}
+
+function playPlayerMove(row, col) {
+  if (locked || turn !== BLACK) return;
   const move = legalMoves(board, BLACK).find((item) => item.row === row && item.col === col);
   if (!move) return;
   playMove(move, BLACK);
+}
+
+boardEl.addEventListener("click", (event) => {
+  const cell = event.target.closest(".cell");
+  if (cell) {
+    handleCellSelection(cell);
+    return;
+  }
+  handleBoardPoint(event.clientX, event.clientY);
 });
 
 if (opponentListEl) {

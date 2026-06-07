@@ -472,8 +472,8 @@ button:hover {
   display: grid;
   place-items: center;
   overflow: hidden;
-  perspective: 360px;
-  perspective-origin: 50% 10%;
+  perspective: none;
+  perspective-origin: 50% 50%;
 }
 
 .board-frame::before {
@@ -504,41 +504,40 @@ button:hover {
 }
 
 .board {
-  --board-size: min(67vh, 94%, 660px);
+  --board-size: min(78vh, 94%, 680px);
+  --board-depth: .72;
   position: relative;
   z-index: 1;
   width: var(--board-size);
   max-width: 100%;
-  aspect-ratio: 1;
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, 1fr);
-  padding: 8px;
+  height: calc(var(--board-size) * var(--board-depth));
+  display: block;
+  padding: 0;
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(255,255,255,.1), transparent 40%),
     var(--table);
+  clip-path: polygon(24% 0, 76% 0, 100% 100%, 0 100%);
   box-shadow:
     0 46px 58px rgba(0,0,0,.52),
     0 18px 0 #06251d,
     0 24px 0 #031710,
     inset 0 0 0 5px rgba(7, 41, 31, .95),
     inset 0 0 0 9px rgba(255,255,255,.09);
-  transform: rotateX(62deg) translateY(-18%);
-  transform-origin: center bottom;
-  transform-style: preserve-3d;
+  transform: translateY(-2%);
 }
 
 .board::before {
   content: "";
   position: absolute;
   z-index: 2;
-  left: 4px;
-  right: 4px;
-  bottom: -20px;
+  left: 1%;
+  right: 1%;
+  bottom: -16px;
   height: 22px;
   border-radius: 0 0 8px 8px;
   background: linear-gradient(180deg, #0e4a39, #041711);
+  clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);
   box-shadow: 0 16px 24px rgba(0,0,0,.38);
   pointer-events: none;
 }
@@ -547,28 +546,71 @@ button:hover {
   content: "";
   position: absolute;
   z-index: 2;
-  inset: 6px;
+  inset: 6px 9px;
   border: 1px solid rgba(255,255,255,.16);
   border-radius: 6px;
+  clip-path: polygon(24% 0, 76% 0, 100% 100%, 0 100%);
   pointer-events: none;
 }
 
+.board-grid {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.board-grid line {
+  stroke: rgba(2, 24, 18, .78);
+  stroke-width: 2.6;
+  vector-effect: non-scaling-stroke;
+}
+
 .cell {
-  position: relative;
-  border: 1px solid rgba(3, 27, 21, .78);
-  background: linear-gradient(135deg, rgba(255,255,255,.04), transparent);
-  display: grid;
-  place-items: center;
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  left: var(--left);
+  top: var(--top);
+  width: var(--width);
+  height: var(--height);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  clip-path: none;
+  box-shadow: none;
+  color: inherit;
   cursor: pointer;
+  margin: 0;
+  padding: 0;
+  pointer-events: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.055), transparent 44%);
+  pointer-events: none;
 }
 
 .cell.legal::after {
   content: "";
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
   width: 18%;
   aspect-ratio: 1;
   border-radius: 50%;
   background: rgba(244, 184, 74, .78);
   box-shadow: 0 0 18px rgba(244, 184, 74, .56);
+  transform: translate(-50%, -50%);
 }
 
 .cell.hint {
@@ -576,9 +618,13 @@ button:hover {
 }
 
 .disc {
-  width: 74%;
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  width: 72%;
   aspect-ratio: 1;
   border-radius: 50%;
+  transform: translate(-50%, -50%) scaleY(.72);
   transform-style: preserve-3d;
   animation: dropDisc .24s ease;
 }
@@ -1007,8 +1053,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(124vh, 78vw, 650px);
-    transform: rotateX(62deg) translateY(-32%);
+    --board-size: min(110vh, 76vw, 560px);
+    transform: translateY(-1%);
   }
 }
 
@@ -1034,8 +1080,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(116vh, 76vw, 500px);
-    transform: rotateX(62deg) translateY(-34%);
+    --board-size: min(106vh, 74vw, 480px);
+    transform: translateY(-1%);
   }
 }
 
@@ -1156,8 +1202,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(88vh, 56vw, 640px);
-    transform: rotateX(59deg) translateY(-18%);
+    --board-size: min(76vh, 56vw, 640px);
+    transform: translateY(-1%);
   }
 
   .profile-grid {
