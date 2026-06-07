@@ -1054,8 +1054,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(110vh, 76vw, 560px);
-    transform: translateY(-1%);
+    --board-size: min(104vh, 74vw, 540px);
+    transform: translateY(0);
   }
 }
 
@@ -1081,8 +1081,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(106vh, 74vw, 480px);
-    transform: translateY(-1%);
+    --board-size: min(100vh, 72vw, 460px);
+    transform: translateY(0);
   }
 }
 
@@ -1199,12 +1199,12 @@ button:hover {
 
   .board-frame {
     min-height: 0;
-    padding: 4px 8px 0;
+    padding: 10px 8px 12px;
   }
 
   .board {
-    --board-size: min(76vh, 56vw, 640px);
-    transform: translateY(-1%);
+    --board-size: min(72vh, 54vw, 620px);
+    transform: translateY(0);
   }
 
   .profile-grid {
