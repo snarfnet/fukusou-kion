@@ -18,7 +18,13 @@ targets:
   GyaruOthello:
     type: application
     platform: iOS
-    sources: [GyaruOthello]
+    sources:
+      - path: GyaruOthello
+        excludes:
+          - Web/**
+    resources:
+      - path: GyaruOthello/Web
+        type: folder
     settings:
       base:
         PRODUCT_NAME: GyaruOthello
