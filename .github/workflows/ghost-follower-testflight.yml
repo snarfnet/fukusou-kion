@@ -181,3 +181,14 @@ jobs:
         run: |
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
+
+      - name: Submit App Store review
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_ID: ${{ env.APP_ID }}
+          APP_VERSION: ${{ env.GHOST_FOLLOWER_VERSION }}
+          BUILD_NUMBER: ${{ env.GHOST_FOLLOWER_BUILD_NUMBER }}
+          APP_PRICE_JPY: "100"
+        run: |
+          . .venv/bin/activate
+          python scripts/submit_production.py
