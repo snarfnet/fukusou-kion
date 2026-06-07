@@ -185,6 +185,17 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
+      - name: Verify bundled web assets
+        shell: bash
+        run: |
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          unzip -l "$IPA_PATH" | tee /tmp/gyaru-othello-ipa-files.txt
+          grep -q "Payload/GyaruOthello.app/Web/gyaru-othello.html" /tmp/gyaru-othello-ipa-files.txt
+          grep -q "Payload/GyaruOthello.app/Web/gyaru-othello.css" /tmp/gyaru-othello-ipa-files.txt
+          grep -q "Payload/GyaruOthello.app/Web/gyaru-othello.js" /tmp/gyaru-othello-ipa-files.txt
+          grep -q "Payload/GyaruOthello.app/Web/assets/gyaru-othello/" /tmp/gyaru-othello-ipa-files.txt
+
       - name: Upload build to App Store Connect
         shell: bash
         run: |

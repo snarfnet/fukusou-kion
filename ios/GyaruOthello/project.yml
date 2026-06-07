@@ -22,7 +22,6 @@ targets:
       - path: GyaruOthello
         excludes:
           - Web/**
-    resources:
       - path: GyaruOthello/Web
         type: folder
     settings:
