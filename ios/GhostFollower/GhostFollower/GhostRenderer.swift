@@ -52,11 +52,45 @@ enum GhostRenderer {
 
     static func nearestPoint(at seconds: Double, in points: [PersonTrackPoint]) -> PersonTrackPoint? {
         guard !points.isEmpty else { return nil }
-        return points.min { abs($0.time - seconds) < abs($1.time - seconds) }
+        guard points.count > 1 else { return points[0] }
+
+        let sorted = points.sorted { $0.time < $1.time }
+        guard let first = sorted.first, let last = sorted.last else { return nil }
+        if seconds <= first.time { return first }
+        if seconds >= last.time { return last }
+
+        guard let upperIndex = sorted.firstIndex(where: { $0.time >= seconds }), upperIndex > 0 else {
+            return sorted.min { abs($0.time - seconds) < abs($1.time - seconds) }
+        }
+
+        let lower = sorted[upperIndex - 1]
+        let upper = sorted[upperIndex]
+        let gap = upper.time - lower.time
+        guard gap > 0, gap < 0.75 else {
+            return abs(lower.time - seconds) < abs(upper.time - seconds) ? lower : upper
+        }
+
+        let rawProgress = (seconds - lower.time) / gap
+        let progress = rawProgress * rawProgress * (3 - 2 * rawProgress)
+        return PersonTrackPoint(
+            time: seconds,
+            boundingBox: interpolate(from: lower.boundingBox, to: upper.boundingBox, progress: progress),
+            confidence: lower.confidence + Float(progress) * (upper.confidence - lower.confidence)
+        )
     }
 
     private static func ghostImage(for settings: GhostSettings) -> UIImage? {
         UIImage(named: settings.style.assetName(for: settings.facing))
+    }
+
+    private static func interpolate(from lower: CGRect, to upper: CGRect, progress: Double) -> CGRect {
+        let progress = CGFloat(progress)
+        CGRect(
+            x: lower.origin.x + (upper.origin.x - lower.origin.x) * progress,
+            y: lower.origin.y + (upper.origin.y - lower.origin.y) * progress,
+            width: lower.width + (upper.width - lower.width) * progress,
+            height: lower.height + (upper.height - lower.height) * progress
+        )
     }
 
     private static func ghostFrame(

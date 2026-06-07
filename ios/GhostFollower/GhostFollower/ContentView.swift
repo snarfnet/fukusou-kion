@@ -11,17 +11,24 @@ struct ContentView: View {
             ZStack {
                 Color(red: 0.02, green: 0.02, blue: 0.025).ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 18) {
-                        preview
-                        actionBar
-                        if editor.videoURL != nil {
-                            analysisPanel
-                            ghostPicker
-                            controls
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: 18) {
+                            preview
+                            actionBar
+                            if editor.videoURL != nil {
+                                analysisPanel
+                                ghostPicker
+                                controls
+                            }
                         }
+                        .padding(16)
                     }
-                    .padding(16)
+
+                    AdMobBannerView()
+                        .frame(height: 50)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.black.opacity(0.82))
                 }
             }
             .navigationTitle("Ghost Follower")
@@ -54,19 +61,25 @@ struct ContentView: View {
                         GhostOverlayView(point: editor.currentPoint(), settings: editor.settings, time: editor.playbackTime)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     } else {
-                        VStack(spacing: 12) {
-                            Image(systemName: "video.badge.plus")
-                                .font(.system(size: 44, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.85))
-                            Text("動画を選んでください")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                            Text("歩いている人を検出し、選んだ幽霊を追わせます。")
-                                .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.62))
-                                .multilineTextAlignment(.center)
+                        Button {
+                            showingPicker = true
+                        } label: {
+                            VStack(spacing: 12) {
+                                Image(systemName: "video.badge.plus")
+                                    .font(.system(size: 44, weight: .semibold))
+                                    .foregroundStyle(.white.opacity(0.85))
+                                Text("動画を選んでください")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                Text("歩いている人を検出し、選んだ幽霊を追わせます。")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.white.opacity(0.62))
+                                    .multilineTextAlignment(.center)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding(24)
                         }
-                        .padding(24)
+                        .buttonStyle(.plain)
                     }
                 }
         }

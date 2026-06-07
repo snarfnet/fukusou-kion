@@ -14,6 +14,11 @@ settings:
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: 83VGKGSQUH
 
+packages:
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
+    from: "12.0.0"
+
 targets:
   GhostFollower:
     type: application
@@ -23,6 +28,9 @@ targets:
       - GhostFollower
     resources:
       - GhostFollower/Resources
+    dependencies:
+      - package: GoogleMobileAds
+        product: GoogleMobileAds
     settings:
       base:
         PRODUCT_NAME: GhostFollower
@@ -37,6 +45,9 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         ITSAppUsesNonExemptEncryption: false
+        GADApplicationIdentifier: "ca-app-pub-9404799280370656~1621295319"
+        SKAdNetworkItems:
+          - SKAdNetworkIdentifier: "cstr6suwn9.skadnetwork"
         NSPhotoLibraryAddUsageDescription: "幽霊を合成した動画を写真ライブラリへ保存します。"
         UILaunchScreen:
           UIColorName: ""
