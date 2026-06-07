@@ -237,6 +237,16 @@ jobs:
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
 
+      - name: Configure TestFlight availability
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          BETA_GROUP_NAME: "Internal Testers"
+        run: |
+          . .venv/bin/activate
+          python scripts/configure_testflight_build.py
+
       - name: Upload archive artifact
         if: always()
         uses: actions/upload-artifact@v4

@@ -20,6 +20,8 @@
     <string>$(CURRENT_PROJECT_VERSION)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>動画を選択して、吹き出しを重ねるために使います。</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
