@@ -472,8 +472,8 @@ button:hover {
   display: grid;
   place-items: center;
   overflow: hidden;
-  perspective: 920px;
-  perspective-origin: 50% 12%;
+  perspective: 360px;
+  perspective-origin: 50% 10%;
 }
 
 .board-frame::before {
@@ -524,8 +524,9 @@ button:hover {
     0 24px 0 #031710,
     inset 0 0 0 5px rgba(7, 41, 31, .95),
     inset 0 0 0 9px rgba(255,255,255,.09);
-  transform: rotateX(59deg) translateY(-18%);
+  transform: rotateX(62deg) translateY(-18%);
   transform-origin: center bottom;
+  transform-style: preserve-3d;
 }
 
 .board::before {
@@ -1006,8 +1007,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(104vh, 66vw, 570px);
-    transform: rotateX(59deg) translateY(-30%);
+    --board-size: min(124vh, 78vw, 650px);
+    transform: rotateX(62deg) translateY(-32%);
   }
 }
 
@@ -1033,8 +1034,8 @@ button:hover {
   }
 
   .board {
-    --board-size: min(100vh, 64vw, 390px);
-    transform: rotateX(59deg) translateY(-32%);
+    --board-size: min(116vh, 76vw, 500px);
+    transform: rotateX(62deg) translateY(-34%);
   }
 }
 
