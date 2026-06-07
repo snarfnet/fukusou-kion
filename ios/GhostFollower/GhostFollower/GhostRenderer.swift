@@ -58,15 +58,15 @@ enum GhostRenderer {
 
         switch settings.facing {
         case .front:
-            let pulse = 1.0 + (sin(time * 2.2) + 1.0) * 0.09
-            let height = max(canvasSize.height * 0.44, person.height * settings.scale * 1.85) * pulse
+            let pulse = 1.0 + (sin(time * 2.2) + 1.0) * 0.05
+            let height = max(canvasSize.height * 0.30, person.height * settings.scale * 1.18) * pulse
             let width = height * aspect
             let x = person.midX - width / 2 + wobble + person.width * settings.horizontalOffset * 0.25
             let y = person.midY - height * 0.55 + person.height * settings.verticalOffset
             return CGRect(x: x, y: y, width: width, height: height)
 
         case .side:
-            let height = max(canvasSize.height * 0.28, person.height * settings.scale * 1.25)
+            let height = max(canvasSize.height * 0.22, person.height * settings.scale * 0.92)
             let width = height * aspect
             let x = person.midX - width * 0.56 + person.width * settings.horizontalOffset + wobble
             let y = person.midY - height * 0.52 + person.height * settings.verticalOffset

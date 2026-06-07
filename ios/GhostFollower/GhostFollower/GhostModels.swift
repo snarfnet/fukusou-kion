@@ -73,7 +73,7 @@ struct GhostSettings: Codable, Equatable {
     var style: GhostStyle = .wetWoman
     var facing: GhostFacing = .front
     var opacity: Double = 0.86
-    var scale: Double = 1.18
+    var scale: Double = 0.82
     var horizontalOffset: Double = -0.52
     var verticalOffset: Double = -0.08
     var jitter: Double = 0.04

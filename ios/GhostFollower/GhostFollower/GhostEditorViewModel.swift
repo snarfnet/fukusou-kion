@@ -45,6 +45,23 @@ final class GhostEditorViewModel: ObservableObject {
         }
     }
 
+    func togglePlayback() {
+        guard let player else { return }
+
+        if player.timeControlStatus == .playing {
+            player.pause()
+            return
+        }
+
+        if shouldRestartPlayback(player: player) {
+            player.seek(to: .zero, toleranceBefore: .zero, toleranceAfter: .zero) { _ in
+                player.play()
+            }
+        } else {
+            player.play()
+        }
+    }
+
     func exportAndSave() {
         guard let videoURL else { return }
         phase = .exporting(0)
@@ -87,6 +104,14 @@ final class GhostEditorViewModel: ObservableObject {
         }
         timeObserver = nil
         player = nil
+    }
+
+    private func shouldRestartPlayback(player: AVPlayer) -> Bool {
+        guard let duration = player.currentItem?.duration.seconds, duration.isFinite else {
+            return false
+        }
+
+        return player.currentTime().seconds >= max(0, duration - 0.15)
     }
 
     deinit {}

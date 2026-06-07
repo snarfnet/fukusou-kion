@@ -83,11 +83,7 @@ struct ContentView: View {
             .buttonStyle(PrimaryButtonStyle())
 
             Button {
-                if editor.player?.timeControlStatus == .playing {
-                    editor.player?.pause()
-                } else {
-                    editor.player?.play()
-                }
+                editor.togglePlayback()
             } label: {
                 Label("再生", systemImage: "playpause.fill")
             }
