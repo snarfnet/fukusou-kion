@@ -64,7 +64,7 @@ jobs:
       APP_SKU: tracked-bubble-app-ios
       BUNDLE_NAME: TrackedBubbleApp
       PROFILE_NAME: "TrackedBubbleApp App Store"
-      TRACKED_BUBBLE_APP_ID: ${{ secrets.TRACKED_BUBBLE_APP_ID }}
+      TRACKED_BUBBLE_APP_ID: ${{ secrets.TRACKED_BUBBLE_APP_ID || '6777611892' }}
 
     steps:
       - name: Checkout
