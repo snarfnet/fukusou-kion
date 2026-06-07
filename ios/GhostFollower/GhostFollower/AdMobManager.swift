@@ -1,0 +1,31 @@
+import AppTrackingTransparency
+import Foundation
+import GoogleMobileAds
+
+@MainActor
+final class AdMobManager: ObservableObject {
+    @Published private(set) var isReady = false
+    private var didStart = false
+
+    func start() async {
+        guard !didStart else { return }
+        didStart = true
+
+        await requestTrackingAuthorizationIfNeeded()
+        await withCheckedContinuation { continuation in
+            MobileAds.shared.start { _ in
+                continuation.resume()
+            }
+        }
+        isReady = true
+    }
+
+    private func requestTrackingAuthorizationIfNeeded() async {
+        guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+        await withCheckedContinuation { continuation in
+            ATTrackingManager.requestTrackingAuthorization { _ in
+                continuation.resume()
+            }
+        }
+    }
+}

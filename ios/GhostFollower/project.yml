@@ -46,9 +46,11 @@ targets:
         LSRequiresIPhoneOS: true
         ITSAppUsesNonExemptEncryption: false
         GADApplicationIdentifier: "ca-app-pub-9404799280370656~1621295319"
+        GADDelayAppMeasurementInit: true
         SKAdNetworkItems:
           - SKAdNetworkIdentifier: "cstr6suwn9.skadnetwork"
         NSPhotoLibraryAddUsageDescription: "幽霊を合成した動画を写真ライブラリへ保存します。"
+        NSUserTrackingUsageDescription: "広告の表示と効果測定のために使用します。"
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:

@@ -4,6 +4,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var editor: GhostEditorViewModel
     @EnvironmentObject private var store: GhostStore
+    @EnvironmentObject private var ads: AdMobManager
     @State private var showingPicker = false
 
     var body: some View {
@@ -25,10 +26,12 @@ struct ContentView: View {
                         .padding(16)
                     }
 
-                    AdMobBannerView()
-                        .frame(height: 50)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.black.opacity(0.82))
+                    if ads.isReady {
+                        AdMobBannerView()
+                            .frame(height: 50)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.black.opacity(0.82))
+                    }
                 }
             }
             .navigationTitle("Ghost Follower")
@@ -306,4 +309,5 @@ private extension View {
     ContentView()
         .environmentObject(GhostEditorViewModel())
         .environmentObject(GhostStore())
+        .environmentObject(AdMobManager())
 }
