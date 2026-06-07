@@ -41,7 +41,7 @@ final class VideoExportService {
         for index in 0..<max(1, min(4, bubbleCount)) {
             overlayLayer.addSublayer(
                 makeBubbleLayer(
-                    text: bubbleText(for: index, primaryText: bubbleText),
+                    text: exportBubbleText(for: index, primaryText: bubbleText),
                     renderSize: renderSize,
                     trackingPoints: trackingPoints,
                     index: index
@@ -260,7 +260,7 @@ final class VideoExportService {
         return path
     }
 
-    private func bubbleText(for index: Int, primaryText: String) -> String {
+    private func exportBubbleText(for index: Int, primaryText: String) -> String {
         if index == 0 {
             return primaryText
         }
