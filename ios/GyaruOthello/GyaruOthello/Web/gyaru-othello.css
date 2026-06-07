@@ -1006,7 +1006,7 @@ button:hover {
   }
 
   .board {
-    --board-size: min(102vh, 68vw, 590px);
+    --board-size: min(98vh, 66vw, 570px);
     transform: rotateX(36deg) translateY(-21%);
   }
 }
@@ -1033,7 +1033,7 @@ button:hover {
   }
 
   .board {
-    --board-size: min(98vh, 66vw, 400px);
+    --board-size: min(94vh, 64vw, 390px);
     transform: rotateX(36deg) translateY(-24%);
   }
 }
@@ -1155,7 +1155,7 @@ button:hover {
   }
 
   .board {
-    --board-size: min(92vh, 58vw, 680px);
+    --board-size: min(88vh, 56vw, 640px);
     transform: rotateX(59deg) translateY(-18%);
   }
 
