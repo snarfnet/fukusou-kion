@@ -7,6 +7,7 @@ final class VideoExportService {
         videoURL: URL,
         trackingPoints: [FaceTrackingPoint],
         bubbleText: String,
+        bubbleCount: Int,
         sparkleShape: EyeSparkleShape,
         includeSparkles: Bool
     ) async throws -> URL {
@@ -37,7 +38,16 @@ final class VideoExportService {
         let overlayLayer = CALayer()
         overlayLayer.frame = CGRect(origin: .zero, size: renderSize)
         overlayLayer.masksToBounds = true
-        overlayLayer.addSublayer(makeBubbleLayer(text: bubbleText, renderSize: renderSize, trackingPoints: trackingPoints))
+        for index in 0..<max(1, min(4, bubbleCount)) {
+            overlayLayer.addSublayer(
+                makeBubbleLayer(
+                    text: bubbleText(for: index, primaryText: bubbleText),
+                    renderSize: renderSize,
+                    trackingPoints: trackingPoints,
+                    index: index
+                )
+            )
+        }
         if includeSparkles {
             overlayLayer.addSublayer(makeSparkleLayer(shape: sparkleShape, renderSize: renderSize, trackingPoints: trackingPoints))
         }
@@ -91,14 +101,15 @@ final class VideoExportService {
         return CGSize(width: abs(rect.width), height: abs(rect.height))
     }
 
-    private func makeBubbleLayer(text: String, renderSize: CGSize, trackingPoints: [FaceTrackingPoint]) -> CALayer {
-        let bubbleSize = CGSize(width: renderSize.width * 0.54, height: renderSize.height * 0.14)
+    private func makeBubbleLayer(text: String, renderSize: CGSize, trackingPoints: [FaceTrackingPoint], index: Int) -> CALayer {
+        let scale = bubbleScale(for: index)
+        let bubbleSize = CGSize(width: renderSize.width * 0.54 * scale, height: renderSize.height * 0.14 * scale)
         let root = CALayer()
         root.bounds = CGRect(origin: .zero, size: bubbleSize)
         root.position = CGPoint(x: renderSize.width * 0.5, y: renderSize.height * 0.18)
 
         let tailFrame = CGRect(
-            x: bubbleSize.width * 0.16,
+            x: bubbleSize.width * 0.66,
             y: bubbleSize.height * 0.74,
             width: bubbleSize.width * 0.20,
             height: bubbleSize.height * 0.48
@@ -121,24 +132,20 @@ final class VideoExportService {
 
         let textLayer = BubbleTextLayer()
         textLayer.string = text.isEmpty ? "え、まって" : text
-        textLayer.fontSize = max(26, renderSize.width * 0.052)
+        textLayer.fontSize = max(22, renderSize.width * 0.052 * scale)
         textLayer.alignmentMode = .center
-        textLayer.foregroundColor = UIColor(red: 0.93, green: 0.26, blue: 0.52, alpha: 1).cgColor
+        textLayer.foregroundColor = UIColor(red: 0.88, green: 0.18, blue: 0.46, alpha: 1).cgColor
         textLayer.contentsScale = UIScreen.main.scale
         textLayer.bounds = CGRect(x: 0, y: 0, width: bubbleSize.width * 0.78, height: bubbleSize.height * 0.66)
         textLayer.position = CGPoint(x: bubbleSize.width * 0.50, y: bubbleSize.height * 0.51)
         root.addSublayer(textLayer)
 
-        let marks = CAShapeLayer()
-        marks.path = emphasisMarksPath(in: CGRect(x: bubbleSize.width * 0.80, y: -bubbleSize.height * 0.06, width: bubbleSize.width * 0.18, height: bubbleSize.height * 0.32)).cgPath
-        marks.fillColor = UIColor.clear.cgColor
-        marks.strokeColor = UIColor.black.cgColor
-        marks.lineWidth = max(3, renderSize.width * 0.006)
-        marks.lineCap = .round
-        root.addSublayer(marks)
-
         root.add(
-            positionAnimation(points: trackingPoints.map(\.bubbleAnchor), renderSize: renderSize, duration: trackingDuration(trackingPoints)),
+            positionAnimation(
+                points: trackingPoints.map { adjustedBubbleAnchor($0.bubbleAnchor, index: index) },
+                renderSize: renderSize,
+                duration: trackingDuration(trackingPoints)
+            ),
             forKey: "bubblePosition"
         )
         return root
@@ -152,26 +159,32 @@ final class VideoExportService {
             forKey: "sparklePosition"
         )
 
-        let glyphs = [shape.glyph, shape.glyph, "✦", "•", "✦", "•"]
-        let offsets: [CGPoint] = [
-            CGPoint(x: -0.08, y: 0),
-            CGPoint(x: 0.08, y: 0),
-            CGPoint(x: -0.16, y: -0.05),
-            CGPoint(x: 0.16, y: -0.06),
-            CGPoint(x: -0.02, y: -0.10),
-            CGPoint(x: 0.02, y: 0.09)
+        let glyphs = [
+            shape.glyph,
+            shape.glyph,
+            shape.particleGlyph(0),
+            shape.particleGlyph(1),
+            shape.particleGlyph(2),
+            shape.particleGlyph(3),
+            shape.particleGlyph(4),
+            shape.particleGlyph(5)
         ]
         let base = renderSize.width * 0.18
         for index in glyphs.indices {
+            let angle = CGFloat(index) * .pi * 2 / CGFloat(glyphs.count)
+            let radius = base * (0.18 + CGFloat((index + shape.rawValue) % 4) * 0.12)
             let textLayer = CATextLayer()
             textLayer.string = glyphs[index]
             textLayer.alignmentMode = .center
-            textLayer.fontSize = index < 2 ? base * 0.23 : base * 0.13
+            textLayer.fontSize = index < 2 ? base * 0.23 : base * (0.10 + CGFloat((index + shape.rawValue) % 4) * 0.025)
             textLayer.foregroundColor = uiColor(for: shape, index: index).cgColor
             textLayer.contentsScale = UIScreen.main.scale
             textLayer.bounds = CGRect(x: 0, y: 0, width: base * 0.35, height: base * 0.35)
-            textLayer.position = CGPoint(x: offsets[index].x * renderSize.width, y: offsets[index].y * renderSize.height)
-            textLayer.add(pulseAnimation(delay: Double(index) * 0.08), forKey: "pulse")
+            textLayer.position = CGPoint(
+                x: CGFloat(cos(angle)) * radius,
+                y: CGFloat(sin(angle)) * radius * shape.ySpread
+            )
+            textLayer.add(pulseAnimation(delay: Double(index) * 0.08, speed: shape.speed), forKey: "pulse")
             root.addSublayer(textLayer)
         }
         return root
@@ -247,6 +260,32 @@ final class VideoExportService {
         return path
     }
 
+    private func bubbleText(for index: Int, primaryText: String) -> String {
+        if index == 0 {
+            return primaryText
+        }
+        let presets = ["すごい!!", "えっ!?", "かわいい", "まって!"]
+        return presets[min(index - 1, presets.count - 1)]
+    }
+
+    private func adjustedBubbleAnchor(_ anchor: CGPoint, index: Int) -> CGPoint {
+        let offsets = [
+            CGPoint(x: 0.00, y: 0.00),
+            CGPoint(x: -0.24, y: 0.14),
+            CGPoint(x: 0.18, y: -0.12),
+            CGPoint(x: -0.18, y: -0.16)
+        ]
+        let offset = offsets[min(index, offsets.count - 1)]
+        return CGPoint(
+            x: min(0.88, max(0.12, anchor.x + offset.x)),
+            y: min(0.88, max(0.08, anchor.y + offset.y))
+        )
+    }
+
+    private func bubbleScale(for index: Int) -> CGFloat {
+        index == 0 ? 1.0 : 0.78
+    }
+
     private func positionAnimation(points: [CGPoint], renderSize: CGSize, duration: Double) -> CAKeyframeAnimation {
         let animation = CAKeyframeAnimation(keyPath: "position")
         animation.values = points.map { point in
@@ -265,7 +304,7 @@ final class VideoExportService {
         trackingPoints.last?.time ?? 0.1
     }
 
-    private func pulseAnimation(delay: Double) -> CAAnimationGroup {
+    private func pulseAnimation(delay: Double, speed: Double = 5.0) -> CAAnimationGroup {
         let scale = CABasicAnimation(keyPath: "transform.scale")
         scale.fromValue = 0.72
         scale.toValue = 1.18
@@ -278,21 +317,26 @@ final class VideoExportService {
 
         let group = CAAnimationGroup()
         group.animations = [scale, opacity]
-        group.duration = 0.42
+        group.duration = max(0.24, 2.2 / speed)
         group.beginTime = AVCoreAnimationBeginTimeAtZero + delay
         group.repeatCount = .greatestFiniteMagnitude
         return group
     }
 
     private func uiColor(for shape: EyeSparkleShape, index: Int) -> UIColor {
-        if index >= 2 {
-            return index.isMultiple(of: 2) ? .systemYellow : .systemPink
-        }
-        switch shape {
-        case .star: return .systemYellow
-        case .heart: return .systemPink
-        case .diamond: return .systemCyan
-        }
+        let colors: [UIColor] = [
+            .systemYellow,
+            .systemPink,
+            .systemCyan,
+            .systemOrange,
+            .systemPurple,
+            .systemMint,
+            .systemRed,
+            .systemBlue,
+            .systemGreen,
+            UIColor(red: 1.0, green: 0.76, blue: 0.18, alpha: 1)
+        ]
+        return colors[(shape.rawValue + index) % colors.count]
     }
 
     private func saveToPhotoLibrary(_ url: URL) async throws {

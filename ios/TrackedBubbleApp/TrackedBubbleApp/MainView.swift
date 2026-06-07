@@ -10,8 +10,9 @@ struct MainView: View {
     @State private var bubbleText = "え、まって"
     @State private var trackingPoints: [FaceTrackingPoint] = []
     @State private var currentTime = 0.0
-    @State private var sparkleShape: EyeSparkleShape = .star
+    @State private var sparkleShape: EyeSparkleShape = .material01
     @State private var showsEyeSparkle = false
+    @State private var bubbleCount = 1
     @State private var isAnalyzing = false
     @State private var isExporting = false
     @State private var alertMessage: String?
@@ -41,7 +42,16 @@ struct MainView: View {
                             Text(shape.title).tag(shape)
                         }
                     }
-                    .pickerStyle(.segmented)
+                    .pickerStyle(.menu)
+
+                    Button {
+                        bubbleCount = min(4, bubbleCount + 1)
+                    } label: {
+                        Label("吹き出しを追加", systemImage: "plus.bubble")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(trackingPoints.isEmpty || bubbleCount >= 4)
 
                     Button {
                         showsEyeSparkle.toggle()
@@ -104,9 +114,17 @@ struct MainView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 18))
 
                     if let point = trackingPoints.interpolatedPoint(at: currentTime) {
-                        BubbleOverlayView(text: bubbleText, anchor: point.bubbleAnchor, containerSize: size)
+                        ForEach(0..<bubbleCount, id: \.self) { index in
+                            BubbleOverlayView(
+                                text: bubbleText(for: index),
+                                anchor: point.bubbleAnchor,
+                                containerSize: size,
+                                offset: bubbleOffset(for: index),
+                                scale: bubbleScale(for: index)
+                            )
                             .allowsHitTesting(false)
-                            .zIndex(2)
+                            .zIndex(Double(2 + index))
+                        }
                         if showsEyeSparkle {
                             EyeSparkleOverlayView(point: point, shape: sparkleShape, containerSize: size)
                                 .zIndex(3)
@@ -153,6 +171,7 @@ struct MainView: View {
                     player = AVPlayer(url: picked.url)
                     trackingPoints = []
                     showsEyeSparkle = false
+                    bubbleCount = 1
                     currentTime = 0
                     isPlaying = false
                 }
@@ -184,6 +203,7 @@ struct MainView: View {
                 videoURL: videoURL,
                 trackingPoints: trackingPoints,
                 bubbleText: bubbleText,
+                bubbleCount: bubbleCount,
                 sparkleShape: sparkleShape,
                 includeSparkles: showsEyeSparkle
             )
@@ -206,5 +226,27 @@ struct MainView: View {
             player.play()
         }
         isPlaying.toggle()
+    }
+
+    private func bubbleText(for index: Int) -> String {
+        if index == 0 {
+            return bubbleText
+        }
+        let presets = ["すごい!!", "えっ!?", "かわいい", "まって!"]
+        return presets[min(index - 1, presets.count - 1)]
+    }
+
+    private func bubbleOffset(for index: Int) -> CGPoint {
+        let offsets = [
+            CGPoint(x: 0.00, y: 0.00),
+            CGPoint(x: -0.24, y: 0.14),
+            CGPoint(x: 0.18, y: -0.12),
+            CGPoint(x: -0.18, y: -0.16)
+        ]
+        return offsets[min(index, offsets.count - 1)]
+    }
+
+    private func bubbleScale(for index: Int) -> CGFloat {
+        index == 0 ? 1.0 : 0.78
     }
 }
