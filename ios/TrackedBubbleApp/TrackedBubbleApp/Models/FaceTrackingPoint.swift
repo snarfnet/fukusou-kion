@@ -2,7 +2,7 @@ import CoreGraphics
 import Foundation
 
 struct FaceTrackingPoint: Identifiable, Codable, Hashable {
-    let id = UUID()
+    var id = UUID()
     let time: Double
     let faceRect: CGRect
     let leftEye: CGPoint?
@@ -42,7 +42,7 @@ extension Array where Element == FaceTrackingPoint {
         }
         let lower = self[index(before: upperIndex)]
         let upper = self[upperIndex]
-        let progress = CGFloat((time - lower.time) / max(0.001, upper.time - lower.time))
+        let progress = CGFloat((time - lower.time) / Swift.max(0.001, upper.time - lower.time))
         return FaceTrackingPoint(
             time: time,
             faceRect: lower.faceRect.lerp(to: upper.faceRect, progress: progress),
