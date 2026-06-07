@@ -42,9 +42,12 @@ def main():
     app_id = find_app_id()
     version_id = get_or_create_version(app_id, APP_VERSION)
     set_common_app_settings(app_id, version_id)
-    update_app_info(app_id)
+    app_info_id = update_app_info(app_id)
+    if app_info_id:
+        update_age_rating(app_info_id)
     update_localization(version_id)
     update_review_detail(version_id)
+    ensure_no_data_collected(app_id)
     ensure_jpy_price(app_id)
     print(f"ASC metadata prepared for app={app_id} version={version_id}")
 
@@ -64,7 +67,7 @@ def update_app_info(app_id):
     app_infos = list_all(f"/apps/{app_id}/appInfos?limit=20")
     if not app_infos:
         print("App info not found")
-        return
+        return None
 
     app_info_id = app_infos[0]["id"]
     try:
@@ -83,6 +86,7 @@ def update_app_info(app_id):
 
     for loc in list_all(f"/appInfos/{app_info_id}/appInfoLocalizations?limit=20"):
         patch(f"/appInfoLocalizations/{loc['id']}", "appInfoLocalizations", loc["id"], APP_INFO, f"App info {loc['attributes'].get('locale')}")
+    return app_info_id
 
 
 def update_localization(version_id):
@@ -98,13 +102,28 @@ def update_localization(version_id):
         localizations = [payload["data"]]
 
     for loc in localizations:
-        patch(
-            f"/appStoreVersionLocalizations/{loc['id']}",
-            "appStoreVersionLocalizations",
-            loc["id"],
-            LOCALIZATION,
-            f"Version localization {loc['attributes'].get('locale')}",
-        )
+        attrs = dict(LOCALIZATION)
+        try:
+            api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json={
+                "data": {
+                    "type": "appStoreVersionLocalizations",
+                    "id": loc["id"],
+                    "attributes": attrs,
+                }
+            })
+            print(f"Version localization {loc['attributes'].get('locale')}: updated")
+        except RuntimeError as error:
+            if "whatsNew" in str(error):
+                attrs.pop("whatsNew", None)
+                patch(
+                    f"/appStoreVersionLocalizations/{loc['id']}",
+                    "appStoreVersionLocalizations",
+                    loc["id"],
+                    attrs,
+                    f"Version localization {loc['attributes'].get('locale')}",
+                )
+            else:
+                print(f"Version localization {loc['attributes'].get('locale')}: skipped: {error}")
 
 
 def update_review_detail(version_id):
@@ -124,6 +143,90 @@ def update_review_detail(version_id):
     print("Review detail created")
 
 
+def update_age_rating(app_info_id):
+    string_keys = [
+        "alcoholTobaccoOrDrugUseOrReferences",
+        "contests",
+        "gamblingSimulated",
+        "gunsOrOtherWeapons",
+        "medicalOrTreatmentInformation",
+        "profanityOrCrudeHumor",
+        "sexualContentGraphicAndNudity",
+        "sexualContentOrNudity",
+        "horrorOrFearThemes",
+        "matureOrSuggestiveThemes",
+        "violenceCartoonOrFantasy",
+        "violenceRealisticProlongedGraphicOrSadistic",
+        "violenceRealistic",
+    ]
+    bool_keys = [
+        "messagingAndChat",
+        "gambling",
+        "parentalControls",
+        "ageAssurance",
+        "userGeneratedContent",
+        "healthOrWellnessTopics",
+        "unrestrictedWebAccess",
+        "lootBox",
+    ]
+    attrs = {key: "NONE" for key in string_keys}
+    attrs.update({key: False for key in bool_keys})
+    attrs["advertising"] = False
+    patch(
+        f"/ageRatingDeclarations/{app_info_id}",
+        "ageRatingDeclarations",
+        app_info_id,
+        attrs,
+        "Age rating",
+    )
+
+
+def ensure_no_data_collected(app_id):
+    try:
+        usages = list_all(f"/apps/{app_id}/dataUsages?include=category,grouping,purpose,dataProtection&limit=500")
+        for usage in usages:
+            try:
+                api("DELETE", f"/appDataUsages/{usage['id']}")
+                print(f"Deleted app data usage {usage['id']}")
+            except RuntimeError as error:
+                print(f"Delete app data usage skipped {usage['id']}: {error}")
+    except RuntimeError as error:
+        print(f"Data usage lookup skipped: {error}")
+
+    try:
+        api("POST", "/appDataUsages", json={
+            "data": {
+                "type": "appDataUsages",
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": app_id}},
+                    "dataProtection": {
+                        "data": {
+                            "type": "appDataUsageDataProtections",
+                            "id": "DATA_NOT_COLLECTED",
+                        }
+                    },
+                },
+            }
+        })
+        print("No data collected usage: updated")
+    except RuntimeError as error:
+        print(f"No data collected usage: skipped: {error}")
+
+    try:
+        payload = api("GET", f"/apps/{app_id}/dataUsagePublishState")
+        if payload.get("data"):
+            state_id = payload["data"]["id"]
+            patch(
+                f"/appDataUsagesPublishState/{state_id}",
+                "appDataUsagesPublishState",
+                state_id,
+                {"published": True},
+                "App data usage publish",
+            )
+    except RuntimeError as error:
+        print(f"App data usage publish skipped: {error}")
+
+
 def ensure_jpy_price(app_id):
     points = list_all(
         f"/apps/{app_id}/appPricePoints"
@@ -132,13 +235,25 @@ def ensure_jpy_price(app_id):
         "&limit=200"
     )
     target = None
+    closest = None
+    closest_delta = None
     for point in points:
-        customer_price = str(point.get("attributes", {}).get("customerPrice", "")).rstrip("0").rstrip(".")
+        raw_price = point.get("attributes", {}).get("customerPrice")
+        customer_price = str(raw_price or "").rstrip("0").rstrip(".")
+        try:
+            delta = abs(float(raw_price) - float(TARGET_JPY_PRICE))
+            if closest is None or delta < closest_delta:
+                closest = point
+                closest_delta = delta
+        except Exception:
+            pass
         if customer_price == TARGET_JPY_PRICE:
             target = point
             break
     if not target:
-        print(f"Price skipped: JPN customer price {TARGET_JPY_PRICE} was not found. Set it manually in Pricing and Availability.")
+        target = closest
+    if not target:
+        print("Price skipped: no JPN price points found. Set it manually in Pricing and Availability.")
         return
 
     price_id = "${gyaruOthelloPrice}"
@@ -154,7 +269,7 @@ def ensure_jpy_price(app_id):
         "included": [{
             "type": "appPrices",
             "id": price_id,
-            "attributes": {"startDate": date.today().isoformat()},
+            "attributes": {"startDate": None},
             "relationships": {
                 "appPricePoint": {"data": {"type": "appPricePoints", "id": target["id"]}},
             },
