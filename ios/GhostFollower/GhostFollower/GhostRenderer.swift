@@ -85,7 +85,7 @@ enum GhostRenderer {
 
     private static func interpolate(from lower: CGRect, to upper: CGRect, progress: Double) -> CGRect {
         let progress = CGFloat(progress)
-        CGRect(
+        return CGRect(
             x: lower.origin.x + (upper.origin.x - lower.origin.x) * progress,
             y: lower.origin.y + (upper.origin.y - lower.origin.y) * progress,
             width: lower.width + (upper.width - lower.width) * progress,
