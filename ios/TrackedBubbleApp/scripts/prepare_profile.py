@@ -10,7 +10,10 @@ from asc_helpers import api, api_json, decode_profile, fail, query
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.trackedbubbleapp")
 PROFILE_NAME = os.environ.get("PROFILE_NAME", "TrackedBubbleApp App Store")
 PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/TrackedBubbleApp_App_Store.mobileprovision"
-CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").replace(":", "").upper()
+CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").upper()
+if "=" in CERT_SHA1:
+    CERT_SHA1 = CERT_SHA1.rsplit("=", 1)[-1]
+CERT_SHA1 = CERT_SHA1.replace(":", "").replace(" ", "")
 CERTIFICATE_ID = os.environ.get("ASC_CERTIFICATE_ID", "")
 
 
