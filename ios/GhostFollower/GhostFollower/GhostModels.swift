@@ -50,11 +50,26 @@ enum GhostStyle: String, CaseIterable, Identifiable, Codable {
 
 struct GhostSettings: Codable, Equatable {
     var style: GhostStyle = .paleWoman
-    var opacity: Double = 0.72
-    var scale: Double = 1.25
-    var horizontalOffset: Double = -0.28
+    var facing: GhostFacing = .front
+    var opacity: Double = 0.86
+    var scale: Double = 1.18
+    var horizontalOffset: Double = -0.52
     var verticalOffset: Double = -0.08
     var jitter: Double = 0.04
+}
+
+enum GhostFacing: String, CaseIterable, Identifiable, Codable {
+    case front
+    case side
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .front: "正面"
+        case .side: "横向き"
+        }
+    }
 }
 
 struct AnalysisSummary: Equatable {

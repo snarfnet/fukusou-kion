@@ -196,6 +196,20 @@ struct ContentView: View {
 
     private var controls: some View {
         VStack(spacing: 14) {
+            HStack(spacing: 8) {
+                ForEach(GhostFacing.allCases) { facing in
+                    Button {
+                        editor.settings.facing = facing
+                    } label: {
+                        Label(
+                            facing.displayName,
+                            systemImage: facing == .front ? "face.smiling.inverse" : "figure.walk.motion"
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(FacingButtonStyle(isSelected: editor.settings.facing == facing))
+                }
+            }
             SliderRow(title: "濃さ", value: $editor.settings.opacity, range: 0.2...1.0)
             SliderRow(title: "大きさ", value: $editor.settings.scale, range: 0.75...1.9)
             SliderRow(title: "横位置", value: $editor.settings.horizontalOffset, range: -1.0...1.0)
@@ -246,6 +260,20 @@ private struct SecondaryButtonStyle: ButtonStyle {
             .padding(.horizontal, 12)
             .frame(height: 44)
             .background(configuration.isPressed ? Color.white.opacity(0.18) : Color.white.opacity(0.10))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct FacingButtonStyle: ButtonStyle {
+    var isSelected: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(isSelected ? .black : .white)
+            .padding(.horizontal, 10)
+            .frame(height: 42)
+            .background(isSelected ? Color.white : Color.white.opacity(configuration.isPressed ? 0.18 : 0.09))
             .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

@@ -1,0 +1,13 @@
+{
+  "images" : [
+    {
+      "filename" : "ghost_side.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
