@@ -610,7 +610,7 @@ button:hover {
   position: absolute;
   left: var(--cx);
   top: var(--cy);
-  width: 18%;
+  width: 14%;
   aspect-ratio: 1;
   border-radius: 50%;
   background: rgba(244, 184, 74, .78);
@@ -619,14 +619,14 @@ button:hover {
 }
 
 .cell.hint {
-  box-shadow: inset 0 0 0 4px rgba(255, 79, 138, .78);
+  box-shadow: inset 0 0 0 3px rgba(255, 79, 138, .78);
 }
 
 .disc {
   position: absolute;
   left: var(--cx);
   top: var(--cy);
-  width: 72%;
+  width: 64%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%) scaleY(.72);
@@ -1056,13 +1056,13 @@ button:hover {
   }
 
   .board-frame {
-    padding: 2px 6px 8px;
+    padding: 2px 6px 20px;
     align-items: center;
   }
 
   .board {
     --board-size: min(88vh, 64vw, 390px);
-    transform: translateY(0);
+    transform: translateY(-3%);
   }
 
   .result-overlay {
@@ -1108,12 +1108,12 @@ button:hover {
   }
 
   .board-frame {
-    padding: 2px 5px 8px;
+    padding: 2px 5px 20px;
   }
 
   .board {
     --board-size: min(84vh, 62vw, 360px);
-    transform: translateY(0);
+    transform: translateY(-3%);
   }
 }
 
@@ -1230,12 +1230,12 @@ button:hover {
 
   .board-frame {
     min-height: 0;
-    padding: 10px 8px 12px;
+    padding: 10px 8px 24px;
   }
 
   .board {
     --board-size: min(72vh, 52vw, 540px);
-    transform: translateY(0);
+    transform: translateY(-2%);
   }
 
   .profile-grid {
