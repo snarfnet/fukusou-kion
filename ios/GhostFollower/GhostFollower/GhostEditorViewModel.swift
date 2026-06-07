@@ -75,7 +75,9 @@ final class GhostEditorViewModel: ObservableObject {
             forInterval: CMTime(value: 1, timescale: 30),
             queue: .main
         ) { [weak self] time in
-            self?.playbackTime = time.seconds
+            Task { @MainActor in
+                self?.playbackTime = time.seconds
+            }
         }
     }
 
@@ -87,9 +89,5 @@ final class GhostEditorViewModel: ObservableObject {
         player = nil
     }
 
-    deinit {
-        if let timeObserver, let player {
-            player.removeTimeObserver(timeObserver)
-        }
-    }
+    deinit {}
 }
