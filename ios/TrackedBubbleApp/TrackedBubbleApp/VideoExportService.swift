@@ -105,14 +105,20 @@ final class VideoExportService {
         layer.contentsScale = UIScreen.main.scale
         layer.bounds = CGRect(origin: .zero, size: bubbleSize)
         layer.position = CGPoint(x: renderSize.width * 0.5, y: renderSize.height * 0.18)
-        layer.add(positionAnimation(points: trackingPoints.map(\.bubbleAnchor), renderSize: renderSize), forKey: "bubblePosition")
+        layer.add(
+            positionAnimation(points: trackingPoints.map(\.bubbleAnchor), renderSize: renderSize, duration: trackingDuration(trackingPoints)),
+            forKey: "bubblePosition"
+        )
         return layer
     }
 
     private func makeSparkleLayer(shape: EyeSparkleShape, renderSize: CGSize, trackingPoints: [FaceTrackingPoint]) -> CALayer {
         let root = CALayer()
         root.frame = CGRect(origin: .zero, size: renderSize)
-        root.add(positionAnimation(points: trackingPoints.map(\.eyeCenter), renderSize: renderSize), forKey: "sparklePosition")
+        root.add(
+            positionAnimation(points: trackingPoints.map(\.eyeCenter), renderSize: renderSize, duration: trackingDuration(trackingPoints)),
+            forKey: "sparklePosition"
+        )
 
         let glyphs = [shape.glyph, shape.glyph, "✦", "•", "✦", "•"]
         let offsets: [CGPoint] = [
@@ -139,18 +145,22 @@ final class VideoExportService {
         return root
     }
 
-    private func positionAnimation(points: [CGPoint], renderSize: CGSize) -> CAKeyframeAnimation {
+    private func positionAnimation(points: [CGPoint], renderSize: CGSize, duration: Double) -> CAKeyframeAnimation {
         let animation = CAKeyframeAnimation(keyPath: "position")
         animation.values = points.map { point in
             CGPoint(x: point.x * renderSize.width, y: point.y * renderSize.height)
         }
         let count = max(1, points.count - 1)
         animation.keyTimes = (0..<points.count).map { NSNumber(value: Double($0) / Double(count)) }
-        animation.duration = max(0.1, points.last?.time ?? 0.1)
+        animation.duration = max(0.1, duration)
         animation.calculationMode = .linear
         animation.isRemovedOnCompletion = false
         animation.fillMode = .forwards
         return animation
+    }
+
+    private func trackingDuration(_ trackingPoints: [FaceTrackingPoint]) -> Double {
+        trackingPoints.last?.time ?? 0.1
     }
 
     private func pulseAnimation(delay: Double) -> CAAnimationGroup {
