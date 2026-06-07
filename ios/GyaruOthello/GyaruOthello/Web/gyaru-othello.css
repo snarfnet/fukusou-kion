@@ -522,8 +522,7 @@ button:hover {
   box-shadow:
     0 46px 58px rgba(0,0,0,.52),
     0 18px 0 #041711,
-    0 27px 0 #010806,
-    inset 0 0 0 8px rgba(1, 10, 8, .88);
+    0 27px 0 #010806;
   transform: translateY(-2%);
 }
 
@@ -1050,7 +1049,7 @@ button:hover {
 
   .board {
     --board-size: min(84vh, 64vw, 376px);
-    transform: translateY(-4%);
+    transform: translateY(1%);
   }
 
   .result-overlay {
@@ -1101,7 +1100,7 @@ button:hover {
 
   .board {
     --board-size: min(80vh, 62vw, 346px);
-    transform: translateY(-4%);
+    transform: translateY(1%);
   }
 }
 
@@ -1223,7 +1222,7 @@ button:hover {
 
   .board {
     --board-size: min(70vh, 52vw, 528px);
-    transform: translateY(-3%);
+    transform: translateY(1%);
   }
 
   .profile-grid {
