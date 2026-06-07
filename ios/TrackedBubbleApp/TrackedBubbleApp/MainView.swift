@@ -81,6 +81,10 @@ struct MainView: View {
         .onReceive(timer) { _ in
             currentTime = player?.currentTime().seconds ?? 0
         }
+        .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)) { notification in
+            guard notification.object as? AVPlayerItem === player?.currentItem else { return }
+            isPlaying = false
+        }
         .alert("お知らせ", isPresented: Binding(get: { alertMessage != nil }, set: { if !$0 { alertMessage = nil } })) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -101,8 +105,11 @@ struct MainView: View {
 
                     if let point = trackingPoints.interpolatedPoint(at: currentTime) {
                         BubbleOverlayView(text: bubbleText, anchor: point.bubbleAnchor, containerSize: size)
+                            .allowsHitTesting(false)
+                            .zIndex(2)
                         if showsEyeSparkle {
                             EyeSparkleOverlayView(point: point, shape: sparkleShape, containerSize: size)
+                                .zIndex(3)
                         }
                     }
                 } else {
@@ -127,6 +134,7 @@ struct MainView: View {
                                 .background(.white.opacity(0.92), in: Circle())
                         }
                         .disabled(player == nil)
+                        .zIndex(10)
                         Spacer()
                     }
                     .padding(12)
@@ -190,6 +198,11 @@ struct MainView: View {
         if isPlaying {
             player.pause()
         } else {
+            if let duration = player.currentItem?.duration.seconds,
+               duration.isFinite,
+               player.currentTime().seconds >= duration - 0.05 {
+                player.seek(to: .zero)
+            }
             player.play()
         }
         isPlaying.toggle()

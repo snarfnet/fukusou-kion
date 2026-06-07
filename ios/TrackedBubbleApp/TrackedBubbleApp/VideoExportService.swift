@@ -92,24 +92,56 @@ final class VideoExportService {
     }
 
     private func makeBubbleLayer(text: String, renderSize: CGSize, trackingPoints: [FaceTrackingPoint]) -> CALayer {
-        let bubbleSize = CGSize(width: renderSize.width * 0.46, height: renderSize.height * 0.13)
-        let layer = BubbleTextLayer()
-        layer.string = text.isEmpty ? "え、まって" : text
-        layer.fontSize = max(24, renderSize.width * 0.045)
-        layer.alignmentMode = .center
-        layer.foregroundColor = UIColor(red: 0.20, green: 0.10, blue: 0.18, alpha: 1).cgColor
-        layer.backgroundColor = UIColor.white.withAlphaComponent(0.96).cgColor
-        layer.cornerRadius = 22
-        layer.borderColor = UIColor(red: 0.18, green: 0.08, blue: 0.16, alpha: 1).cgColor
-        layer.borderWidth = 3
-        layer.contentsScale = UIScreen.main.scale
-        layer.bounds = CGRect(origin: .zero, size: bubbleSize)
-        layer.position = CGPoint(x: renderSize.width * 0.5, y: renderSize.height * 0.18)
-        layer.add(
+        let bubbleSize = CGSize(width: renderSize.width * 0.54, height: renderSize.height * 0.14)
+        let root = CALayer()
+        root.bounds = CGRect(origin: .zero, size: bubbleSize)
+        root.position = CGPoint(x: renderSize.width * 0.5, y: renderSize.height * 0.18)
+
+        let tailFrame = CGRect(
+            x: bubbleSize.width * 0.16,
+            y: bubbleSize.height * 0.74,
+            width: bubbleSize.width * 0.20,
+            height: bubbleSize.height * 0.48
+        )
+        let tail = CAShapeLayer()
+        tail.path = mangaTailPath(in: tailFrame).cgPath
+        tail.fillColor = UIColor.white.cgColor
+        tail.strokeColor = UIColor.black.cgColor
+        tail.lineWidth = max(3, renderSize.width * 0.006)
+        tail.lineJoin = .round
+        root.addSublayer(tail)
+
+        let bubble = CAShapeLayer()
+        bubble.path = mangaBubblePath(in: CGRect(origin: .zero, size: bubbleSize)).cgPath
+        bubble.fillColor = UIColor.white.cgColor
+        bubble.strokeColor = UIColor.black.cgColor
+        bubble.lineWidth = max(4, renderSize.width * 0.008)
+        bubble.lineJoin = .round
+        root.addSublayer(bubble)
+
+        let textLayer = BubbleTextLayer()
+        textLayer.string = text.isEmpty ? "え、まって" : text
+        textLayer.fontSize = max(26, renderSize.width * 0.052)
+        textLayer.alignmentMode = .center
+        textLayer.foregroundColor = UIColor(red: 0.93, green: 0.26, blue: 0.52, alpha: 1).cgColor
+        textLayer.contentsScale = UIScreen.main.scale
+        textLayer.bounds = CGRect(x: 0, y: 0, width: bubbleSize.width * 0.78, height: bubbleSize.height * 0.66)
+        textLayer.position = CGPoint(x: bubbleSize.width * 0.50, y: bubbleSize.height * 0.51)
+        root.addSublayer(textLayer)
+
+        let marks = CAShapeLayer()
+        marks.path = emphasisMarksPath(in: CGRect(x: bubbleSize.width * 0.80, y: -bubbleSize.height * 0.06, width: bubbleSize.width * 0.18, height: bubbleSize.height * 0.32)).cgPath
+        marks.fillColor = UIColor.clear.cgColor
+        marks.strokeColor = UIColor.black.cgColor
+        marks.lineWidth = max(3, renderSize.width * 0.006)
+        marks.lineCap = .round
+        root.addSublayer(marks)
+
+        root.add(
             positionAnimation(points: trackingPoints.map(\.bubbleAnchor), renderSize: renderSize, duration: trackingDuration(trackingPoints)),
             forKey: "bubblePosition"
         )
-        return layer
+        return root
     }
 
     private func makeSparkleLayer(shape: EyeSparkleShape, renderSize: CGSize, trackingPoints: [FaceTrackingPoint]) -> CALayer {
@@ -143,6 +175,76 @@ final class VideoExportService {
             root.addSublayer(textLayer)
         }
         return root
+    }
+
+    private func mangaBubblePath(in rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.22, y: rect.minY + rect.height * 0.21))
+        path.addCurve(
+            to: CGPoint(x: rect.minX + rect.width * 0.47, y: rect.minY + rect.height * 0.08),
+            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.25, y: rect.minY + rect.height * 0.02),
+            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.40, y: rect.minY - rect.height * 0.02)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.minX + rect.width * 0.73, y: rect.minY + rect.height * 0.18),
+            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.55, y: rect.minY - rect.height * 0.05),
+            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.02)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.maxX - rect.width * 0.05, y: rect.minY + rect.height * 0.45),
+            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.91, y: rect.minY + rect.height * 0.14),
+            controlPoint2: CGPoint(x: rect.maxX + rect.width * 0.02, y: rect.minY + rect.height * 0.28)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.maxX - rect.width * 0.18, y: rect.maxY - rect.height * 0.13),
+            controlPoint1: CGPoint(x: rect.maxX + rect.width * 0.05, y: rect.minY + rect.height * 0.66),
+            controlPoint2: CGPoint(x: rect.maxX - rect.width * 0.05, y: rect.maxY - rect.height * 0.10)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.minX + rect.width * 0.45, y: rect.maxY - rect.height * 0.04),
+            controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.22, y: rect.maxY + rect.height * 0.06),
+            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.60, y: rect.maxY + rect.height * 0.08)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.minX + rect.width * 0.12, y: rect.maxY - rect.height * 0.22),
+            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.32, y: rect.maxY + rect.height * 0.06),
+            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.14, y: rect.maxY - rect.height * 0.02)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.minX + rect.width * 0.22, y: rect.minY + rect.height * 0.21),
+            controlPoint1: CGPoint(x: rect.minX - rect.width * 0.03, y: rect.maxY - rect.height * 0.37),
+            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.02, y: rect.minY + rect.height * 0.25)
+        )
+        path.close()
+        return path
+    }
+
+    private func mangaTailPath(in rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.18, y: rect.minY + rect.height * 0.05))
+        path.addCurve(
+            to: CGPoint(x: rect.maxX - rect.width * 0.03, y: rect.maxY - rect.height * 0.03),
+            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.23, y: rect.minY + rect.height * 0.47),
+            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.58, y: rect.maxY)
+        )
+        path.addCurve(
+            to: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.18),
+            controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.18, y: rect.maxY - rect.height * 0.52),
+            controlPoint2: CGPoint(x: rect.maxX - rect.width * 0.24, y: rect.minY + rect.height * 0.28)
+        )
+        path.close()
+        return path
+    }
+
+    private func emphasisMarksPath(in rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.15, y: rect.maxY * 0.72))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.22))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.move(to: CGPoint(x: rect.maxX - rect.width * 0.16, y: rect.maxY * 0.72))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        return path
     }
 
     private func positionAnimation(points: [CGPoint], renderSize: CGSize, duration: Double) -> CAKeyframeAnimation {
