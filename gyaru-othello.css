@@ -207,10 +207,11 @@ button {
 }
 
 .game-table {
+  min-width: 0;
   padding: 18px;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
-  gap: 14px;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
   background:
     linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.025)),
     linear-gradient(45deg, rgba(91,48,32,.8), rgba(16, 15, 14, .92));
@@ -222,6 +223,10 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.topbar {
+  flex-wrap: wrap;
 }
 
 .eyebrow {
@@ -306,6 +311,7 @@ h1 {
 .match-strip {
   justify-content: flex-start;
   flex-wrap: wrap;
+  margin-left: auto;
 }
 
 .opponent-picker {
@@ -832,7 +838,7 @@ button:hover {
     min-height: 100vh;
     height: 100vh;
     padding: 6px 0;
-    grid-template-columns: minmax(220px, 33vw) minmax(430px, 1fr);
+    grid-template-columns: minmax(200px, 30vw) minmax(0, 1fr);
     gap: 8px;
   }
 
@@ -877,33 +883,48 @@ button:hover {
 
   .game-table {
     padding: 6px;
-    gap: 5px;
+    gap: 4px;
   }
 
   .topbar {
-    min-height: 38px;
+    min-height: 34px;
+    flex-wrap: nowrap;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .topbar > div:first-child {
+    display: none;
   }
 
   .eyebrow {
-    margin-bottom: 1px;
-    font-size: 10px;
+    display: none;
   }
 
   h1 {
-    font-size: 26px;
+    max-width: 92px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
   }
 
   .scoreboard {
-    grid-template-columns: repeat(2, 70px);
+    display: flex;
+    grid-template-columns: none;
+    gap: 4px;
+    flex: 0 0 auto;
   }
 
   .scoreboard > div {
-    min-height: 36px;
-    padding: 4px 6px;
+    width: 54px;
+    min-height: 30px;
+    padding: 3px 5px;
+    grid-template-columns: auto auto;
+    column-gap: 5px;
   }
 
   .scoreboard strong {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .scoreboard small,
@@ -913,26 +934,37 @@ button:hover {
     font-size: 12px;
   }
 
+  .scoreboard small {
+    display: none;
+  }
+
   .stone {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 
   .match-strip {
-    gap: 5px;
+    gap: 4px;
     flex-wrap: nowrap;
+    min-width: 0;
+    margin-left: 0;
   }
 
   .opponent-picker {
-    min-height: 32px;
-    padding: 3px 5px 3px 7px;
+    min-height: 30px;
+    padding: 2px 4px;
+  }
+
+  .picker-label {
+    display: none;
   }
 
   .picker-button {
-    min-width: 166px;
+    min-width: 136px;
+    max-width: 22vw;
     min-height: 26px;
-    grid-template-columns: 22px 1fr;
-    gap: 6px;
+    grid-template-columns: 21px 1fr;
+    gap: 5px;
     padding: 2px 24px 2px 4px;
     font-size: 12px;
   }
@@ -951,36 +983,37 @@ button:hover {
   .turn-pill,
   .icon-btn,
   .text-btn {
-    min-height: 32px;
+    min-height: 30px;
   }
 
   .turn-pill {
-    min-width: 116px;
-    padding: 4px 8px;
+    min-width: 92px;
+    padding: 3px 7px;
+    gap: 6px;
   }
 
   .icon-btn {
-    width: 32px;
+    width: 30px;
   }
 
   .text-btn {
-    padding: 0 10px;
+    padding: 0 8px;
   }
 
   .board-frame {
-    padding: 0 8px;
+    padding: 2px 6px 0;
     align-items: center;
   }
 
   .board {
-    --board-size: min(68vh, 58vw, 450px);
-    transform: rotateX(36deg) translateY(-6%);
+    --board-size: min(102vh, 68vw, 590px);
+    transform: rotateX(36deg) translateY(-21%);
   }
 }
 
 @media (orientation: landscape) and (max-width: 700px) and (max-height: 400px) {
   .app-shell {
-    grid-template-columns: minmax(190px, 31vw) minmax(390px, 1fr);
+    grid-template-columns: minmax(180px, 29vw) minmax(0, 1fr);
     gap: 6px;
   }
 
@@ -996,12 +1029,12 @@ button:hover {
   }
 
   .board-frame {
-    padding: 0 6px;
+    padding: 2px 5px 0;
   }
 
   .board {
-    --board-size: min(55vh, 48vw, 330px);
-    transform: rotateX(36deg) translateY(-30%);
+    --board-size: min(98vh, 66vw, 400px);
+    transform: rotateX(36deg) translateY(-24%);
   }
 }
 
@@ -1025,18 +1058,105 @@ button:hover {
 
   .game-table {
     min-height: 0;
-    padding: 12px;
-    gap: 10px;
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .topbar {
+    min-height: 38px;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .topbar > div:first-child {
+    display: none;
+  }
+
+  .scoreboard {
+    display: flex;
+    grid-template-columns: none;
+    gap: 5px;
+    flex: 0 0 auto;
+  }
+
+  .scoreboard > div {
+    width: 60px;
+    min-height: 32px;
+    padding: 4px 6px;
+    grid-template-columns: auto auto;
+    column-gap: 5px;
+  }
+
+  .scoreboard strong {
+    font-size: 17px;
+  }
+
+  .scoreboard small,
+  .picker-label {
+    display: none;
+  }
+
+  .stone {
+    width: 22px;
+    height: 22px;
+  }
+
+  .match-strip {
+    flex-wrap: nowrap;
+    gap: 5px;
+    margin-left: 0;
+    min-width: 0;
+  }
+
+  .opponent-picker {
+    min-height: 32px;
+    padding: 3px 5px;
+  }
+
+  .picker-button {
+    min-width: 158px;
+    max-width: 22vw;
+    min-height: 28px;
+    grid-template-columns: 22px 1fr;
+    gap: 6px;
+    padding: 2px 24px 2px 4px;
+    font-size: 12px;
+  }
+
+  .picker-button img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .turn-pill,
+  .icon-btn,
+  .text-btn {
+    min-height: 32px;
+    font-size: 12px;
+  }
+
+  .turn-pill {
+    min-width: 102px;
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .icon-btn {
+    width: 32px;
+  }
+
+  .text-btn {
+    padding: 0 10px;
   }
 
   .board-frame {
     min-height: 0;
-    padding: clamp(28px, 4vw, 54px) 10px 2px;
+    padding: 4px 8px 0;
   }
 
   .board {
-    --board-size: min(58vh, 54vw, 520px);
-    transform: rotateX(59deg) translateY(-16%);
+    --board-size: min(92vh, 58vw, 680px);
+    transform: rotateX(59deg) translateY(-18%);
   }
 
   .profile-grid {

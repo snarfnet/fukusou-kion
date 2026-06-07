@@ -208,6 +208,9 @@ jobs:
             --apple-id "$APP_ID" \
             --apiKey "$ASC_KEY_ID" \
             --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/gyaru-othello-altool-upload.log
+          if grep -q 'UPLOAD SUCCEEDED with no errors' /tmp/gyaru-othello-altool-upload.log; then
+            exit 0
+          fi
           if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/gyaru-othello-altool-upload.log; then
             exit 1
           fi
