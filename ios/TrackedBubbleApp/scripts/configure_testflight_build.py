@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-from asc_helpers import api_json, fail, query
+from asc_helpers import api, api_json, fail, query
 
 
 APP_ID = os.environ["APP_ID"]
@@ -33,7 +33,12 @@ def mark_no_non_exempt_encryption(build_id):
             "attributes": {"usesNonExemptEncryption": False},
         }
     }
-    api_json("PATCH", f"/builds/{build_id}", json=payload)
+    response = api("PATCH", f"/builds/{build_id}", json=payload)
+    if response.status_code == 409 and "already set" in response.text:
+        print(f"Build {BUILD_NUMBER} encryption value is already set.")
+        return
+    if response.status_code not in (200, 201, 204):
+        raise RuntimeError(f"PATCH /builds/{build_id} failed {response.status_code}: {response.text[:800]}")
     print(f"Marked build {BUILD_NUMBER} as not using non-exempt encryption.")
 
 
