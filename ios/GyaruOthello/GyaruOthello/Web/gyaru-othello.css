@@ -1001,13 +1001,13 @@ button:hover {
   }
 
   .board-frame {
-    padding: 2px 6px 0;
+    padding: 2px 6px 8px;
     align-items: center;
   }
 
   .board {
-    --board-size: min(98vh, 66vw, 570px);
-    transform: rotateX(36deg) translateY(-21%);
+    --board-size: min(94vh, 64vw, 550px);
+    transform: rotateX(46deg) translateY(-25%);
   }
 }
 
@@ -1029,12 +1029,12 @@ button:hover {
   }
 
   .board-frame {
-    padding: 2px 5px 0;
+    padding: 2px 5px 8px;
   }
 
   .board {
-    --board-size: min(94vh, 64vw, 390px);
-    transform: rotateX(36deg) translateY(-24%);
+    --board-size: min(90vh, 62vw, 380px);
+    transform: rotateX(46deg) translateY(-28%);
   }
 }
 
