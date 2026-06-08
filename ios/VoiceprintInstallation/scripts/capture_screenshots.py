@@ -11,7 +11,6 @@ BUNDLE_ID = "com.tokyonasu.voiceprintinstallation"
 DEVICE_CANDIDATES = {
     "iphone67": ["iPhone 16 Pro Max", "iPhone 15 Pro Max", "iPhone 14 Pro Max"],
     "iphone65": ["iPhone 11 Pro Max", "iPhone XS Max"],
-    "iphone55": ["iPhone 8 Plus"],
     "ipad129": ["iPad Pro 13-inch (M4)", "iPad Pro (12.9-inch) (6th generation)", "iPad Pro (12.9-inch) (5th generation)"],
 }
 
@@ -104,7 +103,7 @@ def main():
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True)
 
-    for kind in ["iphone67", "iphone65", "iphone55", "ipad129"]:
+    for kind in ["iphone67", "iphone65", "ipad129"]:
         screenshot_device(kind, str(app_path), output_root)
 
 

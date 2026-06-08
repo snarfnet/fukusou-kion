@@ -25,7 +25,6 @@ REVIEW_CONTACT = {
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone67_01_studio.png", "iphone67_02_gallery.png", "iphone67_03_nft_prep.png"]),
     ("APP_IPHONE_65", ["iphone65_01_studio.png", "iphone65_02_gallery.png", "iphone65_03_nft_prep.png"]),
-    ("APP_IPHONE_55", ["iphone55_01_studio.png", "iphone55_02_gallery.png", "iphone55_03_nft_prep.png"]),
     ("APP_IPAD_PRO_3GEN_129", ["ipad129_01_studio.png", "ipad129_02_gallery.png", "ipad129_03_nft_prep.png"]),
 ]
 
