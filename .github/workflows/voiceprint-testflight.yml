@@ -1,0 +1,162 @@
+name: Voiceprint TestFlight
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    name: Archive and Upload
+    runs-on: macos-15
+    timeout-minutes: 75
+    defaults:
+      run:
+        working-directory: ios/VoiceprintInstallation
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.voiceprintinstallation
+      APP_NAME: Voiceprint
+      APP_SKU: voiceprint-ios
+      BUNDLE_NAME: VoiceprintInstallation
+      PROFILE_NAME: "Voiceprint App Store"
+      TEAM_ID: 83VGKGSQUH
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: |
+          brew update
+          brew install xcodegen
+          xcodegen --version
+
+      - name: Set build number
+        run: |
+          BUILD_NUM=${{ github.run_number }}
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path("project.yml")
+          text = path.read_text()
+          build = os.environ["GITHUB_RUN_NUMBER"]
+          text = text.replace("CURRENT_PROJECT_VERSION: 1", f"CURRENT_PROJECT_VERSION: {build}")
+          text = text.replace('CURRENT_PROJECT_VERSION: "1"', f'CURRENT_PROJECT_VERSION: "{build}"')
+          path.write_text(text)
+          PY
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Set up ASC API Key
+        env:
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p ~/.appstoreconnect/private_keys /tmp/asc
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 -D > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+
+      - name: Install Python dependencies
+        run: pip3 install --break-system-packages PyJWT cryptography requests
+
+      - name: Create Distribution Certificate
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          CERT_BASE64: ${{ secrets.DIST_CERT_BASE64 || secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD || secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'temporary-keychain-password' }}
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          if [ -n "$CERT_BASE64" ]; then
+            echo "$CERT_BASE64" | base64 -D > cert.p12
+            security import cert.p12 -k build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+            security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+            security find-certificate -a -c "Apple Distribution" -Z build.keychain | awk '/SHA-1 hash:/ {print "IOS_DISTRIBUTION_CERT_SHA1="$3; exit}' >> "$GITHUB_ENV"
+            rm cert.p12
+          else
+            python3 scripts/create_distribution_certificate.py | tee /tmp/voiceprint-cert.log
+            grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/voiceprint-cert.log >> "$GITHUB_ENV"
+          fi
+
+      - name: Ensure App Store Connect App
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUNDLE_ID: ${{ env.APP_BUNDLE_ID }}
+        run: python3 scripts/ensure_asc_app.py
+
+      - name: Prepare Provisioning Profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/prepare_profile.py
+
+      - name: Build Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive \
+            -project VoiceprintInstallation.xcodeproj \
+            -scheme VoiceprintInstallation \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/VoiceprintInstallation.xcarchive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Export IPA
+        run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" export_options.plist
+          /usr/libexec/PlistBuddy -c "Set :teamID $TEAM_ID" export_options.plist
+          xcodebuild -exportArchive \
+            -archivePath build/VoiceprintInstallation.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload IPA to App Store Connect
+        run: |
+          IPA_PATH=$(ls build/export/*.ipa | head -1)
+          xcrun altool --upload-app \
+            -f "$IPA_PATH" \
+            -t ios \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID" \
+            --verbose
+
+      - name: Wait for TestFlight Processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/wait_for_testflight_build.py "$BUILD_NUM"

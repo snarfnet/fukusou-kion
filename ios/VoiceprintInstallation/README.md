@@ -62,6 +62,29 @@ Xcodeで以下を確認します。
 5. App Store ConnectのTestFlightで内部テスターを追加
 6. 外部テスターへ出す場合はBeta App Reviewへ提出
 
+## GitHub ActionsでTestFlightへアップロード
+
+専用workflow:
+
+- `.github/workflows/voiceprint-testflight.yml`
+
+必要なGitHub Secrets:
+
+- `ASC_KEY_ID`
+- `ASC_ISSUER_ID`
+- `ASC_PRIVATE_KEY` または `ASC_API_KEY_CONTENT`
+- 任意: `DIST_CERT_BASE64` または `IOS_DISTRIBUTION_P12_BASE64`
+- 任意: `DIST_CERT_PASSWORD` または `IOS_DISTRIBUTION_P12_PASSWORD`
+- 任意: `KEYCHAIN_PASSWORD`
+
+実行:
+
+```sh
+gh workflow run "Voiceprint TestFlight" --ref codex/trouble-navi-testflight
+```
+
+このworkflowはApp Store Connectのアプリ登録、配布証明書、Provisioning Profile、Archive、IPA export、App Store Connect upload、TestFlight処理待ちまで行います。App Store審査提出はしません。
+
 ## 次に足す機能
 
 - WalletConnect
