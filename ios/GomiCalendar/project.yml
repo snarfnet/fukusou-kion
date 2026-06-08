@@ -31,6 +31,7 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
+        ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "現在地の住所から、ごみ収集エリアを確認するために使います。"
         UILaunchScreen:
           UIColorName: ""
