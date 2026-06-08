@@ -85,6 +85,15 @@ gh workflow run "Voiceprint iOS Build" --ref codex/trouble-navi-testflight -f up
 
 このworkflowはApp Store Connectのアプリ登録、配布証明書、Provisioning Profile、Archive、IPA export、App Store Connect upload、TestFlight処理待ちまで行います。App Store審査提出はしません。
 
+APIキーにアプリ作成権限がない場合、App Store Connectで最初のアプリレコードだけ手動作成してください。
+
+- Name: `Voiceprint`
+- Bundle ID: `com.tokyonasu.voiceprintinstallation`
+- SKU: `voiceprint-ios`
+- Platform: iOS
+
+手動作成後、同じworkflowを再実行すればArchive/Uploadへ進みます。
+
 ## 次に足す機能
 
 - WalletConnect

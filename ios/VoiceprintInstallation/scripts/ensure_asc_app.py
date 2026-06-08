@@ -116,7 +116,12 @@ def ensure_app(bundle):
         except Exception as error:
             last_error = error
 
-    raise RuntimeError(f"App Store Connect app was not created: {last_error}")
+    raise RuntimeError(
+        "App Store Connect app was not created. The API key may not have permission to create apps.\n"
+        f"Create the app record once in App Store Connect with name '{APP_NAME}', "
+        f"bundle ID '{BUNDLE_ID}', and SKU '{APP_SKU}', then rerun this workflow.\n"
+        f"Original error: {last_error}"
+    )
 
 
 def main():
