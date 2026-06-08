@@ -87,22 +87,181 @@ struct VoiceArtworkView: View {
             )
         )
 
+        drawModernGround(features, palette: palette, size: size, in: &context, rng: &rng)
+
         switch style.family {
-        case .orbit:
-            drawOrbitArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
-        case .crystalline:
-            drawCrystallineArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
-        case .terrain:
-            drawTerrainArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
-        case .ink:
-            drawInkArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
-        case .signal:
-            drawSignalArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
-        case .veil:
-            drawVeilArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .bloom:
+            drawBloomArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .aurora:
+            drawAuroraArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
+        case .topography:
+            drawTopographyArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
+        case .calligraphy:
+            drawCalligraphyArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .mist:
+            drawMistArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
+        case .nebula:
+            drawNebulaArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         }
 
         drawGrain(palette: palette, size: size, in: &context, rng: &rng)
+    }
+
+    private func drawModernGround(_ features: VoiceFeatures, palette: ArtworkPalette, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let planes = 4 + Int(rng.next() % 4)
+        for index in 0..<planes {
+            let energy = sample(features.energyCurve, at: Double(index) / Double(max(1, planes - 1)))
+            let width = size.width * CGFloat(rng.double(in: 0.34...0.78))
+            let height = size.height * CGFloat(rng.double(in: 0.22...0.58) * (0.75 + energy))
+            let x = size.width * CGFloat(rng.double(in: -0.12...0.82))
+            let y = size.height * CGFloat(rng.double(in: -0.08...0.84))
+            let rect = CGRect(x: x, y: y, width: width, height: height)
+            let color = index.isMultiple(of: 3) ? palette.lineB : (index.isMultiple(of: 2) ? palette.backgroundB : palette.lineA)
+            context.fill(Path(ellipseIn: rect), with: .color(color.opacity(rng.double(in: 0.045...0.16))))
+        }
+
+        let slashCount = 2 + Int(rng.next() % 3)
+        for index in 0..<slashCount {
+            var path = Path()
+            let start = CGPoint(x: size.width * CGFloat(rng.double(in: -0.1...0.42)), y: size.height * CGFloat(rng.double(in: 0.12...0.95)))
+            let end = CGPoint(x: size.width * CGFloat(rng.double(in: 0.48...1.12)), y: size.height * CGFloat(rng.double(in: -0.05...0.84)))
+            let voice = sample(features.waveform, at: Double(index) / Double(max(1, slashCount - 1)))
+            path.move(to: start)
+            path.addQuadCurve(
+                to: end,
+                control: CGPoint(x: size.width * CGFloat(rng.double(in: 0.25...0.75)), y: size.height * CGFloat(0.5 + voice * 0.28))
+            )
+            let color = index.isMultiple(of: 2) ? palette.spark : palette.lineA
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.09...0.24))), lineWidth: CGFloat(rng.double(in: 10...28)))
+        }
+    }
+
+    private func drawBloomArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let petals = 18 + style.symmetry * 3
+        for petal in 0..<petals {
+            let t = Double(petal) / Double(petals)
+            let voice = abs(sample(features.waveform, at: t))
+            let energy = sample(features.energyCurve, at: (t + 0.19).truncatingRemainder(dividingBy: 1))
+            let angle = t * .pi * 2 + rng.double(in: -0.22...0.22)
+            let length = short * CGFloat(0.22 + voice * 0.22 + energy * 0.14)
+            let width = short * CGFloat(rng.double(in: 0.035...0.085) * style.strokeBias)
+            let tip = CGPoint(x: center.x + CGFloat(cos(angle)) * length, y: center.y + CGFloat(sin(angle)) * length)
+            let left = CGPoint(x: center.x + CGFloat(cos(angle - .pi / 2)) * width, y: center.y + CGFloat(sin(angle - .pi / 2)) * width)
+            let right = CGPoint(x: center.x + CGFloat(cos(angle + .pi / 2)) * width, y: center.y + CGFloat(sin(angle + .pi / 2)) * width)
+
+            var path = Path()
+            path.move(to: left)
+            path.addQuadCurve(to: tip, control: CGPoint(x: center.x + CGFloat(cos(angle - 0.35)) * length * 0.52, y: center.y + CGFloat(sin(angle - 0.35)) * length * 0.52))
+            path.addQuadCurve(to: right, control: CGPoint(x: center.x + CGFloat(cos(angle + 0.35)) * length * 0.52, y: center.y + CGFloat(sin(angle + 0.35)) * length * 0.52))
+            path.addQuadCurve(to: left, control: center)
+
+            let color = petal.isMultiple(of: 3) ? palette.spark : (petal.isMultiple(of: 2) ? palette.lineA : palette.lineB)
+            context.fill(path, with: .color(color.opacity(rng.double(in: 0.07...0.28))))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.12...0.38))), lineWidth: CGFloat(rng.double(in: 0.5...1.8)))
+        }
+    }
+
+    private func drawAuroraArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let bands = 7 + style.symmetry
+        for band in 0..<bands {
+            var path = Path()
+            let steps = 110
+            let baseY = size.height * CGFloat(rng.double(in: 0.18...0.82))
+            let amplitude = size.height * CGFloat(rng.double(in: 0.05...0.18) * style.turbulence)
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let pitch = sample(features.pitchCurve, at: (t + Double(band) * 0.047).truncatingRemainder(dividingBy: 1))
+                let wave = sample(features.waveform, at: t)
+                let x = size.width * CGFloat(t)
+                let y = baseY + CGFloat(sin(t * .pi * Double(2 + band % 4) + pitch * 4) + wave * 0.55) * amplitude
+                step == 0 ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
+            }
+            let color = band.isMultiple(of: 2) ? palette.lineA : palette.spark
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.18...0.48))), lineWidth: CGFloat(rng.double(in: 6...18)))
+            context.stroke(path, with: .color(.white.opacity(rng.double(in: 0.04...0.16))), lineWidth: CGFloat(rng.double(in: 1...3)))
+        }
+    }
+
+    private func drawTopographyArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let rows = 10 + style.symmetry
+        for row in 0..<rows {
+            var path = Path()
+            let yBase = size.height * CGFloat(row + 1) / CGFloat(rows + 1)
+            let steps = 95
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let voice = sample(features.waveform, at: (t + Double(row) * 0.061).truncatingRemainder(dividingBy: 1))
+                let energy = sample(features.energyCurve, at: (t * 0.6 + Double(row) * 0.083).truncatingRemainder(dividingBy: 1))
+                let drift = sin(t * .pi * rng.double(in: 1.4...4.5) + Double(row)) * 0.55
+                let x = size.width * CGFloat(t)
+                let y = yBase + CGFloat(voice * 0.42 + energy * 0.38 + drift * 0.2) * size.height * 0.12
+                step == 0 ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
+            }
+            let color = row.isMultiple(of: 2) ? palette.lineB : palette.lineA
+            context.stroke(path, with: .color(color.opacity(0.18 + rng.double(in: 0...0.28))), lineWidth: CGFloat(rng.double(in: 1.4...5.5)))
+        }
+    }
+
+    private func drawCalligraphyArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let strokes = 9 + style.symmetry
+        for stroke in 0..<strokes {
+            var path = Path()
+            let phase = rng.double(in: 0...(.pi * 2))
+            let sweep = rng.double(in: 0.7...2.5)
+            let steps = 80
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let voice = sample(features.waveform, at: (t + Double(stroke) * 0.077).truncatingRemainder(dividingBy: 1))
+                let radius = short * CGFloat(0.04 + t * rng.double(in: 0.26...0.48) + abs(voice) * 0.1)
+                let angle = phase + t * .pi * 2 * sweep + voice * 0.7
+                let point = CGPoint(x: center.x + CGFloat(cos(angle)) * radius, y: center.y + CGFloat(sin(angle)) * radius)
+                step == 0 ? path.move(to: point) : path.addQuadCurve(to: point, control: CGPoint(x: center.x + CGFloat(voice) * short * 0.24, y: center.y - CGFloat(voice) * short * 0.18))
+            }
+            let color = stroke.isMultiple(of: 2) ? palette.spark : palette.lineA
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.16...0.5))), lineWidth: CGFloat(rng.double(in: 3.0...12.0)))
+        }
+    }
+
+    private func drawMistArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let clouds = 70 + Int(features.averageEnergy * 80)
+        for index in 0..<clouds {
+            let t = Double(index) / Double(clouds)
+            let wave = sample(features.waveform, at: t)
+            let energy = sample(features.energyCurve, at: (t + 0.31).truncatingRemainder(dividingBy: 1))
+            let x = size.width * CGFloat(rng.double(in: 0.05...0.95))
+            let y = size.height * CGFloat(0.18 + rng.double(in: 0...0.68) + wave * 0.08)
+            let side = size.width * CGFloat(rng.double(in: 0.05...0.16) * (0.7 + energy))
+            let rect = CGRect(x: x - side / 2, y: y - side / 2, width: side, height: side * CGFloat(rng.double(in: 0.55...1.25)))
+            let color = index.isMultiple(of: 3) ? palette.lineB : (index.isMultiple(of: 2) ? palette.lineA : palette.spark)
+            context.fill(Path(ellipseIn: rect), with: .color(color.opacity(rng.double(in: 0.025...0.14))))
+        }
+    }
+
+    private func drawNebulaArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let arms = 3 + style.symmetry % 5
+        for arm in 0..<arms {
+            var path = Path()
+            let phase = Double(arm) / Double(arms) * .pi * 2 + rng.double(in: -0.4...0.4)
+            let steps = 130
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let wave = sample(features.waveform, at: (t + Double(arm) * 0.11).truncatingRemainder(dividingBy: 1))
+                let radius = short * CGFloat(0.04 + t * 0.46 + wave * 0.07)
+                let angle = phase + t * .pi * rng.double(in: 1.6...3.2)
+                let point = CGPoint(x: center.x + CGFloat(cos(angle)) * radius, y: center.y + CGFloat(sin(angle)) * radius)
+                step == 0 ? path.move(to: point) : path.addLine(to: point)
+            }
+            let color = arm.isMultiple(of: 2) ? palette.lineA : palette.lineB
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.16...0.42))), lineWidth: CGFloat(rng.double(in: 8...20)))
+        }
+
+        for _ in 0..<(80 + Int(features.rhythmDensity * 15)) {
+            let angle = rng.double(in: 0...(.pi * 2))
+            let distance = short * CGFloat(rng.double(in: 0.04...0.47))
+            let side = CGFloat(rng.double(in: 1.5...8.5))
+            let point = CGPoint(x: center.x + CGFloat(cos(angle)) * distance, y: center.y + CGFloat(sin(angle)) * distance)
+            context.fill(Path(ellipseIn: CGRect(x: point.x - side / 2, y: point.y - side / 2, width: side, height: side)), with: .color(palette.spark.opacity(rng.double(in: 0.18...0.72))))
+        }
     }
 
     private func drawOrbitArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {

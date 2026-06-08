@@ -102,12 +102,12 @@ struct ArtworkPalette {
 
 struct ArtworkStyle: Equatable {
     enum Family: String {
-        case orbit
-        case crystalline
-        case terrain
-        case ink
-        case signal
-        case veil
+        case bloom
+        case aurora
+        case topography
+        case calligraphy
+        case mist
+        case nebula
     }
 
     var family: Family
@@ -117,7 +117,7 @@ struct ArtworkStyle: Equatable {
 
     init(seed: UInt64, features: VoiceFeatures) {
         var rng = SeededRandomNumberGenerator(seed: seed ^ 0xd6e8_feb8_6659_fd93)
-        let families: [Family] = [.orbit, .crystalline, .terrain, .ink, .signal, .veil]
+        let families: [Family] = [.bloom, .aurora, .topography, .calligraphy, .mist, .nebula]
         family = families[Int(seed % UInt64(families.count))]
         symmetry = 3 + Int(rng.next() % 9)
         turbulence = min(1.35, 0.34 + features.zeroCrossingRate * 12 + rng.double(in: 0...0.66))
