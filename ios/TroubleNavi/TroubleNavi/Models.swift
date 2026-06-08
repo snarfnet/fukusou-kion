@@ -60,6 +60,7 @@ enum SourceDirectory {
         "phishing": .init(id: "phishing", title: "警察庁: フィッシング対策", url: URL(string: "https://www.npa.go.jp/bureau/cyber/countermeasures/phishing.html")!),
         "supportFraud": .init(id: "supportFraud", title: "警察庁: サポート詐欺対策", url: URL(string: "https://www.npa.go.jp/bureau/cyber/countermeasures/support-fraud.html")!),
         "spam": .init(id: "spam", title: "迷惑メール相談センター", url: URL(string: "https://www.dekyo.or.jp/soudan/contents/")!),
+        "mhlwRabies": .init(id: "mhlwRabies", title: "厚生労働省: 狂犬病に関するQ&A", url: URL(string: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/rabies_qa.html")!),
         "accident": .init(id: "accident", title: "国土交通省: 交通事故にあったら", url: URL(string: "https://www.mlit.go.jp/jidosha/jibaiseki/accident/correspondence/index.html")!),
         "jsdc": .init(id: "jsdc", title: "自動車安全運転センター", url: URL(string: "https://www.jsdc.or.jp/certificate/tabid/112/Default.aspx")!),
         "lost": .init(id: "lost", title: "警察庁: 落とし物", url: URL(string: "https://www.npa.go.jp/bureau/soumu/ishitsubutsu/ishitsu-todokedekensaku.html")!),

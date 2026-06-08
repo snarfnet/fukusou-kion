@@ -61,6 +61,17 @@ if (!snsBadMouth) {
   }
 }
 
+const dogBite = payload.cases.find((item) => item.title === "犬にかまれた");
+if (!dogBite) {
+  errors.push("missing pet case: 犬にかまれた");
+} else {
+  const text = [...dogBite.evidence, ...dogBite.contacts].join(" ");
+  if (text.includes("管理会社")) errors.push("犬にかまれた includes unrelated contact: 管理会社");
+  for (const must of ["医療機関", "保健所", "警察相談", "傷の写真", "受診記録"]) {
+    if (!text.includes(must)) errors.push(`犬にかまれた missing expected term: ${must}`);
+  }
+}
+
 for (const [category, count] of byCategory.entries()) {
   if (count < 8) warnings.push(`${category} has only ${count} cases`);
 }
