@@ -28,8 +28,8 @@ targets:
       properties:
         CFBundleName: "ごみ日カレンダー"
         CFBundleDisplayName: "ごみ日カレンダー"
-        CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         NSLocationWhenInUseUsageDescription: "現在地の住所から、ごみ収集エリアを確認するために使います。"
         UILaunchScreen:
