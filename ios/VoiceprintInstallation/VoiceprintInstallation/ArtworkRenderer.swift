@@ -173,9 +173,9 @@ struct VoiceArtworkView: View {
     }
 
     private func strokeNeon(_ path: Path, color: Color, in context: inout GraphicsContext, width: CGFloat) {
-        context.stroke(path, with: .color(color.opacity(0.3)), lineWidth: width * 3.2)
-        context.stroke(path, with: .color(color.opacity(0.86)), lineWidth: width)
-        context.stroke(path, with: .color(.white.opacity(0.55)), lineWidth: max(0.8, width * 0.38))
+        context.stroke(path, with: .color(color.opacity(0.2)), lineWidth: width * 2.1)
+        context.stroke(path, with: .color(color.opacity(0.9)), lineWidth: width)
+        context.stroke(path, with: .color(.white.opacity(0.62)), lineWidth: max(0.45, width * 0.28))
     }
 
     private func drawNeonBirdOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
@@ -183,21 +183,21 @@ struct VoiceArtworkView: View {
         body.move(to: CGPoint(x: center.x - short * 0.12, y: center.y))
         body.addCurve(to: CGPoint(x: center.x + short * 0.16, y: center.y - short * 0.03), control1: CGPoint(x: center.x - short * 0.04, y: center.y - short * 0.12), control2: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.11))
         body.addCurve(to: CGPoint(x: center.x - short * 0.12, y: center.y), control1: CGPoint(x: center.x + short * 0.05, y: center.y + short * 0.1), control2: CGPoint(x: center.x - short * 0.06, y: center.y + short * 0.08))
-        strokeNeon(body, color: palette.spark, in: &context, width: 2.2)
+        strokeNeon(body, color: palette.spark, in: &context, width: 1.35)
 
         for side in [-1.0, 1.0] {
             var wing = Path()
             wing.move(to: center)
             wing.addCurve(to: CGPoint(x: center.x + CGFloat(side) * short * 0.34, y: center.y - short * 0.26), control1: CGPoint(x: center.x + CGFloat(side) * short * 0.08, y: center.y - short * 0.22), control2: CGPoint(x: center.x + CGFloat(side) * short * 0.2, y: center.y - short * 0.35))
             wing.addCurve(to: CGPoint(x: center.x + CGFloat(side) * short * 0.11, y: center.y + short * 0.02), control1: CGPoint(x: center.x + CGFloat(side) * short * 0.28, y: center.y - short * 0.04), control2: CGPoint(x: center.x + CGFloat(side) * short * 0.18, y: center.y + short * 0.08))
-            strokeNeon(wing, color: side < 0 ? palette.lineA : palette.lineB, in: &context, width: 1.8)
+            strokeNeon(wing, color: side < 0 ? palette.lineA : palette.lineB, in: &context, width: 1.15)
 
             for feather in 0..<5 {
                 var line = Path()
                 let t = CGFloat(feather) / 5
                 line.move(to: CGPoint(x: center.x + CGFloat(side) * short * 0.08, y: center.y - short * 0.03))
                 line.addLine(to: CGPoint(x: center.x + CGFloat(side) * short * (0.14 + t * 0.22), y: center.y - short * (0.08 + t * 0.18)))
-                context.stroke(line, with: .color((feather.isMultiple(of: 2) ? palette.spark : palette.lineA).opacity(0.58)), lineWidth: 1.1)
+                context.stroke(line, with: .color((feather.isMultiple(of: 2) ? palette.spark : palette.lineA).opacity(0.68)), lineWidth: 0.75)
             }
         }
     }
@@ -207,21 +207,21 @@ struct VoiceArtworkView: View {
         body.move(to: CGPoint(x: center.x - short * 0.28, y: center.y))
         body.addCurve(to: CGPoint(x: center.x + short * 0.18, y: center.y), control1: CGPoint(x: center.x - short * 0.12, y: center.y - short * 0.17), control2: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.16))
         body.addCurve(to: CGPoint(x: center.x - short * 0.28, y: center.y), control1: CGPoint(x: center.x + short * 0.04, y: center.y + short * 0.17), control2: CGPoint(x: center.x - short * 0.12, y: center.y + short * 0.16))
-        strokeNeon(body, color: palette.lineA, in: &context, width: 2)
+        strokeNeon(body, color: palette.lineA, in: &context, width: 1.25)
 
         var tail = Path()
         tail.move(to: CGPoint(x: center.x + short * 0.16, y: center.y))
         tail.addLine(to: CGPoint(x: center.x + short * 0.34, y: center.y - short * 0.13))
         tail.addLine(to: CGPoint(x: center.x + short * 0.34, y: center.y + short * 0.13))
         tail.closeSubpath()
-        strokeNeon(tail, color: palette.lineB, in: &context, width: 1.7)
+        strokeNeon(tail, color: palette.lineB, in: &context, width: 1.05)
 
         for stripe in 0..<5 {
             var line = Path()
             let x = center.x - short * 0.16 + short * CGFloat(stripe) * 0.07
             line.move(to: CGPoint(x: x, y: center.y - short * 0.09))
             line.addQuadCurve(to: CGPoint(x: x + short * 0.02, y: center.y + short * 0.09), control: CGPoint(x: x - short * 0.03, y: center.y))
-            context.stroke(line, with: .color((stripe.isMultiple(of: 2) ? palette.spark : palette.lineB).opacity(0.62)), lineWidth: 1)
+            context.stroke(line, with: .color((stripe.isMultiple(of: 2) ? palette.spark : palette.lineB).opacity(0.7)), lineWidth: 0.7)
         }
     }
 
@@ -231,7 +231,7 @@ struct VoiceArtworkView: View {
         head.addCurve(to: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.17), control1: CGPoint(x: center.x - short * 0.12, y: center.y - short * 0.2), control2: CGPoint(x: center.x, y: center.y - short * 0.22))
         head.addCurve(to: CGPoint(x: center.x + short * 0.2, y: center.y + short * 0.03), control1: CGPoint(x: center.x + short * 0.18, y: center.y - short * 0.12), control2: CGPoint(x: center.x + short * 0.2, y: center.y - short * 0.02))
         head.addCurve(to: CGPoint(x: center.x - short * 0.16, y: center.y - short * 0.03), control1: CGPoint(x: center.x + short * 0.08, y: center.y + short * 0.18), control2: CGPoint(x: center.x - short * 0.13, y: center.y + short * 0.12))
-        strokeNeon(head, color: palette.spark, in: &context, width: 2)
+        strokeNeon(head, color: palette.spark, in: &context, width: 1.25)
         drawAnimalFace(palette: palette, center: CGPoint(x: center.x + short * 0.04, y: center.y - short * 0.02), short: short, in: &context, rng: &rng)
     }
 
@@ -241,14 +241,14 @@ struct VoiceArtworkView: View {
         back.addCurve(to: CGPoint(x: center.x + short * 0.2, y: center.y - short * 0.04), control1: CGPoint(x: center.x - short * 0.18, y: center.y - short * 0.16), control2: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.16))
         back.addCurve(to: CGPoint(x: center.x + short * 0.28, y: center.y + short * 0.04), control1: CGPoint(x: center.x + short * 0.26, y: center.y - short * 0.02), control2: CGPoint(x: center.x + short * 0.29, y: center.y + short * 0.01))
         back.addCurve(to: CGPoint(x: center.x - short * 0.25, y: center.y + short * 0.08), control1: CGPoint(x: center.x + short * 0.1, y: center.y + short * 0.16), control2: CGPoint(x: center.x - short * 0.12, y: center.y + short * 0.15))
-        strokeNeon(back, color: palette.lineA, in: &context, width: 2)
+        strokeNeon(back, color: palette.lineA, in: &context, width: 1.25)
 
         for leg in 0..<4 {
             var path = Path()
             let x = center.x - short * 0.2 + short * CGFloat(leg) * 0.12
             path.move(to: CGPoint(x: x, y: center.y + short * 0.07))
             path.addLine(to: CGPoint(x: x + short * CGFloat(leg.isMultiple(of: 2) ? -0.02 : 0.02), y: center.y + short * 0.24))
-            strokeNeon(path, color: palette.lineB, in: &context, width: 1.3)
+            strokeNeon(path, color: palette.lineB, in: &context, width: 0.85)
         }
     }
 
@@ -258,7 +258,7 @@ struct VoiceArtworkView: View {
         face.addCurve(to: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.04), control1: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.2), control2: CGPoint(x: center.x + short * 0.1, y: center.y - short * 0.1))
         face.addCurve(to: CGPoint(x: center.x - short * 0.02, y: center.y + short * 0.22), control1: CGPoint(x: center.x + short * 0.16, y: center.y + short * 0.02), control2: CGPoint(x: center.x + short * 0.08, y: center.y + short * 0.18))
         face.addCurve(to: CGPoint(x: center.x - short * 0.08, y: center.y - short * 0.24), control1: CGPoint(x: center.x - short * 0.18, y: center.y + short * 0.08), control2: CGPoint(x: center.x - short * 0.18, y: center.y - short * 0.12))
-        strokeNeon(face, color: palette.spark, in: &context, width: 2)
+        strokeNeon(face, color: palette.spark, in: &context, width: 1.25)
         drawHumanLikeEyes(palette: palette, center: CGPoint(x: center.x + short * 0.015, y: center.y - short * 0.08), short: short, in: &context, rng: &rng)
     }
 
@@ -267,9 +267,9 @@ struct VoiceArtworkView: View {
         eye.move(to: CGPoint(x: center.x - short * 0.24, y: center.y))
         eye.addQuadCurve(to: CGPoint(x: center.x + short * 0.24, y: center.y), control: CGPoint(x: center.x, y: center.y - short * 0.15))
         eye.addQuadCurve(to: CGPoint(x: center.x - short * 0.24, y: center.y), control: CGPoint(x: center.x, y: center.y + short * 0.15))
-        strokeNeon(eye, color: palette.lineA, in: &context, width: 2.1)
+        strokeNeon(eye, color: palette.lineA, in: &context, width: 1.25)
         let iris = CGRect(x: center.x - short * 0.055, y: center.y - short * 0.055, width: short * 0.11, height: short * 0.11)
-        context.stroke(Path(ellipseIn: iris), with: .color(palette.spark.opacity(0.78)), lineWidth: 2)
+        context.stroke(Path(ellipseIn: iris), with: .color(palette.spark.opacity(0.78)), lineWidth: 1.1)
         context.fill(Path(ellipseIn: iris.insetBy(dx: short * 0.035, dy: short * 0.035)), with: .color(.white.opacity(0.6)))
     }
 
@@ -279,7 +279,7 @@ struct VoiceArtworkView: View {
             var horn = Path()
             horn.move(to: CGPoint(x: center.x + CGFloat(side) * short * 0.08, y: center.y - short * 0.12))
             horn.addQuadCurve(to: CGPoint(x: center.x + CGFloat(side) * short * 0.24, y: center.y - short * 0.3), control: CGPoint(x: center.x + CGFloat(side) * short * 0.18, y: center.y - short * 0.18))
-            strokeNeon(horn, color: palette.lineB, in: &context, width: 1.4)
+            strokeNeon(horn, color: palette.lineB, in: &context, width: 0.9)
         }
     }
 
@@ -348,8 +348,8 @@ struct VoiceArtworkView: View {
             let w = short * CGFloat(rng.double(in: 0.038...0.075))
             let h = w * CGFloat(rng.double(in: 0.42...0.7))
             let rect = CGRect(x: center.x + CGFloat(side) * short * 0.055 - w / 2, y: center.y - short * 0.045 - h / 2, width: w, height: h)
-            context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(0.55)))
-            context.fill(Path(ellipseIn: rect.insetBy(dx: w * 0.34, dy: h * 0.18)), with: .color(palette.spark.opacity(0.82)))
+            context.stroke(Path(ellipseIn: rect), with: .color(.white.opacity(0.68)), lineWidth: 0.65)
+            context.fill(Path(ellipseIn: rect.insetBy(dx: w * 0.36, dy: h * 0.24)), with: .color(palette.spark.opacity(0.72)))
         }
     }
 
@@ -359,7 +359,7 @@ struct VoiceArtworkView: View {
         let y = center.y + short * CGFloat(rng.double(in: 0.045...0.105))
         path.move(to: CGPoint(x: center.x - width / 2, y: y))
         path.addQuadCurve(to: CGPoint(x: center.x + width / 2, y: y), control: CGPoint(x: center.x, y: y + short * CGFloat(0.02 + features.averageEnergy * 0.09)))
-        context.stroke(path, with: .color(palette.lineB.opacity(0.62)), lineWidth: CGFloat(rng.double(in: 2...5)))
+        context.stroke(path, with: .color(palette.lineB.opacity(0.7)), lineWidth: CGFloat(rng.double(in: 0.65...1.25)))
     }
 
     private func drawCompoundEyes(palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
@@ -465,7 +465,7 @@ struct VoiceArtworkView: View {
             var path = Path()
             path.move(to: CGPoint(x: center.x + CGFloat(side) * short * 0.025, y: center.y + short * 0.05))
             path.addQuadCurve(to: CGPoint(x: center.x + CGFloat(side) * short * CGFloat(rng.double(in: 0.11...0.22)), y: center.y + short * CGFloat(rng.double(in: 0.07...0.17))), control: CGPoint(x: center.x + CGFloat(side) * short * 0.1, y: center.y + short * 0.01))
-            context.stroke(path, with: .color(palette.lineB.opacity(0.54)), lineWidth: CGFloat(rng.double(in: 2.2...5)))
+            context.stroke(path, with: .color(palette.lineB.opacity(0.66)), lineWidth: CGFloat(rng.double(in: 0.65...1.25)))
         }
     }
 
@@ -484,7 +484,7 @@ struct VoiceArtworkView: View {
             let y = size.height * CGFloat(rng.double(in: -0.08...0.84))
             let rect = CGRect(x: x, y: y, width: width, height: height)
             let color = index.isMultiple(of: 3) ? palette.lineB : (index.isMultiple(of: 2) ? palette.backgroundB : palette.lineA)
-            context.fill(Path(ellipseIn: rect), with: .color(color.opacity(rng.double(in: 0.045...0.16))))
+            context.fill(Path(ellipseIn: rect), with: .color(color.opacity(rng.double(in: 0.018...0.055))))
         }
 
         let slashCount = 2 + Int(rng.next() % 3)
@@ -499,7 +499,7 @@ struct VoiceArtworkView: View {
                 control: CGPoint(x: size.width * CGFloat(rng.double(in: 0.25...0.75)), y: size.height * CGFloat(0.5 + voice * 0.28))
             )
             let color = index.isMultiple(of: 2) ? palette.spark : palette.lineA
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.09...0.24))), lineWidth: CGFloat(rng.double(in: 10...28)))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.1...0.28))), lineWidth: CGFloat(rng.double(in: 1.0...2.4)))
         }
     }
 
@@ -523,8 +523,8 @@ struct VoiceArtworkView: View {
             path.addQuadCurve(to: left, control: center)
 
             let color = petal.isMultiple(of: 3) ? palette.spark : (petal.isMultiple(of: 2) ? palette.lineA : palette.lineB)
-            context.fill(path, with: .color(color.opacity(rng.double(in: 0.07...0.28))))
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.12...0.38))), lineWidth: CGFloat(rng.double(in: 0.5...1.8)))
+            context.fill(path, with: .color(color.opacity(rng.double(in: 0.012...0.055))))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.34...0.72))), lineWidth: CGFloat(rng.double(in: 0.55...1.05)))
         }
     }
 
@@ -544,8 +544,8 @@ struct VoiceArtworkView: View {
                 step == 0 ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
             }
             let color = band.isMultiple(of: 2) ? palette.lineA : palette.spark
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.18...0.48))), lineWidth: CGFloat(rng.double(in: 6...18)))
-            context.stroke(path, with: .color(.white.opacity(rng.double(in: 0.04...0.16))), lineWidth: CGFloat(rng.double(in: 1...3)))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.26...0.62))), lineWidth: CGFloat(rng.double(in: 0.75...1.8)))
+            context.stroke(path, with: .color(.white.opacity(rng.double(in: 0.08...0.22))), lineWidth: CGFloat(rng.double(in: 0.35...0.8)))
         }
     }
 
@@ -565,7 +565,7 @@ struct VoiceArtworkView: View {
                 step == 0 ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
             }
             let color = row.isMultiple(of: 2) ? palette.lineB : palette.lineA
-            context.stroke(path, with: .color(color.opacity(0.18 + rng.double(in: 0...0.28))), lineWidth: CGFloat(rng.double(in: 1.4...5.5)))
+            context.stroke(path, with: .color(color.opacity(0.24 + rng.double(in: 0...0.34))), lineWidth: CGFloat(rng.double(in: 0.55...1.35)))
         }
     }
 
@@ -585,7 +585,7 @@ struct VoiceArtworkView: View {
                 step == 0 ? path.move(to: point) : path.addQuadCurve(to: point, control: CGPoint(x: center.x + CGFloat(voice) * short * 0.24, y: center.y - CGFloat(voice) * short * 0.18))
             }
             let color = stroke.isMultiple(of: 2) ? palette.spark : palette.lineA
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.16...0.5))), lineWidth: CGFloat(rng.double(in: 3.0...12.0)))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.24...0.62))), lineWidth: CGFloat(rng.double(in: 0.75...2.0)))
         }
     }
 
@@ -600,7 +600,7 @@ struct VoiceArtworkView: View {
             let side = size.width * CGFloat(rng.double(in: 0.05...0.16) * (0.7 + energy))
             let rect = CGRect(x: x - side / 2, y: y - side / 2, width: side, height: side * CGFloat(rng.double(in: 0.55...1.25)))
             let color = index.isMultiple(of: 3) ? palette.lineB : (index.isMultiple(of: 2) ? palette.lineA : palette.spark)
-            context.fill(Path(ellipseIn: rect), with: .color(color.opacity(rng.double(in: 0.025...0.14))))
+            context.stroke(Path(ellipseIn: rect), with: .color(color.opacity(rng.double(in: 0.12...0.34))), lineWidth: CGFloat(rng.double(in: 0.45...1.05)))
         }
     }
 
@@ -619,7 +619,7 @@ struct VoiceArtworkView: View {
                 step == 0 ? path.move(to: point) : path.addLine(to: point)
             }
             let color = arm.isMultiple(of: 2) ? palette.lineA : palette.lineB
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.16...0.42))), lineWidth: CGFloat(rng.double(in: 8...20)))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.26...0.62))), lineWidth: CGFloat(rng.double(in: 0.85...2.0)))
         }
 
         for _ in 0..<(80 + Int(features.rhythmDensity * 15)) {
@@ -652,13 +652,13 @@ struct VoiceArtworkView: View {
                     control2: CGPoint(x: center.x + CGFloat(side) * span * 0.18, y: center.y + short * CGFloat(rng.double(in: 0.06...0.2)))
                 )
                 let color = pair.isMultiple(of: 2) ? palette.spark : palette.lineA
-                context.fill(wing, with: .color(color.opacity(0.18)))
-                context.stroke(wing, with: .color(.white.opacity(0.18)), lineWidth: 1.2)
+                context.stroke(wing, with: .color(color.opacity(0.5)), lineWidth: 1.0)
+                context.stroke(wing, with: .color(.white.opacity(0.22)), lineWidth: 0.45)
             }
         }
 
         let body = CGRect(x: center.x - short * 0.035, y: center.y - bodyHeight / 2, width: short * 0.07, height: bodyHeight)
-        context.fill(Path(ellipseIn: body), with: .color(palette.lineB.opacity(0.5)))
+        context.stroke(Path(ellipseIn: body), with: .color(palette.lineB.opacity(0.72)), lineWidth: 1.0)
     }
 
     private func drawAquaticCreature(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
@@ -668,15 +668,15 @@ struct VoiceArtworkView: View {
         body.move(to: CGPoint(x: center.x - length * 0.46, y: center.y))
         body.addCurve(to: CGPoint(x: center.x + length * 0.34, y: center.y - height * 0.15), control1: CGPoint(x: center.x - length * 0.2, y: center.y - height), control2: CGPoint(x: center.x + length * 0.18, y: center.y - height * 0.82))
         body.addCurve(to: CGPoint(x: center.x - length * 0.46, y: center.y), control1: CGPoint(x: center.x + length * 0.1, y: center.y + height * 0.85), control2: CGPoint(x: center.x - length * 0.2, y: center.y + height))
-        context.fill(body, with: .color(palette.lineA.opacity(0.24)))
-        context.stroke(body, with: .color(palette.spark.opacity(0.5)), lineWidth: CGFloat(rng.double(in: 1.6...4.2)))
+        context.fill(body, with: .color(palette.lineA.opacity(0.035)))
+        context.stroke(body, with: .color(palette.spark.opacity(0.72)), lineWidth: CGFloat(rng.double(in: 0.75...1.45)))
 
         var tail = Path()
         tail.move(to: CGPoint(x: center.x + length * 0.32, y: center.y))
         tail.addLine(to: CGPoint(x: center.x + length * 0.52, y: center.y - height * 0.8))
         tail.addLine(to: CGPoint(x: center.x + length * 0.52, y: center.y + height * 0.8))
         tail.closeSubpath()
-        context.fill(tail, with: .color(palette.lineB.opacity(0.28)))
+        context.stroke(tail, with: .color(palette.lineB.opacity(0.68)), lineWidth: CGFloat(rng.double(in: 0.65...1.3)))
 
         for fin in 0..<(2 + style.biomorphIndex % 4) {
             var path = Path()
@@ -684,7 +684,7 @@ struct VoiceArtworkView: View {
             let x = center.x - length * CGFloat(0.18 - t * 0.28)
             path.move(to: CGPoint(x: x, y: center.y))
             path.addQuadCurve(to: CGPoint(x: x + short * CGFloat(rng.double(in: -0.04...0.06)), y: center.y + height * CGFloat(rng.double(in: 0.8...1.7))), control: CGPoint(x: x - short * 0.04, y: center.y + height))
-            context.stroke(path, with: .color(palette.spark.opacity(0.34)), lineWidth: CGFloat(rng.double(in: 3...7)))
+            context.stroke(path, with: .color(palette.spark.opacity(0.56)), lineWidth: CGFloat(rng.double(in: 0.65...1.35)))
         }
     }
 
@@ -697,7 +697,7 @@ struct VoiceArtworkView: View {
             let y = center.y - axis / 2 + axis * t
             let w = short * CGFloat(rng.double(in: 0.055...0.13)) * CGFloat(1.2 - abs(Double(t - 0.5)))
             let h = short * CGFloat(rng.double(in: 0.055...0.12))
-            context.fill(Path(ellipseIn: CGRect(x: center.x - w / 2, y: y - h / 2, width: w, height: h)), with: .color((segment.isMultiple(of: 2) ? palette.lineA : palette.lineB).opacity(0.36)))
+            context.stroke(Path(ellipseIn: CGRect(x: center.x - w / 2, y: y - h / 2, width: w, height: h)), with: .color((segment.isMultiple(of: 2) ? palette.lineA : palette.lineB).opacity(0.64)), lineWidth: 0.8)
         }
 
         let legs = 6 + (style.biomorphIndex / 11) % 8
@@ -707,7 +707,7 @@ struct VoiceArtworkView: View {
             var path = Path()
             path.move(to: CGPoint(x: center.x, y: y))
             path.addQuadCurve(to: CGPoint(x: center.x + side * short * CGFloat(rng.double(in: 0.18...0.34)), y: y + short * CGFloat(rng.double(in: -0.12...0.12))), control: CGPoint(x: center.x + side * short * 0.12, y: y + short * CGFloat(rng.double(in: -0.18...0.18))))
-            context.stroke(path, with: .color(palette.spark.opacity(0.38)), lineWidth: CGFloat(rng.double(in: 1.5...4.8)))
+            context.stroke(path, with: .color(palette.spark.opacity(0.58)), lineWidth: CGFloat(rng.double(in: 0.55...1.25)))
         }
     }
 
@@ -719,14 +719,14 @@ struct VoiceArtworkView: View {
             let tip = CGPoint(x: center.x + short * CGFloat(rng.double(in: -0.26...0.26)), y: center.y - short * CGFloat(rng.double(in: 0.16...0.36)))
             path.move(to: base)
             path.addCurve(to: tip, control1: CGPoint(x: base.x + short * CGFloat(rng.double(in: -0.18...0.18)), y: center.y + short * 0.04), control2: CGPoint(x: tip.x + short * CGFloat(rng.double(in: -0.15...0.15)), y: center.y - short * 0.02))
-            context.stroke(path, with: .color(palette.lineA.opacity(0.36)), lineWidth: CGFloat(rng.double(in: 3...9)))
+            context.stroke(path, with: .color(palette.lineA.opacity(0.58)), lineWidth: CGFloat(rng.double(in: 0.65...1.5)))
 
             let leafs = 2 + (style.biomorphIndex / 7 + stem) % 5
             for leaf in 0..<leafs {
                 let angle = rng.double(in: 0...(.pi * 2))
                 let side = short * CGFloat(rng.double(in: 0.045...0.12))
                 let p = CGPoint(x: tip.x + CGFloat(cos(angle)) * side, y: tip.y + CGFloat(sin(angle)) * side)
-                context.fill(Path(ellipseIn: CGRect(x: p.x - side / 2, y: p.y - side / 3, width: side, height: side * 0.66)), with: .color((leaf.isMultiple(of: 2) ? palette.spark : palette.lineB).opacity(0.24)))
+                context.stroke(Path(ellipseIn: CGRect(x: p.x - side / 2, y: p.y - side / 3, width: side, height: side * 0.66)), with: .color((leaf.isMultiple(of: 2) ? palette.spark : palette.lineB).opacity(0.48)), lineWidth: 0.7)
             }
         }
     }
@@ -757,13 +757,13 @@ struct VoiceArtworkView: View {
         let facing: CGFloat = style.biomorphIndex.isMultiple(of: 2) ? 1 : -1
 
         let bodyRect = CGRect(x: center.x - bodyWidth * 0.52, y: center.y - bodyHeight * 0.5, width: bodyWidth, height: bodyHeight)
-        context.fill(Path(ellipseIn: bodyRect), with: .color(palette.lineA.opacity(0.34)))
-        context.stroke(Path(ellipseIn: bodyRect), with: .color(palette.spark.opacity(0.5)), lineWidth: CGFloat(rng.double(in: 1.6...4.6)))
+        context.fill(Path(ellipseIn: bodyRect), with: .color(palette.lineA.opacity(0.035)))
+        context.stroke(Path(ellipseIn: bodyRect), with: .color(palette.spark.opacity(0.72)), lineWidth: CGFloat(rng.double(in: 0.75...1.45)))
 
         let headCenter = CGPoint(x: center.x + facing * bodyWidth * 0.48, y: center.y - bodyHeight * 0.28)
         let headRect = CGRect(x: headCenter.x - headSize / 2, y: headCenter.y - headSize / 2, width: headSize, height: headSize * CGFloat(rng.double(in: 0.82...1.24)))
-        context.fill(Path(ellipseIn: headRect), with: .color(palette.lineB.opacity(0.4)))
-        context.stroke(Path(ellipseIn: headRect), with: .color(.white.opacity(0.24)), lineWidth: 1.2)
+        context.fill(Path(ellipseIn: headRect), with: .color(palette.lineB.opacity(0.035)))
+        context.stroke(Path(ellipseIn: headRect), with: .color(.white.opacity(0.46)), lineWidth: 0.85)
 
         for leg in 0..<4 {
             let legX = center.x - bodyWidth * 0.34 + bodyWidth * CGFloat(leg) / 3
@@ -773,7 +773,7 @@ struct VoiceArtworkView: View {
                 to: CGPoint(x: legX + short * CGFloat(rng.double(in: -0.035...0.035)), y: center.y + bodyHeight * 0.26 + short * CGFloat(rng.double(in: 0.11...0.2))),
                 control: CGPoint(x: legX + short * CGFloat(rng.double(in: -0.04...0.04)), y: center.y + short * 0.11)
             )
-            context.stroke(path, with: .color(palette.spark.opacity(0.42)), lineWidth: CGFloat(rng.double(in: 3.5...7.5)))
+            context.stroke(path, with: .color(palette.spark.opacity(0.62)), lineWidth: CGFloat(rng.double(in: 0.75...1.5)))
         }
 
         var tail = Path()
@@ -783,7 +783,7 @@ struct VoiceArtworkView: View {
             to: CGPoint(x: tailStart.x - facing * short * CGFloat(rng.double(in: 0.12...0.24)), y: tailStart.y - short * CGFloat(rng.double(in: 0.02...0.16))),
             control: CGPoint(x: tailStart.x - facing * short * 0.08, y: tailStart.y - short * 0.12)
         )
-        context.stroke(tail, with: .color(palette.lineB.opacity(0.48)), lineWidth: CGFloat(rng.double(in: 3...8)))
+        context.stroke(tail, with: .color(palette.lineB.opacity(0.64)), lineWidth: CGFloat(rng.double(in: 0.75...1.6)))
 
         if style.biomorphIndex % 3 == 0 {
             drawEarMarks(palette: palette, center: headCenter, short: short, in: &context, rng: &rng)
@@ -805,8 +805,8 @@ struct VoiceArtworkView: View {
         mask.addCurve(to: CGPoint(x: center.x, y: center.y + height * 0.56), control1: CGPoint(x: center.x - width * 0.5, y: center.y + height * 0.35), control2: CGPoint(x: center.x - width * 0.18, y: center.y + height * 0.62))
         mask.addCurve(to: CGPoint(x: center.x + width * 0.55, y: center.y), control1: CGPoint(x: center.x + width * 0.18, y: center.y + height * 0.62), control2: CGPoint(x: center.x + width * 0.5, y: center.y + height * 0.35))
         mask.addCurve(to: CGPoint(x: center.x, y: center.y - height * 0.58), control1: CGPoint(x: center.x + width * 0.78, y: center.y - height * 0.08), control2: CGPoint(x: center.x + width * 0.55, y: center.y - height * 0.48))
-        context.fill(mask, with: .color(palette.lineB.opacity(0.32)))
-        context.stroke(mask, with: .color(palette.spark.opacity(0.58)), lineWidth: CGFloat(rng.double(in: 1.5...4.5)))
+        context.fill(mask, with: .color(palette.lineB.opacity(0.035)))
+        context.stroke(mask, with: .color(palette.spark.opacity(0.74)), lineWidth: CGFloat(rng.double(in: 0.75...1.45)))
 
         for eye in [-1.0, 1.0] {
             let side = short * CGFloat(rng.double(in: 0.018...0.04))
@@ -826,8 +826,8 @@ struct VoiceArtworkView: View {
             let y = center.y + CGFloat(sin(t * .pi * Double(2 + style.biomorphIndex % 5)) + wave) * short * CGFloat(rng.double(in: 0.035...0.085))
             step == 0 ? spine.move(to: CGPoint(x: x, y: y)) : spine.addLine(to: CGPoint(x: x, y: y))
         }
-        context.stroke(spine, with: .color(palette.lineA.opacity(0.48)), lineWidth: CGFloat(rng.double(in: 8...18)))
-        context.stroke(spine, with: .color(palette.spark.opacity(0.5)), lineWidth: CGFloat(rng.double(in: 1.5...4)))
+        context.stroke(spine, with: .color(palette.lineA.opacity(0.34)), lineWidth: CGFloat(rng.double(in: 1.3...2.5)))
+        context.stroke(spine, with: .color(palette.spark.opacity(0.62)), lineWidth: CGFloat(rng.double(in: 0.55...1.15)))
     }
 
     private func drawFigureArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
@@ -855,12 +855,12 @@ struct VoiceArtworkView: View {
             control2: CGPoint(x: bodyCenter.x + bodyWidth * 0.74, y: bodyCenter.y - bodyHeight * 0.3)
         )
 
-        context.fill(torso, with: .color(palette.lineA.opacity(0.32)))
-        context.stroke(torso, with: .color(palette.spark.opacity(0.58)), lineWidth: CGFloat(rng.double(in: 1.8...5.6)))
+        context.fill(torso, with: .color(palette.lineA.opacity(0.035)))
+        context.stroke(torso, with: .color(palette.spark.opacity(0.76)), lineWidth: CGFloat(rng.double(in: 0.75...1.55)))
 
         let headRect = CGRect(x: bodyCenter.x - headSize / 2, y: bodyCenter.y - bodyHeight * 0.58 - headSize / 2, width: headSize, height: headSize * CGFloat(rng.double(in: 1.05...1.45)))
-        context.fill(Path(ellipseIn: headRect), with: .color(palette.spark.opacity(0.42)))
-        context.stroke(Path(ellipseIn: headRect), with: .color(.white.opacity(0.36)), lineWidth: 1.4)
+        context.fill(Path(ellipseIn: headRect), with: .color(palette.spark.opacity(0.04)))
+        context.stroke(Path(ellipseIn: headRect), with: .color(.white.opacity(0.58)), lineWidth: 0.85)
 
         let limbs = 4 + style.symmetry % 4
         for limb in 0..<limbs {
@@ -872,7 +872,7 @@ struct VoiceArtworkView: View {
             let wave = sample(features.waveform, at: Double(limb) / Double(max(1, limbs - 1)))
             path.move(to: start)
             path.addQuadCurve(to: end, control: CGPoint(x: center.x + side * short * CGFloat(0.16 + abs(wave) * 0.18), y: startY - short * CGFloat(wave * 0.18)))
-            context.stroke(path, with: .color((limb.isMultiple(of: 2) ? palette.lineB : palette.spark).opacity(0.42)), lineWidth: CGFloat(rng.double(in: 5...14)))
+            context.stroke(path, with: .color((limb.isMultiple(of: 2) ? palette.lineB : palette.spark).opacity(0.64)), lineWidth: CGFloat(rng.double(in: 0.85...1.8)))
         }
     }
 
@@ -899,8 +899,8 @@ struct VoiceArtworkView: View {
         }
         body.closeSubpath()
 
-        context.fill(body, with: .radialGradient(Gradient(colors: [palette.spark.opacity(0.44), palette.lineA.opacity(0.24), .clear]), center: center, startRadius: 0, endRadius: bodyScale * 1.8))
-        context.stroke(body, with: .color(palette.lineB.opacity(0.56)), lineWidth: CGFloat(rng.double(in: 1.8...5.8)))
+        context.fill(body, with: .radialGradient(Gradient(colors: [palette.spark.opacity(0.08), palette.lineA.opacity(0.035), .clear]), center: center, startRadius: 0, endRadius: bodyScale * 1.8))
+        context.stroke(body, with: .color(palette.lineB.opacity(0.72)), lineWidth: CGFloat(rng.double(in: 0.75...1.55)))
 
         for tendril in 0..<tendrils {
             var path = Path()
@@ -916,7 +916,7 @@ struct VoiceArtworkView: View {
                 control1: CGPoint(x: start.x + CGFloat(cos(angle + 0.8)) * length * 0.38, y: start.y + CGFloat(sin(angle + 0.8)) * length * 0.38),
                 control2: CGPoint(x: end.x - CGFloat(voice) * short * 0.08, y: end.y + CGFloat(voice) * short * 0.12)
             )
-            context.stroke(path, with: .color((tendril.isMultiple(of: 2) ? palette.spark : palette.lineA).opacity(0.45)), lineWidth: CGFloat(rng.double(in: 2.8...9.5)))
+            context.stroke(path, with: .color((tendril.isMultiple(of: 2) ? palette.spark : palette.lineA).opacity(0.62)), lineWidth: CGFloat(rng.double(in: 0.75...1.65)))
         }
 
         let eyeCount = archetype % 4 == 0 ? 0 : 1 + archetype % 3
@@ -950,8 +950,8 @@ struct VoiceArtworkView: View {
                 control2: CGPoint(x: offset.x + short * CGFloat(rng.double(in: 0.14...0.26)), y: offset.y - short * 0.16)
             )
             let color = silhouette.isMultiple(of: 2) ? palette.spark : palette.lineB
-            context.fill(path, with: .color(color.opacity(rng.double(in: 0.16...0.34))))
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.34...0.62))), lineWidth: CGFloat(rng.double(in: 1.8...4.8)))
+            context.fill(path, with: .color(color.opacity(rng.double(in: 0.025...0.07))))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.52...0.78))), lineWidth: CGFloat(rng.double(in: 0.75...1.45)))
 
             drawVoiceRibbon(features.energyCurve, color: color, center: offset, radius: short * CGFloat(rng.double(in: 0.12...0.21)), in: &context, phase: rng.double(in: 0...(.pi * 2)))
         }
@@ -1052,7 +1052,7 @@ struct VoiceArtworkView: View {
                 step == 0 ? path.move(to: point) : path.addCurve(to: point, control1: CGPoint(x: center.x, y: point.y), control2: CGPoint(x: point.x, y: center.y))
             }
             let color = stroke.isMultiple(of: 2) ? palette.lineA : palette.spark
-            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.18...0.54))), lineWidth: CGFloat(rng.double(in: 2.5...9.5) * style.strokeBias))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.28...0.64))), lineWidth: CGFloat(rng.double(in: 0.65...1.65) * max(0.7, style.strokeBias * 0.7)))
         }
     }
 
@@ -1108,8 +1108,8 @@ struct VoiceArtworkView: View {
             index == values.startIndex ? path.move(to: point) : path.addLine(to: point)
         }
         path.closeSubpath()
-        context.stroke(path, with: .color(color.opacity(0.9)), lineWidth: 2.4)
-        context.stroke(path, with: .color(.white.opacity(0.18)), lineWidth: 7)
+        context.stroke(path, with: .color(.white.opacity(0.16)), lineWidth: 2.2)
+        context.stroke(path, with: .color(color.opacity(0.92)), lineWidth: 0.95)
     }
 
     private func drawPitchGlyph(_ values: [Double], color: Color, center: CGPoint, in context: inout GraphicsContext, size: CGSize) {
