@@ -169,7 +169,7 @@ struct VoiceArtworkView: View {
         case 6:
             drawBotanicalCreature(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         case 7:
-            drawMicrobeCreature(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+            drawQuadrupedCreature(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         case 8:
             drawMaskedCreature(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         default:
@@ -201,7 +201,7 @@ struct VoiceArtworkView: View {
             drawFangMouth(palette: palette, center: faceCenter, short: short, in: &context, rng: &rng)
             drawHumanLikeEyes(palette: palette, center: faceCenter, short: short, in: &context, rng: &rng)
         case 8:
-            drawManyTinyEyes(palette: palette, center: faceCenter, short: short, in: &context, rng: &rng)
+            drawAnimalFace(palette: palette, center: faceCenter, short: short, in: &context, rng: &rng)
         case 9:
             drawSnoutAndWhiskers(features, palette: palette, center: faceCenter, short: short, in: &context, rng: &rng)
         case 10:
@@ -617,6 +617,52 @@ struct VoiceArtworkView: View {
                 context.stroke(path, with: .color(palette.spark.opacity(0.22)), lineWidth: 1)
             }
         }
+    }
+
+    private func drawQuadrupedCreature(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let bodyWidth = short * CGFloat(0.28 + Double(style.biomorphIndex % 17) / 90)
+        let bodyHeight = short * CGFloat(0.12 + features.averageEnergy * 0.1)
+        let headSize = short * CGFloat(rng.double(in: 0.07...0.13))
+        let facing: CGFloat = style.biomorphIndex.isMultiple(of: 2) ? 1 : -1
+
+        let bodyRect = CGRect(x: center.x - bodyWidth * 0.52, y: center.y - bodyHeight * 0.5, width: bodyWidth, height: bodyHeight)
+        context.fill(Path(ellipseIn: bodyRect), with: .color(palette.lineA.opacity(0.34)))
+        context.stroke(Path(ellipseIn: bodyRect), with: .color(palette.spark.opacity(0.5)), lineWidth: CGFloat(rng.double(in: 1.6...4.6)))
+
+        let headCenter = CGPoint(x: center.x + facing * bodyWidth * 0.48, y: center.y - bodyHeight * 0.28)
+        let headRect = CGRect(x: headCenter.x - headSize / 2, y: headCenter.y - headSize / 2, width: headSize, height: headSize * CGFloat(rng.double(in: 0.82...1.24)))
+        context.fill(Path(ellipseIn: headRect), with: .color(palette.lineB.opacity(0.4)))
+        context.stroke(Path(ellipseIn: headRect), with: .color(.white.opacity(0.24)), lineWidth: 1.2)
+
+        for leg in 0..<4 {
+            let legX = center.x - bodyWidth * 0.34 + bodyWidth * CGFloat(leg) / 3
+            var path = Path()
+            path.move(to: CGPoint(x: legX, y: center.y + bodyHeight * 0.26))
+            path.addQuadCurve(
+                to: CGPoint(x: legX + short * CGFloat(rng.double(in: -0.035...0.035)), y: center.y + bodyHeight * 0.26 + short * CGFloat(rng.double(in: 0.11...0.2))),
+                control: CGPoint(x: legX + short * CGFloat(rng.double(in: -0.04...0.04)), y: center.y + short * 0.11)
+            )
+            context.stroke(path, with: .color(palette.spark.opacity(0.42)), lineWidth: CGFloat(rng.double(in: 3.5...7.5)))
+        }
+
+        var tail = Path()
+        let tailStart = CGPoint(x: center.x - facing * bodyWidth * 0.48, y: center.y - bodyHeight * 0.18)
+        tail.move(to: tailStart)
+        tail.addQuadCurve(
+            to: CGPoint(x: tailStart.x - facing * short * CGFloat(rng.double(in: 0.12...0.24)), y: tailStart.y - short * CGFloat(rng.double(in: 0.02...0.16))),
+            control: CGPoint(x: tailStart.x - facing * short * 0.08, y: tailStart.y - short * 0.12)
+        )
+        context.stroke(tail, with: .color(palette.lineB.opacity(0.48)), lineWidth: CGFloat(rng.double(in: 3...8)))
+
+        if style.biomorphIndex % 3 == 0 {
+            drawEarMarks(palette: palette, center: headCenter, short: short, in: &context, rng: &rng)
+        }
+    }
+
+    private func drawAnimalFace(palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        drawHumanLikeEyes(palette: palette, center: center, short: short, in: &context, rng: &rng)
+        drawMammalMuzzle(palette: palette, center: center, short: short, in: &context, rng: &rng)
+        drawEarMarks(palette: palette, center: center, short: short, in: &context, rng: &rng)
     }
 
     private func drawMaskedCreature(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
