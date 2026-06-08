@@ -40,6 +40,10 @@ struct VoiceArtwork: Identifiable, Codable, Equatable {
         ArtworkPalette(seed: seed, features: features)
     }
 
+    var style: ArtworkStyle {
+        ArtworkStyle(seed: seed, features: features)
+    }
+
     var nftMetadata: NFTMetadata {
         NFTMetadata(
             name: title,
@@ -82,15 +86,42 @@ struct ArtworkPalette {
     var spark: Color
 
     init(seed: UInt64, features: VoiceFeatures) {
-        let baseHue = ((Double(seed % 360) / 360) + features.averagePitch / 900).truncatingRemainder(dividingBy: 1)
+        var rng = SeededRandomNumberGenerator(seed: seed ^ 0xa921_f35d_49c1_7a81)
+        let jitter = rng.double(in: -0.18...0.18)
+        let baseHue = ((Double(seed % 360) / 360) + features.averagePitch / 900 + jitter).wrappedUnit
         let energy = max(0.35, min(0.95, features.averageEnergy * 4))
         let pitch = max(0.25, min(0.9, features.pitchRange / 280))
 
-        backgroundA = Color(hue: baseHue, saturation: 0.62, brightness: 0.14 + energy * 0.16)
-        backgroundB = Color(hue: (baseHue + 0.18).truncatingRemainder(dividingBy: 1), saturation: 0.48 + pitch * 0.26, brightness: 0.18)
-        lineA = Color(hue: (baseHue + 0.41).truncatingRemainder(dividingBy: 1), saturation: 0.78, brightness: 0.92)
-        lineB = Color(hue: (baseHue + 0.08).truncatingRemainder(dividingBy: 1), saturation: 0.86, brightness: 0.74)
-        spark = Color(hue: (baseHue + 0.62).truncatingRemainder(dividingBy: 1), saturation: 0.92, brightness: 0.98)
+        backgroundA = Color(hue: baseHue, saturation: 0.52 + rng.double(in: 0...0.24), brightness: 0.08 + energy * rng.double(in: 0.12...0.24))
+        backgroundB = Color(hue: (baseHue + rng.double(in: 0.13...0.42)).wrappedUnit, saturation: 0.38 + pitch * 0.32, brightness: rng.double(in: 0.10...0.24))
+        lineA = Color(hue: (baseHue + rng.double(in: 0.29...0.58)).wrappedUnit, saturation: 0.68 + rng.double(in: 0...0.24), brightness: 0.82 + rng.double(in: 0...0.18))
+        lineB = Color(hue: (baseHue + rng.double(in: 0.04...0.22)).wrappedUnit, saturation: 0.66 + rng.double(in: 0...0.28), brightness: 0.62 + rng.double(in: 0...0.26))
+        spark = Color(hue: (baseHue + rng.double(in: 0.56...0.82)).wrappedUnit, saturation: 0.72 + rng.double(in: 0...0.2), brightness: 0.9 + rng.double(in: 0...0.1))
+    }
+}
+
+struct ArtworkStyle: Equatable {
+    enum Family: String {
+        case orbit
+        case crystalline
+        case terrain
+        case ink
+        case signal
+        case veil
+    }
+
+    var family: Family
+    var symmetry: Int
+    var turbulence: Double
+    var strokeBias: Double
+
+    init(seed: UInt64, features: VoiceFeatures) {
+        var rng = SeededRandomNumberGenerator(seed: seed ^ 0xd6e8_feb8_6659_fd93)
+        let families: [Family] = [.orbit, .crystalline, .terrain, .ink, .signal, .veil]
+        family = families[Int(seed % UInt64(families.count))]
+        symmetry = 3 + Int(rng.next() % 9)
+        turbulence = min(1.35, 0.34 + features.zeroCrossingRate * 12 + rng.double(in: 0...0.66))
+        strokeBias = rng.double(in: 0.65...1.75)
     }
 }
 
@@ -112,6 +143,13 @@ struct SeededRandomNumberGenerator: RandomNumberGenerator {
     mutating func double(in range: ClosedRange<Double>) -> Double {
         let unit = Double(next() % 10_000) / 10_000
         return range.lowerBound + (range.upperBound - range.lowerBound) * unit
+    }
+}
+
+private extension Double {
+    var wrappedUnit: Double {
+        let value = truncatingRemainder(dividingBy: 1)
+        return value < 0 ? value + 1 : value
     }
 }
 

@@ -24,6 +24,7 @@ struct ContentView: View {
                         liveLevel: recorder.liveLevel,
                         livePitch: recorder.livePitch,
                         onRecord: toggleRecording,
+                        onRemix: remixCurrent,
                         onExport: exportCurrent
                     )
                     MetricPanel(features: selectedArtwork?.features ?? recorder.latestFeatures, isLive: recorder.isRecording)
@@ -71,6 +72,22 @@ struct ContentView: View {
         exportedMetadata = ArtworkExporter.writeMetadata(artwork: selectedArtwork)
         showShare = exportedPNG != nil || exportedMetadata != nil
     }
+
+    private func remixCurrent() {
+        guard let selectedArtwork else { return }
+        let seed = selectedArtwork.seed ^ UInt64(Date().timeIntervalSince1970 * 1000) ^ UInt64.random(in: 1...UInt64.max)
+        let artwork = VoiceArtwork(
+            id: UUID(),
+            createdAt: Date(),
+            title: selectedArtwork.title.replacingOccurrences(of: "#", with: "Remix #"),
+            seed: seed,
+            features: selectedArtwork.features
+        )
+        self.selectedArtwork = artwork
+        gallery.add(artwork)
+        exportedPNG = nil
+        exportedMetadata = nil
+    }
 }
 
 private struct HeaderView: View {
@@ -105,6 +122,7 @@ private struct StudioPanel: View {
     var liveLevel: Double
     var livePitch: Double
     var onRecord: () -> Void
+    var onRemix: () -> Void
     var onExport: () -> Void
 
     var body: some View {
@@ -133,6 +151,15 @@ private struct StudioPanel: View {
 
                 Button(action: onExport) {
                     Image(systemName: "square.and.arrow.up")
+                        .font(.headline.weight(.black))
+                        .frame(width: 54, height: 52)
+                }
+                .buttonStyle(IconButtonStyle())
+                .disabled(artwork == nil)
+                .opacity(artwork == nil ? 0.42 : 1)
+
+                Button(action: onRemix) {
+                    Image(systemName: "arrow.triangle.2.circlepath")
                         .font(.headline.weight(.black))
                         .frame(width: 54, height: 52)
                 }

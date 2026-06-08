@@ -71,6 +71,7 @@ struct VoiceArtworkView: View {
     private func drawArtwork(_ artwork: VoiceArtwork, in context: inout GraphicsContext, size: CGSize) {
         let features = artwork.features
         let palette = artwork.palette
+        let style = artwork.style
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let short = min(size.width, size.height)
         var rng = SeededRandomNumberGenerator(seed: artwork.seed)
@@ -86,9 +87,28 @@ struct VoiceArtworkView: View {
             )
         )
 
-        drawVoiceRibbon(features.waveform, color: palette.lineA, center: center, radius: short * 0.19, in: &context)
-        drawVoiceRibbon(features.energyCurve, color: palette.lineB, center: center, radius: short * 0.30, in: &context, phase: .pi / 2)
-        drawPitchGlyph(features.pitchCurve, color: palette.spark, center: center, in: &context, size: size)
+        switch style.family {
+        case .orbit:
+            drawOrbitArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .crystalline:
+            drawCrystallineArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .terrain:
+            drawTerrainArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
+        case .ink:
+            drawInkArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .signal:
+            drawSignalArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
+        case .veil:
+            drawVeilArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        }
+
+        drawGrain(palette: palette, size: size, in: &context, rng: &rng)
+    }
+
+    private func drawOrbitArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        drawVoiceRibbon(features.waveform, color: palette.lineA, center: center, radius: short * CGFloat(rng.double(in: 0.15...0.24)), in: &context, phase: rng.double(in: 0...(.pi * 2)))
+        drawVoiceRibbon(features.energyCurve, color: palette.lineB, center: center, radius: short * CGFloat(rng.double(in: 0.27...0.39)), in: &context, phase: rng.double(in: 0...(.pi * 2)))
+        drawPitchGlyph(features.pitchCurve, color: palette.spark, center: center, in: &context, size: CGSize(width: short, height: short))
 
         let particleCount = 70 + Int(features.rhythmDensity * 18)
         for index in 0..<particleCount {
@@ -107,6 +127,121 @@ struct VoiceArtworkView: View {
             Path(ellipseIn: CGRect(x: center.x - coreSize / 2, y: center.y - coreSize / 2, width: coreSize, height: coreSize)),
             with: .radialGradient(Gradient(colors: [.white.opacity(0.92), palette.spark.opacity(0.42), .clear]), center: center, startRadius: 0, endRadius: coreSize * 0.72)
         )
+    }
+
+    private func drawCrystallineArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let nodes = 18 + Int(features.rhythmDensity * 5) + style.symmetry
+        var points: [CGPoint] = []
+
+        for index in 0..<nodes {
+            let t = Double(index) / Double(nodes)
+            let sample = sample(features.energyCurve, at: t)
+            let angle = t * .pi * 2 * Double(style.symmetry % 5 + 1) + rng.double(in: -0.28...0.28)
+            let distance = short * CGFloat(0.11 + sample * 0.34 + rng.double(in: 0...0.08))
+            points.append(CGPoint(x: center.x + CGFloat(cos(angle)) * distance, y: center.y + CGFloat(sin(angle)) * distance))
+        }
+
+        for a in points.indices {
+            for b in (a + 1)..<points.count where (b - a).isMultiple(of: style.symmetry % 4 + 2) {
+                var path = Path()
+                path.move(to: points[a])
+                path.addLine(to: points[b])
+                let alpha = 0.08 + abs(sample(features.waveform, at: Double(a + b) / Double(points.count * 2))) * 0.28
+                context.stroke(path, with: .color(palette.lineA.opacity(alpha)), lineWidth: CGFloat(rng.double(in: 0.45...1.8)))
+            }
+        }
+
+        for point in points {
+            let size = CGFloat(rng.double(in: 6...18)) * CGFloat(0.7 + features.averageEnergy)
+            let rect = CGRect(x: point.x - size / 2, y: point.y - size / 2, width: size, height: size)
+            context.fill(Path(ellipseIn: rect), with: .color(palette.spark.opacity(rng.double(in: 0.35...0.9))))
+        }
+    }
+
+    private func drawTerrainArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let rows = 12 + style.symmetry
+        let width = size.width
+        let height = size.height
+
+        for row in 0..<rows {
+            var path = Path()
+            let yBase = height * CGFloat(row + 1) / CGFloat(rows + 1)
+            let steps = 90
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let voice = sample(features.waveform, at: t)
+                let energy = sample(features.energyCurve, at: (t + Double(row) * 0.071).truncatingRemainder(dividingBy: 1))
+                let ridge = sin(t * .pi * Double(style.symmetry) + Double(row) * 0.55) * style.turbulence
+                let y = yBase + CGFloat((voice * 0.55 + energy * 0.45 + ridge * 0.18) * Double(height) * 0.11)
+                let point = CGPoint(x: width * CGFloat(t), y: y)
+                step == 0 ? path.move(to: point) : path.addLine(to: point)
+            }
+            let color = row.isMultiple(of: 2) ? palette.lineA : palette.lineB
+            context.stroke(path, with: .color(color.opacity(0.38 + Double(row % 4) * 0.08)), lineWidth: CGFloat(1.2 + style.strokeBias))
+        }
+
+        drawPitchGlyph(features.pitchCurve, color: palette.spark, center: CGPoint(x: width / 2, y: height / 2), in: &context, size: size)
+    }
+
+    private func drawInkArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let strokes = 7 + style.symmetry
+
+        for stroke in 0..<strokes {
+            var path = Path()
+            let turns = rng.double(in: 0.65...2.2)
+            let phase = rng.double(in: 0...(.pi * 2))
+            let steps = 120
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let voice = sample(features.waveform, at: (t + Double(stroke) * 0.09).truncatingRemainder(dividingBy: 1))
+                let angle = phase + t * .pi * 2 * turns
+                let radius = short * CGFloat(0.05 + t * 0.44 + voice * 0.08 * style.turbulence)
+                let point = CGPoint(x: center.x + CGFloat(cos(angle)) * radius, y: center.y + CGFloat(sin(angle)) * radius)
+                step == 0 ? path.move(to: point) : path.addCurve(to: point, control1: CGPoint(x: center.x, y: point.y), control2: CGPoint(x: point.x, y: center.y))
+            }
+            let color = stroke.isMultiple(of: 2) ? palette.lineA : palette.spark
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.18...0.54))), lineWidth: CGFloat(rng.double(in: 2.5...9.5) * style.strokeBias))
+        }
+    }
+
+    private func drawSignalArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let columns = 20 + style.symmetry * 2
+        let rows = 18 + Int(features.rhythmDensity * 4)
+        let cellW = size.width / CGFloat(columns)
+        let cellH = size.height / CGFloat(rows)
+
+        for row in 0..<rows {
+            for column in 0..<columns {
+                let t = Double(column) / Double(max(1, columns - 1))
+                let wave = abs(sample(features.waveform, at: (t + Double(row) * 0.037).truncatingRemainder(dividingBy: 1)))
+                let energy = sample(features.energyCurve, at: Double(row) / Double(max(1, rows - 1)))
+                guard rng.double(in: 0...1) < 0.18 + wave * 0.52 + energy * 0.26 else { continue }
+                let inset = CGFloat(rng.double(in: 1.2...5.8))
+                let rect = CGRect(x: CGFloat(column) * cellW + inset, y: CGFloat(row) * cellH + inset, width: max(1, cellW - inset * 2), height: max(1, cellH - inset * 2))
+                let color = column.isMultiple(of: 3) ? palette.spark : (row.isMultiple(of: 2) ? palette.lineA : palette.lineB)
+                context.fill(Path(roundedRect: rect, cornerRadius: 1.5), with: .color(color.opacity(rng.double(in: 0.15...0.72))))
+            }
+        }
+    }
+
+    private func drawVeilArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let layers = 8 + style.symmetry
+        for layer in 0..<layers {
+            var path = Path()
+            let steps = 180
+            let phase = rng.double(in: 0...(.pi * 2))
+            for step in 0...steps {
+                let t = Double(step) / Double(steps)
+                let pitch = sample(features.pitchCurve, at: t)
+                let wave = sample(features.waveform, at: (t + Double(layer) * 0.053).truncatingRemainder(dividingBy: 1))
+                let angle = t * .pi * 2 + phase
+                let radius = short * CGFloat(0.12 + Double(layer) * 0.026 + pitch * 0.16 + wave * 0.05)
+                let point = CGPoint(x: center.x + CGFloat(cos(angle)) * radius, y: center.y + CGFloat(sin(angle * Double(style.symmetry % 5 + 1))) * radius)
+                step == 0 ? path.move(to: point) : path.addLine(to: point)
+            }
+            let color = layer.isMultiple(of: 2) ? palette.lineB : palette.lineA
+            context.stroke(path, with: .color(color.opacity(0.15 + rng.double(in: 0...0.32))), lineWidth: CGFloat(rng.double(in: 0.8...3.4)))
+        }
     }
 
     private func drawVoiceRibbon(_ values: [Double], color: Color, center: CGPoint, radius: CGFloat, in context: inout GraphicsContext, phase: Double = 0) {
@@ -136,6 +271,23 @@ struct VoiceArtworkView: View {
             index == values.startIndex ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
         }
         context.stroke(path, with: .color(color.opacity(0.78)), lineWidth: 1.8)
+    }
+
+    private func drawGrain(palette: ArtworkPalette, size: CGSize, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let count = 90
+        for _ in 0..<count {
+            let point = CGPoint(x: CGFloat(rng.double(in: 0...Double(size.width))), y: CGFloat(rng.double(in: 0...Double(size.height))))
+            let side = CGFloat(rng.double(in: 0.8...2.8))
+            let rect = CGRect(x: point.x, y: point.y, width: side, height: side)
+            context.fill(Path(ellipseIn: rect), with: .color(palette.spark.opacity(rng.double(in: 0.04...0.16))))
+        }
+    }
+
+    private func sample(_ values: [Double], at t: Double) -> Double {
+        guard !values.isEmpty else { return 0 }
+        let clamped = max(0, min(1, t))
+        let index = min(values.count - 1, Int((Double(values.count - 1) * clamped).rounded()))
+        return values[index]
     }
 
     private func ringColor(_ index: Int) -> Color {
