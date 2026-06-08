@@ -149,7 +149,138 @@ struct VoiceArtworkView: View {
 
         drawCreatureMotif(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         drawCreatureParts(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        drawReadableNeonContour(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         drawGrain(palette: palette, size: size, in: &context, rng: &rng)
+    }
+
+    private func drawReadableNeonContour(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        switch style.biomorphIndex % 7 {
+        case 0:
+            drawNeonBirdOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        case 1:
+            drawNeonFishOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        case 2:
+            drawNeonMammalHeadOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        case 3:
+            drawNeonQuadrupedOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        case 4:
+            drawNeonHumanProfileOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        case 5:
+            drawNeonEyeOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        default:
+            drawNeonWingedMaskOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        }
+    }
+
+    private func strokeNeon(_ path: Path, color: Color, in context: inout GraphicsContext, width: CGFloat) {
+        context.stroke(path, with: .color(color.opacity(0.3)), lineWidth: width * 3.2)
+        context.stroke(path, with: .color(color.opacity(0.86)), lineWidth: width)
+        context.stroke(path, with: .color(.white.opacity(0.55)), lineWidth: max(0.8, width * 0.38))
+    }
+
+    private func drawNeonBirdOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        var body = Path()
+        body.move(to: CGPoint(x: center.x - short * 0.12, y: center.y))
+        body.addCurve(to: CGPoint(x: center.x + short * 0.16, y: center.y - short * 0.03), control1: CGPoint(x: center.x - short * 0.04, y: center.y - short * 0.12), control2: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.11))
+        body.addCurve(to: CGPoint(x: center.x - short * 0.12, y: center.y), control1: CGPoint(x: center.x + short * 0.05, y: center.y + short * 0.1), control2: CGPoint(x: center.x - short * 0.06, y: center.y + short * 0.08))
+        strokeNeon(body, color: palette.spark, in: &context, width: 2.2)
+
+        for side in [-1.0, 1.0] {
+            var wing = Path()
+            wing.move(to: center)
+            wing.addCurve(to: CGPoint(x: center.x + CGFloat(side) * short * 0.34, y: center.y - short * 0.26), control1: CGPoint(x: center.x + CGFloat(side) * short * 0.08, y: center.y - short * 0.22), control2: CGPoint(x: center.x + CGFloat(side) * short * 0.2, y: center.y - short * 0.35))
+            wing.addCurve(to: CGPoint(x: center.x + CGFloat(side) * short * 0.11, y: center.y + short * 0.02), control1: CGPoint(x: center.x + CGFloat(side) * short * 0.28, y: center.y - short * 0.04), control2: CGPoint(x: center.x + CGFloat(side) * short * 0.18, y: center.y + short * 0.08))
+            strokeNeon(wing, color: side < 0 ? palette.lineA : palette.lineB, in: &context, width: 1.8)
+
+            for feather in 0..<5 {
+                var line = Path()
+                let t = CGFloat(feather) / 5
+                line.move(to: CGPoint(x: center.x + CGFloat(side) * short * 0.08, y: center.y - short * 0.03))
+                line.addLine(to: CGPoint(x: center.x + CGFloat(side) * short * (0.14 + t * 0.22), y: center.y - short * (0.08 + t * 0.18)))
+                context.stroke(line, with: .color((feather.isMultiple(of: 2) ? palette.spark : palette.lineA).opacity(0.58)), lineWidth: 1.1)
+            }
+        }
+    }
+
+    private func drawNeonFishOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        var body = Path()
+        body.move(to: CGPoint(x: center.x - short * 0.28, y: center.y))
+        body.addCurve(to: CGPoint(x: center.x + short * 0.18, y: center.y), control1: CGPoint(x: center.x - short * 0.12, y: center.y - short * 0.17), control2: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.16))
+        body.addCurve(to: CGPoint(x: center.x - short * 0.28, y: center.y), control1: CGPoint(x: center.x + short * 0.04, y: center.y + short * 0.17), control2: CGPoint(x: center.x - short * 0.12, y: center.y + short * 0.16))
+        strokeNeon(body, color: palette.lineA, in: &context, width: 2)
+
+        var tail = Path()
+        tail.move(to: CGPoint(x: center.x + short * 0.16, y: center.y))
+        tail.addLine(to: CGPoint(x: center.x + short * 0.34, y: center.y - short * 0.13))
+        tail.addLine(to: CGPoint(x: center.x + short * 0.34, y: center.y + short * 0.13))
+        tail.closeSubpath()
+        strokeNeon(tail, color: palette.lineB, in: &context, width: 1.7)
+
+        for stripe in 0..<5 {
+            var line = Path()
+            let x = center.x - short * 0.16 + short * CGFloat(stripe) * 0.07
+            line.move(to: CGPoint(x: x, y: center.y - short * 0.09))
+            line.addQuadCurve(to: CGPoint(x: x + short * 0.02, y: center.y + short * 0.09), control: CGPoint(x: x - short * 0.03, y: center.y))
+            context.stroke(line, with: .color((stripe.isMultiple(of: 2) ? palette.spark : palette.lineB).opacity(0.62)), lineWidth: 1)
+        }
+    }
+
+    private func drawNeonMammalHeadOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        var head = Path()
+        head.move(to: CGPoint(x: center.x - short * 0.16, y: center.y - short * 0.03))
+        head.addCurve(to: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.17), control1: CGPoint(x: center.x - short * 0.12, y: center.y - short * 0.2), control2: CGPoint(x: center.x, y: center.y - short * 0.22))
+        head.addCurve(to: CGPoint(x: center.x + short * 0.2, y: center.y + short * 0.03), control1: CGPoint(x: center.x + short * 0.18, y: center.y - short * 0.12), control2: CGPoint(x: center.x + short * 0.2, y: center.y - short * 0.02))
+        head.addCurve(to: CGPoint(x: center.x - short * 0.16, y: center.y - short * 0.03), control1: CGPoint(x: center.x + short * 0.08, y: center.y + short * 0.18), control2: CGPoint(x: center.x - short * 0.13, y: center.y + short * 0.12))
+        strokeNeon(head, color: palette.spark, in: &context, width: 2)
+        drawAnimalFace(palette: palette, center: CGPoint(x: center.x + short * 0.04, y: center.y - short * 0.02), short: short, in: &context, rng: &rng)
+    }
+
+    private func drawNeonQuadrupedOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        var back = Path()
+        back.move(to: CGPoint(x: center.x - short * 0.28, y: center.y - short * 0.02))
+        back.addCurve(to: CGPoint(x: center.x + short * 0.2, y: center.y - short * 0.04), control1: CGPoint(x: center.x - short * 0.18, y: center.y - short * 0.16), control2: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.16))
+        back.addCurve(to: CGPoint(x: center.x + short * 0.28, y: center.y + short * 0.04), control1: CGPoint(x: center.x + short * 0.26, y: center.y - short * 0.02), control2: CGPoint(x: center.x + short * 0.29, y: center.y + short * 0.01))
+        back.addCurve(to: CGPoint(x: center.x - short * 0.25, y: center.y + short * 0.08), control1: CGPoint(x: center.x + short * 0.1, y: center.y + short * 0.16), control2: CGPoint(x: center.x - short * 0.12, y: center.y + short * 0.15))
+        strokeNeon(back, color: palette.lineA, in: &context, width: 2)
+
+        for leg in 0..<4 {
+            var path = Path()
+            let x = center.x - short * 0.2 + short * CGFloat(leg) * 0.12
+            path.move(to: CGPoint(x: x, y: center.y + short * 0.07))
+            path.addLine(to: CGPoint(x: x + short * CGFloat(leg.isMultiple(of: 2) ? -0.02 : 0.02), y: center.y + short * 0.24))
+            strokeNeon(path, color: palette.lineB, in: &context, width: 1.3)
+        }
+    }
+
+    private func drawNeonHumanProfileOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        var face = Path()
+        face.move(to: CGPoint(x: center.x - short * 0.08, y: center.y - short * 0.24))
+        face.addCurve(to: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.04), control1: CGPoint(x: center.x + short * 0.08, y: center.y - short * 0.2), control2: CGPoint(x: center.x + short * 0.1, y: center.y - short * 0.1))
+        face.addCurve(to: CGPoint(x: center.x - short * 0.02, y: center.y + short * 0.22), control1: CGPoint(x: center.x + short * 0.16, y: center.y + short * 0.02), control2: CGPoint(x: center.x + short * 0.08, y: center.y + short * 0.18))
+        face.addCurve(to: CGPoint(x: center.x - short * 0.08, y: center.y - short * 0.24), control1: CGPoint(x: center.x - short * 0.18, y: center.y + short * 0.08), control2: CGPoint(x: center.x - short * 0.18, y: center.y - short * 0.12))
+        strokeNeon(face, color: palette.spark, in: &context, width: 2)
+        drawHumanLikeEyes(palette: palette, center: CGPoint(x: center.x + short * 0.015, y: center.y - short * 0.08), short: short, in: &context, rng: &rng)
+    }
+
+    private func drawNeonEyeOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        var eye = Path()
+        eye.move(to: CGPoint(x: center.x - short * 0.24, y: center.y))
+        eye.addQuadCurve(to: CGPoint(x: center.x + short * 0.24, y: center.y), control: CGPoint(x: center.x, y: center.y - short * 0.15))
+        eye.addQuadCurve(to: CGPoint(x: center.x - short * 0.24, y: center.y), control: CGPoint(x: center.x, y: center.y + short * 0.15))
+        strokeNeon(eye, color: palette.lineA, in: &context, width: 2.1)
+        let iris = CGRect(x: center.x - short * 0.055, y: center.y - short * 0.055, width: short * 0.11, height: short * 0.11)
+        context.stroke(Path(ellipseIn: iris), with: .color(palette.spark.opacity(0.78)), lineWidth: 2)
+        context.fill(Path(ellipseIn: iris.insetBy(dx: short * 0.035, dy: short * 0.035)), with: .color(.white.opacity(0.6)))
+    }
+
+    private func drawNeonWingedMaskOutline(_ features: VoiceFeatures, palette: ArtworkPalette, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        drawNeonMammalHeadOutline(features, palette: palette, center: center, short: short, in: &context, rng: &rng)
+        for side in [-1.0, 1.0] {
+            var horn = Path()
+            horn.move(to: CGPoint(x: center.x + CGFloat(side) * short * 0.08, y: center.y - short * 0.12))
+            horn.addQuadCurve(to: CGPoint(x: center.x + CGFloat(side) * short * 0.24, y: center.y - short * 0.3), control: CGPoint(x: center.x + CGFloat(side) * short * 0.18, y: center.y - short * 0.18))
+            strokeNeon(horn, color: palette.lineB, in: &context, width: 1.4)
+        }
     }
 
     private func drawCreatureMotif(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
