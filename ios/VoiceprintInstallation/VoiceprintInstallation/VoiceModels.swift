@@ -181,6 +181,11 @@ final class ArtworkGallery: ObservableObject {
         save()
     }
 
+    func useDemoArtworks(_ demoArtworks: [VoiceArtwork]) {
+        artworks = Array(demoArtworks.prefix(12))
+        save()
+    }
+
     private func load() {
         guard let data = UserDefaults.standard.data(forKey: storageKey),
               let decoded = try? JSONDecoder().decode([VoiceArtwork].self, from: data) else {
@@ -192,5 +197,87 @@ final class ArtworkGallery: ObservableObject {
     private func save() {
         guard let data = try? JSONEncoder().encode(artworks) else { return }
         UserDefaults.standard.set(data, forKey: storageKey)
+    }
+}
+
+enum DemoArtworkFactory {
+    static func artworks() -> [VoiceArtwork] {
+        [
+            make(
+                title: "Lunar Mammal #1837",
+                seed: 0x9f33_ab12_8831,
+                energy: 0.58,
+                pitch: 210,
+                range: 148,
+                rhythm: 2.7,
+                silence: 0.18,
+                phase: 0.0
+            ),
+            make(
+                title: "Wing Signal #2401",
+                seed: 0x71c2_55d9_4a10,
+                energy: 0.44,
+                pitch: 165,
+                range: 92,
+                rhythm: 3.4,
+                silence: 0.09,
+                phase: 0.29
+            ),
+            make(
+                title: "Neon Profile #5082",
+                seed: 0xd412_8e01_7723,
+                energy: 0.66,
+                pitch: 245,
+                range: 176,
+                rhythm: 1.9,
+                silence: 0.24,
+                phase: 0.57
+            ),
+            make(
+                title: "Deep Fish #7716",
+                seed: 0x8c90_66aa_b351,
+                energy: 0.39,
+                pitch: 132,
+                range: 78,
+                rhythm: 2.2,
+                silence: 0.32,
+                phase: 0.81
+            )
+        ]
+    }
+
+    private static func make(title: String, seed: UInt64, energy: Double, pitch: Double, range: Double, rhythm: Double, silence: Double, phase: Double) -> VoiceArtwork {
+        let samples = 160
+        let waveform = (0..<samples).map { index in
+            let t = Double(index) / Double(samples - 1)
+            return sin((t + phase) * .pi * 8) * 0.58 + sin((t + phase * 0.4) * .pi * 23) * 0.22
+        }
+        let energyCurve = (0..<120).map { index in
+            let t = Double(index) / 119
+            return max(0.04, min(1, energy + sin((t + phase) * .pi * 6) * 0.25))
+        }
+        let pitchCurve = (0..<120).map { index in
+            let t = Double(index) / 119
+            return max(0.05, min(1, 0.45 + sin((t + phase) * .pi * 4) * 0.3))
+        }
+        return VoiceArtwork(
+            id: UUID(),
+            createdAt: Date(),
+            title: title,
+            seed: seed,
+            features: VoiceFeatures(
+                duration: 5.8,
+                averageEnergy: energy,
+                peakEnergy: min(1, energy + 0.31),
+                averagePitch: pitch,
+                pitchRange: range,
+                rhythmDensity: rhythm,
+                silenceRatio: silence,
+                zeroCrossingRate: 0.12 + phase * 0.1,
+                waveform: waveform,
+                energyCurve: energyCurve,
+                pitchCurve: pitchCurve
+            )
+        )
     }
 }
