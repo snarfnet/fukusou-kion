@@ -29,7 +29,7 @@ targets:
     info:
       path: TroubleNavi/Resources/Info.plist
       properties:
-        CFBundleDisplayName: "初動ナビ"
+        CFBundleDisplayName: "こんな時、どうしたらいい？"
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true

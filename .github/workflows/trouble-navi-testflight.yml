@@ -38,7 +38,7 @@ jobs:
         working-directory: ios/TroubleNavi
     env:
       APP_BUNDLE_ID: com.tokyonasu.troublenavi
-      APP_NAME: "初動ナビ"
+      APP_NAME: "こんな時、どうしたらいい？"
       APP_SKU: trouble-navi-ios
       APP_ID: ${{ inputs.app_id || secrets.TROUBLE_NAVI_APP_ID || '' }}
       BUNDLE_NAME: TroubleNavi
