@@ -102,6 +102,12 @@ struct VoiceArtworkView: View {
             drawMistArtwork(features, palette: palette, style: style, size: size, in: &context, rng: &rng)
         case .nebula:
             drawNebulaArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .figure:
+            drawFigureArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .organism:
+            drawOrganismArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
+        case .spirit:
+            drawSpiritArtwork(features, palette: palette, style: style, center: center, short: short, in: &context, rng: &rng)
         }
 
         drawGrain(palette: palette, size: size, in: &context, rng: &rng)
@@ -261,6 +267,133 @@ struct VoiceArtworkView: View {
             let side = CGFloat(rng.double(in: 1.5...8.5))
             let point = CGPoint(x: center.x + CGFloat(cos(angle)) * distance, y: center.y + CGFloat(sin(angle)) * distance)
             context.fill(Path(ellipseIn: CGRect(x: point.x - side / 2, y: point.y - side / 2, width: side, height: side)), with: .color(palette.spark.opacity(rng.double(in: 0.18...0.72))))
+        }
+    }
+
+    private func drawFigureArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let tilt = CGFloat(rng.double(in: -0.22...0.22))
+        let bodyHeight = short * CGFloat(0.38 + features.averageEnergy * 0.18)
+        let bodyWidth = short * CGFloat(0.12 + features.pitchRange / 2_800)
+        let headSize = short * CGFloat(rng.double(in: 0.055...0.105))
+        let bodyCenter = CGPoint(x: center.x + short * tilt, y: center.y + short * CGFloat(rng.double(in: -0.02...0.08)))
+
+        var torso = Path()
+        torso.move(to: CGPoint(x: bodyCenter.x, y: bodyCenter.y - bodyHeight * 0.45))
+        torso.addCurve(
+            to: CGPoint(x: bodyCenter.x - bodyWidth * 0.55, y: bodyCenter.y + bodyHeight * 0.42),
+            control1: CGPoint(x: bodyCenter.x - bodyWidth * 1.25, y: bodyCenter.y - bodyHeight * 0.25),
+            control2: CGPoint(x: bodyCenter.x - bodyWidth * 0.95, y: bodyCenter.y + bodyHeight * 0.2)
+        )
+        torso.addCurve(
+            to: CGPoint(x: bodyCenter.x + bodyWidth * 0.6, y: bodyCenter.y + bodyHeight * 0.34),
+            control1: CGPoint(x: bodyCenter.x - bodyWidth * 0.1, y: bodyCenter.y + bodyHeight * 0.58),
+            control2: CGPoint(x: bodyCenter.x + bodyWidth * 1.25, y: bodyCenter.y + bodyHeight * 0.54)
+        )
+        torso.addCurve(
+            to: CGPoint(x: bodyCenter.x, y: bodyCenter.y - bodyHeight * 0.45),
+            control1: CGPoint(x: bodyCenter.x + bodyWidth * 0.95, y: bodyCenter.y),
+            control2: CGPoint(x: bodyCenter.x + bodyWidth * 0.74, y: bodyCenter.y - bodyHeight * 0.3)
+        )
+
+        context.fill(torso, with: .color(palette.lineA.opacity(0.16)))
+        context.stroke(torso, with: .color(palette.spark.opacity(0.34)), lineWidth: CGFloat(rng.double(in: 1.4...4.8)))
+
+        let headRect = CGRect(x: bodyCenter.x - headSize / 2, y: bodyCenter.y - bodyHeight * 0.58 - headSize / 2, width: headSize, height: headSize * CGFloat(rng.double(in: 1.05...1.45)))
+        context.fill(Path(ellipseIn: headRect), with: .color(palette.spark.opacity(0.2)))
+        context.stroke(Path(ellipseIn: headRect), with: .color(.white.opacity(0.2)), lineWidth: 1.2)
+
+        let limbs = 4 + style.symmetry % 4
+        for limb in 0..<limbs {
+            var path = Path()
+            let side: CGFloat = limb.isMultiple(of: 2) ? -1 : 1
+            let startY = bodyCenter.y + bodyHeight * CGFloat(rng.double(in: -0.22...0.24))
+            let start = CGPoint(x: bodyCenter.x + side * bodyWidth * CGFloat(rng.double(in: 0.24...0.7)), y: startY)
+            let end = CGPoint(x: bodyCenter.x + side * short * CGFloat(rng.double(in: 0.18...0.38)), y: startY + short * CGFloat(rng.double(in: -0.16...0.22)))
+            let wave = sample(features.waveform, at: Double(limb) / Double(max(1, limbs - 1)))
+            path.move(to: start)
+            path.addQuadCurve(to: end, control: CGPoint(x: center.x + side * short * CGFloat(0.16 + abs(wave) * 0.18), y: startY - short * CGFloat(wave * 0.18)))
+            context.stroke(path, with: .color((limb.isMultiple(of: 2) ? palette.lineB : palette.spark).opacity(0.22)), lineWidth: CGFloat(rng.double(in: 4...12)))
+        }
+    }
+
+    private func drawOrganismArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let archetype = style.biomorphIndex
+        let lobes = 5 + archetype % 13
+        let tendrils = 3 + (archetype / 13) % 9
+        let shellBias = Double((archetype / 117) % 7) / 7
+        let rotation = rng.double(in: 0...(.pi * 2))
+        let bodyScale = short * CGFloat(0.18 + features.averageEnergy * 0.22 + shellBias * 0.06)
+
+        var body = Path()
+        let steps = 180
+        for step in 0...steps {
+            let t = Double(step) / Double(steps)
+            let angle = t * .pi * 2 + rotation
+            let voice = sample(features.waveform, at: t)
+            let pitch = sample(features.pitchCurve, at: (t + shellBias).truncatingRemainder(dividingBy: 1))
+            let breathing = sin(angle * Double(lobes)) * 0.14 + cos(angle * Double(2 + archetype % 5)) * 0.08
+            let radius = bodyScale * CGFloat(0.76 + breathing + abs(voice) * 0.22 + pitch * 0.16)
+            let x = center.x + CGFloat(cos(angle)) * radius * CGFloat(1.0 + shellBias * 0.46)
+            let y = center.y + CGFloat(sin(angle)) * radius * CGFloat(0.72 + Double(archetype % 11) / 26)
+            step == 0 ? body.move(to: CGPoint(x: x, y: y)) : body.addLine(to: CGPoint(x: x, y: y))
+        }
+        body.closeSubpath()
+
+        context.fill(body, with: .radialGradient(Gradient(colors: [palette.spark.opacity(0.28), palette.lineA.opacity(0.12), .clear]), center: center, startRadius: 0, endRadius: bodyScale * 1.8))
+        context.stroke(body, with: .color(palette.lineB.opacity(0.32)), lineWidth: CGFloat(rng.double(in: 1.4...5.2)))
+
+        for tendril in 0..<tendrils {
+            var path = Path()
+            let t = Double(tendril) / Double(tendrils)
+            let angle = t * .pi * 2 + rotation + rng.double(in: -0.4...0.4)
+            let start = CGPoint(x: center.x + CGFloat(cos(angle)) * bodyScale * 0.78, y: center.y + CGFloat(sin(angle)) * bodyScale * 0.64)
+            let length = short * CGFloat(rng.double(in: 0.12...0.34) * (0.8 + features.rhythmDensity * 0.06))
+            let end = CGPoint(x: start.x + CGFloat(cos(angle + rng.double(in: -0.8...0.8))) * length, y: start.y + CGFloat(sin(angle + rng.double(in: -0.8...0.8))) * length)
+            let voice = sample(features.waveform, at: t)
+            path.move(to: start)
+            path.addCurve(
+                to: end,
+                control1: CGPoint(x: start.x + CGFloat(cos(angle + 0.8)) * length * 0.38, y: start.y + CGFloat(sin(angle + 0.8)) * length * 0.38),
+                control2: CGPoint(x: end.x - CGFloat(voice) * short * 0.08, y: end.y + CGFloat(voice) * short * 0.12)
+            )
+            context.stroke(path, with: .color((tendril.isMultiple(of: 2) ? palette.spark : palette.lineA).opacity(0.26)), lineWidth: CGFloat(rng.double(in: 2.2...8.5)))
+        }
+
+        let eyeCount = archetype % 4 == 0 ? 0 : 1 + archetype % 3
+        for eye in 0..<eyeCount {
+            let angle = rotation + Double(eye) / Double(max(1, eyeCount)) * .pi * 0.55 - 0.28
+            let point = CGPoint(x: center.x + CGFloat(cos(angle)) * bodyScale * 0.28, y: center.y + CGFloat(sin(angle)) * bodyScale * 0.18)
+            let side = short * CGFloat(rng.double(in: 0.012...0.026))
+            context.fill(Path(ellipseIn: CGRect(x: point.x - side / 2, y: point.y - side / 2, width: side, height: side)), with: .color(.white.opacity(0.36)))
+        }
+    }
+
+    private func drawSpiritArtwork(_ features: VoiceFeatures, palette: ArtworkPalette, style: ArtworkStyle, center: CGPoint, short: CGFloat, in context: inout GraphicsContext, rng: inout SeededRandomNumberGenerator) {
+        let silhouettes = 2 + style.biomorphIndex % 4
+        for silhouette in 0..<silhouettes {
+            let offset = CGPoint(x: center.x + short * CGFloat(rng.double(in: -0.18...0.18)), y: center.y + short * CGFloat(rng.double(in: -0.12...0.18)))
+            var path = Path()
+            path.move(to: CGPoint(x: offset.x, y: offset.y - short * CGFloat(rng.double(in: 0.22...0.34))))
+            path.addCurve(
+                to: CGPoint(x: offset.x - short * CGFloat(rng.double(in: 0.12...0.24)), y: offset.y + short * CGFloat(rng.double(in: 0.18...0.34))),
+                control1: CGPoint(x: offset.x - short * CGFloat(rng.double(in: 0.18...0.34)), y: offset.y - short * 0.14),
+                control2: CGPoint(x: offset.x - short * CGFloat(rng.double(in: 0.22...0.35)), y: offset.y + short * 0.12)
+            )
+            path.addCurve(
+                to: CGPoint(x: offset.x + short * CGFloat(rng.double(in: 0.12...0.24)), y: offset.y + short * CGFloat(rng.double(in: 0.16...0.32))),
+                control1: CGPoint(x: offset.x - short * 0.06, y: offset.y + short * CGFloat(rng.double(in: 0.4...0.5))),
+                control2: CGPoint(x: offset.x + short * CGFloat(rng.double(in: 0.18...0.32)), y: offset.y + short * 0.34)
+            )
+            path.addCurve(
+                to: CGPoint(x: offset.x, y: offset.y - short * CGFloat(rng.double(in: 0.22...0.34))),
+                control1: CGPoint(x: offset.x + short * CGFloat(rng.double(in: 0.2...0.34)), y: offset.y + short * 0.02),
+                control2: CGPoint(x: offset.x + short * CGFloat(rng.double(in: 0.14...0.26)), y: offset.y - short * 0.16)
+            )
+            let color = silhouette.isMultiple(of: 2) ? palette.spark : palette.lineB
+            context.fill(path, with: .color(color.opacity(rng.double(in: 0.045...0.14))))
+            context.stroke(path, with: .color(color.opacity(rng.double(in: 0.16...0.32))), lineWidth: CGFloat(rng.double(in: 1.2...3.8)))
+
+            drawVoiceRibbon(features.energyCurve, color: color, center: offset, radius: short * CGFloat(rng.double(in: 0.12...0.21)), in: &context, phase: rng.double(in: 0...(.pi * 2)))
         }
     }
 
