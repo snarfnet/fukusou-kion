@@ -66,7 +66,7 @@ Xcodeで以下を確認します。
 
 専用workflow:
 
-- `.github/workflows/voiceprint-testflight.yml`
+- `.github/workflows/voiceprint-ios-build.yml`
 
 必要なGitHub Secrets:
 
@@ -80,7 +80,7 @@ Xcodeで以下を確認します。
 実行:
 
 ```sh
-gh workflow run "Voiceprint TestFlight" --ref codex/trouble-navi-testflight
+gh workflow run "Voiceprint iOS Build" --ref codex/trouble-navi-testflight -f upload_testflight=true
 ```
 
 このworkflowはApp Store Connectのアプリ登録、配布証明書、Provisioning Profile、Archive、IPA export、App Store Connect upload、TestFlight処理待ちまで行います。App Store審査提出はしません。
