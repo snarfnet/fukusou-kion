@@ -73,8 +73,6 @@ Xcodeで以下を確認します。
 - `ASC_KEY_ID`
 - `ASC_ISSUER_ID`
 - `ASC_PRIVATE_KEY` または `ASC_API_KEY_CONTENT`
-- 任意: `DIST_CERT_BASE64` または `IOS_DISTRIBUTION_P12_BASE64`
-- 任意: `DIST_CERT_PASSWORD` または `IOS_DISTRIBUTION_P12_PASSWORD`
 - 任意: `KEYCHAIN_PASSWORD`
 
 実行:
@@ -83,7 +81,7 @@ Xcodeで以下を確認します。
 gh workflow run "Voiceprint iOS Build" --ref codex/trouble-navi-testflight -f upload_testflight=true
 ```
 
-このworkflowはApp Store Connectのアプリ登録、配布証明書、Provisioning Profile、Archive、IPA export、App Store Connect upload、TestFlight処理待ちまで行います。App Store審査提出はしません。
+このworkflowはApp Store Connectのアプリ登録確認、配布証明書作成、Provisioning Profile、Archive、IPA export、App Store Connect upload、TestFlight処理待ちまで行います。App Store審査提出はしません。
 
 APIキーにアプリ作成権限がない場合、App Store Connectで最初のアプリレコードだけ手動作成してください。
 
