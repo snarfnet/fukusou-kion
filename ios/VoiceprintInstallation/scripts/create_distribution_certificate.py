@@ -58,6 +58,35 @@ def create_certificate():
     raise RuntimeError(last_error)
 
 
+def delete_existing_distribution_certificates():
+    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
+        try:
+            response = api_json("GET", f"/certificates?filter[certificateType]={certificate_type}&limit=200")
+        except Exception as error:
+            print(f"Could not list {certificate_type} certificates before replacement: {error}")
+            continue
+
+        for certificate in response.get("data", []):
+            attributes = certificate.get("attributes", {})
+            name = attributes.get("name", "unnamed")
+            expires = attributes.get("expirationDate", "unknown expiration")
+            print(f"Deleting existing {certificate_type} certificate: {certificate['id']} ({name}, {expires})")
+            api_json("DELETE", f"/certificates/{certificate['id']}")
+
+
+def create_or_replace_certificate():
+    try:
+        return create_certificate()
+    except Exception as error:
+        message = str(error)
+        if "current iOS Distribution certificate" not in message and "current Distribution certificate" not in message:
+            raise
+
+        print("Existing distribution certificate blocks creation; replacing it for CI signing.")
+        delete_existing_distribution_certificates()
+        return create_certificate()
+
+
 def import_certificate(certificate):
     content = certificate.get("attributes", {}).get("certificateContent")
     if not content:
@@ -76,7 +105,7 @@ def import_certificate(certificate):
 
 def main():
     generate_csr()
-    certificate = create_certificate()
+    certificate = create_or_replace_certificate()
     import_certificate(certificate)
 
 
