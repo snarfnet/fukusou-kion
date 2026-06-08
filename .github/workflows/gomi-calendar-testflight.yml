@@ -181,7 +181,7 @@ jobs:
             PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID"
 
-      - name: Export IPA
+      - name: Export and upload IPA
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         shell: bash
@@ -198,22 +198,6 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
-      - name: Upload to App Store Connect
-        shell: bash
-        run: |
-          set -o pipefail
-          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
-          test -n "$IPA_PATH"
-          xcrun altool --upload-app \
-            --type ios \
-            --file "$IPA_PATH" \
-            --apple-id "$APP_ID" \
-            --apiKey "$ASC_KEY_ID" \
-            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/gomi-calendar-altool-upload.log
-          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/gomi-calendar-altool-upload.log; then
-            exit 1
-          fi
-
       - name: Wait for TestFlight build processing
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -226,7 +210,9 @@ jobs:
           python scripts/wait_for_testflight_build.py
 
       - name: Upload IPA artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gomi-calendar-ipa
           path: ios/GomiCalendar/build/export/*.ipa
+          if-no-files-found: ignore
