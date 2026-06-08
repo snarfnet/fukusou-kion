@@ -1,101 +1,107 @@
-# Voiceprint Installation
+# VoiceprintNFT
 
-声だけで抽象アートを生成するiOS MVPです。録音音声は保存せず、波形、ピッチ、リズム、無音率などの特徴量から作品を描きます。
+VoiceprintNFT is an iOS app that turns a short voice recording into generative art for NFT preparation.
 
-## MVP
+The app is built for worldwide release. The interface, App Store metadata, privacy copy, and App Review notes use English as the primary language.
 
-- 5秒録音
-- ライブ音量・ピッチ表示
-- Canvasによるジェネラティブアート生成
-- PNG書き出し
-- OpenSea向けmetadata JSON書き出し
-- 作品ギャラリー
-- App Store有料販売を想定したTestFlight準備
+VoiceprintNFT does not save the recorded audio file. It analyzes abstract voice features such as waveform, pitch, rhythm, silence, and energy, then uses those features to render dark neon line art with creature-like, human-like, and symbolic contours. Each result changes with the user's voice and the generated seed, so the same person can create different works each time.
 
-## OpenSea連携
+## What The App Does
 
-アプリ内の「OpenSeaを開く」は確認導線です。実際のmintは次の流れで実装します。
+- Records a short voice sample through the microphone.
+- Extracts voice features without keeping the original audio file.
+- Generates a square artwork in a dark neon line-art style.
+- Adds readable creature, animal, figure, eye, wing, mask, and symbolic motifs.
+- Lets the user remix the same voice features with a new seed.
+- Exports a PNG and NFT-style metadata JSON.
+- Opens OpenSea so the user can continue the minting flow.
+- Saves generated works in a local gallery.
 
-1. PNGをIPFSへアップロード
-2. metadata JSONの`image`を`ipfs://...`へ差し替え
-3. ERC-721またはERC-1155でmint
-4. OpenSeaでmetadataを読み込み
+## App Store Description Draft
 
-秘密鍵やOpenSea APIキーをiOSアプリに直置きしないでください。本番ではサーバー側で署名・IPFSアップロードを扱います。
+VoiceprintNFT turns your voice into visual art.
 
-## 800円販売
+Speak for a few seconds, and the app analyzes the shape of your voice: waveform, pitch, rhythm, silence, energy, and the small changes that make your voice feel personal. From those signals, VoiceprintNFT creates a unique neon artwork.
 
-アプリ本体を800円で売る場合、iOSコード側の課金処理は不要です。App Store Connectで価格を設定します。
+The result is not a photo, not a face filter, and not a template image. It is generative art drawn from the characteristics of your voice. Some works feel like animals, masks, wings, eyes, constellations, or human silhouettes. Others feel closer to modern line art or electronic poster art. The style changes every time, even when the same person records again.
 
-- Paid Apps Agreementを有効化
-- Pricing and Availabilityで日本向け価格を800円相当に設定
-- TestFlight配信中はテスターからアプリ代金は取りません
+VoiceprintNFT is designed for people who want personal artwork without using their face, body, or private photos. Your voice becomes the source material, but the app does not store the recorded audio file. It keeps only abstract values used to create the image, such as pitch range, rhythm density, silence pattern, and energy.
 
-Apple公式:
+After generating an artwork, you can remix it, save it, and export the image with NFT-style metadata. The exported metadata includes traits based on the analyzed voice features, so the artwork has a clear connection to the voice that created it.
 
-- https://developer.apple.com/help/app-store-connect/manage-app-pricing/set-a-price
-- https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/
+VoiceprintNFT also includes a simple NFT preparation flow. Export the PNG and metadata JSON, upload the image to IPFS, replace the image CID in the metadata, then use OpenSea or your preferred minting tool.
 
-## TestFlight手順
+The app does not mint or sell NFTs inside the app. It prepares creative assets that you can use outside the app.
 
-Macで作業してください。
+VoiceprintNFT is for creative expression, digital identity experiments, generative art, audio art, NFT preparation, and people who want to make something personal without using a camera.
+
+Your voice becomes a visual signature.
+
+## Subtitle Draft
+
+Turn your voice into NFT art
+
+## Promotional Text Draft
+
+Create neon generative art from your voice. Record a short sample, generate a unique visual piece, export PNG and metadata, and prepare it for NFT minting.
+
+## Keywords Draft
+
+voice,nft,generative art,neon,abstract art,opensea,digital art,waveform,audio art,creator
+
+## Privacy Notes
+
+VoiceprintNFT uses the microphone only to analyze a short voice sample for artwork generation. The app does not store the recorded audio file. It stores generated artwork data and abstract voice features locally so users can view and export their generated works.
+
+No tracking is used.
+
+## Price And Availability
+
+The planned base price is 100 JPY for Japan, with equivalent worldwide pricing generated in App Store Connect.
+
+Price and availability are set in App Store Connect, not in the iOS code. Before submitting for review:
+
+1. Open App Store Connect.
+2. Select `VoiceprintNFT`.
+3. Open Pricing and Availability.
+4. Confirm the Paid Apps Agreement is active.
+5. Set Japan as the base country or region.
+6. Set the base price to 100 JPY.
+7. Keep worldwide storefront availability enabled unless a specific country or region must be excluded.
+8. Review Apple's automatically generated equivalent prices for other storefronts.
+
+Apple's App Store Connect pricing help says paid apps require the Paid Apps Agreement, and pricing must be set before review. Apple can generate equivalent prices across storefronts from a selected base country or region.
+
+## TestFlight
+
+GitHub Actions can build and upload the app to TestFlight:
 
 ```sh
-cd ios/VoiceprintInstallation
-xcodegen generate
-open VoiceprintInstallation.xcodeproj
+gh workflow run "VoiceprintNFT iOS Build" --ref codex/trouble-navi-testflight -f upload_testflight=true
 ```
 
-Xcodeで以下を確認します。
+The workflow checks the App Store Connect app record, creates or prepares signing assets, builds an archive, exports an IPA, uploads it to App Store Connect, and waits for TestFlight processing.
 
-- Bundle ID: `com.tokyonasu.voiceprintinstallation`
-- Team: 自分のApple Developer Team
-- Signing: Automatic
-- Build numberを提出ごとに更新
+## App Store Connect Record
 
-提出:
+Use these values if the app record must be created manually:
 
-1. Xcodeで`Any iOS Device`を選択
-2. `Product > Archive`
-3. Organizerから`Distribute App`
-4. `App Store Connect`へアップロード
-5. App Store ConnectのTestFlightで内部テスターを追加
-6. 外部テスターへ出す場合はBeta App Reviewへ提出
-
-## GitHub ActionsでTestFlightへアップロード
-
-専用workflow:
-
-- `.github/workflows/voiceprint-ios-build.yml`
-
-必要なGitHub Secrets:
-
-- `ASC_KEY_ID`
-- `ASC_ISSUER_ID`
-- `ASC_PRIVATE_KEY` または `ASC_API_KEY_CONTENT`
-- 任意: `KEYCHAIN_PASSWORD`
-
-実行:
-
-```sh
-gh workflow run "Voiceprint iOS Build" --ref codex/trouble-navi-testflight -f upload_testflight=true
-```
-
-このworkflowはApp Store Connectのアプリ登録確認、配布証明書作成、Provisioning Profile、Archive、IPA export、App Store Connect upload、TestFlight処理待ちまで行います。App Store審査提出はしません。
-
-APIキーにアプリ作成権限がない場合、App Store Connectで最初のアプリレコードだけ手動作成してください。
-
-- Name: `Voiceprint`
+- Name: `VoiceprintNFT`
 - Bundle ID: `com.tokyonasu.voiceprintinstallation`
 - SKU: `voiceprint-ios`
 - Platform: iOS
+- Primary language: English
+- Availability: Worldwide
 
-手動作成後、同じworkflowを再実行すればArchive/Uploadへ進みます。
+## Submission Checklist
 
-## 次に足す機能
-
-- WalletConnect
-- IPFSアップロード用バックエンド
-- mint用スマートコントラクト
-- OpenSea listing導線
-- Core ML Stable Diffusionモード
+- App name is `VoiceprintNFT`.
+- Display name is `VoiceprintNFT`.
+- Primary App Store metadata is in English.
+- Microphone usage text explains that audio is used only for artwork generation.
+- Privacy details say audio is not stored and tracking is not used.
+- Price is set in App Store Connect with Japan as 100 JPY base pricing.
+- Worldwide availability is enabled in App Store Connect.
+- Latest TestFlight build is processed.
+- Screenshots show recording, generated neon line art, NFT preparation, and gallery.
+- App Review notes explain that NFT minting happens outside the app through OpenSea or the user's own tools.

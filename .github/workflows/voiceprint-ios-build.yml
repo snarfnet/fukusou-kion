@@ -1,4 +1,4 @@
-name: Voiceprint iOS Build
+name: VoiceprintNFT iOS Build
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: Build Voiceprint
+    name: Build VoiceprintNFT
     runs-on: macos-15
     timeout-minutes: 30
 
@@ -63,10 +63,10 @@ jobs:
         working-directory: ios/VoiceprintInstallation
     env:
       APP_BUNDLE_ID: com.tokyonasu.voiceprintinstallation
-      APP_NAME: Voiceprint
+      APP_NAME: VoiceprintNFT
       APP_SKU: voiceprint-ios
       BUNDLE_NAME: VoiceprintInstallation
-      PROFILE_NAME: "Voiceprint App Store"
+      PROFILE_NAME: "VoiceprintNFT App Store"
       TEAM_ID: 83VGKGSQUH
 
     steps:

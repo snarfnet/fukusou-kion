@@ -8,8 +8,8 @@ from asc_helpers import api_json, decode_profile, fail
 
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.voiceprintinstallation")
-PROFILE_NAME = os.environ.get("PROFILE_NAME", "Voiceprint App Store")
-PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/Voiceprint_App_Store.mobileprovision"
+PROFILE_NAME = os.environ.get("PROFILE_NAME", "VoiceprintNFT App Store")
+PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/VoiceprintNFT_App_Store.mobileprovision"
 CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").replace(":", "").upper()
 
 

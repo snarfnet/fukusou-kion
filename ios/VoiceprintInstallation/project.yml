@@ -30,13 +30,13 @@ targets:
     info:
       path: VoiceprintInstallation/Info.plist
       properties:
-        CFBundleName: "Voiceprint"
-        CFBundleDisplayName: "Voiceprint"
+        CFBundleName: "VoiceprintNFT"
+        CFBundleDisplayName: "VoiceprintNFT"
         CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
-        NSMicrophoneUsageDescription: "声の波形、ピッチ、リズムから抽象アートを生成するために使います。録音音声は保存しません。"
+        NSMicrophoneUsageDescription: "VoiceprintNFT uses your microphone to analyze waveform, pitch, and rhythm for artwork generation. The recorded audio file is not stored."
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
           UIColorName: ""

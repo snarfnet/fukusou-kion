@@ -47,7 +47,7 @@ struct ContentView: View {
                 recorder.clearPermissionAlert()
             }
         } message: {
-            Text("Enable microphone access in Settings. Voiceprint does not store your audio, only abstract features for the artwork.")
+            Text("Enable microphone access in Settings. VoiceprintNFT does not store your audio, only abstract features for the artwork.")
         }
         .onChange(of: recorder.completedArtwork) { _, artwork in
             guard let artwork, selectedArtwork?.id != artwork.id else { return }
@@ -101,7 +101,7 @@ private struct HeaderView: View {
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.16), lineWidth: 1))
 
             VStack(alignment: .leading, spacing: 3) {
-                Text("Voiceprint")
+                Text("VoiceprintNFT")
                     .font(.system(size: 42, weight: .black, design: .rounded))
                     .foregroundStyle(.white)
                     .minimumScaleFactor(0.78)

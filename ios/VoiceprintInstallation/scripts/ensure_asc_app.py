@@ -12,7 +12,7 @@ KEY_ID = os.environ["ASC_KEY_ID"]
 ISSUER = os.environ["ASC_ISSUER_ID"]
 BUNDLE_ID = os.environ.get("BUNDLE_ID", "com.tokyonasu.voiceprintinstallation")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "VoiceprintInstallation")
-APP_NAME = os.environ.get("APP_NAME", "Voiceprint")
+APP_NAME = os.environ.get("APP_NAME", "VoiceprintNFT")
 APP_SKU = os.environ.get("APP_SKU", "voiceprint-ios")
 P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 
