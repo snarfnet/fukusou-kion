@@ -29,6 +29,7 @@ struct CaseDetailView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
+                CategoryIcon(category: item.category, size: 42)
                 Text(item.urgency.title)
                     .font(.caption)
                     .fontWeight(.bold)
@@ -134,7 +135,7 @@ struct CaseDetailView: View {
     private var memoText: String {
         var lines = [
             "【相談テーマ】\(item.title)",
-            "【カテゴリ】\(item.category)",
+            "【カテゴリー】\(item.category)",
             "【緊急度】\(item.urgency.rawValue)",
             "",
             "【起きたこと】",

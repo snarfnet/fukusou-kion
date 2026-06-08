@@ -23,7 +23,7 @@ struct ContentView: View {
         NavigationSplitView {
             List(selection: $selectedCase) {
                 Section {
-                    legalNotice
+                    heroPanel
                     filterPanel
                 }
 
@@ -35,8 +35,8 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("初動ナビ")
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "離婚 ゴミ 騒音 SNS")
+            .navigationTitle("こんな時、どうしたらいい？")
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "離婚、ゴミ、騒音、SNS")
         } detail: {
             if let selectedCase {
                 CaseDetailView(item: selectedCase)
@@ -46,7 +46,7 @@ struct ContentView: View {
                 ContentUnavailableView("事例がありません", systemImage: "magnifyingglass", description: Text("検索条件を変えてください。"))
             }
         }
-        .tint(.brown)
+        .tint(.blue)
         .onAppear {
             if selectedCase == nil {
                 selectedCase = store.cases.first
@@ -60,23 +60,70 @@ struct ContentView: View {
         }
     }
 
-    private var legalNotice: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("法律相談ではありません", systemImage: "shield.lefthalf.filled")
-                .font(.headline)
-            Text("初動、証拠、相談先、専門家に話す内容を整理します。違法性、請求可否、金額、勝敗は判断しません。")
+    private var heroPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Image("HeaderTroubleIllustration")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 126)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .bottomLeading) {
+                    LinearGradient(
+                        colors: [.black.opacity(0.52), .black.opacity(0.18), .clear],
+                        startPoint: .bottom,
+                        endPoint: .top
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .overlay(alignment: .bottomLeading) {
+                    Label("困った時の初動を整理", systemImage: "questionmark.bubble.fill")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding(12)
+                }
+                .accessibilityHidden(true)
+
+            Text("法律判断ではなく、まず何を残し、どこへ相談し、何を避けるかを事例ごとに整理します。離婚、近隣、マンション、事故、契約、SNSなど、日常のトラブルを探しやすくしました。")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+                .lineSpacing(3)
+
+            Text("このアプリは一般情報の案内です。違法性、請求可否、勝敗の判断はしません。深刻な内容は弁護士、警察、自治体、専門窓口へ相談してください。")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
     }
 
     private var filterPanel: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Picker("カテゴリ", selection: $selectedCategory) {
-                ForEach(store.categories, id: \.self) { category in
-                    Text(category).tag(category)
+            Text("カテゴリーから探す")
+                .font(.headline)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    CategoryChip(
+                        category: "全部",
+                        count: store.cases.count,
+                        isSelected: selectedCategory == "全部"
+                    ) {
+                        selectedCategory = "全部"
+                    }
+
+                    ForEach(store.categories, id: \.self) { category in
+                        CategoryChip(
+                            category: category,
+                            count: store.cases.filter { $0.category == category }.count,
+                            isSelected: selectedCategory == category
+                        ) {
+                            selectedCategory = category
+                        }
+                    }
                 }
+                .padding(.vertical, 2)
             }
 
             Picker("緊急度", selection: $selectedUrgency) {
@@ -99,30 +146,73 @@ struct ContentView: View {
     }
 }
 
+private struct CategoryChip: View {
+    let category: String
+    let count: Int
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                if category == "全部" {
+                    Image(systemName: "square.grid.2x2")
+                        .font(.subheadline.weight(.bold))
+                        .frame(width: 28, height: 28)
+                } else {
+                    CategoryIcon(category: category, size: 30)
+                }
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(category)
+                        .font(.caption.weight(.bold))
+                        .lineLimit(1)
+                    Text("\(count)件")
+                        .font(.caption2)
+                        .foregroundStyle(isSelected ? .white.opacity(0.82) : .secondary)
+                }
+            }
+            .foregroundStyle(isSelected ? .white : .primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                isSelected ? Color.blue.gradient : Color(.secondarySystemBackground).gradient,
+                in: RoundedRectangle(cornerRadius: 8)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 private struct CaseRow: View {
     let item: TroubleCase
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(item.urgency.title)
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(color(for: item.urgency), in: Capsule())
-                Text(item.category)
+        HStack(alignment: .top, spacing: 12) {
+            CategoryIcon(category: item.category)
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(item.urgency.title)
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(color(for: item.urgency), in: Capsule())
+                    Text(item.category)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text(item.title)
+                    .font(.headline)
+                    .lineLimit(2)
+                Text(item.summary)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .lineLimit(2)
             }
-            Text(item.title)
-                .font(.headline)
-                .lineLimit(2)
-            Text(item.summary)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
         }
         .padding(.vertical, 4)
     }
