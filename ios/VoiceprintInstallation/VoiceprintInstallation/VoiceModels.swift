@@ -56,7 +56,7 @@ struct VoiceArtwork: Identifiable, Codable, Equatable {
                 NFTAttribute(trait_type: "Pitch Range", value: rounded(features.pitchRange)),
                 NFTAttribute(trait_type: "Rhythm Density", value: rounded(features.rhythmDensity * 100)),
                 NFTAttribute(trait_type: "Silence Pattern", value: rounded(features.silenceRatio * 100)),
-                NFTAttribute(trait_type: "Biomorphic Form", value: Double(style.biomorphIndex)),
+                NFTAttribute(trait_type: "Creature Motif", value: Double(style.biomorphIndex)),
                 NFTAttribute(trait_type: "Seed", value: Double(seed % 1_000_000))
             ]
         )
@@ -122,12 +122,18 @@ struct ArtworkStyle: Equatable {
 
     init(seed: UInt64, features: VoiceFeatures) {
         var rng = SeededRandomNumberGenerator(seed: seed ^ 0xd6e8_feb8_6659_fd93)
-        let families: [Family] = [.bloom, .aurora, .topography, .calligraphy, .mist, .nebula, .figure, .organism, .spirit]
+        let families: [Family] = [
+            .figure, .organism, .spirit,
+            .bloom, .organism, .aurora,
+            .figure, .topography, .spirit,
+            .calligraphy, .organism, .mist,
+            .nebula, .figure, .spirit
+        ]
         family = families[Int(seed % UInt64(families.count))]
         symmetry = 3 + Int(rng.next() % 9)
         turbulence = min(1.35, 0.34 + features.zeroCrossingRate * 12 + rng.double(in: 0...0.66))
         strokeBias = rng.double(in: 0.65...1.75)
-        biomorphIndex = Int((seed ^ UInt64(Int(features.averageEnergy * 10_000))) % 1_000)
+        biomorphIndex = Int((seed ^ UInt64(Int(features.averageEnergy * 10_000))) % 5_000)
     }
 }
 

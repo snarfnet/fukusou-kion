@@ -128,7 +128,7 @@ private struct StudioPanel: View {
     var body: some View {
         VStack(spacing: 14) {
             ZStack(alignment: .topLeading) {
-                VoiceArtworkView(artwork: artwork, liveLevel: liveLevel, livePitch: livePitch)
+                VoiceArtworkView(artwork: artwork, liveLevel: liveLevel, livePitch: livePitch, isRecording: isRecording)
                     .shadow(color: .cyan.opacity(0.22), radius: 28, y: 12)
 
                 VStack(alignment: .leading, spacing: 6) {
