@@ -37,6 +37,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         NSMicrophoneUsageDescription: "声の波形、ピッチ、リズムから抽象アートを生成するために使います。録音音声は保存しません。"
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:
