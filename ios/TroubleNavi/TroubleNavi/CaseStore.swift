@@ -10,11 +10,11 @@ final class CaseStore: ObservableObject {
     }
 
     var categories: [String] {
-        ["全部"] + Array(Set(cases.map(\.category))).sorted()
+        Array(Set(cases.map(\.category))).sorted()
     }
 
     func load() {
-        guard let url = Bundle.main.url(forResource: "trouble_cases_1200", withExtension: "json") else {
+        guard let url = Bundle.main.url(forResource: "trouble_cases_curated", withExtension: "json") else {
             loadError = "事例データが見つかりません。"
             return
         }
