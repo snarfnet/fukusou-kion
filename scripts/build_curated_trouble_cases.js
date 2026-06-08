@@ -44,7 +44,7 @@ const guides = {
     avoid: ["その場で示談する", "痛みを我慢して受診しない", "相手情報を確認せず離れる", "証拠を消す"]
   },
   "買い物・契約": {
-    contacts: ["販売事業者", "消費生活センター188", "カード会社", "プラットフォーム", "弁護士"],
+    contacts: ["販売事業者", "消費生活センター188", "プラットフォーム", "弁護士"],
     evidence: ["契約画面", "注文メール", "請求明細", "やり取り", "商品写真", "広告表示"],
     avoid: ["支払明細を捨てる", "相手の口頭説明だけで納得する", "追加契約を急いで結ぶ", "感情的なレビューを書く"]
   },
@@ -54,8 +54,8 @@ const guides = {
     avoid: ["無断欠勤で対抗する", "証拠を会社PCだけに置く", "同僚へ過度に拡散する", "退職届を急いで出す"]
   },
   "ネット・SNS": {
-    contacts: ["プラットフォーム", "法務省人権相談", "警察相談", "弁護士", "カード会社"],
-    evidence: ["URL", "スクリーンショット", "投稿日時", "アカウント情報", "メッセージ", "送金履歴"],
+    contacts: ["プラットフォーム", "法務省人権相談", "警察相談", "弁護士"],
+    evidence: ["URL", "スクリーンショット", "投稿日時", "アカウント情報", "メッセージ", "削除依頼の履歴"],
     avoid: ["相手に何度も反論する", "投稿を消す前に記録しない", "個人情報を追加で送る", "二次拡散する"]
   },
   "家族・相続": {
@@ -376,9 +376,175 @@ function urgencyFor(title) {
   return "中";
 }
 
+function specificDetails(category, title) {
+  if (category === "ネット・SNS") {
+    if (title.includes("悪口")) {
+      return {
+        evidence: ["投稿URL", "スクリーンショット", "投稿日時", "投稿者のアカウント名", "投稿が見える範囲", "削除依頼や通報の履歴"],
+        contacts: ["投稿先プラットフォーム", "法務省人権相談", "警察相談", "弁護士"],
+        avoid: ["感情的に言い返す", "記録前に投稿を消すよう強く迫る", "相手の個人情報を晒し返す", "第三者に拡散を頼む"],
+        sourceKeys: ["internet", "houterasu"]
+      };
+    }
+    if (title.includes("住所を晒")) {
+      return {
+        evidence: ["投稿URL", "スクリーンショット", "投稿日時", "晒された情報の範囲", "相手アカウント", "削除依頼や通報の履歴"],
+        contacts: ["投稿先プラットフォーム", "警察相談", "法務省人権相談", "弁護士"],
+        avoid: ["相手に住所確認の返信をする", "自宅周辺の情報を追加投稿する", "一人で相手を特定しに行く", "証拠を取らずに削除だけ急ぐ"],
+        sourceKeys: ["internet", "cyber", "houterasu"]
+      };
+    }
+    if (title.includes("なりすまし")) {
+      return {
+        evidence: ["なりすましアカウントのURL", "プロフィール画面", "投稿内容", "自分の本物アカウント情報", "通報履歴", "被害を受けた人からの連絡"],
+        contacts: ["投稿先プラットフォーム", "法務省人権相談", "警察相談", "弁護士"],
+        avoid: ["偽アカウントへ何度も返信する", "本人確認資料を公開投稿する", "周囲に未確認情報を広める", "通報前に画面を閉じる"],
+        sourceKeys: ["internet", "cyber"]
+      };
+    }
+    if (title.includes("写真を勝手") && !title.includes("子ども")) {
+      return {
+        evidence: ["掲載URL", "掲載画面のスクリーンショット", "掲載日時", "写真の元データ", "削除依頼の履歴", "掲載者とのやり取り"],
+        contacts: ["投稿先プラットフォーム", "法務省人権相談", "弁護士", "警察相談"],
+        avoid: ["写真をさらに拡散する", "相手の個人情報を晒す", "記録前に削除だけ求める", "感情的な長文を送る"],
+        sourceKeys: ["internet", "houterasu"]
+      };
+    }
+    if (title.includes("DMでお金")) {
+      return {
+        evidence: ["DM全文", "相手アカウント", "要求された金額", "送金先情報", "送金した場合の履歴", "脅し文句のスクリーンショット"],
+        contacts: ["警察相談", "投稿先プラットフォーム", "金融機関", "弁護士"],
+        avoid: ["追加で送金する", "個人情報や本人確認書類を送る", "脅されて一人で対応する", "DMを削除する"],
+        sourceKeys: ["cyber", "houterasu"]
+      };
+    }
+    if (title.includes("フィッシング")) {
+      return {
+        evidence: ["SMS本文", "リンク先URL", "入力した可能性がある情報", "カードや口座の利用履歴", "受信日時", "端末画面のスクリーンショット"],
+        contacts: ["カード会社", "金融機関", "警察相談", "フィッシング対策情報の窓口"],
+        avoid: ["同じリンクを再度開く", "追加の認証コードを入力する", "不審な電話に折り返す", "利用履歴を確認せず放置する"],
+        sourceKeys: ["phishing", "cyber"]
+      };
+    }
+    if (title.includes("サポート詐欺")) {
+      return {
+        evidence: ["表示された警告画面", "電話番号", "支払った場合の明細", "遠隔操作の有無", "相手との通話メモ", "端末の状態"],
+        contacts: ["警察相談", "カード会社", "金融機関", "消費生活センター188"],
+        avoid: ["画面の番号へ電話する", "遠隔操作を許可する", "プリペイドカード番号を伝える", "支払履歴を消す"],
+        sourceKeys: ["supportFraud", "cyber", "consumer"]
+      };
+    }
+    if (title.includes("迷惑メール")) {
+      return {
+        evidence: ["メール本文", "送信元アドレス", "件名", "受信日時", "添付ファイルの有無", "被害や返信の有無"],
+        contacts: ["迷惑メール相談センター", "メールサービス事業者", "警察相談"],
+        avoid: ["添付ファイルを開く", "本文のリンクを押す", "返信して個人情報を伝える", "受信履歴を全部消す"],
+        sourceKeys: ["spam", "cyber"]
+      };
+    }
+    if (title.includes("乗っ取られ")) {
+      return {
+        evidence: ["ログイン通知", "アカウントID", "不審な投稿やDM", "登録メールアドレス", "復旧申請の履歴", "被害連絡を受けた日時"],
+        contacts: ["プラットフォーム", "警察相談", "メールサービス事業者"],
+        avoid: ["同じパスワードを使い続ける", "復旧前に周囲へ未確認情報を流す", "認証コードを第三者へ渡す", "被害投稿を記録せず消す"],
+        sourceKeys: ["cyber"]
+      };
+    }
+    if (title.includes("ログイン通知")) {
+      return {
+        evidence: ["ログイン通知画面", "通知日時", "アクセス元の表示", "利用中サービス名", "パスワード変更履歴", "二段階認証の設定状況"],
+        contacts: ["サービス運営元", "メールサービス事業者", "警察相談"],
+        avoid: ["通知を無視する", "同じパスワードを別サービスで使い続ける", "認証コードを他人に伝える", "不審な端末を確認せず放置する"],
+        sourceKeys: ["cyber"]
+      };
+    }
+    if (title.includes("レビュー")) {
+      return {
+        evidence: ["レビューURL", "投稿日時", "投稿内容", "事実と違う部分の資料", "削除依頼の履歴", "店舗や取引の記録"],
+        contacts: ["レビューサイト運営元", "法務省人権相談", "弁護士", "商工相談窓口"],
+        avoid: ["相手を特定した投稿で反撃する", "事実確認なしに削除だけ求める", "感情的な返信を続ける", "証拠を保存せず画面を閉じる"],
+        sourceKeys: ["internet", "houterasu"]
+      };
+    }
+    if (title.includes("子どもの写真")) {
+      return {
+        evidence: ["掲載URL", "スクリーンショット", "掲載日時", "写っている範囲", "削除依頼の履歴", "相手とのやり取り"],
+        contacts: ["投稿先プラットフォーム", "学校や園", "法務省人権相談", "警察相談"],
+        avoid: ["子どもの情報を追加で書き込む", "相手児童や保護者を公開で責める", "記録前に削除だけ急ぐ", "画像をさらに拡散する"],
+        sourceKeys: ["internet", "houterasu"]
+      };
+    }
+  }
+
+  if (category === "買い物・契約" && title.includes("偽物")) {
+    return {
+      evidence: ["商品写真", "販売ページ", "広告表示", "注文メール", "販売者情報", "事業者とのやり取り"],
+      contacts: ["販売事業者", "プラットフォーム", "消費生活センター188", "弁護士"],
+      avoid: ["商品を捨てる", "販売ページを保存せず閉じる", "感情的なレビューだけで済ませる", "追加購入で確認しようとする"],
+      sourceKeys: ["consumer"]
+    };
+  }
+
+  if (category === "買い物・契約" && title.includes("中古車")) {
+    return {
+      evidence: ["契約書", "重要事項や保証の説明資料", "車両写真", "整備記録", "不具合の発生日メモ", "販売店とのやり取り"],
+      contacts: ["販売店", "消費生活センター188", "自動車関連の相談窓口", "弁護士"],
+      avoid: ["修理前の状態を記録せず直す", "口頭説明だけで納得する", "不具合を放置して走り続ける", "SNSで販売店名を断定的に晒す"],
+      sourceKeys: ["consumer"]
+    };
+  }
+
+  if (category === "買い物・契約" && title.includes("引っ越し")) {
+    return {
+      evidence: ["破損した家具の写真", "引っ越し契約書", "見積書", "作業日時", "業者への連絡履歴", "修理見積"],
+      contacts: ["引っ越し業者", "消費生活センター188", "保険会社", "弁護士"],
+      avoid: ["破損箇所を撮影せず処分する", "その場の口頭だけで終わらせる", "修理費を先に決めつける", "作業員個人を責め続ける"],
+      sourceKeys: ["consumer"]
+    };
+  }
+
+  if (category === "買い物・契約" && title.includes("オンライン講座")) {
+    return {
+      evidence: ["契約画面", "利用規約", "申込メール", "解約手続き画面", "受講履歴", "事業者とのやり取り"],
+      contacts: ["講座運営事業者", "消費生活センター188", "プラットフォーム", "弁護士"],
+      avoid: ["規約を確認せず支払いを止める", "解約希望を口頭だけで伝える", "アカウントを消して履歴を失う", "追加契約を結ぶ"],
+      sourceKeys: ["consumer"]
+    };
+  }
+
+  if (category === "買い物・契約" && title.includes("キャンセル料")) {
+    return {
+      evidence: ["予約画面", "キャンセル規約", "予約日時", "キャンセル連絡の履歴", "請求された金額", "事業者とのやり取り"],
+      contacts: ["予約先事業者", "予約サイト運営元", "消費生活センター188", "弁護士"],
+      avoid: ["規約を見ずに拒否だけする", "連絡履歴を消す", "第三者レビューで感情的に攻撃する", "支払期限を放置する"],
+      sourceKeys: ["consumer"]
+    };
+  }
+
+  if (category === "買い物・契約" && /定期購入|無料体験|サブスク|請求|通販|カード/.test(title)) {
+    return {
+      evidence: ["申込画面", "広告表示", "注文メール", "請求明細", "解約手続き画面", "事業者とのやり取り"],
+      contacts: ["販売事業者", "消費生活センター188", "カード会社", "プラットフォーム"],
+      sourceKeys: ["consumer"]
+    };
+  }
+
+  if (category === "近隣・住まい" && title.includes("洗濯物")) {
+    return {
+      evidence: ["飛んできた洗濯物の写真", "見つけた日時", "落ちていた場所", "汚れや破損の有無", "返却や連絡の履歴"],
+      contacts: ["管理会社", "大家", "自治体の相談窓口"],
+      avoid: ["勝手に捨てる", "洗濯物の中身を詳しく撮って晒す", "怒鳴って返しに行く", "相手の敷地へ無断で入る"],
+      sourceKeys: ["houterasu"]
+    };
+  }
+
+  return {};
+}
+
 function buildCase(category, scenario, index) {
   const [title, focus] = scenario;
   const guide = guides[category];
+  const detail = specificDetails(category, title);
   return {
     id: `case-${String(index).padStart(4, "0")}`,
     category,
@@ -392,11 +558,11 @@ function buildCase(category, scenario, index) {
       "緊急性がある場合は警察、医療機関、自治体など安全に直結する窓口を優先する",
       "判断が必要な部分は専門窓口に確認する"
     ],
-    avoid: guide.avoid,
-    evidence: guide.evidence,
-    contacts: guide.contacts,
+    avoid: detail.avoid || guide.avoid,
+    evidence: detail.evidence || guide.evidence,
+    contacts: detail.contacts || guide.contacts,
     memo: ["いつ起きたか", "どこで起きたか", "誰が関係しているか", "何に困っているか", "どうしてほしいか"],
-    sourceKeys: sourceKeysByCategory[category],
+    sourceKeys: detail.sourceKeys || sourceKeysByCategory[category],
     tags: [category, ...title.split(/[、。・\s]/).filter((x) => x.length >= 2).slice(0, 4)],
     legalBoundary: "この事例は一般的な初動整理です。違法性、請求可否、金額、勝敗は判断しません。"
   };

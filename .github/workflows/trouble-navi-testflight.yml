@@ -50,6 +50,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Audit curated trouble cases
+        working-directory: ${{ github.workspace }}
+        run: node scripts/audit_curated_trouble_cases.js
+
       - name: Write App Store Connect API key
         env:
           ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}

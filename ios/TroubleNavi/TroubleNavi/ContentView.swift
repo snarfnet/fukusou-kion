@@ -38,20 +38,17 @@ struct ContentView: View {
             .navigationTitle("こんな時、どうしたらいい？")
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "離婚、ゴミ、騒音、SNS")
         } detail: {
-            if let selectedCase {
+            if let selectedCase, filteredCases.contains(selectedCase) {
                 CaseDetailView(item: selectedCase)
-            } else if let first = filteredCases.first {
-                CaseDetailView(item: first)
             } else {
-                ContentUnavailableView("事例がありません", systemImage: "magnifyingglass", description: Text("検索条件を変えてください。"))
+                ContentUnavailableView(
+                    filteredCases.isEmpty ? "事例がありません" : "事例を選んでください",
+                    systemImage: filteredCases.isEmpty ? "magnifyingglass" : "list.bullet.rectangle",
+                    description: Text(filteredCases.isEmpty ? "検索条件を変えてください。" : "左の一覧から、今の状況に近い事例を選べます。")
+                )
             }
         }
         .tint(.blue)
-        .onAppear {
-            if selectedCase == nil {
-                selectedCase = store.cases.first
-            }
-        }
         .overlay {
             if let message = store.loadError {
                 ContentUnavailableView("読み込みエラー", systemImage: "exclamationmark.triangle", description: Text(message))
@@ -135,13 +132,19 @@ struct ContentView: View {
             .pickerStyle(.segmented)
         }
         .onChange(of: selectedCategory) {
-            selectedCase = filteredCases.first
+            clearSelectionIfNeeded()
         }
         .onChange(of: selectedUrgency) {
-            selectedCase = filteredCases.first
+            clearSelectionIfNeeded()
         }
         .onChange(of: searchText) {
-            selectedCase = filteredCases.first
+            clearSelectionIfNeeded()
+        }
+    }
+
+    private func clearSelectionIfNeeded() {
+        if let selectedCase, !filteredCases.contains(selectedCase) {
+            self.selectedCase = nil
         }
     }
 }
