@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+import json
+import os
+import time
+import urllib.parse
+
+import jwt
+import requests
+
+
+KEY_ID = os.environ["ASC_KEY_ID"]
+ISSUER = os.environ["ASC_ISSUER_ID"]
+BUNDLE_ID = os.environ.get("BUNDLE_ID", "com.tokyonasu.voiceprintinstallation")
+BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "VoiceprintInstallation")
+APP_NAME = os.environ.get("APP_NAME", "VoiceprintNFT")
+APP_SKU = os.environ.get("APP_SKU", "voiceprint-ios")
+P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
+
+
+def token():
+    now = int(time.time())
+    p8 = open(P8_PATH, encoding="utf-8").read()
+    return jwt.encode(
+        {"iss": ISSUER, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+        p8,
+        algorithm="ES256",
+        headers={"kid": KEY_ID},
+    )
+
+
+def api(method, path, **kwargs):
+    response = requests.request(
+        method,
+        f"https://api.appstoreconnect.apple.com/v1{path}",
+        headers={"Authorization": f"Bearer {token()}", "Content-Type": "application/json"},
+        timeout=120,
+        **kwargs,
+    )
+    try:
+        body = response.json()
+    except Exception:
+        body = {}
+    if response.status_code not in (200, 201, 204):
+        raise RuntimeError(f"{method} {path} failed {response.status_code}: {response.text[:800]}")
+    return body
+
+
+def query(params):
+    return urllib.parse.urlencode(params)
+
+
+def ensure_bundle_id():
+    body = api("GET", f"/bundleIds?{query({'filter[identifier]': BUNDLE_ID, 'limit': '1'})}")
+    if body.get("data"):
+        bundle = body["data"][0]
+        print(f"Bundle ID already exists: {BUNDLE_ID} ({bundle['id']})")
+        return bundle
+
+    payload = {
+        "data": {
+            "type": "bundleIds",
+            "attributes": {
+                "identifier": BUNDLE_ID,
+                "name": BUNDLE_NAME,
+                "platform": "IOS",
+            },
+        }
+    }
+    bundle = api("POST", "/bundleIds", data=json.dumps(payload, ensure_ascii=False))["data"]
+    print(f"Bundle ID created: {BUNDLE_ID} ({bundle['id']})")
+    return bundle
+
+
+def ensure_app(bundle):
+    body = api("GET", f"/apps?{query({'filter[bundleId]': BUNDLE_ID, 'limit': '1'})}")
+    if body.get("data"):
+        app = body["data"][0]
+        print(f"App already exists: {app['attributes'].get('name')} ({app['id']})")
+        print(f"APP_ID={app['id']}")
+        return
+
+    attempts = [
+        {
+            "data": {
+                "type": "apps",
+                "attributes": {
+                    "bundleId": BUNDLE_ID,
+                    "name": APP_NAME,
+                    "primaryLocale": "ja",
+                    "sku": APP_SKU,
+                },
+            }
+        },
+        {
+            "data": {
+                "type": "apps",
+                "attributes": {
+                    "name": APP_NAME,
+                    "primaryLocale": "ja",
+                    "sku": APP_SKU,
+                },
+                "relationships": {
+                    "bundleId": {"data": {"type": "bundleIds", "id": bundle["id"]}}
+                },
+            }
+        },
+    ]
+
+    last_error = None
+    for payload in attempts:
+        try:
+            app = api("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
+            print(f"App created: {app['attributes'].get('name')} ({app['id']})")
+            print(f"APP_ID={app['id']}")
+            return
+        except Exception as error:
+            last_error = error
+
+    raise RuntimeError(
+        "App Store Connect app was not created. The API key may not have permission to create apps.\n"
+        f"Create the app record once in App Store Connect with name '{APP_NAME}', "
+        f"bundle ID '{BUNDLE_ID}', and SKU '{APP_SKU}', then rerun this workflow.\n"
+        f"Original error: {last_error}"
+    )
+
+
+def main():
+    bundle = ensure_bundle_id()
+    ensure_app(bundle)
+
+
+if __name__ == "__main__":
+    main()
