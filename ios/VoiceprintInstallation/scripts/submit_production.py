@@ -453,13 +453,21 @@ def submit_for_review(version_id):
         "data": {
             "type": "reviewSubmissions",
             "attributes": {"platform": "IOS"},
-            "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}},
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
+            },
         }
     })
     if response.status_code not in (200, 201):
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
     submission_id = body["data"]["id"]
-    for attempt in range(20):
+
+    if review_submission_has_version(submission_id, version_id):
+        finish_review_submission(submission_id)
+        return
+
+    for attempt in range(1, 61):
         response = api("POST", "/reviewSubmissionItems", json={
             "data": {
                 "type": "reviewSubmissionItems",
@@ -469,9 +477,10 @@ def submit_for_review(version_id):
                 },
             }
         })
-        print(f"Review item {attempt + 1}/20: {response.status_code}")
-        if response.status_code == 201:
-            break
+        print(f"Review item {attempt}/60: {response.status_code}")
+        if response.status_code in (200, 201):
+            finish_review_submission(submission_id)
+            return
         if response.status_code == 409 and "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
             time.sleep(60)
             continue
@@ -480,8 +489,31 @@ def submit_for_review(version_id):
             if match:
                 finish_review_submission(match.group(1))
                 return
+        if response.status_code == 409 and review_submission_has_version(submission_id, version_id):
+            finish_review_submission(submission_id)
+            return
+        if attempt == 1 or attempt % 5 == 0 or attempt == 60:
+            print(response.text[:1000])
         time.sleep(30)
-    finish_review_submission(submission_id)
+
+    if review_submission_has_version(submission_id, version_id):
+        finish_review_submission(submission_id)
+        return
+    raise RuntimeError("Review submission item was not created.")
+
+
+def review_submission_has_version(submission_id, version_id):
+    response, body = api_json("GET", f"/reviewSubmissions/{submission_id}/items?limit=50")
+    if response.status_code != 200:
+        print(f"Review item lookup: {response.status_code}")
+        return False
+    for item in body.get("data", []):
+        relationship = item.get("relationships", {}).get("appStoreVersion", {})
+        if relationship.get("data", {}).get("id") == version_id:
+            print(f"Review submission item ready: {item['id']}")
+            return True
+    print("Review submission item not ready yet.")
+    return False
 
 
 def finish_review_submission(submission_id):
