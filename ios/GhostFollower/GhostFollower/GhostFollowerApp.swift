@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct GhostFollowerApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var editor = GhostEditorViewModel()
     @StateObject private var store = GhostStore()
     @StateObject private var ads = AdMobManager()
@@ -15,8 +16,10 @@ struct GhostFollowerApp: App {
                 .task {
                     await store.loadProducts()
                 }
-                .task {
-                    await ads.start()
+                .task(id: scenePhase) {
+                    if scenePhase == .active {
+                        await ads.start()
+                    }
                 }
         }
     }
