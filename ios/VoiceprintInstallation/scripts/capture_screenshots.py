@@ -23,7 +23,13 @@ SCREENSHOTS = [
 
 def run(args, check=True, timeout=180):
     print("+", " ".join(str(arg) for arg in args), flush=True)
-    return subprocess.run(args, check=check, text=True, timeout=timeout)
+    try:
+        return subprocess.run(args, check=check, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        if not check:
+            print(f"Command timed out after {timeout}s; continuing.", flush=True)
+            return None
+        raise
 
 
 def output(args):
