@@ -7,16 +7,16 @@ struct MainView: View {
     @State private var videoURL: URL?
     @State private var player: AVPlayer?
     @State private var isPlaying = false
-    @State private var bubbleText = "え、まって"
+    @State private var bubbleTexts = ["え、まって"]
     @State private var trackingPoints: [FaceTrackingPoint] = []
     @State private var currentTime = 0.0
     @State private var sparkleShape: EyeSparkleShape = .material01
     @State private var showsEyeSparkle = false
-    @State private var bubbleCount = 1
     @State private var isAnalyzing = false
     @State private var isExporting = false
     @State private var alertMessage: String?
 
+    private let maxBubbles = 6
     private let tracker = FaceTrackingService()
     private let exporter = VideoExportService()
     private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
@@ -30,28 +30,14 @@ struct MainView: View {
 
                     preview
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("吹き出しテキスト")
-                            .font(.headline)
-                        TextField("え、まって", text: $bubbleText)
-                            .textFieldStyle(.roundedBorder)
-                    }
+                    bubbleEditor
 
-                    Picker("目キラ", selection: $sparkleShape) {
+                    Picker("目キラ素材", selection: $sparkleShape) {
                         ForEach(EyeSparkleShape.allCases) { shape in
                             Text(shape.title).tag(shape)
                         }
                     }
                     .pickerStyle(.menu)
-
-                    Button {
-                        bubbleCount = min(4, bubbleCount + 1)
-                    } label: {
-                        Label("吹き出しを追加", systemImage: "plus.bubble")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(trackingPoints.isEmpty || bubbleCount >= 4)
 
                     Button {
                         showsEyeSparkle.toggle()
@@ -102,6 +88,46 @@ struct MainView: View {
         }
     }
 
+    private var bubbleEditor: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("吹き出しテキスト")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    bubbleTexts.append(defaultBubbleText(for: bubbleTexts.count))
+                } label: {
+                    Label("追加", systemImage: "plus.bubble")
+                }
+                .buttonStyle(.bordered)
+                .disabled(bubbleTexts.count >= maxBubbles)
+            }
+
+            ForEach(bubbleTexts.indices, id: \.self) { index in
+                HStack(spacing: 8) {
+                    Text("\(index + 1)")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+                        .frame(width: 22, height: 22)
+                        .background(.secondary.opacity(0.12), in: Circle())
+
+                    TextField("セリフを入力", text: bindingForBubble(at: index))
+                        .textFieldStyle(.roundedBorder)
+
+                    if index > 0 {
+                        Button {
+                            bubbleTexts.remove(at: index)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.red)
+                    }
+                }
+            }
+        }
+    }
+
     private var preview: some View {
         GeometryReader { proxy in
             let size = proxy.size
@@ -114,20 +140,21 @@ struct MainView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 18))
 
                     if let point = trackingPoints.interpolatedPoint(at: currentTime) {
-                        ForEach(0..<bubbleCount, id: \.self) { index in
+                        ForEach(bubbleTexts.indices, id: \.self) { index in
                             BubbleOverlayView(
-                                text: bubbleText(for: index),
+                                text: bubbleText(at: index),
                                 anchor: point.bubbleAnchor,
                                 containerSize: size,
                                 offset: bubbleOffset(for: index),
-                                scale: bubbleScale(for: index)
+                                scale: bubbleScale(for: index),
+                                style: .style(for: index)
                             )
                             .allowsHitTesting(false)
                             .zIndex(Double(2 + index))
                         }
                         if showsEyeSparkle {
                             EyeSparkleOverlayView(point: point, shape: sparkleShape, containerSize: size)
-                                .zIndex(3)
+                                .zIndex(20)
                         }
                     }
                 } else {
@@ -152,7 +179,7 @@ struct MainView: View {
                                 .background(.white.opacity(0.92), in: Circle())
                         }
                         .disabled(player == nil)
-                        .zIndex(10)
+                        .zIndex(30)
                         Spacer()
                     }
                     .padding(12)
@@ -160,6 +187,16 @@ struct MainView: View {
             }
         }
         .aspectRatio(9 / 16, contentMode: .fit)
+    }
+
+    private func bindingForBubble(at index: Int) -> Binding<String> {
+        Binding(
+            get: { bubbleTexts.indices.contains(index) ? bubbleTexts[index] : "" },
+            set: { newValue in
+                guard bubbleTexts.indices.contains(index) else { return }
+                bubbleTexts[index] = newValue
+            }
+        )
     }
 
     private func loadSelectedVideo() async {
@@ -171,7 +208,7 @@ struct MainView: View {
                     player = AVPlayer(url: picked.url)
                     trackingPoints = []
                     showsEyeSparkle = false
-                    bubbleCount = 1
+                    bubbleTexts = ["え、まって"]
                     currentTime = 0
                     isPlaying = false
                 }
@@ -202,8 +239,7 @@ struct MainView: View {
             _ = try await exporter.export(
                 videoURL: videoURL,
                 trackingPoints: trackingPoints,
-                bubbleText: bubbleText,
-                bubbleCount: bubbleCount,
+                bubbleTexts: bubbleTexts,
                 sparkleShape: sparkleShape,
                 includeSparkles: showsEyeSparkle
             )
@@ -228,12 +264,14 @@ struct MainView: View {
         isPlaying.toggle()
     }
 
-    private func bubbleText(for index: Int) -> String {
-        if index == 0 {
-            return bubbleText
-        }
-        let presets = ["すごい!!", "えっ!?", "かわいい", "まって!"]
-        return presets[min(index - 1, presets.count - 1)]
+    private func bubbleText(at index: Int) -> String {
+        let text = bubbleTexts.indices.contains(index) ? bubbleTexts[index] : ""
+        return text.isEmpty ? defaultBubbleText(for: index) : text
+    }
+
+    private func defaultBubbleText(for index: Int) -> String {
+        let presets = ["え、まって", "すごい!!", "えっ!?", "かわいい", "まって!", "きらきら"]
+        return presets[min(index, presets.count - 1)]
     }
 
     private func bubbleOffset(for index: Int) -> CGPoint {
@@ -241,12 +279,14 @@ struct MainView: View {
             CGPoint(x: 0.00, y: 0.00),
             CGPoint(x: -0.24, y: 0.14),
             CGPoint(x: 0.18, y: -0.12),
-            CGPoint(x: -0.18, y: -0.16)
+            CGPoint(x: -0.18, y: -0.16),
+            CGPoint(x: 0.24, y: 0.16),
+            CGPoint(x: 0.00, y: -0.24)
         ]
         return offsets[min(index, offsets.count - 1)]
     }
 
     private func bubbleScale(for index: Int) -> CGFloat {
-        index == 0 ? 1.0 : 0.78
+        index == 0 ? 1.0 : 0.76
     }
 }

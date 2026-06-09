@@ -115,12 +115,18 @@ jobs:
           IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
           IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
           REPLACE_DISTRIBUTION_CERTIFICATE: ${{ github.event.inputs.replace_distribution_certificate }}
+          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "true"
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
-          if [ -n "$IOS_DISTRIBUTION_P12_BASE64" ]; then
+          if [ "$USE_ASC_GENERATED_CERTIFICATE" = "true" ]; then
+            . .venv/bin/activate
+            python scripts/create_distribution_certificate.py | tee /tmp/tracked-bubble-app-cert.log
+            grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/tracked-bubble-app-cert.log >> "$GITHUB_ENV"
+            grep '^ASC_CERTIFICATE_ID=' /tmp/tracked-bubble-app-cert.log >> "$GITHUB_ENV"
+          elif [ -n "$IOS_DISTRIBUTION_P12_BASE64" ]; then
             test -n "$IOS_DISTRIBUTION_P12_PASSWORD"
             printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/distribution.p12
             CERT_SHA1=$(openssl pkcs12 -in /tmp/distribution.p12 -nokeys -clcerts -passin pass:"$IOS_DISTRIBUTION_P12_PASSWORD" | openssl x509 -noout -fingerprint -sha1 | awk -F= '{print $2}' | tr -d ':' | tr '[:lower:]' '[:upper:]')
@@ -128,11 +134,6 @@ jobs:
             security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
             echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
             rm /tmp/distribution.p12
-          elif [ "$USE_ASC_GENERATED_CERTIFICATE" = "true" ]; then
-            . .venv/bin/activate
-            python scripts/create_distribution_certificate.py | tee /tmp/tracked-bubble-app-cert.log
-            grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/tracked-bubble-app-cert.log >> "$GITHUB_ENV"
-            grep '^ASC_CERTIFICATE_ID=' /tmp/tracked-bubble-app-cert.log >> "$GITHUB_ENV"
           else
             . .venv/bin/activate
             python scripts/create_distribution_certificate.py | tee /tmp/tracked-bubble-app-cert.log

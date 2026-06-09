@@ -6,8 +6,7 @@ final class VideoExportService {
     func export(
         videoURL: URL,
         trackingPoints: [FaceTrackingPoint],
-        bubbleText: String,
-        bubbleCount: Int,
+        bubbleTexts: [String],
         sparkleShape: EyeSparkleShape,
         includeSparkles: Bool
     ) async throws -> URL {
@@ -38,16 +37,19 @@ final class VideoExportService {
         let overlayLayer = CALayer()
         overlayLayer.frame = CGRect(origin: .zero, size: renderSize)
         overlayLayer.masksToBounds = true
-        for index in 0..<max(1, min(4, bubbleCount)) {
+
+        let exportBubbleTexts = bubbleTexts.isEmpty ? ["え、まって"] : Array(bubbleTexts.prefix(6))
+        for index in exportBubbleTexts.indices {
             overlayLayer.addSublayer(
                 makeBubbleLayer(
-                    text: exportBubbleText(for: index, primaryText: bubbleText),
+                    text: exportBubbleText(for: index, bubbleTexts: exportBubbleTexts),
                     renderSize: renderSize,
                     trackingPoints: trackingPoints,
                     index: index
                 )
             )
         }
+
         if includeSparkles {
             overlayLayer.addSublayer(makeSparkleLayer(shape: sparkleShape, renderSize: renderSize, trackingPoints: trackingPoints))
         }
@@ -103,30 +105,31 @@ final class VideoExportService {
 
     private func makeBubbleLayer(text: String, renderSize: CGSize, trackingPoints: [FaceTrackingPoint], index: Int) -> CALayer {
         let scale = bubbleScale(for: index)
-        let bubbleSize = CGSize(width: renderSize.width * 0.54 * scale, height: renderSize.height * 0.14 * scale)
+        let bubbleSize = CGSize(width: renderSize.width * 0.58 * scale, height: renderSize.height * 0.15 * scale)
         let root = CALayer()
         root.bounds = CGRect(origin: .zero, size: bubbleSize)
         root.position = CGPoint(x: renderSize.width * 0.5, y: renderSize.height * 0.18)
 
+        let style = bubbleStyle(for: index)
         let tailFrame = CGRect(
             x: bubbleSize.width * 0.66,
             y: bubbleSize.height * 0.74,
-            width: bubbleSize.width * 0.20,
-            height: bubbleSize.height * 0.48
+            width: bubbleSize.width * 0.22,
+            height: bubbleSize.height * 0.52
         )
         let tail = CAShapeLayer()
-        tail.path = mangaTailPath(in: tailFrame).cgPath
+        tail.path = mangaTailPath(in: tailFrame, style: style).cgPath
         tail.fillColor = UIColor.white.cgColor
         tail.strokeColor = UIColor.black.cgColor
-        tail.lineWidth = max(3, renderSize.width * 0.006)
+        tail.lineWidth = max(4, renderSize.width * 0.007)
         tail.lineJoin = .round
         root.addSublayer(tail)
 
         let bubble = CAShapeLayer()
-        bubble.path = mangaBubblePath(in: CGRect(origin: .zero, size: bubbleSize)).cgPath
+        bubble.path = mangaBubblePath(in: CGRect(origin: .zero, size: bubbleSize), style: style).cgPath
         bubble.fillColor = UIColor.white.cgColor
         bubble.strokeColor = UIColor.black.cgColor
-        bubble.lineWidth = max(4, renderSize.width * 0.008)
+        bubble.lineWidth = max(5, renderSize.width * 0.009)
         bubble.lineJoin = .round
         root.addSublayer(bubble)
 
@@ -179,7 +182,7 @@ final class VideoExportService {
             textLayer.fontSize = index < 2 ? base * 0.23 : base * (0.10 + CGFloat((index + shape.rawValue) % 4) * 0.025)
             textLayer.foregroundColor = uiColor(for: shape, index: index).cgColor
             textLayer.contentsScale = UIScreen.main.scale
-            textLayer.bounds = CGRect(x: 0, y: 0, width: base * 0.35, height: base * 0.35)
+            textLayer.bounds = CGRect(x: 0, y: 0, width: base * 0.42, height: base * 0.42)
             textLayer.position = CGPoint(
                 x: CGFloat(cos(angle)) * radius,
                 y: CGFloat(sin(angle)) * radius * shape.ySpread
@@ -190,82 +193,79 @@ final class VideoExportService {
         return root
     }
 
-    private func mangaBubblePath(in rect: CGRect) -> UIBezierPath {
-        let path = UIBezierPath()
-        path.move(to: CGPoint(x: rect.minX + rect.width * 0.22, y: rect.minY + rect.height * 0.21))
-        path.addCurve(
-            to: CGPoint(x: rect.minX + rect.width * 0.47, y: rect.minY + rect.height * 0.08),
-            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.25, y: rect.minY + rect.height * 0.02),
-            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.40, y: rect.minY - rect.height * 0.02)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.minX + rect.width * 0.73, y: rect.minY + rect.height * 0.18),
-            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.55, y: rect.minY - rect.height * 0.05),
-            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.02)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.maxX - rect.width * 0.05, y: rect.minY + rect.height * 0.45),
-            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.91, y: rect.minY + rect.height * 0.14),
-            controlPoint2: CGPoint(x: rect.maxX + rect.width * 0.02, y: rect.minY + rect.height * 0.28)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.maxX - rect.width * 0.18, y: rect.maxY - rect.height * 0.13),
-            controlPoint1: CGPoint(x: rect.maxX + rect.width * 0.05, y: rect.minY + rect.height * 0.66),
-            controlPoint2: CGPoint(x: rect.maxX - rect.width * 0.05, y: rect.maxY - rect.height * 0.10)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.minX + rect.width * 0.45, y: rect.maxY - rect.height * 0.04),
-            controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.22, y: rect.maxY + rect.height * 0.06),
-            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.60, y: rect.maxY + rect.height * 0.08)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.minX + rect.width * 0.12, y: rect.maxY - rect.height * 0.22),
-            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.32, y: rect.maxY + rect.height * 0.06),
-            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.14, y: rect.maxY - rect.height * 0.02)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.minX + rect.width * 0.22, y: rect.minY + rect.height * 0.21),
-            controlPoint1: CGPoint(x: rect.minX - rect.width * 0.03, y: rect.maxY - rect.height * 0.37),
-            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.02, y: rect.minY + rect.height * 0.25)
-        )
-        path.close()
-        return path
-    }
-
-    private func mangaTailPath(in rect: CGRect) -> UIBezierPath {
-        let path = UIBezierPath()
-        path.move(to: CGPoint(x: rect.minX + rect.width * 0.18, y: rect.minY + rect.height * 0.05))
-        path.addCurve(
-            to: CGPoint(x: rect.maxX - rect.width * 0.03, y: rect.maxY - rect.height * 0.03),
-            controlPoint1: CGPoint(x: rect.minX + rect.width * 0.23, y: rect.minY + rect.height * 0.47),
-            controlPoint2: CGPoint(x: rect.minX + rect.width * 0.58, y: rect.maxY)
-        )
-        path.addCurve(
-            to: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.18),
-            controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.18, y: rect.maxY - rect.height * 0.52),
-            controlPoint2: CGPoint(x: rect.maxX - rect.width * 0.24, y: rect.minY + rect.height * 0.28)
-        )
-        path.close()
-        return path
-    }
-
-    private func emphasisMarksPath(in rect: CGRect) -> UIBezierPath {
-        let path = UIBezierPath()
-        path.move(to: CGPoint(x: rect.minX + rect.width * 0.15, y: rect.maxY * 0.72))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.22))
-        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.move(to: CGPoint(x: rect.maxX - rect.width * 0.16, y: rect.maxY * 0.72))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        return path
-    }
-
-    private func exportBubbleText(for index: Int, primaryText: String) -> String {
-        if index == 0 {
-            return primaryText
+    private func mangaBubblePath(in rect: CGRect, style: BubbleStyle) -> UIBezierPath {
+        switch style {
+        case .burst:
+            return mangaBurstPath(in: rect)
+        case .oval:
+            return UIBezierPath(ovalIn: rect.insetBy(dx: rect.width * 0.04, dy: rect.height * 0.06))
+        case .soft:
+            return UIBezierPath(roundedRect: rect.insetBy(dx: rect.width * 0.04, dy: rect.height * 0.08), cornerRadius: rect.height * 0.28)
+        case .cloud:
+            return mangaCloudPath(in: rect)
         }
-        let presets = ["すごい!!", "えっ!?", "かわいい", "まって!"]
-        return presets[min(index - 1, presets.count - 1)]
+    }
+
+    private func mangaCloudPath(in rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.16, y: rect.minY + rect.height * 0.50))
+        path.addCurve(to: CGPoint(x: rect.minX + rect.width * 0.27, y: rect.minY + rect.height * 0.20), controlPoint1: CGPoint(x: rect.minX + rect.width * 0.04, y: rect.minY + rect.height * 0.40), controlPoint2: CGPoint(x: rect.minX + rect.width * 0.10, y: rect.minY + rect.height * 0.18))
+        path.addCurve(to: CGPoint(x: rect.minX + rect.width * 0.48, y: rect.minY + rect.height * 0.10), controlPoint1: CGPoint(x: rect.minX + rect.width * 0.30, y: rect.minY + rect.height * 0.01), controlPoint2: CGPoint(x: rect.minX + rect.width * 0.45, y: rect.minY - rect.height * 0.02))
+        path.addCurve(to: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.18), controlPoint1: CGPoint(x: rect.minX + rect.width * 0.57, y: rect.minY - rect.height * 0.02), controlPoint2: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.02))
+        path.addCurve(to: CGPoint(x: rect.maxX - rect.width * 0.06, y: rect.minY + rect.height * 0.47), controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.07, y: rect.minY + rect.height * 0.15), controlPoint2: CGPoint(x: rect.maxX + rect.width * 0.04, y: rect.minY + rect.height * 0.30))
+        path.addCurve(to: CGPoint(x: rect.maxX - rect.width * 0.19, y: rect.maxY - rect.height * 0.17), controlPoint1: CGPoint(x: rect.maxX + rect.width * 0.05, y: rect.maxY - rect.height * 0.34), controlPoint2: CGPoint(x: rect.maxX - rect.width * 0.03, y: rect.maxY - rect.height * 0.14))
+        path.addCurve(to: CGPoint(x: rect.minX + rect.width * 0.48, y: rect.maxY - rect.height * 0.09), controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.25, y: rect.maxY + rect.height * 0.05), controlPoint2: CGPoint(x: rect.minX + rect.width * 0.62, y: rect.maxY + rect.height * 0.04))
+        path.addCurve(to: CGPoint(x: rect.minX + rect.width * 0.18, y: rect.maxY - rect.height * 0.23), controlPoint1: CGPoint(x: rect.minX + rect.width * 0.32, y: rect.maxY + rect.height * 0.02), controlPoint2: CGPoint(x: rect.minX + rect.width * 0.17, y: rect.maxY - rect.height * 0.04))
+        path.addCurve(to: CGPoint(x: rect.minX + rect.width * 0.16, y: rect.minY + rect.height * 0.50), controlPoint1: CGPoint(x: rect.minX - rect.width * 0.02, y: rect.maxY - rect.height * 0.30), controlPoint2: CGPoint(x: rect.minX + rect.width * 0.00, y: rect.minY + rect.height * 0.58))
+        path.close()
+        return path
+    }
+
+    private func mangaBurstPath(in rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        let points: [CGPoint] = [
+            CGPoint(x: 0.03, y: 0.50), CGPoint(x: 0.13, y: 0.40), CGPoint(x: 0.05, y: 0.23), CGPoint(x: 0.20, y: 0.28),
+            CGPoint(x: 0.23, y: 0.08), CGPoint(x: 0.36, y: 0.22), CGPoint(x: 0.47, y: 0.04), CGPoint(x: 0.55, y: 0.21),
+            CGPoint(x: 0.72, y: 0.09), CGPoint(x: 0.73, y: 0.28), CGPoint(x: 0.95, y: 0.24), CGPoint(x: 0.84, y: 0.43),
+            CGPoint(x: 0.98, y: 0.55), CGPoint(x: 0.81, y: 0.61), CGPoint(x: 0.92, y: 0.80), CGPoint(x: 0.70, y: 0.73),
+            CGPoint(x: 0.64, y: 0.94), CGPoint(x: 0.50, y: 0.78), CGPoint(x: 0.32, y: 0.92), CGPoint(x: 0.30, y: 0.72),
+            CGPoint(x: 0.10, y: 0.82), CGPoint(x: 0.18, y: 0.62)
+        ]
+        path.move(to: CGPoint(x: rect.minX + points[0].x * rect.width, y: rect.minY + points[0].y * rect.height))
+        for point in points.dropFirst() {
+            path.addLine(to: CGPoint(x: rect.minX + point.x * rect.width, y: rect.minY + point.y * rect.height))
+        }
+        path.close()
+        return path
+    }
+
+    private func mangaTailPath(in rect: CGRect, style: BubbleStyle) -> UIBezierPath {
+        let path = UIBezierPath()
+        if style == .burst {
+            path.move(to: CGPoint(x: rect.minX + rect.width * 0.12, y: rect.minY + rect.height * 0.02))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.minX + rect.width * 0.60, y: rect.minY + rect.height * 0.20))
+        } else {
+            path.move(to: CGPoint(x: rect.minX + rect.width * 0.18, y: rect.minY + rect.height * 0.05))
+            path.addCurve(
+                to: CGPoint(x: rect.maxX - rect.width * 0.03, y: rect.maxY - rect.height * 0.03),
+                controlPoint1: CGPoint(x: rect.minX + rect.width * 0.23, y: rect.minY + rect.height * 0.47),
+                controlPoint2: CGPoint(x: rect.minX + rect.width * 0.58, y: rect.maxY)
+            )
+            path.addCurve(
+                to: CGPoint(x: rect.minX + rect.width * 0.70, y: rect.minY + rect.height * 0.18),
+                controlPoint1: CGPoint(x: rect.maxX - rect.width * 0.18, y: rect.maxY - rect.height * 0.52),
+                controlPoint2: CGPoint(x: rect.maxX - rect.width * 0.24, y: rect.minY + rect.height * 0.28)
+            )
+        }
+        path.close()
+        return path
+    }
+
+    private func exportBubbleText(for index: Int, bubbleTexts: [String]) -> String {
+        let presets = ["え、まって", "すごい!!", "えっ!?", "かわいい", "まって!", "きらきら"]
+        let text = bubbleTexts.indices.contains(index) ? bubbleTexts[index] : ""
+        return text.isEmpty ? presets[min(index, presets.count - 1)] : text
     }
 
     private func adjustedBubbleAnchor(_ anchor: CGPoint, index: Int) -> CGPoint {
@@ -273,7 +273,9 @@ final class VideoExportService {
             CGPoint(x: 0.00, y: 0.00),
             CGPoint(x: -0.24, y: 0.14),
             CGPoint(x: 0.18, y: -0.12),
-            CGPoint(x: -0.18, y: -0.16)
+            CGPoint(x: -0.18, y: -0.16),
+            CGPoint(x: 0.24, y: 0.16),
+            CGPoint(x: 0.00, y: -0.24)
         ]
         let offset = offsets[min(index, offsets.count - 1)]
         return CGPoint(
@@ -283,7 +285,11 @@ final class VideoExportService {
     }
 
     private func bubbleScale(for index: Int) -> CGFloat {
-        index == 0 ? 1.0 : 0.78
+        index == 0 ? 1.0 : 0.76
+    }
+
+    private func bubbleStyle(for index: Int) -> BubbleStyle {
+        .style(for: index)
     }
 
     private func positionAnimation(points: [CGPoint], renderSize: CGSize, duration: Double) -> CAKeyframeAnimation {
@@ -334,7 +340,9 @@ final class VideoExportService {
             .systemRed,
             .systemBlue,
             .systemGreen,
-            UIColor(red: 1.0, green: 0.76, blue: 0.18, alpha: 1)
+            UIColor(red: 1.0, green: 0.76, blue: 0.18, alpha: 1),
+            UIColor(red: 0.55, green: 0.95, blue: 1.0, alpha: 1),
+            UIColor(red: 1.0, green: 0.45, blue: 0.72, alpha: 1)
         ]
         return colors[(shape.rawValue + index) % colors.count]
     }
