@@ -28,7 +28,8 @@ struct BubbleOverlayView: View {
                 .minimumScaleFactor(0.50)
                 .padding(.horizontal, 28 * scale)
                 .padding(.vertical, 17 * scale)
-                .frame(width: containerSize.width * 0.62 * scale, minHeight: containerSize.width * 0.22 * scale)
+                .frame(width: containerSize.width * 0.62 * scale)
+                .frame(minHeight: containerSize.width * 0.22 * scale)
                 .background(MangaSpeechBubble(style: style).fill(.white))
                 .overlay(MangaSpeechBubble(style: style).stroke(.black, style: StrokeStyle(lineWidth: 5.5, lineJoin: .round)))
         }
