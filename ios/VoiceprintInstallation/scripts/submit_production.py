@@ -512,6 +512,12 @@ def submit_for_review(version_id):
         if response.status_code == 409 and "SCREENSHOT_UPLOADS_IN_PROGRESS" in response.text:
             time.sleep(60)
             continue
+        if response.status_code == 409 and "APP_DATA_USAGES_REQUIRED" in response.text:
+            raise RuntimeError(
+                "App Store Connect App Privacy is not completed. "
+                "Open App Store Connect, go to Trust & Safety > App Privacy, "
+                "and answer the privacy questions before submitting."
+            )
         if response.status_code == 409 and "ITEM_PART_OF_ANOTHER_SUBMISSION" in response.text:
             match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", response.text)
             if match:

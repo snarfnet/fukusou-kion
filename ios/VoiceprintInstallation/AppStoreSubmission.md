@@ -56,6 +56,18 @@ VoiceprintNFT uses the microphone only to analyze a short voice sample for artwo
 
 No tracking is used.
 
+## App Privacy In App Store Connect
+
+Before App Review submission, complete App Privacy manually in App Store Connect:
+
+1. Open App Store Connect.
+2. Select VoiceprintNFT.
+3. Go to App Store > Trust & Safety > App Privacy.
+4. Choose that the app does not collect data, if the current build stays local-only.
+5. Save the response.
+
+Use this answer because VoiceprintNFT does not track users, does not upload audio, and keeps generated artwork data on the device.
+
 ## App Review Notes
 
 VoiceprintNFT generates visual art from short microphone input. The app analyzes abstract voice features and does not save the original audio recording.
