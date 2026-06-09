@@ -161,7 +161,7 @@ struct BottomTabs: View {
 }
 
 struct AnyShape: Shape {
-    private let pathBuilder: (CGRect) -> Path
+    private let pathBuilder: @Sendable (CGRect) -> Path
 
     init<S: Shape>(_ shape: S) {
         pathBuilder = { rect in shape.path(in: rect) }
