@@ -14,7 +14,7 @@
 		<string>UchinokoKarte App Store</string>
 	</dict>
 	<key>destination</key>
-	<string>upload</string>
+	<string>export</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
 	<key>uploadSymbols</key>

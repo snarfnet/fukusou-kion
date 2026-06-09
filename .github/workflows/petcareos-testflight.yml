@@ -166,7 +166,7 @@ jobs:
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             CURRENT_PROJECT_VERSION="$BUILD_NUM"
 
-      - name: Export and upload IPA
+      - name: Export IPA
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -181,6 +181,15 @@ jobs:
             -authenticationKeyPath "$ASC_P8_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload IPA to App Store Connect
+        run: |
+          test -f build/export/PetCareOS.ipa
+          xcrun altool --upload-app \
+            --file build/export/PetCareOS.ipa \
+            --type ios \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
 
       - name: Wait for TestFlight build processing
         env:
