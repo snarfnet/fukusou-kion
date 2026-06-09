@@ -2,6 +2,12 @@ name: PetCareOS Diagnose App Store Connect
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "codex/**"
+    paths:
+      - "ios/PetCareOS/scripts/diagnose_asc_builds.py"
+      - ".github/workflows/petcareos-diagnose-asc.yml"
 
 jobs:
   diagnose:
