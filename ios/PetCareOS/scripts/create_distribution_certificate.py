@@ -3,14 +3,21 @@ import base64
 import hashlib
 import os
 import subprocess
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 from asc_helpers import api, api_json, fail, json_body
 
-
 KEYCHAIN = os.environ.get("BUILD_KEYCHAIN", "build.keychain")
-REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFICATE", "") == "1"
+REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFICATE", "").lower() in {
+    "1",
+    "true",
+    "yes",
+}
+REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE = os.environ.get(
+    "REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE", ""
+).lower() in {"1", "true", "yes"}
 WORK_DIR = Path("/tmp/petcareos-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
@@ -29,19 +36,17 @@ def run(args):
 def generate_csr():
     WORK_DIR.mkdir(parents=True, exist_ok=True)
     run(["openssl", "genrsa", "-out", str(KEY_PATH), "2048"])
-    run(
-        [
-            "openssl",
-            "req",
-            "-new",
-            "-key",
-            str(KEY_PATH),
-            "-out",
-            str(CSR_PATH),
-            "-subj",
+    run([
+        "openssl",
+        "req",
+        "-new",
+        "-key",
+        str(KEY_PATH),
+        "-out",
+        str(CSR_PATH),
+        "-subj",
             "/CN=UchinokoKarte CI Distribution/O=TokyoNasu/C=JP",
-        ]
-    )
+    ])
 
 
 def certificate_lists():
@@ -69,29 +74,77 @@ def parse_expiration(value):
         return None
 
 
-def delete_known_invalid_certificates():
+def serial_from_certificate_content(certificate):
+    content = certificate.get("attributes", {}).get("certificateContent")
+    if not content:
+        detail = api_json("GET", f"/certificates/{certificate['id']}").get("data", certificate)
+        content = detail.get("attributes", {}).get("certificateContent")
+    if not content:
+        return ""
+    with tempfile.NamedTemporaryFile(suffix=".cer") as temp_cert:
+        temp_cert.write(base64.b64decode(content))
+        temp_cert.flush()
+        result = subprocess.run(
+            ["openssl", "x509", "-inform", "DER", "-in", temp_cert.name, "-noout", "-serial"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    return result.stdout.strip().replace("serial=", "").replace(":", "").upper()
+
+
+def certificate_detail(certificate):
+    detail = api_json("GET", f"/certificates/{certificate['id']}").get("data", certificate)
+    attrs = dict(certificate.get("attributes", {}))
+    attrs.update(detail.get("attributes", {}))
+    return attrs
+
+
+def delete_stale_certificates():
     now = datetime.now(timezone.utc)
     deleted = 0
+    inspected = []
     certificates = certificate_lists()
     print(f"Found {len(certificates)} distribution certificate(s) to inspect.")
     for certificate in certificates:
-        attrs = certificate.get("attributes", {})
+        attrs = certificate_detail(certificate)
         serial = (attrs.get("serialNumber") or "").replace(":", "").upper()
+        if not serial:
+            serial = serial_from_certificate_content({"id": certificate["id"], "attributes": attrs})
         expiration = parse_expiration(attrs.get("expirationDate"))
         names = " ".join(str(attrs.get(key) or "") for key in ("name", "displayName", "commonName")).lower()
-        is_petcareos_ci_cert = any(marker in names for marker in CI_CERT_MARKERS)
+        is_ci_cert = any(marker in names for marker in CI_CERT_MARKERS)
+        has_certificate_content = bool(attrs.get("certificateContent"))
+        is_pending_request = not serial and not expiration and not has_certificate_content
         should_delete = (
             REPLACE_DISTRIBUTION_CERTIFICATE
             or serial in INVALID_SERIALS
-            or is_petcareos_ci_cert
+            or is_ci_cert
             or (expiration is not None and expiration < now)
+            or is_pending_request
+        )
+        reason = "delete" if should_delete else "keep"
+        print(
+            "Inspecting distribution certificate "
+            f"{certificate['id']} serial={serial or 'none'} "
+            f"expires={attrs.get('expirationDate') or 'none'} "
+            f"has_content={'yes' if has_certificate_content else 'no'} "
+            f"decision={reason}"
         )
         if not should_delete:
+            if expiration is not None:
+                inspected.append((expiration, certificate, serial))
             continue
         response = api("DELETE", f"/certificates/{certificate['id']}")
+        print(f"Deleted stale distribution certificate {certificate['id']} status={response.status_code}")
+        if response.status_code in (200, 204):
+            deleted += 1
+    if deleted == 0 and REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE and inspected:
+        expiration, certificate, serial = sorted(inspected, key=lambda item: item[0])[0]
+        response = api("DELETE", f"/certificates/{certificate['id']}")
         print(
-            f"Deleted stale distribution certificate {certificate['id']} "
-            f"serial={serial or 'unknown'} status={response.status_code}"
+            f"Deleted oldest active distribution certificate {certificate['id']} "
+            f"serial={serial or 'unknown'} expires={expiration.isoformat()} status={response.status_code}"
         )
         if response.status_code in (200, 204):
             deleted += 1
@@ -127,7 +180,7 @@ def should_clear_stale_certificates(error):
 def create_certificate():
     last_error = None
     cleaned = False
-    for attempt in range(2):
+    for _ in range(2):
         for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
             try:
                 certificate = create_certificate_once(certificate_type)
@@ -138,7 +191,7 @@ def create_certificate():
                 print(f"Certificate create failed for {certificate_type}: {error}")
         if not cleaned and last_error and should_clear_stale_certificates(last_error):
             cleaned = True
-            deleted = delete_known_invalid_certificates()
+            deleted = delete_stale_certificates()
             if deleted:
                 print(f"Retrying certificate creation after deleting {deleted} stale certificate(s).")
                 continue
@@ -154,18 +207,7 @@ def import_certificate(certificate):
     CERT_PATH.write_bytes(base64.b64decode(content))
     run(["security", "import", str(KEY_PATH), "-k", KEYCHAIN, "-T", "/usr/bin/codesign", "-T", "/usr/bin/security"])
     run(["security", "import", str(CERT_PATH), "-k", KEYCHAIN, "-T", "/usr/bin/codesign", "-T", "/usr/bin/security"])
-    run(
-        [
-            "security",
-            "set-key-partition-list",
-            "-S",
-            "apple-tool:,apple:",
-            "-s",
-            "-k",
-            os.environ["KEYCHAIN_PASSWORD"],
-            KEYCHAIN,
-        ]
-    )
+    run(["security", "set-key-partition-list", "-S", "apple-tool:,apple:", "-s", "-k", os.environ["KEYCHAIN_PASSWORD"], KEYCHAIN])
 
     sha1 = hashlib.sha1(CERT_PATH.read_bytes()).hexdigest().upper()
     print(f"IOS_DISTRIBUTION_CERT_SHA1={sha1}")
