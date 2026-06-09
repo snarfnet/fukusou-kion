@@ -46,7 +46,7 @@ jobs:
             -project PetCareOS.xcodeproj \
             -scheme PetCareOS \
             -configuration Debug \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            -destination "generic/platform=iOS Simulator" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Upload generated project

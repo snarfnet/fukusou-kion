@@ -184,12 +184,16 @@ jobs:
 
       - name: Upload IPA to App Store Connect
         run: |
+          set -o pipefail
           test -f build/export/PetCareOS.ipa
           xcrun altool --upload-app \
             --file build/export/PetCareOS.ipa \
             --type ios \
             --apiKey "$ASC_KEY_ID" \
-            --apiIssuer "$ASC_ISSUER_ID"
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/petcareos-altool.log
+          if grep -E "UPLOAD FAILED|Validation failed|ERROR:" /tmp/petcareos-altool.log; then
+            exit 1
+          fi
 
       - name: Wait for TestFlight build processing
         env:
