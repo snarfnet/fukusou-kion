@@ -52,6 +52,26 @@ Your voice becomes a visual signature.""",
         "promotionalText": "Create neon generative art from your voice. Export PNG and metadata for NFT preparation.",
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
+    },
+    "ja": {
+        "description": """VoiceprintNFTは、声からビジュアルアートを作るアプリです。
+
+数秒話すだけで、声の波形、ピッチ、リズム、沈黙、強弱を解析します。その特徴をもとに、ネオンの細い線で描いた現代アート風の作品を生成します。
+
+できあがる絵は、写真でも顔加工でもテンプレートでもありません。声の特徴から生まれるジェネラティブアートです。動物、仮面、翼、目、星座、人のシルエットのように見える作品もあれば、抽象的なラインアートに近い作品もあります。同じ人が録音しても、毎回少し違う作品になります。
+
+顔や写真を使わず、自分らしいデジタルアートを作りたい人のために設計しました。録音した音声ファイルは保存しません。アート生成に使う抽象的な数値だけを扱います。
+
+生成した作品は保存できます。PNG画像とNFT風のメタデータJSONを書き出せるので、IPFSやOpenSeaなど外部サービスで使う素材として準備できます。
+
+アプリ内でNFTを販売したり、ミントしたりはしません。創作素材を作るためのアプリです。
+
+声を、自分だけのビジュアルサインに。""",
+        "keywords": "声,NFT,ジェネラティブアート,ネオン,抽象画,OpenSea,デジタルアート,波形,音声アート",
+        "whatsNew": "初回リリースです。",
+        "promotionalText": "声からネオンのジェネラティブアートを作成。PNGとメタデータを書き出せます。",
+        "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     }
 }
 
@@ -146,12 +166,16 @@ def ensure_localizations(version_id):
             print(f"Localization created: {locale}")
         else:
             print(f"Localization create skipped {locale}: {response.status_code}")
-    return [item for item in existing.values() if item["attributes"]["locale"] in META]
+            localizations = list_all(f"/appStoreVersions/{version_id}/appStoreVersionLocalizations?limit=200")
+            existing = {item["attributes"]["locale"]: item for item in localizations}
+    return list(existing.values())
 
 
 def update_metadata(version_id):
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
+        if locale not in META:
+            continue
         meta = META[locale]
         response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json={
             "data": {"type": "appStoreVersionLocalizations", "id": loc["id"], "attributes": meta}
