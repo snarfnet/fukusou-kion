@@ -5,9 +5,9 @@ from asc_helpers import api_json, fail, json_body, query
 
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.petcareos")
-BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "PetCareOS")
-APP_NAME = os.environ.get("APP_NAME", "PetCare OS")
-APP_SKU = os.environ.get("APP_SKU", "petcareos-ios")
+BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "UchinokoKarte")
+APP_NAME = os.environ.get("APP_NAME", "うちの子カルテ")
+APP_SKU = os.environ.get("APP_SKU", "uchinoko-karte-ios")
 
 
 def ensure_bundle_id():

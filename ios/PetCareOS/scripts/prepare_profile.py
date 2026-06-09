@@ -8,8 +8,8 @@ from asc_helpers import api, api_json, decode_profile, fail, query
 
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.petcareos")
-PROFILE_NAME = os.environ.get("PROFILE_NAME", "PetCareOS App Store")
-PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/PetCareOS_App_Store.mobileprovision"
+PROFILE_NAME = os.environ.get("PROFILE_NAME", "UchinokoKarte App Store")
+PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles/UchinokoKarte_App_Store.mobileprovision"
 CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").replace(":", "").upper()
 CERTIFICATE_ID = os.environ.get("ASC_CERTIFICATE_ID", "")
 

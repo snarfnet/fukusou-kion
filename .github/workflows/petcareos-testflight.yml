@@ -21,10 +21,10 @@ jobs:
         working-directory: ios/PetCareOS
     env:
       APP_BUNDLE_ID: com.tokyonasu.petcareos
-      APP_NAME: "PetCare OS"
-      APP_SKU: petcareos-ios
-      BUNDLE_NAME: PetCareOS
-      PROFILE_NAME: "PetCareOS App Store"
+      APP_NAME: "うちの子カルテ"
+      APP_SKU: uchinoko-karte-ios
+      BUNDLE_NAME: UchinokoKarte
+      PROFILE_NAME: "UchinokoKarte App Store"
       PETCAREOS_APP_ID: ${{ secrets.PETCAREOS_APP_ID }}
 
     steps:

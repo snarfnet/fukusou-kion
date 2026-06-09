@@ -18,7 +18,7 @@ CERT_PATH = WORK_DIR / "distribution.cer"
 INVALID_SERIALS = {
     "797262360B421323CA2A52F022C3F0BF",
 }
-CI_CERT_MARKERS = ("petcareos", "petcare os")
+CI_CERT_MARKERS = ("uchinokokarte", "uchinoko karte", "petcareos", "petcare os")
 
 
 def run(args):
@@ -39,7 +39,7 @@ def generate_csr():
             "-out",
             str(CSR_PATH),
             "-subj",
-            "/CN=PetCareOS CI Distribution/O=TokyoNasu/C=JP",
+            "/CN=UchinokoKarte CI Distribution/O=TokyoNasu/C=JP",
         ]
     )
 

@@ -75,7 +75,7 @@ struct PetHeader: View {
                 .buttonStyle(.plain)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    SectionKicker(text: "PetCare OS")
+                    SectionKicker(text: "うちの子カルテ")
                     Text(title)
                         .font(.title2.weight(.bold))
                         .foregroundStyle(PetTheme.ink)

@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.tokyonasu.petcareos</key>
-		<string>PetCareOS App Store</string>
+		<string>UchinokoKarte App Store</string>
 	</dict>
 	<key>destination</key>
 	<string>upload</string>
