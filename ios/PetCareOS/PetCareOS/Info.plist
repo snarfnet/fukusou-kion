@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDisplayName</key>
+  <string>PetCare OS</string>
+  <key>UILaunchScreen</key>
+  <dict/>
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+  </array>
+  <key>NSCameraUsageDescription</key>
+  <string>ペットの写真や症状メモを記録するためにカメラを使います。</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>ペットの写真を思い出アルバムや健康メモに追加するために写真ライブラリを使います。</string>
+</dict>
+</plist>
