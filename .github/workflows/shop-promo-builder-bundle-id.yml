@@ -1,0 +1,45 @@
+name: Shop Promo Builder Bundle ID
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/shop-promo-builder-app-build
+    paths:
+      - "ios/ShopPromoBuilder/scripts/ensure_bundle_id.py"
+      - ".github/workflows/shop-promo-builder-bundle-id.yml"
+
+jobs:
+  ensure-bundle-id:
+    name: Ensure Apple Developer Bundle ID
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ios/ShopPromoBuilder
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --user pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID"
+          mkdir -p /tmp/asc
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" /tmp/asc_key.p8
+
+      - name: Ensure Bundle ID
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_BUNDLE_ID: com.tokyonasu.shoppromobuilder
+          BUNDLE_NAME: Shop Promo Builder
+        run: python3 scripts/ensure_bundle_id.py
