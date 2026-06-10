@@ -914,6 +914,48 @@ function MarketingSite() {
     ["fa-store", "お店専用に見える", "お客さん側には、テンプレート感を抑えたお店専用ページとして見せられます。"],
     ["fa-chart-line", "すぐ販促に使える", "QRコードを店頭・SNS・チラシに置けば、その日から案内を始められます。"],
   ];
+  const faqs = [
+    {
+      icon: "fa-mobile-screen-button",
+      question: "これはApp Storeから入れるアプリですか？",
+      answer: "App Storeから入れる専用アプリではなく、QRから開けるお店ページです。ホーム画面に追加すると、お店のアイコンからすぐ開けます。",
+    },
+    {
+      icon: "fa-eye",
+      question: "お客さんには何が見えますか？",
+      answer: "メニュー、写真、お知らせ、クーポン、アクセス、予約リンクなどをまとめて見られます。管理画面は店主さんだけが使います。",
+    },
+    {
+      icon: "fa-pen-to-square",
+      question: "お店側は何を変えられますか？",
+      answer: "店名、写真、色、メニュー、お知らせ、キャンペーン画像、予約リンクなどを管理画面から変えられます。",
+    },
+    {
+      icon: "fa-qrcode",
+      question: "QRコードは何に使いますか？",
+      answer: "店頭POP、レジ横、チラシ、SNSに載せます。読み込むと、そのお店のお客さん用ページが開きます。",
+    },
+    {
+      icon: "fa-hand-pointer",
+      question: "スマホだけで使えますか？",
+      answer: "はい。写真を選び、文章を入れて、QRを作るところまでスマホで進められる設計です。",
+    },
+    {
+      icon: "fa-calendar-check",
+      question: "予約がいらないお店でも使えますか？",
+      answer: "使えます。雑貨屋のように予約が不要な業種では、予約ボタンを出さずに商品やお知らせ中心にできます。",
+    },
+    {
+      icon: "fa-puzzle-piece",
+      question: "プラグインパックとは何ですか？",
+      answer: "A4チラシ作成、一斉通知、Mac対応をまとめた追加パックです。必要になった段階で足す想定です。",
+    },
+    {
+      icon: "fa-wand-magic-sparkles",
+      question: "お店ごとに見た目は変えられますか？",
+      answer: "変えられます。サンプルは出発点です。写真、色、文章、メニュー、アイコン風画像をお店ごとに調整できます。",
+    },
+  ];
 
   return (
     <main className="marketing-site">
@@ -1116,6 +1158,22 @@ function MarketingSite() {
               <i className={`fa-solid ${addon.icon}`} aria-hidden="true" />
               <strong>{addon.title}</strong>
               <p>{addon.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-section faq-section" id="faq">
+        <div className="section-heading">
+          <span><i className="fa-solid fa-circle-question" aria-hidden="true" />よくある質問</span>
+          <h2>初めての方が気になりそうな点をまとめました。</h2>
+        </div>
+        <div className="faq-grid">
+          {faqs.map((faq) => (
+            <article key={faq.question}>
+              <i className={`fa-solid ${faq.icon}`} aria-hidden="true" />
+              <h3>{faq.question}</h3>
+              <p>{faq.answer}</p>
             </article>
           ))}
         </div>
