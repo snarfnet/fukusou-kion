@@ -1116,7 +1116,7 @@ button:focus-visible {
 
 .marketing-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(380px, .95fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(24px, 5vw, 70px);
   align-items: center;
   min-height: calc(94vh - 68px);
@@ -1162,8 +1162,8 @@ button:focus-visible {
 
 .marketing-hero .marketing-kicker {
   color: #fff;
-  background: linear-gradient(135deg, #1f6a55, var(--site-orange));
-  box-shadow: 0 18px 45px rgba(31, 106, 85, .26);
+  background: #1f6a55;
+  box-shadow: 0 14px 34px rgba(31, 106, 85, .24);
 }
 
 .price-punch {
@@ -1174,10 +1174,8 @@ button:focus-visible {
   padding: clamp(18px, 3vw, 26px);
   border: 1px solid rgba(255, 211, 90, .34);
   border-radius: 8px;
-  background:
-    linear-gradient(135deg, rgba(31, 106, 85, .88), rgba(239, 125, 78, .68)),
-    rgba(255, 255, 255, .12);
-  box-shadow: 0 30px 95px rgba(31, 106, 85, .22), 0 28px 90px rgba(0, 0, 0, .28);
+  background: rgba(20, 45, 38, .92);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .3);
   backdrop-filter: blur(16px);
 }
 
@@ -1215,8 +1213,8 @@ button:focus-visible {
 
 .marketing-primary {
   color: #fff;
-  background: linear-gradient(135deg, #1f6a55, var(--site-orange));
-  box-shadow: 0 16px 34px rgba(31, 106, 85, .26);
+  background: #1f6a55;
+  box-shadow: 0 16px 34px rgba(31, 106, 85, .24);
 }
 
 .marketing-secondary {
@@ -1465,7 +1463,7 @@ button:focus-visible {
 .value-strip .featured-value {
   color: #fff;
   border-color: rgba(31, 106, 85, .25);
-  background: linear-gradient(135deg, #1f6a55, #ef7d4e 62%, #ffd35a);
+  background: #1f6a55;
   transform: translateY(-14px);
 }
 
@@ -1516,14 +1514,12 @@ button:focus-visible {
   padding: clamp(24px, 4vw, 38px);
   border-radius: 8px;
   color: #fff;
-  background:
-    linear-gradient(135deg, rgba(33, 63, 53, .96), rgba(22, 33, 29, .96));
+  background: #213f35;
   box-shadow: 0 24px 70px rgba(33, 63, 53, .16);
 }
 
 .qr-benefit-grid article:nth-child(2) {
-  background:
-    linear-gradient(135deg, rgba(216, 50, 50, .96), rgba(240, 122, 36, .96));
+  background: #8f4a3f;
 }
 
 .qr-benefit-grid i {
@@ -1572,6 +1568,107 @@ button:focus-visible {
 
 .marketing-section {
   padding: clamp(48px, 8vw, 92px) clamp(18px, 5vw, 70px);
+}
+
+.feature-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: clamp(20px, 4vw, 46px);
+  align-items: center;
+  margin-top: 30px;
+  padding: clamp(22px, 4vw, 34px);
+  border: 1px solid rgba(33, 63, 53, .12);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 22px 70px rgba(33, 63, 53, .1);
+}
+
+.feature-showcase > div:first-child strong {
+  display: block;
+  max-width: 760px;
+  color: var(--site-ink);
+  font-size: clamp(26px, 4vw, 46px);
+  line-height: 1.18;
+}
+
+.feature-showcase > div:first-child p {
+  max-width: 760px;
+  margin: 16px 0 0;
+  color: #505a53;
+  font-size: 17px;
+  line-height: 1.85;
+  font-weight: 800;
+}
+
+.feature-phone {
+  display: flex;
+  justify-content: center;
+}
+
+.feature-phone .marketing-phone-mock {
+  width: min(235px, 100%);
+  border-width: 9px;
+  border-radius: 28px;
+  box-shadow: 0 22px 58px rgba(0, 0, 0, .22);
+}
+
+.feature-phone .mock-status {
+  padding: 12px 14px 8px;
+  font-size: 11px;
+}
+
+.feature-phone .mock-hero {
+  min-height: 122px;
+  padding: 14px;
+}
+
+.feature-phone .mock-hero img {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+}
+
+.feature-phone .mock-hero h2 {
+  font-size: 15px;
+}
+
+.feature-phone .mock-coupon {
+  margin: 10px;
+}
+
+.feature-phone .mock-coupon img {
+  height: 54px;
+}
+
+.feature-phone .mock-coupon div {
+  padding: 9px 10px;
+}
+
+.feature-phone .mock-coupon strong {
+  font-size: 12px;
+}
+
+.feature-phone .mock-actions {
+  gap: 6px;
+  padding: 0 10px 10px;
+}
+
+.feature-phone .mock-actions span {
+  min-height: 46px;
+  font-size: 10px;
+}
+
+.feature-phone .mock-list {
+  padding: 0 10px 12px;
+}
+
+.feature-phone .mock-list p {
+  font-size: 11px;
+  padding: 9px 10px;
+}
+
+.feature-phone .mock-list p:nth-of-type(n+2) {
+  display: none;
 }
 
 .section-heading {
@@ -1756,13 +1853,13 @@ button:focus-visible {
     border-left: 0;
   }
 
-  .marketing-hero,
   .feature-explainer,
   .sample-row,
   .step-list,
   .option-grid,
   .business-points,
   .qr-benefit-grid,
+  .feature-showcase,
   .value-strip {
     grid-template-columns: 1fr 1fr;
   }
@@ -1844,13 +1941,13 @@ button:focus-visible {
     gap: 8px;
   }
 
-  .marketing-hero,
   .feature-explainer,
   .sample-row,
   .step-list,
   .option-grid,
   .business-points,
   .qr-benefit-grid,
+  .feature-showcase,
   .value-strip {
     grid-template-columns: 1fr;
   }

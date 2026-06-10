@@ -586,7 +586,7 @@ export function App() {
         <header className="topbar">
           <div>
             <h1>デザイン設定</h1>
-            <p>編集した内容を保存し、お客さん用ページリンクと実QRコードを作れます。</p>
+            <p>編集した内容を保存し、お客さん用のお店ページと実QRコードを作れます。</p>
           </div>
           <div className="top-actions">
             <button title="ヘルプ">
@@ -613,7 +613,7 @@ export function App() {
             <input value={store.name} maxLength={20} onChange={(event) => updateField("name", event.target.value)} />
           </FormRow>
 
-          <FormRow label="お客さん用ページリンク">
+          <FormRow label="お客さん用のお店ページ">
             <div className="slug-row">
               <span>{window.location.origin}/shop/</span>
               <input value={store.slug} onChange={(event) => updateField("slug", normalizeSlug(event.target.value))} />
@@ -873,8 +873,8 @@ function MarketingSite() {
   const samples = [storeSamples.cafe, storeSamples.zakka, storeSamples.salon, storeSamples.nail, storeSamples.gym];
   const steps = [
     ["1", "お店の情報を入れる", "店名、営業時間、写真、メニューを管理画面で入力します。"],
-    ["2", "お客さん用ページリンクとQRを作る", "お店のページを開くためのリンクとQRコードをその場で作れます。"],
-    ["3", "お店専用アプリ風に見せる", "お客さんはホーム画面に追加して、お店のアプリのように使えます。"],
+    ["2", "お店ページとQRを作る", "QRコードを読むと、お客さん用のお店ページが開きます。"],
+    ["3", "お店専用ページとして使ってもらう", "お客さんはメニュー、お知らせ、クーポンをまとめて確認できます。ホーム画面に追加すれば、次回もすぐ開けます。"],
   ];
   const coreFeatures = [
     ["fa-mobile-screen-button", "お客さん用ページ", "QRコードから開ける、お店専用の案内ページを作れます。"],
@@ -898,12 +898,12 @@ function MarketingSite() {
       points: [
         "紙のメニューや店頭POPから、お客さんをお店専用ページへ案内できます。",
         "営業時間、キャンペーン、メニュー変更を管理画面からすぐ直せます。",
-        "アプリ開発を外注する前に、低コストで専用アプリ風の販促を始められます。",
+        "アプリ開発を外注する前に、低コストでお店専用ページを使った販促を始められます。",
       ],
     },
   ];
   const businessPoints = [
-    ["fa-coins", "初期費用をぐっと軽く", "専用アプリ開発を外注する前に、まずは低コストで見せ方を整えられます。"],
+    ["fa-coins", "初期費用をぐっと軽く", "専用アプリ開発を外注する前に、まずは低コストでお店ページを整えられます。"],
     ["fa-store", "お店専用に見える", "お客さん側には、テンプレート感を抑えたお店専用ページとして見せられます。"],
     ["fa-chart-line", "すぐ販促に使える", "QRコードを店頭・SNS・チラシに置けば、その日から案内を始められます。"],
   ];
@@ -937,11 +937,11 @@ function MarketingSite() {
           </h1>
           <div className="price-punch">
             <span>アプリ開発を外注すると数百万円規模になりがち</span>
-            <strong>まずは2,000円で、専用アプリ風の販促ページを作れます。</strong>
+            <strong>まずはお店専用の販促ページを作れます。</strong>
           </div>
           <p>
             店名、写真、メニューを入れるだけ。お客さんには「このお店専用のアプリみたい」と見えるページを作れます。
-            高い開発費をかける前に、まずお店の見せ方を整えたい店主さん向けです。
+            高い開発費をかける前に、まずお店の情報をきれいに届けたい店主さん向けです。
           </p>
           <div className="marketing-actions">
             <a className="marketing-primary" href="/">
@@ -949,18 +949,6 @@ function MarketingSite() {
               <i className="fa-solid fa-arrow-right" aria-hidden="true" />
             </a>
             <a className="marketing-secondary" href="#how-it-works">流れを見る</a>
-          </div>
-        </div>
-        <div className="marketing-visual" aria-label="お店アプリのサンプル">
-          <div className="marketing-card app-card">
-            <img src={nailHero} alt="" />
-            <div>
-              <strong>お店ごとの見た目にできます</strong>
-              <span>雑貨屋・美容室・ネイルサロン・ジム</span>
-            </div>
-          </div>
-          <div className="marketing-phone">
-            <MarketingPhoneMock />
           </div>
         </div>
       </section>
@@ -977,14 +965,14 @@ function MarketingSite() {
         <article className="featured-value">
           <span>小さなお店の宣伝ツール</span>
           <strong>2,000円</strong>
-          <p>まずはお店専用アプリ風ページ、QR、メニュー、告知をまとめて持てます。</p>
+          <p>まずはお店専用ページ、QR、メニュー、告知をまとめて持てます。</p>
         </article>
         <article>
           <span>お客さんからの見え方</span>
           <strong>お店専用</strong>
           <p>
             店ごとに「お客さん用ページ」を作り、店名、写真、色、メニュー、アイコン風画像を分けます。
-            QRコードの先はそのお店だけのページなので、専用アプリのように見えます。
+            QRコードの先はそのお店だけのページです。お客さんは迷わず必要な情報を確認できます。
           </p>
         </article>
       </section>
@@ -1018,6 +1006,18 @@ function MarketingSite() {
         <div className="section-heading">
           <span>できること</span>
           <h2>お店の宣伝に必要なものを、ひとつにまとめます。</h2>
+        </div>
+        <div className="feature-showcase">
+          <div>
+            <strong>QRを読んだ先は、こんなページです。</strong>
+            <p>
+              お客さんはメニュー、クーポン、お知らせ、アクセスをすぐ確認できます。
+              店主さんは管理画面で内容を変えるだけ。紙のチラシより早く、専用アプリより軽く始められます。
+            </p>
+          </div>
+          <div className="feature-phone">
+            <MarketingPhoneMock />
+          </div>
         </div>
         <div className="business-points">
           {businessPoints.map(([icon, title, text]) => (
