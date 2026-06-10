@@ -20,6 +20,8 @@
   <string>$(DEVELOPMENT_LANGUAGE)</string>
   <key>LSRequiresIPhoneOS</key>
   <true/>
+  <key>ITSAppUsesNonExemptEncryption</key>
+  <false/>
   <key>UILaunchScreen</key>
   <dict/>
   <key>UIRequiresFullScreen</key>
