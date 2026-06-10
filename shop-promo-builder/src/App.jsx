@@ -55,7 +55,7 @@ const paidAddOns = [
   {
     icon: "fa-desktop",
     title: "macOS展開",
-    description: "管理画面をMac用アプリとして配布できる形にします。",
+    description: "Macでも管理画面が動作します。",
     status: "別ビルド予定",
   },
 ];

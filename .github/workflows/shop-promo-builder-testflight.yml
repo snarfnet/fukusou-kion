@@ -1,0 +1,149 @@
+name: Shop Promo Builder TestFlight
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: shop-promo-builder-testflight
+  cancel-in-progress: true
+
+jobs:
+  upload-testflight:
+    name: Build and Upload TestFlight
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_APP=$(ls /Applications/ | grep -E "^Xcode_2[6-9]|^Xcode_[3-9][0-9]" | sort -V | tail -1)
+          if [ -n "$XCODE_APP" ]; then
+            sudo xcode-select -s "/Applications/$XCODE_APP"
+          else
+            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          fi
+          xcodebuild -version
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: shop-promo-builder/package-lock.json
+
+      - name: Build bundled web app
+        working-directory: shop-promo-builder
+        run: |
+          npm ci
+          npm run build
+
+      - name: Copy web app into iOS bundle
+        run: |
+          rm -rf ios/ShopPromoBuilder/ShopPromoBuilder/WebApp
+          mkdir -p ios/ShopPromoBuilder/ShopPromoBuilder/WebApp
+          cp -R shop-promo-builder/dist/. ios/ShopPromoBuilder/ShopPromoBuilder/WebApp/
+
+      - name: Install tools
+        working-directory: ios/ShopPromoBuilder
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID"
+          mkdir -p /tmp/asc
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+
+      - name: Generate Xcode project
+        working-directory: ios/ShopPromoBuilder
+        run: xcodegen generate
+
+      - name: Set build number
+        run: |
+          BUILD_NUMBER=$((GITHUB_RUN_NUMBER + 100))
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+          echo "Using build number $BUILD_NUMBER"
+
+      - name: Ensure App Store Connect app record
+        working-directory: ios/ShopPromoBuilder
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_BUNDLE_ID: com.tokyonasu.shoppromobuilder
+          APP_NAME: "小さな店の宣伝"
+          APP_SKU: shop-promo-builder
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_testflight.py
+
+      - name: Archive
+        working-directory: ios/ShopPromoBuilder
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          xcodebuild archive \
+            -project ShopPromoBuilder.xcodeproj \
+            -scheme ShopPromoBuilder \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/ShopPromoBuilder.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+
+      - name: Export IPA
+        working-directory: ios/ShopPromoBuilder
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/ShopPromoBuilder.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload IPA to TestFlight
+        working-directory: ios/ShopPromoBuilder
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shop-promo-builder-ipa
+          path: ios/ShopPromoBuilder/build/export/*.ipa
