@@ -305,6 +305,7 @@ function resizeImage(file, options) {
 }
 
 export function App() {
+  const isLandingRoute = window.location.pathname.startsWith("/landing");
   const isCustomerRoute = window.location.pathname.startsWith("/shop/");
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [store, setStore] = useState(loadStoredStore);
@@ -342,10 +343,10 @@ export function App() {
   useEffect(() => {
     document.title = isCustomerRoute ? store.name : "小さいお店の宣伝ツール";
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    themeMeta?.setAttribute("content", store.theme);
+    themeMeta?.setAttribute("content", isLandingRoute ? "#213f35" : store.theme);
     const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-    appleTitle?.setAttribute("content", store.name);
-  }, [isCustomerRoute, store.name, store.theme]);
+    appleTitle?.setAttribute("content", isCustomerRoute ? store.name : "小さいお店の宣伝ツール");
+  }, [isCustomerRoute, isLandingRoute, store.name, store.theme]);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -515,6 +516,10 @@ export function App() {
     anchor.download = `${store.slug || "shop"}-customer-app.html`;
     anchor.click();
     URL.revokeObjectURL(url);
+  }
+
+  if (isLandingRoute) {
+    return <MarketingSite />;
   }
 
   if (isCustomerRoute) {
@@ -863,6 +868,156 @@ function ImageUpload({ image, onChange, note }) {
         <small>{note}</small>
       </div>
     </div>
+  );
+}
+
+function MarketingSite() {
+  const samples = [storeSamples.zakka, storeSamples.nail, storeSamples.gym];
+  const steps = [
+    ["1", "お店の情報を入れる", "店名、営業時間、写真、メニューを管理画面で入力します。"],
+    ["2", "公開URLとQRを作る", "お客さんに渡すURLとQRコードをその場で作れます。"],
+    ["3", "お店専用アプリ風に見せる", "お客さんはホーム画面に追加して、お店のアプリのように使えます。"],
+  ];
+  const coreFeatures = [
+    ["fa-mobile-screen-button", "お客さん用ページ", "お店ごとのURLで、専用アプリのような画面を見せられます。"],
+    ["fa-palette", "かんたん編集", "写真、色、メニュー、お知らせ、予約リンクを管理画面から変えられます。"],
+    ["fa-qrcode", "QRコード作成", "店頭POPやチラシに載せるQRコードをすぐ作れます。"],
+    ["fa-image", "画像リサイズ", "アップロードした画像を、アプリ用に自動で整えます。"],
+  ];
+
+  return (
+    <main className="marketing-site">
+      <nav className="marketing-nav" aria-label="紹介サイトのナビゲーション">
+        <a className="marketing-logo" href="/landing">
+          <img src={appIcon} alt="" />
+          <span>小さいお店の宣伝ツール</span>
+        </a>
+        <div>
+          <a href="#features">できること</a>
+          <a href="#pricing">別料金</a>
+          <a href="/">管理画面を見る</a>
+        </div>
+      </nav>
+
+      <section
+        className="marketing-hero"
+        style={{
+          backgroundImage: `linear-gradient(90deg, rgba(24, 35, 30, .92), rgba(24, 35, 30, .72) 48%, rgba(24, 35, 30, .2)), url(${zakkaHero})`,
+        }}
+      >
+        <div className="marketing-hero-copy">
+          <span className="marketing-kicker">小さなお店向け</span>
+          <h1>
+            <span>小さいお店の</span>
+            <span>宣伝ツール</span>
+          </h1>
+          <p>
+            店名、写真、メニューを入れるだけ。
+            お客さんには「このお店専用のアプリみたい」と見えるページを作れます。
+          </p>
+          <div className="marketing-actions">
+            <a className="marketing-primary" href="/">
+              管理画面を試す
+              <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+            </a>
+            <a className="marketing-secondary" href="#how-it-works">流れを見る</a>
+          </div>
+        </div>
+        <div className="marketing-visual" aria-label="お店アプリのサンプル">
+          <div className="marketing-card app-card">
+            <img src={nailHero} alt="" />
+            <div>
+              <strong>お店ごとの見た目にできます</strong>
+              <span>雑貨屋・美容室・ネイルサロン・ジム</span>
+            </div>
+          </div>
+          <div className="marketing-phone">
+            <PhonePreview store={storeSamples.zakka} customerOnly />
+          </div>
+        </div>
+      </section>
+
+      <section className="plain-message">
+        <strong>やりたいことは、とてもシンプルです。</strong>
+        <p>店主さんは管理画面で編集します。お客さんは、きれいに整ったお店ページだけを見ます。</p>
+      </section>
+
+      <section className="marketing-section" id="features">
+        <div className="section-heading">
+          <span>できること</span>
+          <h2>お店の宣伝に必要なものを、ひとつにまとめます。</h2>
+        </div>
+        <div className="feature-explainer">
+          {coreFeatures.map(([icon, title, text]) => (
+            <article key={title}>
+              <i className={`fa-solid ${icon}`} aria-hidden="true" />
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-section sample-section">
+        <div className="section-heading">
+          <span>店舗サンプル</span>
+          <h2>業種に合わせて、見た目も文章も変えられます。</h2>
+        </div>
+        <div className="sample-row">
+          {samples.map((sample) => (
+            <article key={sample.slug}>
+              <img src={sample.hero} alt="" />
+              <div>
+                <strong>{sample.label}</strong>
+                <p>{sample.subtitle}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-section steps-section" id="how-it-works">
+        <div className="section-heading">
+          <span>使い方</span>
+          <h2>やることは3つだけです。</h2>
+        </div>
+        <div className="step-list">
+          {steps.map(([number, title, text]) => (
+            <article key={number}>
+              <em>{number}</em>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-section option-section" id="pricing">
+        <div className="section-heading">
+          <span>別料金メニュー</span>
+          <h2>必要になった時だけ追加できます。</h2>
+        </div>
+        <div className="option-grid">
+          {paidAddOns.map((addon) => (
+            <article key={addon.title}>
+              <i className={`fa-solid ${addon.icon}`} aria-hidden="true" />
+              <strong>{addon.title}</strong>
+              <p>{addon.description}</p>
+              <span>{addon.status}</span>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marketing-cta">
+        <h2>まずは、1店舗分のページを作ってみましょう。</h2>
+        <p>写真とメニューがあれば、すぐにお店専用アプリ風ページを試せます。</p>
+        <a className="marketing-primary" href="/">
+          管理画面を開く
+          <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+        </a>
+      </section>
+    </main>
   );
 }
 
