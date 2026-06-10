@@ -871,6 +871,13 @@ function ImageUpload({ image, onChange, note }) {
 
 function MarketingSite() {
   const samples = [storeSamples.cafe, storeSamples.zakka, storeSamples.salon, storeSamples.nail, storeSamples.gym];
+  const sampleIcons = {
+    "komorebi-cafe": "fa-mug-saucer",
+    "miiya-zakka": "fa-gift",
+    "komorebi-hair": "fa-scissors",
+    "luce-nail": "fa-hand-sparkles",
+    "steady-gym": "fa-dumbbell",
+  };
   const steps = [
     ["1", "お店の情報を入れる", "店名、営業時間、写真、メニューを管理画面で入力します。"],
     ["2", "お店ページとQRを作る", "QRコードを読むと、お客さん用のお店ページが開きます。"],
@@ -939,6 +946,11 @@ function MarketingSite() {
             <span>アプリ開発を外注すると数百万円規模になりがち</span>
             <strong>まずはお店専用の販促ページを作れます。</strong>
           </div>
+          <div className="hero-mini-points" aria-label="このツールの特徴">
+            <span><i className="fa-solid fa-mobile-screen-button" aria-hidden="true" />スマホだけで完結</span>
+            <span><i className="fa-solid fa-camera" aria-hidden="true" />写真もその場で設定</span>
+            <span><i className="fa-solid fa-qrcode" aria-hidden="true" />QRまで作成</span>
+          </div>
           <p>
             店名、写真、メニューを入れるだけ。お客さんには「このお店専用のアプリみたい」と見えるページを作れます。
             高い開発費をかける前に、まずお店の情報をきれいに届けたい店主さん向けです。
@@ -955,6 +967,7 @@ function MarketingSite() {
 
       <section className="value-strip" id="value">
         <article>
+          <i className="fa-solid fa-sack-yen value-icon" aria-hidden="true" />
           <span>一般的な専用アプリ制作</span>
           <strong>数百万円規模</strong>
           <p>
@@ -963,11 +976,13 @@ function MarketingSite() {
           </p>
         </article>
         <article className="featured-value">
+          <i className="fa-solid fa-bolt value-icon" aria-hidden="true" />
           <span>小さなお店の宣伝ツール</span>
           <strong>2,000円</strong>
           <p>まずはお店専用ページ、QR、メニュー、告知をまとめて持てます。</p>
         </article>
         <article>
+          <i className="fa-solid fa-store value-icon" aria-hidden="true" />
           <span>お客さんからの見え方</span>
           <strong>お店専用</strong>
           <p>
@@ -979,7 +994,7 @@ function MarketingSite() {
 
       <section className="qr-benefits">
         <div className="section-heading">
-          <span>販促QRコードの役割</span>
+          <span><i className="fa-solid fa-qrcode" aria-hidden="true" />販促QRコードの役割</span>
           <h2>QRコードの先に、お店専用ページがあります。</h2>
         </div>
         <div className="qr-benefit-grid">
@@ -998,13 +1013,14 @@ function MarketingSite() {
       </section>
 
       <section className="plain-message">
+        <i className="fa-solid fa-lightbulb message-icon" aria-hidden="true" />
         <strong>いきなり数百万円のアプリ開発は重い。まずは低コストで、お店専用ページを持ちましょう。</strong>
         <p>店主さんは管理画面で編集します。お客さんは、きれいに整ったお店ページだけを見ます。</p>
       </section>
 
       <section className="marketing-section" id="features">
         <div className="section-heading">
-          <span>できること</span>
+          <span><i className="fa-solid fa-toolbox" aria-hidden="true" />できること</span>
           <h2>お店の宣伝に必要なものを、ひとつにまとめます。</h2>
         </div>
         <div className="feature-showcase">
@@ -1056,7 +1072,7 @@ function MarketingSite() {
 
       <section className="marketing-section sample-section">
         <div className="section-heading">
-          <span>店舗サンプル</span>
+          <span><i className="fa-solid fa-layer-group" aria-hidden="true" />店舗サンプル</span>
           <h2>サンプルを選んだあと、写真・色・文章・メニューは自由にカスタマイズできます。</h2>
         </div>
         <div className="sample-row">
@@ -1064,6 +1080,7 @@ function MarketingSite() {
             <article key={sample.slug}>
               <img src={sample.hero} alt="" />
               <div>
+                <i className={`fa-solid ${sampleIcons[sample.slug] || "fa-store"} sample-icon`} aria-hidden="true" />
                 <strong>{sample.label}</strong>
                 <p>{sample.subtitle}</p>
               </div>
@@ -1074,7 +1091,7 @@ function MarketingSite() {
 
       <section className="marketing-section steps-section" id="how-it-works">
         <div className="section-heading">
-          <span>使い方</span>
+          <span><i className="fa-solid fa-list-check" aria-hidden="true" />使い方</span>
           <h2>やることは3つだけです。</h2>
         </div>
         <div className="step-list">
@@ -1090,7 +1107,7 @@ function MarketingSite() {
 
       <section className="marketing-section option-section" id="pricing">
         <div className="section-heading">
-          <span>プラグインパックも充実</span>
+          <span><i className="fa-solid fa-puzzle-piece" aria-hidden="true" />プラグインパックも充実</span>
           <h2>A4チラシ作成、一斉通知、Mac対応の3つセットで1,000円です。</h2>
         </div>
         <div className="option-grid">

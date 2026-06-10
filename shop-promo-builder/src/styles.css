@@ -1128,6 +1128,8 @@ button:focus-visible {
 
 .marketing-kicker,
 .section-heading span {
+  align-items: center;
+  gap: 7px;
   display: inline-flex;
   width: fit-content;
   padding: 7px 11px;
@@ -1136,6 +1138,10 @@ button:focus-visible {
   background: rgba(215, 169, 79, .22);
   font-size: 13px;
   font-weight: 900;
+}
+
+.section-heading span i {
+  color: var(--site-green);
 }
 
 .marketing-hero h1 {
@@ -1190,6 +1196,33 @@ button:focus-visible {
   font-size: clamp(24px, 3.6vw, 48px);
   line-height: 1.14;
   text-shadow: 0 2px 18px rgba(0, 0, 0, .26);
+}
+
+.hero-mini-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 720px;
+  margin-top: 16px;
+}
+
+.hero-mini-points span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(20, 45, 38, .82);
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .18);
+}
+
+.hero-mini-points i {
+  color: #ffd35a;
 }
 
 .marketing-actions {
@@ -1434,6 +1467,24 @@ button:focus-visible {
   box-shadow: 0 22px 60px rgba(33, 63, 53, .13);
 }
 
+.value-icon,
+.message-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  color: #fff;
+  background: #1f6a55;
+  box-shadow: 0 12px 28px rgba(31, 106, 85, .18);
+}
+
+.featured-value .value-icon {
+  color: #173227;
+  background: #ffd35a;
+}
+
 .value-strip article span {
   display: inline-flex;
   width: fit-content;
@@ -1477,11 +1528,16 @@ button:focus-visible {
 }
 
 .plain-message {
+  position: relative;
   margin: clamp(22px, 4vw, 44px) clamp(18px, 5vw, 70px) 0;
   padding: clamp(24px, 4vw, 38px);
   border: 1px solid rgba(33, 63, 53, .14);
   border-radius: 8px;
   background: #fff;
+}
+
+.plain-message .message-icon {
+  margin-bottom: 16px;
 }
 
 .plain-message strong {
@@ -1829,6 +1885,17 @@ button:focus-visible {
   padding: 18px;
 }
 
+.sample-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  color: #fff;
+  background: #1f6a55;
+}
+
 .sample-row strong {
   font-size: 18px;
 }
@@ -1848,6 +1915,10 @@ button:focus-visible {
 .steps-section .section-heading span {
   color: #fff;
   background: rgba(255, 255, 255, .16);
+}
+
+.steps-section .section-heading span i {
+  color: #fff;
 }
 
 .step-list {
