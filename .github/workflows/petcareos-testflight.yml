@@ -191,7 +191,10 @@ jobs:
             --type ios \
             --apiKey "$ASC_KEY_ID" \
             --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/petcareos-altool.log
-          if grep -E "UPLOAD FAILED|Validation failed|ERROR:" /tmp/petcareos-altool.log; then
+          if grep -E "UPLOAD FAILED|Validation failed" /tmp/petcareos-altool.log; then
+            exit 1
+          fi
+          if ! grep -q "UPLOAD SUCCEEDED" /tmp/petcareos-altool.log; then
             exit 1
           fi
 
