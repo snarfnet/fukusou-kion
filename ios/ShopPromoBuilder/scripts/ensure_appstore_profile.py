@@ -13,6 +13,7 @@ P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.shoppromobuilder")
 PROFILE_NAME = os.environ.get("PROFILE_NAME", "ShopPromoBuilder App Store")
 PROFILE_PATH = Path(os.environ.get("PROFILE_PATH", "build/ShopPromoBuilder_App_Store.mobileprovision"))
+CERTIFICATE_ID = os.environ.get("CERTIFICATE_ID", "")
 
 PRIVATE_KEY = open(P8_PATH, encoding="utf-8").read()
 
@@ -42,6 +43,11 @@ def find_bundle_id():
 
 
 def find_distribution_certificate():
+    if CERTIFICATE_ID:
+        response = request("GET", f"/certificates/{CERTIFICATE_ID}")
+        response.raise_for_status()
+        return response.json()["data"]
+
     response = request("GET", "/certificates?filter[certificateType]=IOS_DISTRIBUTION&limit=200")
     response.raise_for_status()
     certificates = response.json().get("data", [])
