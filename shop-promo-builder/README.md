@@ -15,7 +15,7 @@ GitHub Actionsでは `.github/workflows/shop-promo-builder-build.yml` が `shop-
 
 `ios/ShopPromoBuilder` は、Webビルドを `WKWebView` で表示するiOSラッパーです。`.github/workflows/shop-promo-builder-testflight.yml` を手動実行すると、Webビルドを同梱したIPAを作り、App Store Connectへアップロードします。
 
-Bundle IDは `com.tokyonasu.shoppromobuilder` です。初回実行前にApple Developer側のBundle IDと、GitHub SecretsのASC APIキー設定を確認してください。
+Bundle IDは `com.tokyonasu.shoppromobuilder` です。初回実行前にApple Developer側のBundle IDと、App Store Connect側のアプリレコードを作成してください。今回のASC APIキーでは新規アプリ作成権限がないため、アプリレコード作成後にTestFlightアップロードを実行します。
 
 ## 別課金オプション
 

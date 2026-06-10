@@ -5,13 +5,6 @@ env:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/shop-promo-builder-app-build
-    paths:
-      - "shop-promo-builder/**"
-      - "ios/ShopPromoBuilder/**"
-      - ".github/workflows/shop-promo-builder-testflight.yml"
 
 concurrency:
   group: shop-promo-builder-testflight
