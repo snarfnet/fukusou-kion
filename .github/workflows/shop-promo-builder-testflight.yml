@@ -117,6 +117,18 @@ jobs:
           . .venv/bin/activate
           python scripts/prepare_testflight.py
 
+      - name: Ensure App Store provisioning profile
+        working-directory: ios/ShopPromoBuilder
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_BUNDLE_ID: com.tokyonasu.shoppromobuilder
+          PROFILE_NAME: ShopPromoBuilder App Store
+        run: |
+          . .venv/bin/activate
+          python scripts/ensure_appstore_profile.py
+
       - name: Archive
         working-directory: ios/ShopPromoBuilder
         env:
@@ -133,8 +145,9 @@ jobs:
             -authenticationKeyPath "/tmp/asc/AuthKey_${ASC_KEY_ID}.p8" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="ShopPromoBuilder App Store" \
             DEVELOPMENT_TEAM=83VGKGSQUH \
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
 
