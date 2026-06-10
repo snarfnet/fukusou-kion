@@ -341,11 +341,11 @@ export function App() {
   }, [publicUrl]);
 
   useEffect(() => {
-    document.title = isCustomerRoute ? store.name : "小さいお店の宣伝ツール";
+    document.title = isCustomerRoute ? store.name : "小さなお店の宣伝ツール";
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     themeMeta?.setAttribute("content", isLandingRoute ? "#213f35" : store.theme);
     const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-    appleTitle?.setAttribute("content", isCustomerRoute ? store.name : "小さいお店の宣伝ツール");
+    appleTitle?.setAttribute("content", isCustomerRoute ? store.name : "小さなお店の宣伝ツール");
   }, [isCustomerRoute, isLandingRoute, store.name, store.theme]);
 
   useEffect(() => {
@@ -477,7 +477,7 @@ export function App() {
     ${campaignMarkup}
     ${productMarkup}
     <section class="info"><div><h2>お知らせ</h2><ul class="news">${newsMarkup}</ul></div><div><h2>店舗情報</h2><p>${store.hours}<br>${store.address}<br>${store.instagram}</p>${reserveMarkup}</div></section>
-    <p class="footer">このチラシは小さいお店の宣伝ツールから作成しました。QRコードや地図リンクは公開版で追加できます。</p>
+    <p class="footer">このチラシは小さなお店の宣伝ツールから作成しました。QRコードや地図リンクは公開版で追加できます。</p>
   </main>
 </body>
 </html>`;
@@ -547,7 +547,7 @@ export function App() {
         <div className="brand">
           <img src={store.icon} alt="" />
           <div>
-            <strong>小さいお店の宣伝ツール</strong>
+            <strong>小さなお店の宣伝ツール</strong>
             <span>アプリ作成・管理</span>
           </div>
         </div>
@@ -884,16 +884,22 @@ function MarketingSite() {
     ["fa-qrcode", "QRコード作成", "店頭POPやチラシに載せるQRコードをすぐ作れます。"],
     ["fa-image", "画像リサイズ", "アップロードした画像を、アプリ用に自動で整えます。"],
   ];
+  const businessPoints = [
+    ["fa-coins", "初期費用をぐっと軽く", "専用アプリ開発を外注する前に、まずは2,000円で見せ方を整えられます。"],
+    ["fa-store", "お店専用に見える", "お客さん側には、テンプレート感を抑えたお店専用ページとして見せられます。"],
+    ["fa-chart-line", "すぐ販促に使える", "QRコードを店頭・SNS・チラシに置けば、その日から案内を始められます。"],
+  ];
 
   return (
     <main className="marketing-site">
       <nav className="marketing-nav" aria-label="紹介サイトのナビゲーション">
         <a className="marketing-logo" href="/landing">
           <img src={appIcon} alt="" />
-          <span>小さいお店の宣伝ツール</span>
+          <span>小さなお店の宣伝ツール</span>
         </a>
         <div>
-          <a href="#features">できること</a>
+          <a href="#value">価格の強み</a>
+          <a href="#features">機能</a>
           <a href="#pricing">別料金</a>
           <a href="/">管理画面を見る</a>
         </div>
@@ -906,14 +912,18 @@ function MarketingSite() {
         }}
       >
         <div className="marketing-hero-copy">
-          <span className="marketing-kicker">小さなお店向け</span>
+          <span className="marketing-kicker">2,000円で始めるお店アプリ風ページ</span>
           <h1>
-            <span>小さいお店の</span>
+            <span>小さなお店の</span>
             <span>宣伝ツール</span>
           </h1>
+          <div className="price-punch">
+            <span>アプリ開発を外注すると数百万円規模になりがち</span>
+            <strong>まずは2,000円で、専用アプリ風の販促ページを作れます。</strong>
+          </div>
           <p>
-            店名、写真、メニューを入れるだけ。
-            お客さんには「このお店専用のアプリみたい」と見えるページを作れます。
+            店名、写真、メニューを入れるだけ。お客さんには「このお店専用のアプリみたい」と見えるページを作れます。
+            高い開発費をかける前に、まずお店の見せ方を整えたい店主さん向けです。
           </p>
           <div className="marketing-actions">
             <a className="marketing-primary" href="/">
@@ -927,7 +937,7 @@ function MarketingSite() {
           <div className="marketing-card app-card">
             <img src={nailHero} alt="" />
             <div>
-              <strong>お店ごとの見た目にできます</strong>
+              <strong>2,000円で、お店専用アプリ風</strong>
               <span>雑貨屋・美容室・ネイルサロン・ジム</span>
             </div>
           </div>
@@ -937,8 +947,26 @@ function MarketingSite() {
         </div>
       </section>
 
+      <section className="value-strip" id="value">
+        <article>
+          <span>一般的な専用アプリ制作</span>
+          <strong>数百万円規模</strong>
+          <p>要件定義、デザイン、開発、審査、保守まで費用が大きくなりがちです。</p>
+        </article>
+        <article className="featured-value">
+          <span>小さなお店の宣伝ツール</span>
+          <strong>2,000円</strong>
+          <p>まずはお店専用アプリ風ページ、QR、メニュー、告知をまとめて持てます。</p>
+        </article>
+        <article>
+          <span>お客さんからの見え方</span>
+          <strong>お店専用</strong>
+          <p>表側はそのお店だけのページ。管理画面は店主さんだけが使います。</p>
+        </article>
+      </section>
+
       <section className="plain-message">
-        <strong>やりたいことは、とてもシンプルです。</strong>
+        <strong>高額なアプリ開発の前に、まず「お店専用に見える宣伝面」を持つ。</strong>
         <p>店主さんは管理画面で編集します。お客さんは、きれいに整ったお店ページだけを見ます。</p>
       </section>
 
@@ -946,6 +974,15 @@ function MarketingSite() {
         <div className="section-heading">
           <span>できること</span>
           <h2>お店の宣伝に必要なものを、ひとつにまとめます。</h2>
+        </div>
+        <div className="business-points">
+          {businessPoints.map(([icon, title, text]) => (
+            <article key={title}>
+              <i className={`fa-solid ${icon}`} aria-hidden="true" />
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </article>
+          ))}
         </div>
         <div className="feature-explainer">
           {coreFeatures.map(([icon, title, text]) => (
@@ -1010,7 +1047,8 @@ function MarketingSite() {
       </section>
 
       <section className="marketing-cta">
-        <h2>まずは、1店舗分のページを作ってみましょう。</h2>
+        <span>販売予定価格 2,000円</span>
+        <h2>数百万円のアプリ開発に進む前に、まず2,000円で試す。</h2>
         <p>写真とメニューがあれば、すぐにお店専用アプリ風ページを試せます。</p>
         <a className="marketing-primary" href="/">
           管理画面を開く

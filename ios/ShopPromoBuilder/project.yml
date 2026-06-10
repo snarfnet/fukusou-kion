@@ -30,8 +30,8 @@ targets:
     info:
       path: ShopPromoBuilder/Info.plist
       properties:
-        CFBundleName: "小さいお店の宣伝ツール"
-        CFBundleDisplayName: "小さいお店の宣伝ツール"
+        CFBundleName: "小さなお店の宣伝ツール"
+        CFBundleDisplayName: "小さなお店の宣伝ツール"
         CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
