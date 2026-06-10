@@ -14,6 +14,7 @@ P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 CSR_PATH = Path(os.environ.get("CSR_PATH", "build/distribution.csr"))
 CERT_PATH = Path(os.environ.get("CERT_PATH", "build/distribution.cer"))
 REVOKE_CERT_SERIAL = os.environ.get("REVOKE_CERT_SERIAL", "").replace(":", "").upper()
+REVOKE_CURRENT_DISTRIBUTION = os.environ.get("REVOKE_CURRENT_DISTRIBUTION", "0") == "1"
 GITHUB_ENV = os.environ.get("GITHUB_ENV")
 
 PRIVATE_KEY = open(P8_PATH, encoding="utf-8").read()
@@ -77,6 +78,14 @@ def create_certificate():
         }
     }
     response = request("POST", "/certificates", json=payload)
+    if response.status_code == 409 and REVOKE_CURRENT_DISTRIBUTION:
+        print("Current or pending iOS Distribution certificate exists. Revoking distribution certificates and retrying.")
+        for certificate in list_certificates():
+            attrs = certificate.get("attributes", {})
+            label = f"{attrs.get('name', '')} {attrs.get('serialNumber', '')} {attrs.get('expirationDate', '')}".strip()
+            delete_certificate(certificate["id"], f"recreate TestFlight certificate: {label}")
+        response = request("POST", "/certificates", json=payload)
+
     if response.status_code not in (200, 201):
         raise RuntimeError(f"Distribution certificate create failed {response.status_code}: {response.text[:1000]}")
 

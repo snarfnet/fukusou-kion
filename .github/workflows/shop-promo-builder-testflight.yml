@@ -95,6 +95,7 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
           REVOKE_CERT_SERIAL: 797262360B421323CA2A52F022C3F0BF
+          REVOKE_CURRENT_DISTRIBUTION: "1"
           KEYCHAIN_PASSWORD: temporary-keychain-password
         run: |
           mkdir -p build
