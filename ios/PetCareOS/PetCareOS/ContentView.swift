@@ -30,7 +30,7 @@ struct ContentView: View {
                             HealthView(state: $state)
                         }
                     }
-                    .padding(.horizontal, 18)
+                    .padding(.horizontal, 16)
                     .padding(.top, state.selectedTab == .home ? 0 : 12)
                     .padding(.bottom, 110)
                 }
@@ -71,13 +71,17 @@ struct HomeView: View {
     }
 
     private var hero: some View {
-        ZStack(alignment: .bottomTrailing) {
-            HStack {
-                VStack(alignment: .leading, spacing: 14) {
+        GeometryReader { proxy in
+            let width = proxy.size.width
+            let imageSize = min(max(width * 0.38, 118), 152)
+
+            HStack(alignment: .center, spacing: 12) {
+                VStack(alignment: .leading, spacing: 11) {
                     SectionKicker(text: "おはようございます")
                     Text("モカとの今日も、すてきな1日になりますように。")
-                        .font(.title3.weight(.bold))
-                        .lineSpacing(5)
+                        .font(.system(size: 25, weight: .bold))
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text("6月9日 火曜日")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(PetTheme.muted)
@@ -88,35 +92,37 @@ struct HomeView: View {
                         Label("今日の様子を記録", systemImage: "plus")
                             .font(.subheadline.weight(.bold))
                             .foregroundStyle(PetTheme.coral)
-                            .padding(.horizontal, 14)
-                            .frame(height: 42)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
+                            .padding(.horizontal, 13)
+                            .frame(height: 40)
                             .background(.white.opacity(0.72))
                             .clipShape(Capsule())
                             .overlay(Capsule().stroke(PetTheme.coral.opacity(0.35)))
                     }
                     .buttonStyle(.plain)
                 }
-                .frame(width: 210, alignment: .leading)
-                Spacer()
-            }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            Image("MokaHomeHero")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 210, height: 210)
-                .clipShape(Circle())
-                .offset(x: 28, y: 12)
+                Image("MokaHomeHero")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: imageSize, height: imageSize)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(.white.opacity(0.78), lineWidth: 4))
+                    .shadow(color: Color.black.opacity(0.06), radius: 14, y: 8)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 18)
+            .frame(width: width, height: proxy.size.height)
+            .background(.white.opacity(0.22))
+            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 260)
-        .padding(.horizontal, 18)
-        .background(.white.opacity(0.20))
-        .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
-        .padding(.horizontal, -18)
+        .frame(height: 238)
     }
 
     private var quickActions: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 7) {
             quick("記録する", "plus.square", .meal)
             quick("思い出", "camera", nil)
             quick("ごはん", "takeoutbag.and.cup.and.straw", .meal)
@@ -139,14 +145,15 @@ struct HomeView: View {
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(PetTheme.coral)
                 Text(title)
-                    .font(.caption.weight(.bold))
-                    .minimumScaleFactor(0.8)
+                    .font(.system(size: 12, weight: .bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 90)
+            .frame(height: 82)
             .background(.white.opacity(0.72))
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 24).stroke(PetTheme.line))
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 22).stroke(PetTheme.line))
         }
         .buttonStyle(.plain)
     }
@@ -161,7 +168,7 @@ struct HomeView: View {
                 Image("MokaSpringMemory")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 154, height: 138)
+                    .frame(width: 132, height: 124)
                     .clipped()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("思い出アルバム")
@@ -172,10 +179,13 @@ struct HomeView: View {
                         .background(PetTheme.coral.opacity(0.12))
                         .clipShape(Capsule())
                     Text("春のおさんぽ")
-                        .font(.title3.weight(.bold))
+                        .font(.headline.weight(.bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
                     Text("満開の花の下で、うれしそうなモカの笑顔。")
                         .font(.caption)
                         .foregroundStyle(PetTheme.muted)
+                        .lineLimit(2)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")

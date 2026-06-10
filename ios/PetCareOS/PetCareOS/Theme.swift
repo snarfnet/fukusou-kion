@@ -118,7 +118,7 @@ struct PetHeader: View {
                 .overlay(RoundedRectangle(cornerRadius: 24).stroke(PetTheme.line))
             }
         }
-        .padding(.horizontal, 18)
+        .padding(.horizontal, 16)
         .padding(.top, 18)
     }
 }
@@ -134,28 +134,31 @@ struct BottomTabs: View {
                 } label: {
                     VStack(spacing: 3) {
                         Image(systemName: tab.icon)
-                            .font(.system(size: tab == .record ? 20 : 17, weight: .semibold))
+                            .font(.system(size: tab == .record ? 19 : 16, weight: .semibold))
                         Text(tab.rawValue)
                             .font(.system(size: 10, weight: .bold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
                     }
                     .foregroundStyle(state.selectedTab == tab ? PetTheme.coral : PetTheme.muted)
                     .frame(maxWidth: .infinity)
-                    .frame(height: tab == .record ? 66 : 56)
+                    .frame(height: tab == .record ? 62 : 54)
                     .background(tab == .record ? PetTheme.coral : (state.selectedTab == tab ? PetTheme.coral.opacity(0.13) : .clear))
                     .foregroundStyle(tab == .record ? Color.white : (state.selectedTab == tab ? PetTheme.coral : PetTheme.muted))
                     .clipShape(tab == .record ? AnyShape(Circle()) : AnyShape(RoundedRectangle(cornerRadius: 18, style: .continuous)))
-                    .offset(y: tab == .record ? -18 : 0)
+                    .offset(y: tab == .record ? -15 : 0)
                     .shadow(color: tab == .record ? PetTheme.coral.opacity(0.25) : .clear, radius: 14, y: 8)
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(8)
-        .frame(height: 78)
+        .frame(maxWidth: 430)
+        .frame(height: 76)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 28).stroke(PetTheme.line))
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 18)
         .padding(.bottom, 10)
     }
 }
