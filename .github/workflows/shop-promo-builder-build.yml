@@ -1,0 +1,39 @@
+name: Shop Promo Builder Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "shop-promo-builder/**"
+      - ".github/workflows/shop-promo-builder-build.yml"
+
+jobs:
+  web-pwa-build:
+    name: Build Web/PWA
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shop-promo-builder
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: shop-promo-builder/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shop-promo-builder-dist
+          path: shop-promo-builder/dist

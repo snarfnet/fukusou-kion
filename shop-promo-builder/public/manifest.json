@@ -1,0 +1,17 @@
+{
+  "name": "カフェこもれび",
+  "short_name": "こもれび",
+  "description": "小規模店舗向け宣伝ツールアプリのテスト版です。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfaf6",
+  "theme_color": "#1f5b45",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
