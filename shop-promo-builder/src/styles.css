@@ -1294,8 +1294,7 @@ button:focus-visible {
   box-shadow: 0 22px 60px rgba(33, 63, 53, .13);
 }
 
-.value-strip article span,
-.marketing-cta span {
+.value-strip article span {
   display: inline-flex;
   width: fit-content;
   padding: 6px 10px;
@@ -1455,7 +1454,7 @@ button:focus-visible {
 
 .sample-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 18px;
   margin-top: 30px;
 }
@@ -1532,44 +1531,6 @@ button:focus-visible {
   background: rgba(33, 63, 53, .08);
   font-size: 12px;
   font-weight: 900;
-}
-
-.marketing-cta {
-  margin: 0 clamp(18px, 5vw, 70px) clamp(34px, 6vw, 70px);
-  padding: clamp(30px, 6vw, 64px);
-  border-radius: 8px;
-  color: #fff;
-  background:
-    linear-gradient(135deg, rgba(216, 50, 50, .96), rgba(240, 122, 36, .96)),
-    var(--site-green);
-  box-shadow: 0 24px 70px rgba(216, 50, 50, .22);
-}
-
-.marketing-cta h2 {
-  max-width: 760px;
-  margin: 0;
-  font-size: clamp(30px, 5vw, 58px);
-  line-height: 1.16;
-}
-
-.marketing-cta p {
-  margin: 14px 0 24px;
-  color: rgba(255, 255, 255, .82);
-  font-size: 18px;
-  line-height: 1.8;
-  font-weight: 700;
-}
-
-.marketing-cta span {
-  color: #7c2600;
-  background: rgba(255, 255, 255, .84);
-  margin-bottom: 16px;
-}
-
-.marketing-cta .marketing-primary {
-  color: var(--site-green);
-  background: #fff;
-  box-shadow: none;
 }
 
 @media (max-width: 1180px) {

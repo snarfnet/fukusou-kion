@@ -44,19 +44,19 @@ const paidAddOns = [
     icon: "fa-file-lines",
     title: "A4チラシ作成",
     description: "アプリ内のメニューやお知らせから印刷用チラシを作成します。",
-    status: "実装中",
+    status: "3つセット 1,000円",
   },
   {
     icon: "fa-bullhorn",
     title: "一斉通知",
     description: "新着情報やクーポンを登録客へ送ります。公開サーバーと通知APIが必要です。",
-    status: "API連携予定",
+    status: "3つセット 1,000円",
   },
   {
     icon: "fa-desktop",
     title: "macOS展開",
     description: "Macでも管理画面が動作します。",
-    status: "別ビルド予定",
+    status: "3つセット 1,000円",
   },
 ];
 
@@ -872,10 +872,10 @@ function ImageUpload({ image, onChange, note }) {
 }
 
 function MarketingSite() {
-  const samples = [storeSamples.zakka, storeSamples.nail, storeSamples.gym];
+  const samples = [storeSamples.cafe, storeSamples.zakka, storeSamples.salon, storeSamples.nail, storeSamples.gym];
   const steps = [
     ["1", "お店の情報を入れる", "店名、営業時間、写真、メニューを管理画面で入力します。"],
-    ["2", "公開URLとQRを作る", "お客さんに渡すURLとQRコードをその場で作れます。"],
+    ["2", "お客さん用ページリンクとQRを作る", "お店のページを開くためのリンクとQRコードをその場で作れます。"],
     ["3", "お店専用アプリ風に見せる", "お客さんはホーム画面に追加して、お店のアプリのように使えます。"],
   ];
   const coreFeatures = [
@@ -900,7 +900,7 @@ function MarketingSite() {
         <div>
           <a href="#value">価格の強み</a>
           <a href="#features">機能</a>
-          <a href="#pricing">別料金</a>
+          <a href="#pricing">プラグイン</a>
           <a href="/">管理画面を見る</a>
         </div>
       </nav>
@@ -961,7 +961,10 @@ function MarketingSite() {
         <article>
           <span>お客さんからの見え方</span>
           <strong>お店専用</strong>
-          <p>表側はそのお店だけのページ。管理画面は店主さんだけが使います。</p>
+          <p>
+            店ごとに公開URL、店名、写真、色、メニュー、アイコン風画像を分けます。
+            お客さんには管理画面を見せず、表側のページだけを渡すので、そのお店専用に見えます。
+          </p>
         </article>
       </section>
 
@@ -1031,8 +1034,8 @@ function MarketingSite() {
 
       <section className="marketing-section option-section" id="pricing">
         <div className="section-heading">
-          <span>別料金メニュー</span>
-          <h2>必要になった時だけ追加できます。</h2>
+          <span>プラグインパックも充実</span>
+          <h2>A4チラシ作成、一斉通知、Mac対応の3つセットで1,000円です。</h2>
         </div>
         <div className="option-grid">
           {paidAddOns.map((addon) => (
@@ -1044,16 +1047,6 @@ function MarketingSite() {
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="marketing-cta">
-        <span>販売予定価格 2,000円</span>
-        <h2>数百万円のアプリ開発に進む前に、まず2,000円で試す。</h2>
-        <p>写真とメニューがあれば、すぐにお店専用アプリ風ページを試せます。</p>
-        <a className="marketing-primary" href="/">
-          管理画面を開く
-          <i className="fa-solid fa-arrow-right" aria-hidden="true" />
-        </a>
       </section>
     </main>
   );
