@@ -9,8 +9,9 @@ KEY_ID = os.environ["ASC_KEY_ID"]
 ISSUER_ID = os.environ["ASC_ISSUER_ID"]
 P8_PATH = os.environ.get("ASC_P8_PATH", "/tmp/asc_key.p8")
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.shoppromobuilder")
-APP_NAME = os.environ.get("APP_NAME", "小さな店の宣伝")
+APP_NAME = os.environ.get("APP_NAME", "小さいお店の宣伝ツール")
 APP_SKU = os.environ.get("APP_SKU", "shop-promo-builder")
+APP_ID = os.environ.get("ASC_APP_ID", "")
 
 PRIVATE_KEY = open(P8_PATH, encoding="utf-8").read()
 
@@ -27,6 +28,14 @@ def request(method, path, **kwargs):
 
 
 def main():
+    if APP_ID:
+        response = request("GET", f"/apps/{APP_ID}")
+        if response.status_code != 200:
+            raise RuntimeError(f"ASC app ID {APP_ID} could not be verified: {response.status_code} {response.text[:500]}")
+        attrs = response.json()["data"].get("attributes", {})
+        print(f"ASC app verified: {APP_ID} {attrs.get('name', APP_NAME)}")
+        return
+
     response = request("GET", f"/apps?filter[bundleId]={BUNDLE_ID}")
     response.raise_for_status()
     data = response.json().get("data", [])

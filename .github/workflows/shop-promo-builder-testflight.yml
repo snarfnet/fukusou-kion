@@ -5,6 +5,13 @@ env:
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/shop-promo-builder-app-build
+    paths:
+      - "shop-promo-builder/**"
+      - "ios/ShopPromoBuilder/**"
+      - ".github/workflows/shop-promo-builder-testflight.yml"
 
 concurrency:
   group: shop-promo-builder-testflight
@@ -86,8 +93,9 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_P8_PATH: /tmp/asc_key.p8
+          ASC_APP_ID: "6778811541"
           APP_BUNDLE_ID: com.tokyonasu.shoppromobuilder
-          APP_NAME: "小さな店の宣伝"
+          APP_NAME: "小さいお店の宣伝ツール"
           APP_SKU: shop-promo-builder
         run: |
           . .venv/bin/activate

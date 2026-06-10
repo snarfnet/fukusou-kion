@@ -340,7 +340,7 @@ export function App() {
   }, [publicUrl]);
 
   useEffect(() => {
-    document.title = isCustomerRoute ? store.name : "小さな店の宣伝アプリ";
+    document.title = isCustomerRoute ? store.name : "小さいお店の宣伝ツール";
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     themeMeta?.setAttribute("content", store.theme);
     const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
@@ -476,7 +476,7 @@ export function App() {
     ${campaignMarkup}
     ${productMarkup}
     <section class="info"><div><h2>お知らせ</h2><ul class="news">${newsMarkup}</ul></div><div><h2>店舗情報</h2><p>${store.hours}<br>${store.address}<br>${store.instagram}</p>${reserveMarkup}</div></section>
-    <p class="footer">このチラシは小さな店の宣伝アプリから作成しました。QRコードや地図リンクは公開版で追加できます。</p>
+    <p class="footer">このチラシは小さいお店の宣伝ツールから作成しました。QRコードや地図リンクは公開版で追加できます。</p>
   </main>
 </body>
 </html>`;
@@ -542,7 +542,7 @@ export function App() {
         <div className="brand">
           <img src={store.icon} alt="" />
           <div>
-            <strong>小さな店の宣伝アプリ</strong>
+            <strong>小さいお店の宣伝ツール</strong>
             <span>アプリ作成・管理</span>
           </div>
         </div>
