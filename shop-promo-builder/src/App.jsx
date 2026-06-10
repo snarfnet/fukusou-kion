@@ -15,6 +15,7 @@ import nailIcon from "./assets/nail-icon.png";
 import gymHero from "./assets/gym-hero.png";
 import gymCampaign from "./assets/gym-campaign.png";
 import gymIcon from "./assets/gym-icon.png";
+import promoHero from "./assets/promo-hero-clean-business.png";
 
 const STORAGE_KEY = "shop-promo-builder.store.v2";
 
@@ -44,19 +45,16 @@ const paidAddOns = [
     icon: "fa-file-lines",
     title: "A4チラシ作成",
     description: "アプリ内のメニューやお知らせから印刷用チラシを作成します。",
-    status: "3つセット 1,000円",
   },
   {
     icon: "fa-bullhorn",
     title: "一斉通知",
     description: "新着情報やクーポンを登録客へ送ります。公開サーバーと通知APIが必要です。",
-    status: "3つセット 1,000円",
   },
   {
     icon: "fa-desktop",
     title: "macOS展開",
     description: "Macでも管理画面が動作します。",
-    status: "3つセット 1,000円",
   },
 ];
 
@@ -530,7 +528,7 @@ export function App() {
           <img src={store.icon} alt="" />
           <div>
             <h1>{store.name}</h1>
-            <p>このページは店ごとの公開URLです。Safariで開いてホーム画面に追加すると、お店専用アプリのように使えます。</p>
+            <p>このページはお客さん用ページです。Safariで開いてホーム画面に追加すると、お店専用アプリのように使えます。</p>
             <button className="primary-button inline" onClick={requestNotification}>
               通知を受け取る
             </button>
@@ -568,7 +566,7 @@ export function App() {
           </p>
           <small>状態：{saveStatus}</small>
           <button className="ghost-button" onClick={openCustomerApp}>
-            公開URLを開く
+            お客さん用ページを開く
             <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
           </button>
           <button className="ghost-button" onClick={saveSettings}>
@@ -588,7 +586,7 @@ export function App() {
         <header className="topbar">
           <div>
             <h1>デザイン設定</h1>
-            <p>編集した内容を保存し、店ごとの公開URLと実QRコードを作れます。</p>
+            <p>編集した内容を保存し、お客さん用ページリンクと実QRコードを作れます。</p>
           </div>
           <div className="top-actions">
             <button title="ヘルプ">
@@ -615,7 +613,7 @@ export function App() {
             <input value={store.name} maxLength={20} onChange={(event) => updateField("name", event.target.value)} />
           </FormRow>
 
-          <FormRow label="公開URL">
+          <FormRow label="お客さん用ページリンク">
             <div className="slug-row">
               <span>{window.location.origin}/shop/</span>
               <input value={store.slug} onChange={(event) => updateField("slug", normalizeSlug(event.target.value))} />
@@ -779,15 +777,15 @@ export function App() {
           </div>
           <button onClick={openCustomerApp}>
             <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
-            公開URL
+            お客さん用ページ
           </button>
         </div>
         <PhonePreview store={store} />
         <section className="install-box">
           <h3>インストール用QRコード</h3>
-          <p>このQRコードは公開URLから実生成しています。</p>
+          <p>このQRコードを読むと、お客さん用ページが開きます。</p>
           <div className="qr-row">
-            {qrCode && <img className="qr-image" src={qrCode} alt="公開URLのQRコード" />}
+            {qrCode && <img className="qr-image" src={qrCode} alt="お客さん用ページのQRコード" />}
             <code>{publicUrl}</code>
           </div>
           <a className="download-link" href={qrCode} download={`${store.slug || "shop"}-qr.png`}>
@@ -879,13 +877,33 @@ function MarketingSite() {
     ["3", "お店専用アプリ風に見せる", "お客さんはホーム画面に追加して、お店のアプリのように使えます。"],
   ];
   const coreFeatures = [
-    ["fa-mobile-screen-button", "お客さん用ページ", "お店ごとのURLで、専用アプリのような画面を見せられます。"],
+    ["fa-mobile-screen-button", "お客さん用ページ", "QRコードから開ける、お店専用の案内ページを作れます。"],
     ["fa-palette", "かんたん編集", "写真、色、メニュー、お知らせ、予約リンクを管理画面から変えられます。"],
     ["fa-qrcode", "QRコード作成", "店頭POPやチラシに載せるQRコードをすぐ作れます。"],
     ["fa-image", "画像リサイズ", "アップロードした画像を、アプリ用に自動で整えます。"],
   ];
+  const qrBenefits = [
+    {
+      icon: "fa-user-check",
+      title: "お客さんのメリット",
+      points: [
+        "QRを読むだけで、お店のメニュー・お知らせ・クーポンをすぐ見られます。",
+        "予約が必要なお店なら、そのまま予約ページへ進めます。",
+        "ホーム画面に追加すると、次からお店アプリのように開けます。",
+      ],
+    },
+    {
+      icon: "fa-shop-lock",
+      title: "お店のメリット",
+      points: [
+        "紙のメニューや店頭POPから、お客さんをお店専用ページへ案内できます。",
+        "営業時間、キャンペーン、メニュー変更を管理画面からすぐ直せます。",
+        "アプリ開発を外注する前に、低コストで専用アプリ風の販促を始められます。",
+      ],
+    },
+  ];
   const businessPoints = [
-    ["fa-coins", "初期費用をぐっと軽く", "専用アプリ開発を外注する前に、まずは2,000円で見せ方を整えられます。"],
+    ["fa-coins", "初期費用をぐっと軽く", "専用アプリ開発を外注する前に、まずは低コストで見せ方を整えられます。"],
     ["fa-store", "お店専用に見える", "お客さん側には、テンプレート感を抑えたお店専用ページとして見せられます。"],
     ["fa-chart-line", "すぐ販促に使える", "QRコードを店頭・SNS・チラシに置けば、その日から案内を始められます。"],
   ];
@@ -908,11 +926,11 @@ function MarketingSite() {
       <section
         className="marketing-hero"
         style={{
-          backgroundImage: `linear-gradient(90deg, rgba(24, 35, 30, .92), rgba(24, 35, 30, .72) 48%, rgba(24, 35, 30, .2)), url(${zakkaHero})`,
+          backgroundImage: `linear-gradient(90deg, rgba(15, 18, 15, .92), rgba(15, 18, 15, .7) 42%, rgba(15, 18, 15, .12)), url(${promoHero})`,
         }}
       >
         <div className="marketing-hero-copy">
-          <span className="marketing-kicker">2,000円で始めるお店アプリ風ページ</span>
+          <span className="marketing-kicker">小さなお店向け宣伝ページ</span>
           <h1>
             <span>小さなお店の</span>
             <span>宣伝ツール</span>
@@ -937,12 +955,12 @@ function MarketingSite() {
           <div className="marketing-card app-card">
             <img src={nailHero} alt="" />
             <div>
-              <strong>2,000円で、お店専用アプリ風</strong>
+              <strong>お店ごとの見た目にできます</strong>
               <span>雑貨屋・美容室・ネイルサロン・ジム</span>
             </div>
           </div>
           <div className="marketing-phone">
-            <PhonePreview store={storeSamples.zakka} customerOnly />
+            <MarketingPhoneMock />
           </div>
         </div>
       </section>
@@ -951,7 +969,10 @@ function MarketingSite() {
         <article>
           <span>一般的な専用アプリ制作</span>
           <strong>数百万円規模</strong>
-          <p>要件定義、デザイン、開発、審査、保守まで費用が大きくなりがちです。</p>
+          <p>
+            本格的にアプリを作ると、打ち合わせ、画面設計、デザイン、開発、審査、保守まで必要です。
+            小さなお店には重すぎる金額になりがちです。
+          </p>
         </article>
         <article className="featured-value">
           <span>小さなお店の宣伝ツール</span>
@@ -962,14 +983,34 @@ function MarketingSite() {
           <span>お客さんからの見え方</span>
           <strong>お店専用</strong>
           <p>
-            店ごとに公開URL、店名、写真、色、メニュー、アイコン風画像を分けます。
-            お客さんには管理画面を見せず、表側のページだけを渡すので、そのお店専用に見えます。
+            店ごとに「お客さん用ページ」を作り、店名、写真、色、メニュー、アイコン風画像を分けます。
+            QRコードの先はそのお店だけのページなので、専用アプリのように見えます。
           </p>
         </article>
       </section>
 
+      <section className="qr-benefits">
+        <div className="section-heading">
+          <span>販促QRコードの役割</span>
+          <h2>QRコードの先に、お店専用ページがあります。</h2>
+        </div>
+        <div className="qr-benefit-grid">
+          {qrBenefits.map((group) => (
+            <article key={group.title}>
+              <i className={`fa-solid ${group.icon}`} aria-hidden="true" />
+              <h3>{group.title}</h3>
+              <ul>
+                {group.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="plain-message">
-        <strong>高額なアプリ開発の前に、まず「お店専用に見える宣伝面」を持つ。</strong>
+        <strong>いきなり数百万円のアプリ開発は重い。まずは低コストで、お店専用ページを持ちましょう。</strong>
         <p>店主さんは管理画面で編集します。お客さんは、きれいに整ったお店ページだけを見ます。</p>
       </section>
 
@@ -1001,7 +1042,7 @@ function MarketingSite() {
       <section className="marketing-section sample-section">
         <div className="section-heading">
           <span>店舗サンプル</span>
-          <h2>業種に合わせて、見た目も文章も変えられます。</h2>
+          <h2>サンプルを選んだあと、写真・色・文章・メニューは自由にカスタマイズできます。</h2>
         </div>
         <div className="sample-row">
           {samples.map((sample) => (
@@ -1043,12 +1084,49 @@ function MarketingSite() {
               <i className={`fa-solid ${addon.icon}`} aria-hidden="true" />
               <strong>{addon.title}</strong>
               <p>{addon.description}</p>
-              <span>{addon.status}</span>
             </article>
           ))}
         </div>
       </section>
     </main>
+  );
+}
+
+function MarketingPhoneMock() {
+  const store = storeSamples.zakka;
+  return (
+    <div className="marketing-phone-mock" aria-label="お客さん用ページの完成サンプル">
+      <div className="mock-status">
+        <span />
+        <strong>{store.name}</strong>
+        <i className="fa-regular fa-bell" aria-hidden="true" />
+      </div>
+      <section className="mock-hero" style={{ backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.58)), url(${store.hero})` }}>
+        <img src={store.icon} alt="" />
+        <h2>{store.subtitle}</h2>
+      </section>
+      <section className="mock-coupon">
+        <img src={store.campaign} alt="" />
+        <div>
+          <strong>{store.coupon}</strong>
+          <span>{store.couponLimit}</span>
+        </div>
+      </section>
+      <div className="mock-actions">
+        <span><i className="fa-solid fa-bag-shopping" aria-hidden="true" />商品</span>
+        <span><i className="fa-solid fa-ticket" aria-hidden="true" />クーポン</span>
+        <span><i className="fa-solid fa-location-dot" aria-hidden="true" />アクセス</span>
+      </div>
+      <section className="mock-list">
+        <h3>お知らせ</h3>
+        {store.news.slice(0, 2).map((news, index) => (
+          <p key={news}>
+            <time>2026/06/{10 + index}</time>
+            {news}
+          </p>
+        ))}
+      </section>
+    </div>
   );
 }
 
