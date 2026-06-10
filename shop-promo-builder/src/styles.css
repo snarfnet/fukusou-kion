@@ -1600,6 +1600,50 @@ button:focus-visible {
   font-weight: 800;
 }
 
+.install-flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 760px;
+  margin-top: 22px;
+}
+
+.install-flow article {
+  display: grid;
+  place-items: center;
+  min-height: 130px;
+  padding: 16px 12px;
+  border: 1px solid rgba(33, 63, 53, .12);
+  border-radius: 8px;
+  background: #fbfaf6;
+  text-align: center;
+}
+
+.install-flow i,
+.install-flow img {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  color: #fff;
+  background: #1f6a55;
+  box-shadow: 0 12px 28px rgba(31, 106, 85, .2);
+}
+
+.install-flow img {
+  object-fit: cover;
+}
+
+.install-flow span {
+  display: block;
+  margin-top: 12px;
+  color: var(--site-ink);
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 900;
+}
+
 .feature-phone {
   display: flex;
   justify-content: center;
@@ -1976,6 +2020,10 @@ button:focus-visible {
 
   .marketing-phone {
     display: none;
+  }
+
+  .install-flow {
+    grid-template-columns: 1fr;
   }
 
   .value-strip {

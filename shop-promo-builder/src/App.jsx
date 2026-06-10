@@ -1009,11 +1009,26 @@ function MarketingSite() {
         </div>
         <div className="feature-showcase">
           <div>
-            <strong>QRを読んだ先は、こんなページです。</strong>
+            <strong>QRを読むと、お店専用ページが開きます。</strong>
             <p>
               お客さんはメニュー、クーポン、お知らせ、アクセスをすぐ確認できます。
+              ホーム画面に追加すると、お店のアイコンからいつでも開けます。
               店主さんは管理画面で内容を変えるだけ。紙のチラシより早く、専用アプリより軽く始められます。
             </p>
+            <div className="install-flow">
+              <article>
+                <i className="fa-solid fa-qrcode" aria-hidden="true" />
+                <span>QRを読む</span>
+              </article>
+              <article>
+                <i className="fa-solid fa-square-plus" aria-hidden="true" />
+                <span>ホーム画面に追加</span>
+              </article>
+              <article>
+                <img src={storeSamples.zakka.icon} alt="" />
+                <span>お店のアイコンから開く</span>
+              </article>
+            </div>
           </div>
           <div className="feature-phone">
             <MarketingPhoneMock />
