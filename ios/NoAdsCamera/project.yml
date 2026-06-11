@@ -23,9 +23,21 @@ targets:
       properties:
         CFBundleDisplayName: MasterShot Camera
         CFBundleDevelopmentRegion: en
+        CFBundleIconName: AppIcon
         NSCameraUsageDescription: "写真を撮影するためにカメラを使います。"
         NSPhotoLibraryAddUsageDescription: "撮影した写真をライブラリに保存します。"
         NSMicrophoneUsageDescription: "音や声を合図に撮影するためにマイクを使います。"
         NSSpeechRecognitionUsageDescription: "「はいチーズ」などの合図を検出するために音声認識を使います。"
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
