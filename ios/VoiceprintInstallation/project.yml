@@ -30,6 +30,8 @@ targets:
     info:
       path: VoiceprintInstallation/Info.plist
       properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSMicrophoneUsageDescription: "Voice recording is used to generate unique artwork from your voice characteristics."
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
