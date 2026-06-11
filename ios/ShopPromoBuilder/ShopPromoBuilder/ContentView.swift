@@ -42,9 +42,9 @@ struct WebAppView: UIViewRepresentable {
         webView.isOpaque = false
         webView.backgroundColor = UIColor(red: 0.98, green: 0.96, blue: 0.93, alpha: 1)
 
-        if let indexURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "WebApp") {
-            let webAppURL = indexURL.deletingLastPathComponent()
-            webView.loadFileURL(indexURL, allowingReadAccessTo: webAppURL)
+        if let indexURL = Bundle.main.url(forResource: "index", withExtension: "html") {
+            let resourceURL = Bundle.main.resourceURL ?? indexURL.deletingLastPathComponent()
+            webView.loadFileURL(indexURL, allowingReadAccessTo: resourceURL)
         } else {
             webView.loadHTMLString(
                 """

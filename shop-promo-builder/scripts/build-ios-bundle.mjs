@@ -13,8 +13,8 @@ await build({
   platform: "browser",
   target: ["ios17"],
   outdir,
-  entryNames: "assets/main-ios",
-  assetNames: "assets/[name]-[hash]",
+  entryNames: "main-ios",
+  assetNames: "[name]-[hash]",
   loader: {
     ".png": "file",
   },
@@ -33,8 +33,8 @@ await writeFile(
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#1f5b45" />
     <title>小さなお店の宣伝ツール</title>
-    <link rel="stylesheet" href="./assets/main-ios.css" />
-    <script defer src="./assets/main-ios.js"></script>
+    <link rel="stylesheet" href="./main-ios.css" />
+    <script defer src="./main-ios.js"></script>
   </head>
   <body>
     <div id="root"></div>
