@@ -551,11 +551,10 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
             previewImage = UIImage(data: data)
         }
 
-        let typeIdentifier = photo.resolvedSettings.processedFileType.map { $0.rawValue } ?? "public.heic"
         items.append(
             CaptureItem(
                 data: data,
-                uniformTypeIdentifier: photo.isRawPhoto ? "com.adobe.raw-image" : typeIdentifier,
+                uniformTypeIdentifier: photo.isRawPhoto ? "com.adobe.raw-image" : "public.heic",
                 resourceType: photo.isRawPhoto ? .alternatePhoto : .photo
             )
         )

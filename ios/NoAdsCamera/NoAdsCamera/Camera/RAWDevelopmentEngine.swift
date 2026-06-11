@@ -53,7 +53,7 @@ final class RAWDevelopmentEngine {
             of: ciImage,
             format: .RGBA8,
             colorSpace: colorSpace,
-            options: [.lossyCompressionQuality: quality]
+            options: [:]
         )
     }
 

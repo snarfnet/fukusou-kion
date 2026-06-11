@@ -19,8 +19,6 @@ final class BestShotBuffer {
     }
 
     func append(pixelBuffer: CVPixelBuffer, timestamp: CMTime, highlightRatio: Double, shadowRatio: Double, shakeLevel: Double) {
-        CVPixelBufferRetain(pixelBuffer)
-
         let candidate = BestShotCandidate(
             pixelBuffer: pixelBuffer,
             timestamp: timestamp,
@@ -32,8 +30,7 @@ final class BestShotBuffer {
 
         candidates.append(candidate)
         while candidates.count > capacity {
-            let removed = candidates.removeFirst()
-            CVPixelBufferRelease(removed.pixelBuffer)
+            candidates.removeFirst()
         }
     }
 
@@ -42,9 +39,6 @@ final class BestShotBuffer {
     }
 
     func removeAll() {
-        for candidate in candidates {
-            CVPixelBufferRelease(candidate.pixelBuffer)
-        }
         candidates.removeAll()
     }
 
