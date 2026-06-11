@@ -1,4 +1,8 @@
 name: VoiceprintNFT Build
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   workflow_dispatch:
   push:
@@ -14,44 +18,81 @@ jobs:
       APP_DIR: ios/VoiceprintInstallation
       SCHEME: VoiceprintNFT
       APP_ID: "6777992670"
+      APP_BUNDLE_ID: com.tokyonasu.voiceprintinstallation
+      PROFILE_NAME: "VoiceprintNFT App Store"
+      BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install tools
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Create signing keychain
+        env:
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
 
       - name: Generate Xcode project
         working-directory: ${{ env.APP_DIR }}
         run: xcodegen generate
 
-      - name: Install Apple certificate
+      - name: Create distribution certificate
+        working-directory: ${{ env.APP_DIR }}
         env:
-          P12_BASE64: ${{ secrets.P12_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
         run: |
-          CERT_PATH=$RUNNER_TEMP/cert.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          echo -n "$P12_BASE64" | base64 --decode -o $CERT_PATH
-          security create-keychain -p "" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "" $KEYCHAIN_PATH
-          security import $CERT_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security set-key-partition-list -S apple-tool:,apple: -k "" $KEYCHAIN_PATH
-          security list-keychains -d user -s $KEYCHAIN_PATH login.keychain-db
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/voiceprint-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/voiceprint-cert.log >> "$GITHUB_ENV"
 
-      - name: Install provisioning profile
+      - name: Prepare provisioning profile
+        working-directory: ${{ env.APP_DIR }}
         env:
-          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+          ASC_P8_PATH: /tmp/asc_key.p8
         run: |
-          PP_PATH=$RUNNER_TEMP/profile.mobileprovision
-          echo -n "$PROVISIONING_PROFILE_BASE64" | base64 --decode -o $PP_PATH
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(security cms -D -i $PP_PATH))
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+          /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:$APP_BUNDLE_ID $PROFILE_NAME" exportOptions.plist
 
       - name: Build archive
         working-directory: ${{ env.APP_DIR }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
         run: |
           xcodebuild archive \
             -project VoiceprintNFT.xcodeproj \
@@ -59,63 +100,68 @@ jobs:
             -configuration Release \
             -archivePath $RUNNER_TEMP/VoiceprintNFT.xcarchive \
             -destination "generic/platform=iOS" \
-            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
-            CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             DEVELOPMENT_TEAM=FHBV2X93N8 \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             -allowProvisioningUpdates
 
       - name: Export IPA
+        working-directory: ${{ env.APP_DIR }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
         run: |
-          cat > $RUNNER_TEMP/export.plist << 'PLIST'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store-connect</string>
-            <key>teamID</key>
-            <string>FHBV2X93N8</string>
-            <key>uploadSymbols</key>
-            <true/>
-            <key>destination</key>
-            <string>upload</string>
-          </dict>
-          </plist>
-          PLIST
           xcodebuild -exportArchive \
             -archivePath $RUNNER_TEMP/VoiceprintNFT.xcarchive \
-            -exportOptionsPlist $RUNNER_TEMP/export.plist \
+            -exportOptionsPlist exportOptions.plist \
             -exportPath $RUNNER_TEMP/export \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             -allowProvisioningUpdates
 
       - name: Upload to App Store Connect
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          ASC_P8_PATH: /tmp/asc_key.p8
         run: |
-          mkdir -p ~/.private_keys
-          echo "$ASC_KEY_CONTENT" > ~/.private_keys/AuthKey_${ASC_KEY_ID}.p8
+          IPA_PATH="$(find "$RUNNER_TEMP/export" -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
           xcrun altool --upload-app \
-            -f "$RUNNER_TEMP/export/VoiceprintNFT.ipa" \
-            -t ios \
-            --apiKey $ASC_KEY_ID \
-            --apiIssuer $ASC_ISSUER_ID
+            --type ios \
+            --file "$IPA_PATH" \
+            --apple-id "$APP_ID" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Wait for TestFlight build processing
+        working-directory: ${{ env.APP_DIR }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_testflight_build.py
 
       - name: Submit for review
+        working-directory: ${{ env.APP_DIR }}
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          ASC_P8_PATH: /tmp/asc_key.p8
         run: |
-          pip3 install pyjwt requests
+          . .venv/bin/activate
           python3 - << 'PYEOF'
           import jwt, time, requests, os
+          from pathlib import Path
 
           key_id = os.environ["ASC_KEY_ID"]
           issuer = os.environ["ASC_ISSUER_ID"]
-          key = os.environ["ASC_KEY_CONTENT"]
-          app_id = "6777992670"
+          key = Path(os.environ["ASC_P8_PATH"]).read_text(encoding="utf-8")
+          app_id = os.environ["APP_ID"]
 
           def token():
               return jwt.encode({"iss": issuer, "iat": int(time.time()), "exp": int(time.time())+1200, "aud": "appstoreconnect-v1"}, key, algorithm="ES256", headers={"kid": key_id})
@@ -130,7 +176,7 @@ jobs:
           # Wait for build processing
           import time as t
           for attempt in range(30):
-              r = api("GET", f"/apps/{app_id}/builds?sort=-uploadedDate&limit=1")
+              r = api("GET", f"/apps/{app_id}/builds?filter[version]={os.environ['BUILD_NUMBER']}&sort=-uploadedDate&limit=1")
               builds = r.json().get("data", [])
               if builds:
                   state = builds[0]["attributes"].get("processingState", "")
@@ -149,7 +195,7 @@ jobs:
               print(f"Version {vid} state: {state}")
               if state in ("PREPARE_FOR_SUBMISSION", "INVALID_BINARY"):
                   # Link build
-                  r2 = api("GET", f"/apps/{app_id}/builds?sort=-uploadedDate&limit=1")
+                  r2 = api("GET", f"/apps/{app_id}/builds?filter[version]={os.environ['BUILD_NUMBER']}&sort=-uploadedDate&limit=1")
                   if r2.json().get("data"):
                       build_id = r2.json()["data"][0]["id"]
                       api("PATCH", f"/appStoreVersions/{vid}", json={"data": {"type": "appStoreVersions", "id": vid, "relationships": {"build": {"data": {"type": "builds", "id": build_id}}}}})
