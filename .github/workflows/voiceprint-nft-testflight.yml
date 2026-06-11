@@ -5,6 +5,15 @@ env:
 
 on:
   workflow_dispatch:
+    inputs:
+      submit_existing_build_number:
+        description: "Build number already uploaded to App Store Connect. Leave blank to build and upload a new IPA."
+        required: false
+        type: string
+      upload_started_at:
+        description: "Optional UTC timestamp for filtering builds, like 2026-06-11T10:42:29Z."
+        required: false
+        type: string
   push:
     paths:
       - 'ios/VoiceprintInstallation/**'
@@ -20,12 +29,15 @@ jobs:
       APP_ID: "6777992670"
       APP_BUNDLE_ID: com.tokyonasu.voiceprintinstallation
       PROFILE_NAME: "VoiceprintNFT App Store"
-      BUILD_NUMBER: ${{ github.run_number }}
+      SUBMIT_EXISTING_BUILD_NUMBER: ${{ inputs.submit_existing_build_number || '' }}
+      UPLOAD_STARTED_AT: ${{ inputs.upload_started_at || '' }}
+      BUILD_NUMBER: ${{ inputs.submit_existing_build_number || github.run_number }}
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Select Xcode
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         run: |
           sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           xcodebuild -version
@@ -33,7 +45,9 @@ jobs:
       - name: Install tools
         working-directory: ${{ env.APP_DIR }}
         run: |
-          brew install xcodegen
+          if [ -z "$SUBMIT_EXISTING_BUILD_NUMBER" ]; then
+            brew install xcodegen
+          fi
           python3 -m venv .venv
           . .venv/bin/activate
           python -m pip install --upgrade pip
@@ -62,6 +76,7 @@ jobs:
           chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
 
       - name: Create signing keychain
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         env:
           KEYCHAIN_PASSWORD: temporary-keychain-password
         run: |
@@ -71,10 +86,12 @@ jobs:
           security set-keychain-settings -lut 21600 build.keychain
 
       - name: Generate Xcode project
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         working-directory: ${{ env.APP_DIR }}
         run: xcodegen generate
 
       - name: Create distribution certificate
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         working-directory: ${{ env.APP_DIR }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -87,6 +104,7 @@ jobs:
           grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/voiceprint-cert.log >> "$GITHUB_ENV"
 
       - name: Prepare provisioning profile
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         working-directory: ${{ env.APP_DIR }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -96,6 +114,7 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:$APP_BUNDLE_ID $PROFILE_NAME" exportOptions.plist
 
       - name: Build archive
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         working-directory: ${{ env.APP_DIR }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -118,6 +137,7 @@ jobs:
             -allowProvisioningUpdates
 
       - name: Export IPA
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         working-directory: ${{ env.APP_DIR }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
@@ -132,6 +152,7 @@ jobs:
             -allowProvisioningUpdates
 
       - name: Upload to App Store Connect
+        if: env.SUBMIT_EXISTING_BUILD_NUMBER == ''
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
