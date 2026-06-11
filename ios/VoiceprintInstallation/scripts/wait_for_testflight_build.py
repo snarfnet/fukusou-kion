@@ -2,7 +2,7 @@
 import os
 import time
 
-from asc_helpers import api_json, fail, query
+from asc_helpers import api_json, fail
 
 
 APP_ID = os.environ["APP_ID"]
@@ -12,15 +12,7 @@ POLL_SECONDS = int(os.environ.get("POLL_SECONDS", "30"))
 
 
 def find_builds():
-    params = query(
-        {
-            "filter[app]": APP_ID,
-            "filter[version]": BUILD_NUMBER,
-            "limit": "10",
-            "sort": "-uploadedDate",
-        }
-    )
-    return api_json("GET", f"/builds?{params}").get("data", [])
+    return api_json("GET", f"/apps/{APP_ID}/builds?sort=-uploadedDate&limit=10").get("data", [])
 
 
 def main():
@@ -30,7 +22,7 @@ def main():
     while time.time() < deadline:
         builds = find_builds()
         if builds:
-            build = builds[0]
+            build = next((item for item in builds if item.get("attributes", {}).get("version") == BUILD_NUMBER), builds[0])
             attrs = build.get("attributes", {})
             state = attrs.get("processingState", "UNKNOWN")
             version = attrs.get("version")
