@@ -1,0 +1,34 @@
+name: VoiceprintNFT
+options:
+  bundleIdPrefix: com.tokyonasu
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "2"
+    SWIFT_VERSION: "5.9"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: FHBV2X93N8
+
+targets:
+  VoiceprintNFT:
+    type: application
+    platform: iOS
+    sources:
+      - path: VoiceprintInstallation
+        excludes:
+          - "**/__pycache__/**"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.voiceprintinstallation
+        INFOPLIST_FILE: VoiceprintInstallation/Info.plist
+        PRODUCT_NAME: VoiceprintNFT
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: VoiceprintInstallation/Info.plist
+      properties:
+        NSMicrophoneUsageDescription: "Voice recording is used to generate unique artwork from your voice characteristics."
+        ITSAppUsesNonExemptEncryption: false

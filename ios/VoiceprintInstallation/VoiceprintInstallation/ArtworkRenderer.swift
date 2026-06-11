@@ -1170,13 +1170,9 @@ struct VoiceArtworkView: View {
             let h = CGFloat(rng.double(in: 2...30) * intensity)
             let offset = CGFloat(rng.double(in: 2...8) * intensity)
 
-            let rRect = CGRect(x: x - offset, y: y, width: w, height: h)
-            let gRect = CGRect(x: x, y: y, width: w, height: h)
-            let bRect = CGRect(x: x + offset, y: y, width: w, height: h)
-
-            context.fill(Path(rRect), with: .color(Color.red.opacity(rng.double(in: 0.06...0.18))))
-            context.fill(Path(gRect), with: .color(Color.green.opacity(rng.double(in: 0.04...0.14))))
-            context.fill(Path(bRect), with: .color(Color.blue.opacity(rng.double(in: 0.06...0.18))))
+            context.fill(Path(CGRect(x: x - offset, y: y, width: w, height: h)), with: .color(Color.red.opacity(rng.double(in: 0.06...0.18))))
+            context.fill(Path(CGRect(x: x, y: y, width: w, height: h)), with: .color(Color.green.opacity(rng.double(in: 0.04...0.14))))
+            context.fill(Path(CGRect(x: x + offset, y: y, width: w, height: h)), with: .color(Color.blue.opacity(rng.double(in: 0.06...0.18))))
         }
 
         let stripCount = 2 + Int(intensity * 5)
@@ -1223,7 +1219,7 @@ struct VoiceArtworkView: View {
         let regionW = CGFloat(rng.double(in: Double(size.width * 0.3)...Double(size.width * 0.7)))
 
         var diag1 = Path()
-        var x = regionX
+        var x: CGFloat = regionX
         while x < regionX + regionW {
             diag1.move(to: CGPoint(x: x, y: regionY))
             diag1.addLine(to: CGPoint(x: x + regionH, y: regionY + regionH))
