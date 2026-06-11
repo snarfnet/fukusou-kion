@@ -19,14 +19,14 @@ REPLACE_DISTRIBUTION_CERTIFICATE = os.environ.get("REPLACE_DISTRIBUTION_CERTIFIC
 REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE = os.environ.get(
     "REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE", ""
 ).lower() in {"1", "true", "yes"}
-WORK_DIR = Path("/tmp/typhoon-watch-signing")
+WORK_DIR = Path("/tmp/mastershot-camera-signing")
 KEY_PATH = WORK_DIR / "distribution.key"
 CSR_PATH = WORK_DIR / "distribution.csr"
 CERT_PATH = WORK_DIR / "distribution.cer"
 INVALID_SERIALS = {
     "797262360B421323CA2A52F022C3F0BF",
 }
-CI_CERT_MARKERS = ("typhoonwatch", "typhoon watch")
+CI_CERT_MARKERS = ("mastershotcamera", "mastershot camera")
 
 
 def run(args):
@@ -47,7 +47,7 @@ def generate_csr():
             "-out",
             str(CSR_PATH),
             "-subj",
-            "/CN=TyphoonWatch CI Distribution/O=TokyoNasu/C=JP",
+            "/CN=MasterShotCamera CI Distribution/O=TokyoNasu/C=JP",
         ]
     )
 
