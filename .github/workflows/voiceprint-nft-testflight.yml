@@ -182,8 +182,8 @@ jobs:
           # Wait for build processing
           import time as t
           for attempt in range(30):
-              r = api("GET", f"/apps/{app_id}/builds?sort=-uploadedDate&limit=10")
-              builds = r.json().get("data", [])
+              r = api("GET", f"/apps/{app_id}/builds?limit=10")
+              builds = sorted(r.json().get("data", []), key=lambda item: item.get("attributes", {}).get("uploadedDate") or "", reverse=True)
               if builds:
                   build = next((item for item in builds if item.get("attributes", {}).get("version") == os.environ["BUILD_NUMBER"]), builds[0])
                   state = build["attributes"].get("processingState", "")
@@ -202,9 +202,9 @@ jobs:
               print(f"Version {vid} state: {state}")
               if state in ("PREPARE_FOR_SUBMISSION", "INVALID_BINARY"):
                   # Link build
-                  r2 = api("GET", f"/apps/{app_id}/builds?sort=-uploadedDate&limit=10")
+                  r2 = api("GET", f"/apps/{app_id}/builds?limit=10")
                   if r2.json().get("data"):
-                      build_items = r2.json()["data"]
+                      build_items = sorted(r2.json()["data"], key=lambda item: item.get("attributes", {}).get("uploadedDate") or "", reverse=True)
                       build = next((item for item in build_items if item.get("attributes", {}).get("version") == os.environ["BUILD_NUMBER"]), build_items[0])
                       build_id = build["id"]
                       api("PATCH", f"/appStoreVersions/{vid}", json={"data": {"type": "appStoreVersions", "id": vid, "relationships": {"build": {"data": {"type": "builds", "id": build_id}}}}})

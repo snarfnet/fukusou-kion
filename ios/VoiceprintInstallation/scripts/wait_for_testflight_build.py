@@ -12,7 +12,8 @@ POLL_SECONDS = int(os.environ.get("POLL_SECONDS", "30"))
 
 
 def find_builds():
-    return api_json("GET", f"/apps/{APP_ID}/builds?sort=-uploadedDate&limit=10").get("data", [])
+    builds = api_json("GET", f"/apps/{APP_ID}/builds?limit=10").get("data", [])
+    return sorted(builds, key=lambda item: item.get("attributes", {}).get("uploadedDate") or "", reverse=True)
 
 
 def main():
