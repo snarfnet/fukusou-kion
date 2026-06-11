@@ -10,6 +10,17 @@ struct VoiceFeatures: Codable {
     var pitchRange: Double
     var rhythmDensity: Double
 
+    var zeroCrossingRate: Double {
+        guard waveform.count > 1 else { return 0 }
+        var crossings = 0
+        for index in 1..<waveform.count {
+            if (waveform[index - 1] < 0 && waveform[index] >= 0) || (waveform[index - 1] >= 0 && waveform[index] < 0) {
+                crossings += 1
+            }
+        }
+        return Double(crossings) / Double(waveform.count - 1)
+    }
+
     static let empty = VoiceFeatures(
         averageEnergy: 0,
         energyCurve: Array(repeating: 0, count: 64),
