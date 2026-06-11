@@ -35,14 +35,14 @@ def main():
             state = attrs.get("processingState", "UNKNOWN")
             version = attrs.get("version")
             uploaded = attrs.get("uploadedDate")
-            print(f"Build found: id={build['id']} version={version} state={state} uploaded={uploaded}")
+            print(f"Build found: id={build['id']} version={version} state={state} uploaded={uploaded}", flush=True)
             if state in {"VALID", "FAILED", "INVALID"}:
                 if state != "VALID":
                     raise RuntimeError(f"Build processing ended with state={state}")
                 return
             last_state = state
         else:
-            print(f"Build {BUILD_NUMBER} is not visible yet.")
+            print(f"Build {BUILD_NUMBER} is not visible yet.", flush=True)
 
         time.sleep(POLL_SECONDS)
 

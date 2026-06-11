@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 90
     env:
       APP_DIR: ios/VoiceprintInstallation
       SCHEME: VoiceprintNFT
@@ -148,7 +148,7 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
-          WAIT_SECONDS: "1800"
+          WAIT_SECONDS: "5400"
           POLL_SECONDS: "30"
         run: |
           . .venv/bin/activate
