@@ -930,6 +930,17 @@ button:focus-visible {
   font-size: 12px;
 }
 
+.install-box .hosting-note {
+  margin-top: 10px;
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--theme), white 78%);
+  border-radius: 6px;
+  color: #334139;
+  background: color-mix(in srgb, var(--theme), white 94%);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
 .addon-head {
   display: flex;
   align-items: center;

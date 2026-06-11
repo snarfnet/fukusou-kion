@@ -916,6 +916,9 @@ export function App() {
         <section className="install-box">
           <h3>インストール用QRコード</h3>
           <p>このQRコードを読むと、お客さん用ページが開きます。</p>
+          <p className="hosting-note">
+            正式公開ではFirebase Hostingにお店ページを置きます。月々500円で、QRから見られるページを公開する想定です。
+          </p>
           <div className="qr-row">
             {qrCode && <img className="qr-image" src={qrCode} alt="お客さん用ページのQRコード" />}
             <code>{publicUrl}</code>
@@ -1141,6 +1144,11 @@ function MarketingSite() {
       answer: "A4チラシ作成、一斉通知、Mac対応をまとめた追加パックです。必要になった段階で足す想定です。",
     },
     {
+      icon: "fa-cloud-arrow-up",
+      question: "月々500円には何が含まれますか？",
+      answer: "お店ページの作成、QRコード、Firebase Hostingでの公開運用を含める想定です。会員管理や予約管理は含めず、静的なお店ページだけを軽く公開します。",
+    },
+    {
       icon: "fa-wand-magic-sparkles",
       question: "お店ごとに見た目は変えられますか？",
       answer: "変えられます。サンプルは出発点です。写真、色、文章、メニュー、アイコン風画像をお店ごとに調整できます。",
@@ -1157,7 +1165,7 @@ function MarketingSite() {
         <div>
           <a href="#value">価格の強み</a>
           <a href="#features">機能</a>
-          <a href="#pricing">プラグイン</a>
+          <a href="#pricing">料金</a>
           <a href="/">管理画面を見る</a>
         </div>
       </nav>
@@ -1176,12 +1184,13 @@ function MarketingSite() {
           </h1>
           <div className="price-punch">
             <span>アプリ開発を外注すると数百万円規模になりがち</span>
-            <strong>まずはお店専用の販促ページを作れます。</strong>
+            <strong>月々なんと500円で、お店専用の販促ページを持てます。</strong>
           </div>
           <div className="hero-mini-points" aria-label="このツールの特徴">
             <span><i className="fa-solid fa-mobile-screen-button" aria-hidden="true" />スマホだけで完結</span>
             <span><i className="fa-solid fa-camera" aria-hidden="true" />写真もその場で設定</span>
             <span><i className="fa-solid fa-qrcode" aria-hidden="true" />QRまで作成</span>
+            <span><i className="fa-solid fa-cloud" aria-hidden="true" />月々500円</span>
           </div>
           <p>
             店名、写真、メニューを入れるだけ。お客さんには「このお店専用のアプリみたい」と見えるページを作れます。
@@ -1210,8 +1219,8 @@ function MarketingSite() {
         <article className="featured-value">
           <i className="fa-solid fa-bolt value-icon" aria-hidden="true" />
           <span>小さなお店の宣伝ツール</span>
-          <strong>2,000円</strong>
-          <p>まずはお店専用ページ、QR、メニュー、告知をまとめて持てます。</p>
+          <strong>月々500円</strong>
+          <p>お店専用ページ、QR、メニュー、告知、Firebase Hostingでの公開までまとめて使えます。</p>
         </article>
         <article>
           <i className="fa-solid fa-store value-icon" aria-hidden="true" />
@@ -1247,7 +1256,7 @@ function MarketingSite() {
       <section className="plain-message">
         <i className="fa-solid fa-lightbulb message-icon" aria-hidden="true" />
         <strong>いきなり数百万円のアプリ開発は重い。まずは低コストで、お店専用ページを持ちましょう。</strong>
-        <p>店主さんは管理画面で編集します。お客さんは、きれいに整ったお店ページだけを見ます。</p>
+        <p>店主さんは管理画面で編集します。Firebase Hostingで公開し、月々500円でQRから見られるお店ページを運用します。</p>
       </section>
 
       <section className="marketing-section" id="features">
@@ -1339,8 +1348,9 @@ function MarketingSite() {
 
       <section className="marketing-section option-section" id="pricing">
         <div className="section-heading">
-          <span><i className="fa-solid fa-puzzle-piece" aria-hidden="true" />プラグインパックも充実</span>
-          <h2>A4チラシ作成、一斉通知、Mac対応の3つセットで1,000円です。</h2>
+          <span><i className="fa-solid fa-yen-sign" aria-hidden="true" />料金の考え方</span>
+          <h2>月々なんと500円。お店ページの作成から公開までまとめます。</h2>
+          <p className="section-lead">Firebase HostingにHTMLページを置き、QRコードからお客さん全員が同じページを見られる形にします。</p>
         </div>
         <div className="option-grid">
           {paidAddOns.map((addon) => (
