@@ -13,9 +13,24 @@ POLL_SECONDS = int(os.environ.get("POLL_SECONDS", "30"))
 MIN_UPLOADED_AT = os.environ.get("UPLOAD_STARTED_AT", "")
 
 
+def describe_builds(builds):
+    rows = []
+    for item in builds[:5]:
+        attrs = item.get("attributes", {})
+        rows.append(
+            "id={id} version={version} state={state} uploaded={uploaded}".format(
+                id=item.get("id", ""),
+                version=attrs.get("version", ""),
+                state=attrs.get("processingState", ""),
+                uploaded=attrs.get("uploadedDate", ""),
+            )
+        )
+    return "; ".join(rows) if rows else "none"
+
+
 def find_builds():
-    builds = api_json("GET", f"/apps/{APP_ID}/builds?limit=10").get("data", [])
-    builds = sorted(builds, key=lambda item: item.get("attributes", {}).get("uploadedDate") or "", reverse=True)
+    raw_builds = api_json("GET", f"/apps/{APP_ID}/builds?limit=10").get("data", [])
+    builds = sorted(raw_builds, key=lambda item: item.get("attributes", {}).get("uploadedDate") or "", reverse=True)
     if MIN_UPLOADED_AT:
         min_dt = datetime.fromisoformat(MIN_UPLOADED_AT.replace("Z", "+00:00"))
         builds = [
@@ -23,6 +38,8 @@ def find_builds():
             if item.get("attributes", {}).get("uploadedDate")
             and datetime.fromisoformat(item["attributes"]["uploadedDate"]).astimezone(min_dt.tzinfo) >= min_dt
         ]
+    if not builds:
+        print(f"Latest ASC builds before filters: {describe_builds(raw_builds)}", flush=True)
     return builds
 
 
