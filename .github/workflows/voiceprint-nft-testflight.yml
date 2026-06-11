@@ -105,7 +105,7 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
-            DEVELOPMENT_TEAM=FHBV2X93N8 \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             -authenticationKeyPath "$ASC_P8_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
