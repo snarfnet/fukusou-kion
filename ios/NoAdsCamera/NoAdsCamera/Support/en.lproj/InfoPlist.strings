@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "MasterShot Camera";
+"NSCameraUsageDescription" = "MasterShot Camera uses the camera to take photos.";
+"NSPhotoLibraryAddUsageDescription" = "MasterShot Camera saves captured photos to your library.";
+"NSMicrophoneUsageDescription" = "MasterShot Camera uses the microphone to trigger shots with sound or voice.";
+"NSSpeechRecognitionUsageDescription" = "MasterShot Camera uses speech recognition to detect voice cues like cheese.";
