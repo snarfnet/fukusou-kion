@@ -26,7 +26,12 @@ struct WebAppView: UIViewRepresentable {
 
         if let indexURL = Bundle.main.url(forResource: "index", withExtension: "html") {
             let resourceURL = Bundle.main.resourceURL ?? indexURL.deletingLastPathComponent()
-            webView.loadFileURL(indexURL, allowingReadAccessTo: resourceURL)
+            do {
+                let html = try String(contentsOf: indexURL, encoding: .utf8)
+                webView.loadHTMLString(html, baseURL: resourceURL)
+            } catch {
+                context.coordinator.showError(error, in: webView)
+            }
         } else {
             webView.loadHTMLString(
                 """
@@ -74,7 +79,7 @@ struct WebAppView: UIViewRepresentable {
             showError(error, in: webView)
         }
 
-        private func showError(_ error: Error, in webView: WKWebView) {
+        func showError(_ error: Error, in webView: WKWebView) {
             let message = error.localizedDescription
                 .replacingOccurrences(of: "&", with: "&amp;")
                 .replacingOccurrences(of: "<", with: "&lt;")
