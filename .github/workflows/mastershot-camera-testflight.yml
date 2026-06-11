@@ -123,6 +123,13 @@ jobs:
         if: ${{ github.event.inputs.register_only == 'true' }}
         run: echo "Registration complete."
 
+      - name: Update App Store Connect app name
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/update_asc_app_name.py
+
       - name: Resolve app bundle
         if: ${{ github.event.inputs.register_only != 'true' }}
         env:
