@@ -29,7 +29,7 @@ def describe_builds(builds):
 
 
 def find_builds():
-    raw_builds = api_json("GET", f"/apps/{APP_ID}/builds?limit=10").get("data", [])
+    raw_builds = api_json("GET", f"/apps/{APP_ID}/builds?limit=200").get("data", [])
     builds = sorted(raw_builds, key=lambda item: item.get("attributes", {}).get("uploadedDate") or "", reverse=True)
     if MIN_UPLOADED_AT:
         min_dt = datetime.fromisoformat(MIN_UPLOADED_AT.replace("Z", "+00:00"))
