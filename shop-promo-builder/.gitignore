@@ -1,3 +1,6 @@
 node_modules/
 dist/
+ios-dist/
+firebase-hosting/
 .npm-cache/
+.firebase/

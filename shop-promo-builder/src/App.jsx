@@ -568,6 +568,24 @@ export function App() {
     URL.revokeObjectURL(url);
   }
 
+  function downloadFirebaseData() {
+    const payload = {
+      stores: [
+        {
+          ...store,
+          exportedAt: new Date().toISOString(),
+        },
+      ],
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${store.slug || "shop"}-firebase-shop-data.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   function showQrCode() {
     if (!qrCode) return;
     if (!canOpenExternalPages) {
@@ -925,6 +943,9 @@ export function App() {
           </div>
           <button className="download-link" type="button" onClick={showQrCode}>
             QRコードを表示・保存
+          </button>
+          <button className="download-link" type="button" onClick={downloadFirebaseData}>
+            Firebase公開用データを保存
           </button>
           <pre>{JSON.stringify(manifestPreview, null, 2)}</pre>
         </section>

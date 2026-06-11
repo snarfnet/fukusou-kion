@@ -1,0 +1,41 @@
+{
+  "stores": [
+    {
+      "name": "雑貨屋みぃ屋",
+      "slug": "miiya-zakka-202606",
+      "subtitle": "暮らしを少し楽しくする小物とギフト",
+      "description": "季節の雑貨、ギフト、ラッピング情報をスマホで見られるお店ページです。",
+      "theme": "#1f5b45",
+      "accent": "#d9704a",
+      "hours": "11:00-18:00 / 水曜休み",
+      "address": "東京都サンプル区1-2-3",
+      "reserveUrl": "",
+      "instagram": "@miiya_zakka",
+      "productLabel": "おすすめ商品",
+      "productNavLabel": "商品",
+      "reservationLabel": "予約する",
+      "coupon": "ギフトラッピング無料",
+      "couponLimit": "今月末まで",
+      "showCampaign": true,
+      "news": [
+        "春色のポーチとハンカチが入荷しました",
+        "ギフトラッピング無料キャンペーン中"
+      ],
+      "productItems": [
+        "季節のハンカチ",
+        "小さなギフトセット",
+        "アロマ雑貨"
+      ],
+      "hero": "",
+      "campaign": "",
+      "icon": "",
+      "enabledFeatures": {
+        "products": true,
+        "reservation": false,
+        "coupon": true,
+        "access": true,
+        "news": true
+      }
+    }
+  ]
+}

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
+    "build:hosting": "node scripts/build-firebase-hosting.mjs",
+    "firebase:deploy": "npm run build:hosting && firebase deploy --only hosting",
     "build:ios-bundle": "node scripts/build-ios-bundle.mjs",
     "preview": "vite preview --host 127.0.0.1"
   },
