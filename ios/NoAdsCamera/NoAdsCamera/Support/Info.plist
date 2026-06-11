@@ -6,6 +6,8 @@
 	<string>MasterShot Camera</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>写真を撮影するためにカメラを使います。</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
