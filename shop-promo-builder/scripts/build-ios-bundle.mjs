@@ -11,6 +11,8 @@ await build({
   bundle: true,
   format: "iife",
   platform: "browser",
+  jsx: "automatic",
+  jsxImportSource: "react",
   target: ["ios17"],
   outdir,
   entryNames: "main-ios",
