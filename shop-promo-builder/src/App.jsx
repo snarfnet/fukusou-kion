@@ -311,6 +311,9 @@ export function App() {
   const [saveStatus, setSaveStatus] = useState("未保存");
   const [imageStatus, setImageStatus] = useState("");
   const [notificationStatus, setNotificationStatus] = useState("未設定");
+  const [customerPreviewOpen, setCustomerPreviewOpen] = useState(false);
+  const [exportPanel, setExportPanel] = useState(null);
+  const canOpenExternalPages = ["http:", "https:"].includes(window.location.protocol);
 
   const publicUrl = useMemo(() => {
     const slug = store.slug || "komorebi-cafe";
@@ -443,11 +446,14 @@ export function App() {
   }
 
   function openCustomerApp() {
+    if (!canOpenExternalPages) {
+      setCustomerPreviewOpen(true);
+      return;
+    }
     window.open(publicUrl, "_blank", "noopener,noreferrer");
   }
 
-
-  function openFlyer() {
+  function createFlyerHtml() {
     const campaignMarkup = store.enabledFeatures.coupon && store.showCampaign
       ? `<section class="flyer-campaign"><img src="${store.campaign}" alt=""><div><strong>${store.coupon}</strong><span>${store.couponLimit}</span></div></section>`
       : "";
@@ -479,14 +485,28 @@ export function App() {
   </main>
 </body>
 </html>`;
+    return html;
+  }
+
+  function openFlyer() {
+    const html = createFlyerHtml();
+    if (!canOpenExternalPages) {
+      setExportPanel({
+        type: "iframe",
+        title: "A4チラシプレビュー",
+        note: "iPhoneアプリ内では別タブを開かず、この画面で確認します。印刷やPDF保存はWeb版で使う想定です。",
+        html,
+      });
+      return;
+    }
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
     window.setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
 
-  function exportHtml() {
-    const html = `<!doctype html>
+  function createCustomerHtml() {
+    return `<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
@@ -507,6 +527,19 @@ export function App() {
   <main><p>${store.description}</p>${store.enabledFeatures.coupon ? `<section class="coupon"><h2>${store.coupon}</h2><p>${store.couponLimit}</p></section>` : ""}<p>${store.hours}</p><p>${store.address}</p>${store.enabledFeatures.reservation ? `<a href="${store.reserveUrl}">${store.reservationLabel}</a>` : ""}</main>
 </body>
 </html>`;
+  }
+
+  function exportHtml() {
+    const html = createCustomerHtml();
+    if (!canOpenExternalPages) {
+      setExportPanel({
+        type: "code",
+        title: "HTML書き出し",
+        note: "iPhoneアプリ内ではファイル保存ではなく、HTMLを表示します。Web版ではHTMLファイルとして保存できます。",
+        html,
+      });
+      return;
+    }
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
@@ -516,13 +549,36 @@ export function App() {
     URL.revokeObjectURL(url);
   }
 
+  function showQrCode() {
+    if (!qrCode) return;
+    if (!canOpenExternalPages) {
+      setExportPanel({
+        type: "image",
+        title: "QRコード",
+        note: "iPhoneアプリ内では画像を長押しして保存してください。Web版ではPNGとして保存できます。",
+        image: qrCode,
+      });
+      return;
+    }
+    const anchor = document.createElement("a");
+    anchor.href = qrCode;
+    anchor.download = `${store.slug || "shop"}-qr.png`;
+    anchor.click();
+  }
+
   if (isLandingRoute) {
     return <MarketingSite />;
   }
 
-  if (isCustomerRoute) {
+  if (isCustomerRoute || customerPreviewOpen) {
     return (
       <main className="customer-shell" style={{ "--theme": store.theme, "--accent": store.accent }}>
+        {customerPreviewOpen && (
+          <button className="back-admin-button" onClick={() => setCustomerPreviewOpen(false)}>
+            <i className="fa-solid fa-arrow-left" aria-hidden="true" />
+            管理画面に戻る
+          </button>
+        )}
         <PhonePreview store={store} customerOnly />
         <section className="customer-install">
           <img src={store.icon} alt="" />
@@ -788,9 +844,9 @@ export function App() {
             {qrCode && <img className="qr-image" src={qrCode} alt="お客さん用ページのQRコード" />}
             <code>{publicUrl}</code>
           </div>
-          <a className="download-link" href={qrCode} download={`${store.slug || "shop"}-qr.png`}>
-            QRコードをダウンロード
-          </a>
+          <button className="download-link" type="button" onClick={showQrCode}>
+            QRコードを表示・保存
+          </button>
           <pre>{JSON.stringify(manifestPreview, null, 2)}</pre>
         </section>
 
@@ -813,7 +869,58 @@ export function App() {
           </div>
         </section>
       </aside>
+      {exportPanel && <ExportPanel panel={exportPanel} onClose={() => setExportPanel(null)} />}
     </main>
+  );
+}
+
+function ExportPanel({ panel, onClose }) {
+  const [copyStatus, setCopyStatus] = useState("");
+
+  async function copyHtml() {
+    if (!panel.html) return;
+    try {
+      await navigator.clipboard.writeText(panel.html);
+      setCopyStatus("コピーしました");
+    } catch {
+      setCopyStatus("コピーできない場合は、下のHTMLを選択してコピーしてください");
+    }
+  }
+
+  return (
+    <div className="export-overlay" role="dialog" aria-modal="true" aria-label={panel.title}>
+      <section className="export-panel">
+        <header>
+          <div>
+            <h2>{panel.title}</h2>
+            <p>{panel.note}</p>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} title="閉じる">
+            <i className="fa-solid fa-xmark" aria-hidden="true" />
+          </button>
+        </header>
+
+        {panel.type === "iframe" && <iframe className="export-frame" title={panel.title} srcDoc={panel.html} />}
+
+        {panel.type === "code" && (
+          <>
+            <div className="export-actions">
+              <button className="primary-button inline" type="button" onClick={copyHtml}>
+                HTMLをコピー
+              </button>
+              <span>{copyStatus}</span>
+            </div>
+            <textarea className="export-code" readOnly value={panel.html} />
+          </>
+        )}
+
+        {panel.type === "image" && (
+          <div className="export-image-wrap">
+            <img src={panel.image} alt="QRコード" />
+          </div>
+        )}
+      </section>
+    </div>
   );
 }
 
