@@ -215,8 +215,9 @@ jobs:
               payload = {"data": {"type": "appStoreVersionSubmissions", "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}}}}
               response = api("POST", "/appStoreVersionSubmissions", json=payload)
               if response.status_code == 403 and "Allowed operation is: DELETE" in response.text:
-                  existing = api("GET", f"/appStoreVersions/{version_id}/appStoreVersionSubmission")
-                  existing_data = existing.json().get("data") if existing.status_code == 200 else None
+                  existing = api("GET", f"/appStoreVersionSubmissions?filter[appStoreVersion]={version_id}")
+                  existing_items = existing.json().get("data", []) if existing.status_code == 200 else []
+                  existing_data = existing_items[0] if existing_items else None
                   if existing_data:
                       require_ok(api("DELETE", f"/appStoreVersionSubmissions/{existing_data['id']}"))
                       response = api("POST", "/appStoreVersionSubmissions", json=payload)
