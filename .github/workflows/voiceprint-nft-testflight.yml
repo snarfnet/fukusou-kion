@@ -213,14 +213,18 @@ jobs:
 
           def submit_version(version_id):
               existing = require_ok(api("GET", f"/reviewSubmissions?filter[app]={app_id}&filter[platform]=IOS&filter[state]=READY_FOR_REVIEW,UNRESOLVED_ISSUES&limit=10")).json().get("data", [])
+              item_payload = None
               if existing:
                   submission_id = existing[0]["id"]
+                  item_payload = {"data": {"type": "reviewSubmissionItems", "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}}, "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}}}}
               else:
                   payload = {"data": {"type": "reviewSubmissions", "attributes": {"platform": "IOS"}, "relationships": {"app": {"data": {"type": "apps", "id": app_id}}, "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}}}}}
                   submission_id = require_ok(api("POST", "/reviewSubmissions", json=payload)).json()["data"]["id"]
                   item_payload = {"data": {"type": "reviewSubmissionItems", "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}}, "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}}}}
-                  require_ok(api("POST", "/reviewSubmissionItems", json=item_payload))
-              submit_payload = {"data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}, "relationships": {"appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}}}}}
+              item_response = api("POST", "/reviewSubmissionItems", json=item_payload)
+              if item_response.status_code not in (200, 201, 409):
+                  require_ok(item_response)
+              submit_payload = {"data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}}
               require_ok(api("PATCH", f"/reviewSubmissions/{submission_id}", json=submit_payload))
 
           # Wait for build processing
