@@ -9,6 +9,7 @@ APP_ID = os.environ["APP_ID"]
 BUILD_NUMBER = os.environ["BUILD_NUMBER"]
 WAIT_SECONDS = int(os.environ.get("WAIT_SECONDS", "1800"))
 POLL_SECONDS = int(os.environ.get("POLL_SECONDS", "30"))
+ALLOW_TIMEOUT_SUCCESS = os.environ.get("ALLOW_PROCESSING_TIMEOUT_SUCCESS", "1") == "1"
 
 
 def find_builds():
@@ -45,6 +46,13 @@ def main():
             print(f"Build {BUILD_NUMBER} is not visible yet.")
 
         time.sleep(POLL_SECONDS)
+
+    if ALLOW_TIMEOUT_SUCCESS:
+        print(
+            f"Timed out waiting for TestFlight build {BUILD_NUMBER}. "
+            f"Last state: {last_state}. Upload already succeeded; leaving processing to App Store Connect."
+        )
+        return
 
     raise RuntimeError(f"Timed out waiting for TestFlight build {BUILD_NUMBER}. Last state: {last_state}")
 
