@@ -40,13 +40,13 @@ jobs:
         working-directory: shop-promo-builder
         run: |
           npm ci
-          npm run build
+          npm run build:ios-bundle
 
       - name: Copy web app into iOS bundle
         run: |
           rm -rf ios/ShopPromoBuilder/ShopPromoBuilder/WebApp
           mkdir -p ios/ShopPromoBuilder/ShopPromoBuilder/WebApp
-          cp -R shop-promo-builder/dist/. ios/ShopPromoBuilder/ShopPromoBuilder/WebApp/
+          cp -R shop-promo-builder/ios-dist/. ios/ShopPromoBuilder/ShopPromoBuilder/WebApp/
 
       - name: Install tools
         working-directory: ios/ShopPromoBuilder
