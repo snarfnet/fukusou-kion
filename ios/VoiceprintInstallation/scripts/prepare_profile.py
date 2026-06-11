@@ -2,6 +2,8 @@
 import base64
 import hashlib
 import os
+import plistlib
+import subprocess
 from pathlib import Path
 
 from asc_helpers import api_json, decode_profile, fail
@@ -83,7 +85,16 @@ def main():
         raise RuntimeError("Provisioning profile was created, but profileContent was empty.")
 
     PROFILE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PROFILE_PATH.write_bytes(decode_profile(content))
+    profile_bytes = decode_profile(content)
+    PROFILE_PATH.write_bytes(profile_bytes)
+    decoded = subprocess.check_output(["security", "cms", "-D", "-i", str(PROFILE_PATH)])
+    profile_plist = plistlib.loads(decoded)
+    uuid = profile_plist.get("UUID")
+    if uuid:
+        uuid_path = PROFILE_PATH.parent / f"{uuid}.mobileprovision"
+        uuid_path.write_bytes(profile_bytes)
+        print(f"PROFILE_UUID={uuid}")
+        print(uuid_path)
     print(PROFILE_PATH)
 
 
