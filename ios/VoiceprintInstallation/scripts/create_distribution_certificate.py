@@ -58,6 +58,18 @@ def create_certificate():
     raise RuntimeError(last_error)
 
 
+def replace_current_certificates():
+    deleted = False
+    for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
+        certificates = api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", [])
+        for certificate in certificates:
+            print(f"Deleting existing certificate: {certificate['id']} ({cert_type})")
+            api_json("DELETE", f"/certificates/{certificate['id']}")
+            deleted = True
+    if not deleted:
+        print("No existing distribution certificate found to delete.")
+
+
 def import_certificate(certificate):
     content = certificate.get("attributes", {}).get("certificateContent")
     if not content:
@@ -76,6 +88,8 @@ def import_certificate(certificate):
 
 def main():
     generate_csr()
+    if os.environ.get("REPLACE_CURRENT_DISTRIBUTION", "") == "1":
+        replace_current_certificates()
     certificate = create_certificate()
     import_certificate(certificate)
 

@@ -75,6 +75,7 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
+          REPLACE_CURRENT_DISTRIBUTION: "1"
         run: |
           . .venv/bin/activate
           python scripts/create_distribution_certificate.py | tee /tmp/voiceprint-cert.log
