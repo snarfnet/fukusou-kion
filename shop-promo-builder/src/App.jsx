@@ -313,7 +313,9 @@ export function App() {
   const [notificationStatus, setNotificationStatus] = useState("未設定");
   const [customerPreviewOpen, setCustomerPreviewOpen] = useState(false);
   const [exportPanel, setExportPanel] = useState(null);
+  const [activeNav, setActiveNav] = useState(2);
   const canOpenExternalPages = ["http:", "https:"].includes(window.location.protocol);
+  const navTabTargets = [null, tabs[0], tabs[1], tabs[3], tabs[2], tabs[2], tabs[4]];
 
   const publicUrl = useMemo(() => {
     const slug = store.slug || "komorebi-cafe";
@@ -408,6 +410,21 @@ export function App() {
   function saveSettings() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
     setSaveStatus("保存しました");
+  }
+
+  function showMessage(title, note) {
+    setExportPanel({ type: "message", title, note });
+  }
+
+  function handleNavClick(index, label) {
+    setActiveNav(index);
+    const targetTab = navTabTargets[index];
+    if (targetTab) {
+      setActiveTab(targetTab);
+      setSaveStatus(`${label}を表示しました`);
+      return;
+    }
+    showMessage("ダッシュボード", "現在はデザイン編集を中心にしたテスト版です。保存状態、プレビュー、QRコードはこの画面で確認できます。");
   }
 
   function resetSettings() {
@@ -566,6 +583,28 @@ export function App() {
     anchor.click();
   }
 
+  function handlePreviewAction(key) {
+    const labels = {
+      home: "ホーム",
+      news: "お知らせ",
+      products: store.productNavLabel || "商品・メニュー",
+      reservation: store.reservationLabel || "予約",
+      coupon: "クーポン",
+      stamp: "スタンプ",
+      access: "アクセス",
+    };
+    const details = {
+      home: "お客さん用ページのトップへ戻るボタンです。",
+      news: "登録したお知らせを一覧で見せる場所です。",
+      products: `${store.productLabel}を見せる場所です。`,
+      reservation: store.reserveUrl ? `${store.reserveUrl} へ案内する想定です。` : "予約URLを入れると、予約ページへの案内に使えます。",
+      coupon: `${store.coupon} を見せる場所です。`,
+      stamp: "来店スタンプなどを後から追加できる想定の枠です。",
+      access: `${store.address} など、お店への案内を見せる場所です。`,
+    };
+    showMessage(labels[key] || "プレビュー", details[key] || "このボタンはお客さん用ページの動作サンプルです。");
+  }
+
   if (isLandingRoute) {
     return <MarketingSite />;
   }
@@ -579,7 +618,7 @@ export function App() {
             管理画面に戻る
           </button>
         )}
-        <PhonePreview store={store} customerOnly />
+        <PhonePreview store={store} customerOnly onAction={handlePreviewAction} />
         <section className="customer-install">
           <img src={store.icon} alt="" />
           <div>
@@ -591,6 +630,7 @@ export function App() {
             <small>{notificationStatus}</small>
           </div>
         </section>
+        {exportPanel && <ExportPanel panel={exportPanel} onClose={() => setExportPanel(null)} />}
       </main>
     );
   }
@@ -608,7 +648,7 @@ export function App() {
 
         <nav>
           {navItems.map(([icon, label], index) => (
-            <button className={index === 2 ? "nav-active" : ""} key={label}>
+            <button className={index === activeNav ? "nav-active" : ""} key={label} onClick={() => handleNavClick(index, label)}>
               <i className={`fa-solid ${icon}`} aria-hidden="true" />
               {label}
             </button>
@@ -645,10 +685,10 @@ export function App() {
             <p>編集した内容を保存し、お客さん用のお店ページと実QRコードを作れます。</p>
           </div>
           <div className="top-actions">
-            <button title="ヘルプ">
+            <button title="ヘルプ" onClick={() => showMessage("ヘルプ", "左のメニューや上のタブから編集項目を切り替えます。保存後、お客さん用ページ、A4チラシ、QRコードを確認できます。")}>
               <i className="fa-regular fa-circle-question" aria-hidden="true" />
             </button>
-            <button title="通知">
+            <button title="通知" onClick={() => showMessage("通知", "一斉通知は追加パック向けの機能です。このテスト版では通知の見せ方だけ確認できます。")}>
               <i className="fa-regular fa-bell" aria-hidden="true" />
               <span>3</span>
             </button>
@@ -658,7 +698,14 @@ export function App() {
 
         <div className="tabs" role="tablist" aria-label="設定カテゴリ">
           {tabs.map((tab) => (
-            <button className={tab === activeTab ? "tab-active" : ""} key={tab} onClick={() => setActiveTab(tab)}>
+            <button
+              className={tab === activeTab ? "tab-active" : ""}
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                setSaveStatus(`${tab}を表示しました`);
+              }}
+            >
               {tab}
             </button>
           ))}
@@ -836,7 +883,7 @@ export function App() {
             お客さん用ページ
           </button>
         </div>
-        <PhonePreview store={store} />
+        <PhonePreview store={store} onAction={handlePreviewAction} />
         <section className="install-box">
           <h3>インストール用QRコード</h3>
           <p>このQRコードを読むと、お客さん用ページが開きます。</p>
@@ -917,6 +964,13 @@ function ExportPanel({ panel, onClose }) {
         {panel.type === "image" && (
           <div className="export-image-wrap">
             <img src={panel.image} alt="QRコード" />
+          </div>
+        )}
+
+        {panel.type === "message" && (
+          <div className="export-message">
+            <i className="fa-solid fa-circle-info" aria-hidden="true" />
+            <p>{panel.note}</p>
           </div>
         )}
       </section>
@@ -1327,7 +1381,7 @@ function MarketingPhoneMock() {
   );
 }
 
-function PhonePreview({ store, customerOnly = false }) {
+function PhonePreview({ store, customerOnly = false, onAction = () => {} }) {
   const visibleFeatures = featureOptions.filter((feature) => store.enabledFeatures[feature.key]);
   const bottomItems = [
     { key: "home", icon: "fa-house", label: "ホーム" },
@@ -1358,7 +1412,7 @@ function PhonePreview({ store, customerOnly = false }) {
         )}
         <div className="quick-grid">
           {visibleFeatures.map((feature) => (
-            <button key={feature.key}>
+            <button key={feature.key} onClick={() => onAction(feature.key)}>
               <i className={`fa-solid ${feature.icon}`} aria-hidden="true" />
               {feature.key === "reservation" ? store.reservationLabel : feature.key === "products" ? store.productNavLabel : feature.shortLabel}
             </button>
@@ -1368,7 +1422,7 @@ function PhonePreview({ store, customerOnly = false }) {
           <section className="app-news">
             <div className="section-title">
               <h3>お知らせ</h3>
-              <a>一覧へ</a>
+              <button type="button" onClick={() => onAction("news")}>一覧へ</button>
             </div>
             {(store.news || []).map((news, index) => (
               <article key={news}>
@@ -1384,7 +1438,7 @@ function PhonePreview({ store, customerOnly = false }) {
           <section className="product-strip">
             <div className="section-title">
               <h3>{store.productLabel}</h3>
-              <a>もっと見る</a>
+              <button type="button" onClick={() => onAction("products")}>もっと見る</button>
             </div>
             <div>
               <article>
@@ -1413,7 +1467,7 @@ function PhonePreview({ store, customerOnly = false }) {
         </section>
         <nav className="bottom-nav">
           {bottomItems.map((item, index) => (
-            <button className={index === 0 ? "current" : ""} key={item.key}>
+            <button className={index === 0 ? "current" : ""} key={item.key} onClick={() => onAction(item.key)}>
               <i className={`fa-solid ${item.icon}`} aria-hidden="true" />
               {item.key === "reservation" ? store.reservationLabel.replace("する", "") : item.shortLabel || item.label}
             </button>
