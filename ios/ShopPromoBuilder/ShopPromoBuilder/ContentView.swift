@@ -17,24 +17,6 @@ struct WebAppView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
-        configuration.userContentController.addUserScript(WKUserScript(
-            source: """
-            (function () {
-              function show(message) {
-                document.documentElement.style.background = '#fbfaf6';
-                document.body.innerHTML = '<main style="font-family:-apple-system;padding:24px;background:#fbfaf6;color:#14231b;"><h1 style="font-size:22px;">画面の表示に失敗しました</h1><p style="line-height:1.7;">アプリ内ページのJavaScriptでエラーが起きました。</p><pre style="white-space:pre-wrap;background:#fff;padding:14px;border-radius:8px;">' + String(message).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }) + '</pre></main>';
-              }
-              window.addEventListener('error', function (event) {
-                show(event.message || 'JavaScript error');
-              });
-              window.addEventListener('unhandledrejection', function (event) {
-                show(event.reason && (event.reason.stack || event.reason.message) || event.reason || 'Unhandled promise rejection');
-              });
-            })();
-            """,
-            injectionTime: .atDocumentStart,
-            forMainFrameOnly: true
-        ))
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator

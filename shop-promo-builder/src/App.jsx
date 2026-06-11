@@ -347,7 +347,7 @@ export function App() {
   }, [isCustomerRoute, isLandingRoute, store.name, store.theme]);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    if (["http:", "https:"].includes(window.location.protocol) && "serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }, []);
