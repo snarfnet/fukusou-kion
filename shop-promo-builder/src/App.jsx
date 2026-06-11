@@ -31,6 +31,8 @@ const navItems = [
   ["fa-download", "インストール促進"],
 ];
 
+const toggleText = (value) => (value ? "ON" : "OFF");
+
 const featureOptions = [
   { key: "news", icon: "fa-bell", label: "お知らせ", shortLabel: "お知らせ" },
   { key: "products", icon: "fa-bag-shopping", label: "商品・メニュー", shortLabel: "商品" },
@@ -551,8 +553,8 @@ export function App() {
     if (!canOpenExternalPages) {
       setExportPanel({
         type: "code",
-        title: "HTML書き出し",
-        note: "iPhoneアプリ内ではファイル保存ではなく、HTMLを表示します。Web版ではHTMLファイルとして保存できます。",
+        title: "お客さん用ページの保存データ",
+        note: "お客さん用ページを別の場所で開きたい時に使う保存用データです。通常のテストでは使わなくても大丈夫です。",
         html,
       });
       return;
@@ -646,15 +648,6 @@ export function App() {
           </div>
         </div>
 
-        <nav>
-          {navItems.map(([icon, label], index) => (
-            <button className={index === activeNav ? "nav-active" : ""} key={label} onClick={() => handleNavClick(index, label)}>
-              <i className={`fa-solid ${icon}`} aria-hidden="true" />
-              {label}
-            </button>
-          ))}
-        </nav>
-
         <section className="publish-box">
           <p>
             <span className={store.publish ? "dot on" : "dot"} />
@@ -672,13 +665,22 @@ export function App() {
             A4チラシを作る
             <i className="fa-solid fa-print" aria-hidden="true" />
           </button>
-          <button className="primary-button" onClick={exportHtml}>
-            HTMLを書き出す
+          <button className="ghost-button" onClick={exportHtml}>
+            ページ保存データを見る
           </button>
         </section>
       </aside>
 
       <section className="workspace">
+        <nav className="compact-nav" aria-label="管理メニュー">
+          {navItems.map(([icon, label], index) => (
+            <button className={index === activeNav ? "nav-active" : ""} key={label} onClick={() => handleNavClick(index, label)}>
+              <i className={`fa-solid ${icon}`} aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+
         <header className="topbar">
           <div>
             <h1>デザイン設定</h1>
@@ -798,6 +800,7 @@ export function App() {
                 <span>
                   <i className="fa-solid fa-image" aria-hidden="true" />
                   キャンペーン画像を表示
+                  <em>{toggleText(store.showCampaign)}</em>
                 </span>
               </label>
               {store.showCampaign && (
@@ -826,6 +829,7 @@ export function App() {
                   <span>
                     <i className={`fa-solid ${feature.icon}`} aria-hidden="true" />
                     {feature.label}
+                    <em>{toggleText(store.enabledFeatures[feature.key])}</em>
                   </span>
                 </label>
               ))}
@@ -834,11 +838,36 @@ export function App() {
 
           <FormRow label="リンク・表示名">
             <div className="two-col">
-              <input value={store.productLabel} onChange={(event) => updateField("productLabel", event.target.value)} />
-              <input value={store.productNavLabel} onChange={(event) => updateField("productNavLabel", event.target.value)} />
-              <input value={store.reservationLabel} onChange={(event) => updateField("reservationLabel", event.target.value)} />
-              <input value={store.reserveUrl} onChange={(event) => updateField("reserveUrl", event.target.value)} />
-              <input value={store.instagram} onChange={(event) => updateField("instagram", event.target.value)} />
+              <label className="field-control">
+                <span>メニュー見出し</span>
+                <input value={store.productLabel} onChange={(event) => updateField("productLabel", event.target.value)} />
+              </label>
+              <label className="field-control">
+                <span>ボタン表示名</span>
+                <input value={store.productNavLabel} onChange={(event) => updateField("productNavLabel", event.target.value)} />
+              </label>
+              <label className="field-control">
+                <span>予約ボタン名</span>
+                <input value={store.reservationLabel} onChange={(event) => updateField("reservationLabel", event.target.value)} />
+              </label>
+              <label className="field-control">
+                <span>予約ページURL</span>
+                <input
+                  value={store.reserveUrl}
+                  placeholder="例：https://beauty.hotpepper.jp/... / LINE予約 / Googleフォーム"
+                  onChange={(event) => updateField("reserveUrl", event.target.value)}
+                />
+                <small>予約ボタンを押した時に開くページです。ホットペッパー、LINE予約、Googleフォームなどを入れます。</small>
+              </label>
+              <label className="field-control">
+                <span>SNS表示名</span>
+                <input
+                  value={store.instagram}
+                  placeholder="例：@komorebi_cafe / @luce_nail"
+                  onChange={(event) => updateField("instagram", event.target.value)}
+                />
+                <small>Instagramなどのアカウント名を表示します。</small>
+              </label>
             </div>
           </FormRow>
 

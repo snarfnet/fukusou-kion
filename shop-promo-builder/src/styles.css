@@ -35,7 +35,7 @@ button {
 
 .shell {
   display: grid;
-  grid-template-columns: 250px minmax(560px, 1fr) 420px;
+  grid-template-columns: 190px minmax(560px, 1fr) 420px;
   min-height: 100vh;
 }
 
@@ -45,7 +45,7 @@ button {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 18px 14px;
+  padding: 16px 12px;
   border-right: 1px solid #e6e0d6;
   background: rgba(252, 250, 245, .88);
   backdrop-filter: blur(18px);
@@ -55,7 +55,7 @@ button {
   display: flex;
   gap: 12px;
   align-items: center;
-  padding: 0 6px 22px;
+  padding: 0 4px 14px;
 }
 
 .brand img {
@@ -78,46 +78,50 @@ button {
   font-size: 12px;
 }
 
-.sidebar nav {
+.compact-nav {
   display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
+  margin-bottom: 18px;
 }
 
-.sidebar nav button {
+.compact-nav button {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 4px;
   width: 100%;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 0;
+  min-height: 50px;
+  padding: 6px 8px;
+  border: 1px solid #e0d8cc;
   border-radius: 7px;
   color: #222520;
-  background: transparent;
-  font-size: 14px;
+  background: #fff;
+  font-size: 11px;
   font-weight: 700;
-  text-align: left;
-}
-
-.sidebar nav i {
-  width: 18px;
-  color: #38423c;
   text-align: center;
 }
 
-.sidebar nav .nav-active {
+.compact-nav i {
+  color: #38423c;
+  font-size: 15px;
+}
+
+.compact-nav .nav-active {
+  border-color: var(--theme);
   color: #fff;
   background: var(--theme);
   box-shadow: 0 10px 26px rgba(31, 91, 69, .18);
 }
 
-.sidebar nav .nav-active i {
+.compact-nav .nav-active i {
   color: #fff;
 }
 
 .publish-box {
   margin-top: auto;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid #e8dfce;
   border-radius: 8px;
   background: #fffdf8;
@@ -189,7 +193,7 @@ button {
 }
 
 .workspace {
-  padding: 28px 24px 42px;
+  padding: 18px 24px 42px;
 }
 
 .topbar {
@@ -418,6 +422,27 @@ button:focus-visible {
   gap: 12px;
 }
 
+.field-control {
+  display: grid;
+  gap: 6px;
+}
+
+.field-control span {
+  color: #53584f;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.field-control small {
+  color: #7a756c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.field-control input::placeholder {
+  color: #aaa49a;
+}
+
 .preset-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
@@ -469,6 +494,18 @@ button:focus-visible {
   font-weight: 800;
 }
 
+.feature-toggle span em {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #7a756c;
+  background: #eee8df;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
 .feature-toggle i {
   color: #566159;
 }
@@ -477,6 +514,11 @@ button:focus-visible {
   border-color: color-mix(in srgb, var(--theme), transparent 38%);
   color: var(--theme);
   background: color-mix(in srgb, var(--theme), white 91%);
+}
+
+.feature-toggle input:checked + span em {
+  color: #fff;
+  background: var(--theme);
 }
 
 .feature-toggle input:checked + span i {
@@ -490,7 +532,7 @@ button:focus-visible {
 
 .feature-toggle.compact span {
   width: fit-content;
-  min-width: 220px;
+  min-width: 260px;
 }
 
 .slug-row {
@@ -2162,7 +2204,7 @@ button:focus-visible {
 
 @media (max-width: 1180px) {
   .shell {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 170px 1fr;
   }
 
   .preview-pane {
@@ -2190,17 +2232,41 @@ button:focus-visible {
 
 @media (max-width: 760px) {
   .shell {
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
 
   .sidebar {
+    order: 3;
     position: static;
     height: auto;
+    border-top: 1px solid #e6e0d6;
+    border-right: 0;
+  }
+
+  .workspace {
+    order: 1;
+  }
+
+  .preview-pane {
+    order: 2;
   }
 
   .workspace,
   .preview-pane {
     padding: 20px 14px;
+  }
+
+  .compact-nav {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+  }
+
+  .compact-nav button {
+    flex: 0 0 92px;
+    scroll-snap-align: start;
   }
 
   .topbar,
