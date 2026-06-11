@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.mastershotcamera")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "MasterShotCamera")
-APP_NAME = os.environ.get("APP_NAME", "神撮りプロ")
+APP_NAME = os.environ.get("APP_NAME", "OAHSPE:α78")
 APP_SKU = os.environ.get("APP_SKU", "mastershot-camera-ios")
 
 

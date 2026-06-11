@@ -21,7 +21,7 @@ targets:
     info:
       path: NoAdsCamera/Support/Info.plist
       properties:
-        CFBundleDisplayName: MasterShot Camera
+        CFBundleDisplayName: "OAHSPE:α78"
         CFBundleDevelopmentRegion: en
         CFBundleIconName: AppIcon
         ITSAppUsesNonExemptEncryption: false

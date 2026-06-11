@@ -1,5 +1,5 @@
-"CFBundleDisplayName" = "MasterShot Camera";
-"NSCameraUsageDescription" = "MasterShot Camera uses the camera to take photos.";
-"NSPhotoLibraryAddUsageDescription" = "MasterShot Camera saves captured photos to your library.";
-"NSMicrophoneUsageDescription" = "MasterShot Camera uses the microphone to trigger shots with sound or voice.";
-"NSSpeechRecognitionUsageDescription" = "MasterShot Camera uses speech recognition to detect voice cues like cheese.";
+"CFBundleDisplayName" = "OAHSPE:α78";
+"NSCameraUsageDescription" = "OAHSPE:α78 uses the camera to take photos.";
+"NSPhotoLibraryAddUsageDescription" = "OAHSPE:α78 saves captured photos to your library.";
+"NSMicrophoneUsageDescription" = "OAHSPE:α78 uses the microphone to trigger shots with sound or voice.";
+"NSSpeechRecognitionUsageDescription" = "OAHSPE:α78 uses speech recognition to detect voice cues like cheese.";

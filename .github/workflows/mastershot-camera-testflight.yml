@@ -1,4 +1,4 @@
-name: MasterShot Camera TestFlight
+name: OAHSPE Alpha78 TestFlight
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -34,7 +34,7 @@ jobs:
         working-directory: ios/NoAdsCamera
     env:
       APP_BUNDLE_ID: com.tokyonasu.mastershotcamera
-      APP_NAME: "神撮りプロ"
+      APP_NAME: "OAHSPE:α78"
       APP_SKU: mastershot-camera-ios
       BUNDLE_NAME: MasterShotCamera
       PROFILE_NAME: "MasterShotCamera App Store"
