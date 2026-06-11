@@ -206,6 +206,22 @@ jobs:
               if r.status_code >= 400: print(r.text[:500])
               return r
 
+          def require_ok(response):
+              if response.status_code >= 400:
+                  raise RuntimeError(response.text[:500])
+              return response
+
+          def submit_version(version_id):
+              payload = {"data": {"type": "appStoreVersionSubmissions", "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}}}}
+              response = api("POST", "/appStoreVersionSubmissions", json=payload)
+              if response.status_code == 403 and "Allowed operation is: DELETE" in response.text:
+                  existing = api("GET", f"/appStoreVersions/{version_id}/appStoreVersionSubmission")
+                  existing_data = existing.json().get("data") if existing.status_code == 200 else None
+                  if existing_data:
+                      require_ok(api("DELETE", f"/appStoreVersionSubmissions/{existing_data['id']}"))
+                      response = api("POST", "/appStoreVersionSubmissions", json=payload)
+              require_ok(response)
+
           # Wait for build processing
           import time as t
           for attempt in range(30):
@@ -246,6 +262,6 @@ jobs:
                           raise RuntimeError("No uploaded build found for this workflow run.")
                       build = next((item for item in build_items if item.get("attributes", {}).get("version") == os.environ["BUILD_NUMBER"]), build_items[0])
                       build_id = build["id"]
-                      api("PATCH", f"/appStoreVersions/{vid}", json={"data": {"type": "appStoreVersions", "id": vid, "relationships": {"build": {"data": {"type": "builds", "id": build_id}}}}})
-                  api("POST", f"/appStoreVersionSubmissions", json={"data": {"type": "appStoreVersionSubmissions", "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}})
+                      require_ok(api("PATCH", f"/appStoreVersions/{vid}", json={"data": {"type": "appStoreVersions", "id": vid, "relationships": {"build": {"data": {"type": "builds", "id": build_id}}}}}))
+                  submit_version(vid)
           PYEOF
