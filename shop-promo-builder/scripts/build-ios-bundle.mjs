@@ -24,8 +24,8 @@ await build({
   minify: true,
 });
 
-const css = await readFile(`${outdir}/main-ios.css`, "utf8");
-const js = await readFile(`${outdir}/main-ios.js`, "utf8");
+const css = (await readFile(`${outdir}/main-ios.css`, "utf8")).replace(/<\/style/gi, "<\\/style");
+const js = (await readFile(`${outdir}/main-ios.js`, "utf8")).replace(/<\/script/gi, "<\\/script");
 
 await writeFile(
   `${outdir}/index.html`,
@@ -44,7 +44,14 @@ ${css}
         if (event.target !== window) return;
         var root = document.getElementById("root");
         if (!root) return;
-        root.innerHTML = '<main style="font-family:-apple-system;padding:24px;background:#fbfaf6;color:#14231b;min-height:100vh;"><h1 style="font-size:22px;">画面を表示できませんでした</h1><p style="line-height:1.7;">JavaScriptの起動でエラーが起きました。</p><pre style="white-space:pre-wrap;background:#fff;padding:14px;border-radius:8px;">' + String(event.message || "JavaScript error").replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }) + '</pre></main>';
+        var detail = [
+          event.message || "JavaScript error",
+          event.filename ? "file: " + event.filename : "",
+          event.lineno ? "line: " + event.lineno : "",
+          event.colno ? "column: " + event.colno : "",
+          event.error && event.error.stack ? event.error.stack : ""
+        ].filter(Boolean).join("\\n");
+        root.innerHTML = '<main style="font-family:-apple-system;padding:24px;background:#fbfaf6;color:#14231b;min-height:100vh;"><h1 style="font-size:22px;">画面を表示できませんでした</h1><p style="line-height:1.7;">JavaScriptの起動でエラーが起きました。</p><pre style="white-space:pre-wrap;background:#fff;padding:14px;border-radius:8px;">' + String(detail).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }) + '</pre></main>';
       });
     </script>
   </head>
