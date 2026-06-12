@@ -5,6 +5,7 @@ import ImageIO
 import MobileCoreServices
 import Photos
 import SwiftUI
+import UIKit
 
 final class CameraController: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
@@ -234,6 +235,8 @@ final class CameraController: NSObject, ObservableObject {
     }
 
     private func capture(with settings: AVCapturePhotoSettings) {
+        applyCurrentCaptureOrientation()
+
         let delegate = PhotoCaptureDelegate { [weak self] result in
             DispatchQueue.main.async {
                 self?.handleCapture(result)
@@ -241,6 +244,20 @@ final class CameraController: NSObject, ObservableObject {
         }
         photoDelegate = delegate
         output.capturePhoto(with: settings, delegate: delegate)
+    }
+
+    private func applyCurrentCaptureOrientation() {
+        let orientation = AVCaptureVideoOrientation.currentInterfaceOrientation
+
+        if let photoConnection = output.connection(with: .video),
+           photoConnection.isVideoOrientationSupported {
+            photoConnection.videoOrientation = orientation
+        }
+
+        if let videoConnection = videoOutput.connection(with: .video),
+           videoConnection.isVideoOrientationSupported {
+            videoConnection.videoOrientation = orientation
+        }
     }
 
     private func captureRAWPlusProcessed() {
@@ -696,6 +713,42 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
 
 private enum CameraError: Error {
     case invalidImage
+}
+
+private extension AVCaptureVideoOrientation {
+    static var currentInterfaceOrientation: AVCaptureVideoOrientation {
+        let interfaceOrientation: UIInterfaceOrientation? = {
+            if Thread.isMainThread {
+                return UIApplication.shared.activeInterfaceOrientation
+            }
+
+            return DispatchQueue.main.sync {
+                UIApplication.shared.activeInterfaceOrientation
+            }
+        }()
+
+        switch interfaceOrientation {
+        case .portrait:
+            return .portrait
+        case .portraitUpsideDown:
+            return .portraitUpsideDown
+        case .landscapeLeft:
+            return .landscapeLeft
+        case .landscapeRight:
+            return .landscapeRight
+        default:
+            return .portrait
+        }
+    }
+}
+
+private extension UIApplication {
+    var activeInterfaceOrientation: UIInterfaceOrientation? {
+        connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }?
+            .interfaceOrientation
+    }
 }
 
 private extension UIImage.Orientation {
