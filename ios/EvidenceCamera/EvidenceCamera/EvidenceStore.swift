@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import ImageIO
+import Photos
 import UIKit
 
 @MainActor
@@ -72,6 +73,7 @@ final class EvidenceStore: ObservableObject {
         )
         records.insert(record, at: 0)
         try persist()
+        Self.saveToPhotoLibrary(imageData: finalImageData)
     }
 
     func verificationState(for record: EvidenceRecord) -> VerificationState {
@@ -289,6 +291,19 @@ final class EvidenceStore: ObservableObject {
 
     private nonisolated static func payloadJSON(_ payload: EmbeddedEvidencePayload) throws -> Data {
         try JSONEncoder.evidenceEncoder.encode(payload)
+    }
+
+    private nonisolated static func saveToPhotoLibrary(imageData: Data) {
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            guard status == .authorized || status == .limited else {
+                return
+            }
+
+            PHPhotoLibrary.shared().performChanges {
+                let request = PHAssetCreationRequest.forAsset()
+                request.addResource(with: .photo, data: imageData, options: nil)
+            }
+        }
     }
 }
 
