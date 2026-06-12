@@ -1,0 +1,33 @@
+name: YakushoTetsuzukiNavi
+options:
+  bundleIdPrefix: com.tokyonasu
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15.4"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: 83VGKGSQUH
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  YakushoTetsuzukiNavi:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: YakushoTetsuzukiNavi
+    resources:
+      - path: YakushoTetsuzukiNavi/Assets.xcassets
+      - path: YakushoTetsuzukiNavi/PrivacyInfo.xcprivacy
+    settings:
+      base:
+        PRODUCT_NAME: YakushoTetsuzukiNavi
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.yakushotetsuzukinavi
+        INFOPLIST_FILE: YakushoTetsuzukiNavi/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
