@@ -13,6 +13,7 @@ struct CameraPreview: UIViewRepresentable {
 
     func updateUIView(_ uiView: PreviewView, context: Context) {
         uiView.videoPreviewLayer.session = session
+        uiView.updateVideoOrientation()
     }
 }
 
@@ -23,5 +24,37 @@ final class PreviewView: UIView {
 
     var videoPreviewLayer: AVCaptureVideoPreviewLayer {
         layer as! AVCaptureVideoPreviewLayer
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateVideoOrientation()
+    }
+
+    func updateVideoOrientation() {
+        guard let connection = videoPreviewLayer.connection,
+              connection.isVideoOrientationSupported else {
+            return
+        }
+
+        let interfaceOrientation = window?.windowScene?.interfaceOrientation
+        connection.videoOrientation = interfaceOrientation?.captureVideoOrientation ?? .portrait
+    }
+}
+
+private extension UIInterfaceOrientation {
+    var captureVideoOrientation: AVCaptureVideoOrientation {
+        switch self {
+        case .portrait:
+            return .portrait
+        case .portraitUpsideDown:
+            return .portraitUpsideDown
+        case .landscapeLeft:
+            return .landscapeLeft
+        case .landscapeRight:
+            return .landscapeRight
+        default:
+            return .portrait
+        }
     }
 }

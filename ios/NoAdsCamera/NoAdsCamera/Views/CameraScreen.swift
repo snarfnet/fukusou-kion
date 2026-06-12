@@ -87,12 +87,6 @@ struct CameraScreen: View {
             }
 
             Spacer()
-
-            Label(String(localized: "purchase_badge"), systemImage: "checkmark.seal.fill")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
-                .background(.black.opacity(0.45), in: Capsule())
         }
         .foregroundStyle(.white)
         .shadow(radius: 10)
@@ -296,11 +290,6 @@ private struct PurposeProPanel: View {
                 }
             }
 
-            Text(engine.currentGuide.primaryGuide)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-            Text(engine.currentGuide.secondaryGuide)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white.opacity(0.76))
             Label(exposureMessage, systemImage: "scope")
                 .font(.system(size: 11, weight: .bold, design: .rounded))
                 .foregroundStyle(.mint)
@@ -606,18 +595,17 @@ private struct PurposeProOverlay: View {
             }
 
             VStack {
-                Spacer()
-                HStack(spacing: 6) {
-                    ForEach(guide.checklist, id: \.self) { item in
-                        Text(item)
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 5)
-                            .background(.black.opacity(0.52), in: Capsule())
-                    }
+                HStack {
+                    Image(systemName: guide.preset.iconName)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 30, height: 30)
+                        .background(.black.opacity(0.42), in: Circle())
+                    Spacer()
                 }
-                .foregroundStyle(.white)
-                .padding(.bottom, 154)
+                .padding(.top, 106)
+                .padding(.leading, 18)
+                Spacer()
             }
         }
     }
