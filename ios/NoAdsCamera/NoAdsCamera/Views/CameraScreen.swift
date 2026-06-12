@@ -384,19 +384,22 @@ private struct RealtimeWarningStrip: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Label("撮る前チェック", systemImage: "exclamationmark.triangle.fill")
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.yellow)
+            Text("撮る前チェック")
             ForEach(warnings, id: \.self) { warning in
                 Text(warning)
             }
             Spacer()
             Text("\(Int(score * 100))")
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundStyle(.yellow)
         }
         .font(.system(size: 12, weight: .bold, design: .rounded))
-        .foregroundStyle(.black)
+        .foregroundStyle(.white)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(.yellow, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .background(.black.opacity(0.62), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
