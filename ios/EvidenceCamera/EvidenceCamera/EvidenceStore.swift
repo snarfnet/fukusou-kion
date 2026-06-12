@@ -46,17 +46,19 @@ final class EvidenceStore: ObservableObject {
             metadata: metadata
         )
         let firstImageData = try Self.embed(payload: firstPayload, into: imageData)
-        let imageDigest = try Self.imageDigest(from: firstImageData)
-        let hash = try Self.hash(imageDigest: imageDigest, metadata: metadata)
+        let firstDigest = try Self.imageDigest(from: firstImageData)
+        let firstHash = try Self.hash(imageDigest: firstDigest, metadata: metadata)
         let finalPayload = EmbeddedEvidencePayload(
             schemaVersion: 1,
             appName: "EvidenceCamera",
             recordID: id,
-            imageDigest: imageDigest,
-            hash: hash,
+            imageDigest: firstDigest,
+            hash: firstHash,
             metadata: metadata
         )
         let finalImageData = try Self.embed(payload: finalPayload, into: firstImageData)
+        let writtenDigest = try Self.imageDigest(from: finalImageData)
+        let writtenHash = try Self.hash(imageDigest: writtenDigest, metadata: metadata)
 
         try finalImageData.write(to: imageURL, options: [.atomic])
 
@@ -64,8 +66,8 @@ final class EvidenceStore: ObservableObject {
             id: id,
             imageFileName: imageFileName,
             metadata: metadata,
-            hash: hash,
-            imageDigest: imageDigest
+            hash: writtenHash,
+            imageDigest: writtenDigest
         )
         records.insert(record, at: 0)
         try persist()
@@ -80,7 +82,16 @@ final class EvidenceStore: ObservableObject {
               let currentHash = try? Self.hash(imageDigest: currentDigest, metadata: record.metadata) else {
             return .changed
         }
-        return currentHash == record.hash ? .verified : .changed
+        if currentHash == record.hash {
+            return .verified
+        }
+        if let payload = try? Self.extractPayload(from: imageData),
+           payload.recordID == record.id,
+           payload.hash == record.hash,
+           payload.metadata == record.metadata {
+            return .verified
+        }
+        return .changed
     }
 
     nonisolated func importedEvidence(from imageData: Data) -> ImportedEvidence? {
