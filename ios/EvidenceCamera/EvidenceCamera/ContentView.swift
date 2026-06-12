@@ -60,7 +60,7 @@ struct CaptureView: View {
                             .textFieldStyle(.plain)
                             .padding(.horizontal, 14)
                             .frame(height: 46)
-                            .background(.ultraThinMaterial)
+                            .background(.black.opacity(0.24))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
 
                         HStack(spacing: 18) {
@@ -106,7 +106,7 @@ struct CaptureView: View {
                     .padding()
                     .background(
                         LinearGradient(
-                            colors: [.clear, .black.opacity(0.65)],
+                            colors: [.clear, .black.opacity(0.36)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -213,7 +213,7 @@ struct EvidenceOverlay: View {
         }
         .foregroundStyle(.white)
         .padding(14)
-        .background(.black.opacity(0.55))
+        .background(.black.opacity(0.32))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
