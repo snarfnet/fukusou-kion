@@ -16,6 +16,9 @@ struct ContentView: View {
     @State private var searchText = ""
     @State private var savedIDs: Set<String> = ["move-002", "birth-002", "inherit-007"]
     @State private var activeSheet: ActiveSheet?
+    @StateObject private var locationResolver = LocationMunicipalityResolver()
+    @State private var locationAlertMessage = ""
+    @State private var showingLocationAlert = false
     @AppStorage("selectedMunicipality") private var selectedMunicipality = "東京都 新宿区"
     @AppStorage("notificationSetting") private var notificationSetting = "7日前・前日"
     @AppStorage("lastDataUpdateCheck") private var lastDataUpdateCheck = "未確認"
@@ -41,7 +44,9 @@ struct ContentView: View {
                 HeaderView(
                     searchText: $searchText,
                     municipality: selectedMunicipality,
+                    isLocating: locationResolver.isResolving,
                     openMunicipality: { activeSheet = .municipality },
+                    locateMunicipality: { locationResolver.locate() },
                     openNotifications: { activeSheet = .notifications }
                 )
 
@@ -96,7 +101,7 @@ struct ContentView: View {
         }
         .foregroundStyle(AppTheme.navy)
         .sheet(item: $selectedItem) { item in
-            ProcedureDetailView(item: item, isSaved: savedIDs.contains(item.id)) {
+            ProcedureDetailView(item: item, municipality: selectedMunicipality, isSaved: savedIDs.contains(item.id)) {
                 if savedIDs.contains(item.id) {
                     savedIDs.remove(item.id)
                 } else {
@@ -122,6 +127,20 @@ struct ContentView: View {
         }
         .onAppear {
             runScheduledDataUpdateIfNeeded()
+        }
+        .onChange(of: locationResolver.resolvedMunicipality) { _, municipality in
+            guard let municipality else { return }
+            selectedMunicipality = municipality.displayName
+        }
+        .onChange(of: locationResolver.message) { _, message in
+            guard let message else { return }
+            locationAlertMessage = message
+            showingLocationAlert = true
+        }
+        .alert("現在地から自治体を選択", isPresented: $showingLocationAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(locationAlertMessage)
         }
     }
 
@@ -150,7 +169,9 @@ struct ContentView: View {
 struct HeaderView: View {
     @Binding var searchText: String
     let municipality: String
+    let isLocating: Bool
     let openMunicipality: () -> Void
+    let locateMunicipality: () -> Void
     let openNotifications: () -> Void
 
     var body: some View {
@@ -173,6 +194,23 @@ struct HeaderView: View {
                 }
 
                 Spacer()
+
+                Button(action: locateMunicipality) {
+                    ZStack {
+                        if isLocating {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Image(systemName: "location.circle")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .frame(width: 38, height: 38)
+                }
+                .buttonStyle(.plain)
+                .disabled(isLocating)
+                .accessibilityLabel("現在地から自治体を選択")
 
                 Button(action: openNotifications) {
                     Image(systemName: "bell.badge")
@@ -636,7 +674,7 @@ struct OfficialNotice: View {
                 Label("公式確認メモ", systemImage: "exclamationmark.triangle")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(AppTheme.navy)
-                Text("この試作の情報は一般的な案内です。実際の期限、必要書類、オンライン可否は自治体や本人の状況で変わります。リリース時は公式リンクと更新日を各手続きに追加してください。")
+                Text("アプリ内の手続きは全国共通の案内を中心にしています。自治体ごとに変わる条件は、選択した自治体の公式サイトとマイナポータルで確認してください。")
                     .font(.system(size: 12))
                     .foregroundStyle(AppTheme.grayText)
                     .lineSpacing(2)
@@ -649,25 +687,48 @@ struct MunicipalityPickerView: View {
     @Binding var selectedMunicipality: String
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
+    @State private var selectedPrefecture = "すべて"
 
-    private let municipalities = [
-        "東京都 新宿区", "東京都 世田谷区", "東京都 渋谷区", "東京都 杉並区",
-        "神奈川県 横浜市", "神奈川県 川崎市", "埼玉県 さいたま市", "千葉県 千葉市",
-        "大阪府 大阪市", "京都府 京都市", "兵庫県 神戸市", "愛知県 名古屋市",
-        "福岡県 福岡市", "北海道 札幌市", "宮城県 仙台市", "広島県 広島市"
-    ]
+    private var prefectures: [String] {
+        ["すべて"] + MunicipalityData.prefectures
+    }
 
-    private var filtered: [String] {
-        query.isEmpty ? municipalities : municipalities.filter { $0.localizedStandardContains(query) }
+    private var filtered: [Municipality] {
+        MunicipalityData.all
+            .filter { selectedPrefecture == "すべて" || $0.prefecture == selectedPrefecture }
+            .filter { $0.matches(query) }
     }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 12) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(prefectures, id: \.self) { prefecture in
+                            Button {
+                                selectedPrefecture = prefecture
+                            } label: {
+                                Text(prefecture)
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(selectedPrefecture == prefecture ? .white : AppTheme.navy)
+                                    .padding(.horizontal, 11)
+                                    .frame(height: 34)
+                                    .background(selectedPrefecture == prefecture ? AppTheme.blue : .white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(selectedPrefecture == prefecture ? AppTheme.blue : AppTheme.line)
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(AppTheme.grayText)
-                    TextField("自治体名を検索", text: $query)
+                    TextField("自治体名・かな・コードを検索", text: $query)
                         .font(.system(size: 14))
                 }
                 .padding(.horizontal, 11)
@@ -675,16 +736,31 @@ struct MunicipalityPickerView: View {
                 .background(AppTheme.background)
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
 
-                List(filtered, id: \.self) { municipality in
+                HStack {
+                    Text("\(filtered.count)件を表示")
+                    Spacer()
+                    Text("収録 \(MunicipalityData.all.count)件")
+                }
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(AppTheme.grayText)
+
+                List(filtered) { municipality in
                     Button {
-                        selectedMunicipality = municipality
+                        selectedMunicipality = municipality.displayName
                         dismiss()
                     } label: {
-                        HStack {
-                            Text(municipality)
-                                .foregroundStyle(AppTheme.navy)
+                        HStack(spacing: 10) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(municipality.displayName)
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundStyle(AppTheme.navy)
+                                Text("\(municipality.kana) / \(municipality.code)")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(AppTheme.grayText)
+                                    .lineLimit(1)
+                            }
                             Spacer()
-                            if selectedMunicipality == municipality {
+                            if selectedMunicipality == municipality.displayName {
                                 Image(systemName: "checkmark")
                                     .foregroundStyle(AppTheme.blue)
                             }
@@ -692,6 +768,11 @@ struct MunicipalityPickerView: View {
                     }
                 }
                 .listStyle(.plain)
+
+                Text("自治体名と公式URLは \(MunicipalityData.sourceName) の公開データを同梱しています。手続きの詳細条件は、各自治体の公式ページで確認してください。")
+                    .font(.system(size: 11))
+                    .foregroundStyle(AppTheme.grayText)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding()
             .navigationTitle("自治体変更")
@@ -787,7 +868,7 @@ struct DataUpdateView: View {
 
                 Section("実装メモ") {
                     Text(status)
-                    Text("本番では、アプリ内の固定データに加えて、署名付きJSONをサーバーに置きます。アプリ起動時に90日以上経っていれば差分だけ取得し、公式リンクと更新日を差し替える設計にできます。")
+                    Text("全国自治体マスタはアプリ内に同梱しています。本番では署名付きJSONをサーバーに置き、90日以上経っていれば公式リンクと差分メモだけを更新する設計にします。")
                         .font(.system(size: 13))
                         .foregroundStyle(AppTheme.grayText)
                 }
@@ -875,9 +956,14 @@ struct BottomTabBar: View {
 
 struct ProcedureDetailView: View {
     let item: ProcedureItem
+    let municipality: String
     let isSaved: Bool
     let toggleSave: () -> Void
     @Environment(\.dismiss) private var dismiss
+
+    private var selectedMunicipality: Municipality? {
+        MunicipalityData.find(displayName: municipality)
+    }
 
     var body: some View {
         NavigationStack {
@@ -905,6 +991,7 @@ struct ProcedureDetailView: View {
                     detailBlock("進め方", rows: item.steps, symbol: "list.number")
                     detailBlock("注意点", rows: item.notes, symbol: "exclamationmark.triangle")
                     detailBlock("公式確認先の目安", rows: [item.sourceHint], symbol: "link")
+                    officialLinksBlock
                 }
                 .padding(14)
             }
@@ -922,6 +1009,39 @@ struct ProcedureDetailView: View {
                         Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
                     }
                 }
+            }
+        }
+    }
+
+    private var officialLinksBlock: some View {
+        OfficialCard {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("自治体別の確認", systemImage: "safari")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(AppTheme.navy)
+
+                Text("選択中: \(municipality)")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppTheme.grayText)
+
+                if let selectedMunicipality, let url = URL(string: selectedMunicipality.officialURL) {
+                    Link(destination: url) {
+                        Label("自治体公式サイトを開く", systemImage: "building.2.crop.circle")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                }
+
+                if let mynaURL = URL(string: "https://myna.go.jp/search") {
+                    Link(destination: mynaURL) {
+                        Label("マイナポータルで手続きを探す", systemImage: "magnifyingglass.circle")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                }
+
+                Text("自治体ごとに書類名、所得制限、対象年齢、オンライン申請可否が変わる手続きは、ここから公式情報を確認してください。")
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.grayText)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
