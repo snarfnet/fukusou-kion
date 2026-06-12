@@ -7,6 +7,7 @@ struct CameraScreen: View {
     @StateObject private var purposePro = PurposeProEngine()
     @State private var focusPoint: CGPoint?
     @State private var showsFeatureHelp = false
+    @State private var showsLastPhotoPreview = false
 
     var body: some View {
         ZStack {
@@ -77,6 +78,11 @@ struct CameraScreen: View {
         }
         .sheet(isPresented: $showsFeatureHelp) {
             FeatureHelpSheet()
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showsLastPhotoPreview) {
+            LastPhotoPreviewSheet(image: camera.lastSavedImage)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
@@ -211,19 +217,27 @@ struct CameraScreen: View {
 
     @ViewBuilder
     private var thumbnail: some View {
-        if let image = camera.lastSavedImage {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 48, height: 48)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.6), lineWidth: 1))
-        } else {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(.black.opacity(0.45))
-                .frame(width: 48, height: 48)
-                .overlay(Image(systemName: "photo").foregroundStyle(.white.opacity(0.75)))
+        Button {
+            guard camera.lastSavedImage != nil else { return }
+            showsLastPhotoPreview = true
+        } label: {
+            if let image = camera.lastSavedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 54, height: 54)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.72), lineWidth: 1))
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.black.opacity(0.45))
+                    .frame(width: 54, height: 54)
+                    .overlay(Image(systemName: "photo").foregroundStyle(.white.opacity(0.75)))
+            }
         }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .accessibilityLabel(AppText.pick(ja: "前回の写真を表示", en: "Show last photo"))
     }
 
     @ViewBuilder
@@ -282,6 +296,39 @@ struct CameraScreen: View {
                 warnings: camera.realtimeWarnings
             )
         )
+    }
+}
+
+private struct LastPhotoPreviewSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let image: UIImage?
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.black.ignoresSafeArea()
+
+                if let image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .padding()
+                } else {
+                    Text(AppText.pick(ja: "まだ写真がありません", en: "No photo yet"))
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.76))
+                }
+            }
+            .navigationTitle(AppText.pick(ja: "前回の写真", en: "Last Photo"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(AppText.pick(ja: "閉じる", en: "Close")) {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 
