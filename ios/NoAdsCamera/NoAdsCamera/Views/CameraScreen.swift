@@ -6,6 +6,7 @@ struct CameraScreen: View {
     @StateObject private var director = CameraDirectorEngine()
     @StateObject private var purposePro = PurposeProEngine()
     @State private var focusPoint: CGPoint?
+    @State private var showsFeatureHelp = false
 
     var body: some View {
         ZStack {
@@ -74,6 +75,11 @@ struct CameraScreen: View {
         .onChange(of: purposePro.selectedPreset) { _, _ in
             camera.applyPurposeGuide(purposePro.currentGuide)
         }
+        .sheet(isPresented: $showsFeatureHelp) {
+            FeatureHelpSheet()
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     private var topBar: some View {
@@ -87,6 +93,16 @@ struct CameraScreen: View {
             }
 
             Spacer()
+
+            Button {
+                showsFeatureHelp = true
+            } label: {
+                Image(systemName: "questionmark.circle.fill")
+                    .font(.system(size: 22, weight: .bold))
+                    .frame(width: 42, height: 42)
+                    .background(.black.opacity(0.45), in: Circle())
+            }
+            .accessibilityLabel("機能説明")
         }
         .foregroundStyle(.white)
         .shadow(radius: 10)
@@ -264,6 +280,78 @@ struct CameraScreen: View {
                 warnings: camera.realtimeWarnings
             )
         )
+    }
+}
+
+private struct FeatureHelpSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    private let rows: [FeatureHelpRowData] = [
+        .init(icon: "camera.aperture", title: "RAW素材", detail: "RAW+JPEG、低ノイズRAW、編集前提の素材保存に使います。"),
+        .init(icon: "bolt.fill", title: "決定的瞬間", detail: "ゼロシャッターラグ系の設定で、子供・ペット・動きものを狙います。"),
+        .init(icon: "square.stack.3d.up.fill", title: "HDRブラケット", detail: "暗め・標準・明るめを撮って、逆光や夜景の失敗を減らします。"),
+        .init(icon: "waveform.path.ecg", title: "最強手ブレ", detail: "揺れを見て、今撮るべきか止めるべきかを表示します。"),
+        .init(icon: "scope", title: "目的別Pro", detail: "メルカリ、ネイル、料理など用途ごとに構図と露出の見方を変えます。"),
+        .init(icon: "shield.lefthalf.filled", title: "投稿前チェック", detail: "住所、QR、カード、顔など写り込みリスクを警告します。"),
+        .init(icon: "person.wave.2.fill", title: "カメラ監督", detail: "明るさ、傾き、ブレを見て撮影指示を出します。")
+    ]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("OAHSPE:α78 は、撮る前に失敗を減らすためのカメラです。")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .padding(.bottom, 4)
+
+                    ForEach(rows) { row in
+                        FeatureHelpRow(row: row)
+                    }
+                }
+                .padding(20)
+            }
+            .navigationTitle("機能説明")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("閉じる") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct FeatureHelpRowData: Identifiable {
+    let id = UUID()
+    let icon: String
+    let title: String
+    let detail: String
+}
+
+private struct FeatureHelpRow: View {
+    let row: FeatureHelpRowData
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: row.icon)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundStyle(.cyan)
+                .frame(width: 28, height: 28)
+                .background(.cyan.opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(row.title)
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                Text(row.detail)
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
