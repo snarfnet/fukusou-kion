@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import ImageIO
 import UIKit
 
 @MainActor
@@ -35,10 +36,37 @@ final class EvidenceStore: ObservableObject {
         let id = UUID()
         let imageFileName = "\(id.uuidString).jpg"
         let imageURL = imagesDirectory.appendingPathComponent(imageFileName)
-        try imageData.write(to: imageURL, options: [.atomic])
 
-        let hash = try Self.hash(imageData: imageData, metadata: metadata)
-        let record = EvidenceRecord(id: id, imageFileName: imageFileName, metadata: metadata, hash: hash)
+        let firstPayload = EmbeddedEvidencePayload(
+            schemaVersion: 1,
+            appName: "EvidenceCamera",
+            recordID: id,
+            imageDigest: "",
+            hash: "",
+            metadata: metadata
+        )
+        let firstImageData = try Self.embed(payload: firstPayload, into: imageData)
+        let imageDigest = try Self.imageDigest(from: firstImageData)
+        let hash = try Self.hash(imageDigest: imageDigest, metadata: metadata)
+        let finalPayload = EmbeddedEvidencePayload(
+            schemaVersion: 1,
+            appName: "EvidenceCamera",
+            recordID: id,
+            imageDigest: imageDigest,
+            hash: hash,
+            metadata: metadata
+        )
+        let finalImageData = try Self.embed(payload: finalPayload, into: firstImageData)
+
+        try finalImageData.write(to: imageURL, options: [.atomic])
+
+        let record = EvidenceRecord(
+            id: id,
+            imageFileName: imageFileName,
+            metadata: metadata,
+            hash: hash,
+            imageDigest: imageDigest
+        )
         records.insert(record, at: 0)
         try persist()
     }
@@ -48,10 +76,30 @@ final class EvidenceStore: ObservableObject {
         guard let imageData = try? Data(contentsOf: url) else {
             return .missingImage
         }
-        guard let currentHash = try? Self.hash(imageData: imageData, metadata: record.metadata) else {
+        guard let currentDigest = try? Self.imageDigest(from: imageData),
+              let currentHash = try? Self.hash(imageDigest: currentDigest, metadata: record.metadata) else {
             return .changed
         }
         return currentHash == record.hash ? .verified : .changed
+    }
+
+    nonisolated func importedEvidence(from imageData: Data) -> ImportedEvidence? {
+        guard let payload = try? Self.extractPayload(from: imageData),
+              let currentDigest = try? Self.imageDigest(from: imageData),
+              let currentHash = try? Self.hash(imageDigest: currentDigest, metadata: payload.metadata) else {
+            return nil
+        }
+
+        let state: VerificationState = currentDigest == payload.imageDigest && currentHash == payload.hash
+            ? .verified
+            : .changed
+
+        return ImportedEvidence(
+            id: payload.recordID,
+            payload: payload,
+            currentImageDigest: currentDigest,
+            state: state
+        )
     }
 
     func delete(_ record: EvidenceRecord) {
@@ -86,14 +134,144 @@ final class EvidenceStore: ObservableObject {
         documentsDirectory.appendingPathComponent(recordsFileName)
     }
 
-    nonisolated static func hash(imageData: Data, metadata: CaptureMetadata) throws -> String {
+    nonisolated static func hash(imageDigest: String, metadata: CaptureMetadata) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         encoder.dateEncodingStrategy = .iso8601
 
         var hasher = SHA256()
-        hasher.update(data: imageData)
+        hasher.update(data: Data(imageDigest.utf8))
         hasher.update(data: try encoder.encode(metadata))
         return hasher.finalize().map { String(format: "%02x", $0) }.joined()
+    }
+
+    nonisolated static func hash(imageData: Data, metadata: CaptureMetadata) throws -> String {
+        try hash(imageDigest: imageDigest(from: imageData), metadata: metadata)
+    }
+
+    nonisolated static func imageDigest(from imageData: Data) throws -> String {
+        guard let image = UIImage(data: imageData), let cgImage = image.cgImage else {
+            throw EvidenceStoreError.invalidImage
+        }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        let bytesPerPixel = 4
+        let bytesPerRow = width * bytesPerPixel
+        var pixels = Data(count: height * bytesPerRow)
+
+        try pixels.withUnsafeMutableBytes { rawBuffer in
+            guard let baseAddress = rawBuffer.baseAddress else {
+                throw EvidenceStoreError.invalidImage
+            }
+
+            guard let context = CGContext(
+                data: baseAddress,
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bytesPerRow: bytesPerRow,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else {
+                throw EvidenceStoreError.invalidImage
+            }
+
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        }
+
+        var hasher = SHA256()
+        hasher.update(data: Data("\(width)x\(height):".utf8))
+        hasher.update(data: pixels)
+        return hasher.finalize().map { String(format: "%02x", $0) }.joined()
+    }
+
+    nonisolated static func embed(payload: EmbeddedEvidencePayload, into imageData: Data) throws -> Data {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
+              let type = CGImageSourceGetType(source),
+              CGImageSourceGetCount(source) > 0 else {
+            throw EvidenceStoreError.invalidImage
+        }
+
+        let metadata = (CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any]) ?? [:]
+        var mutableMetadata = metadata
+        let payloadText = evidencePrefix + String(data: try payloadJSON(payload), encoding: .utf8)!
+
+        var tiff = (mutableMetadata[kCGImagePropertyTIFFDictionary as String] as? [String: Any]) ?? [:]
+        tiff[kCGImagePropertyTIFFImageDescription as String] = payloadText
+        mutableMetadata[kCGImagePropertyTIFFDictionary as String] = tiff
+
+        var exif = (mutableMetadata[kCGImagePropertyExifDictionary as String] as? [String: Any]) ?? [:]
+        exif[kCGImagePropertyExifUserComment as String] = payloadText
+        mutableMetadata[kCGImagePropertyExifDictionary as String] = exif
+
+        let output = NSMutableData()
+        guard let destination = CGImageDestinationCreateWithData(output, type, 1, nil) else {
+            throw EvidenceStoreError.invalidImage
+        }
+
+        CGImageDestinationAddImageFromSource(destination, source, 0, mutableMetadata as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else {
+            throw EvidenceStoreError.invalidImage
+        }
+
+        return output as Data
+    }
+
+    nonisolated static func extractPayload(from imageData: Data) throws -> EmbeddedEvidencePayload {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
+              let metadata = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any] else {
+            throw EvidenceStoreError.noEmbeddedPayload
+        }
+
+        let tiff = metadata[kCGImagePropertyTIFFDictionary as String] as? [String: Any]
+        let exif = metadata[kCGImagePropertyExifDictionary as String] as? [String: Any]
+        let candidates = [
+            tiff?[kCGImagePropertyTIFFImageDescription as String],
+            exif?[kCGImagePropertyExifUserComment as String]
+        ]
+
+        for candidate in candidates {
+            guard let text = candidate as? String,
+                  text.hasPrefix(evidencePrefix) else {
+                continue
+            }
+
+            let jsonText = String(text.dropFirst(evidencePrefix.count))
+            guard let data = jsonText.data(using: .utf8) else {
+                continue
+            }
+            return try JSONDecoder.evidenceDecoder.decode(EmbeddedEvidencePayload.self, from: data)
+        }
+
+        throw EvidenceStoreError.noEmbeddedPayload
+    }
+
+    private nonisolated static let evidencePrefix = "EvidenceCamera:"
+
+    private nonisolated static func payloadJSON(_ payload: EmbeddedEvidencePayload) throws -> Data {
+        try JSONEncoder.evidenceEncoder.encode(payload)
+    }
+}
+
+enum EvidenceStoreError: Error {
+    case invalidImage
+    case noEmbeddedPayload
+}
+
+private extension JSONEncoder {
+    static var evidenceEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }
+}
+
+private extension JSONDecoder {
+    static var evidenceDecoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
     }
 }
