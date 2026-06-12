@@ -1,5 +1,4 @@
 import MapKit
-import PhotosUI
 import SwiftUI
 import UIKit
 
@@ -252,9 +251,6 @@ struct CameraPlaceholder: View {
 
 struct EvidenceListView: View {
     @EnvironmentObject private var store: EvidenceStore
-    @State private var selectedPhoto: PhotosPickerItem?
-    @State private var importedEvidence: ImportedEvidence?
-    @State private var importError: String?
 
     var body: some View {
         NavigationStack {
@@ -284,49 +280,6 @@ struct EvidenceListView: View {
                 }
             }
             .navigationTitle("撮影記録")
-            .toolbar {
-                PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    Label("読み込む", systemImage: "square.and.arrow.down")
-                }
-            }
-            .onChange(of: selectedPhoto) { _, newItem in
-                guard let newItem else { return }
-                Task {
-                    await importPhoto(newItem)
-                    selectedPhoto = nil
-                }
-            }
-            .sheet(item: $importedEvidence) { evidence in
-                NavigationStack {
-                    ImportedEvidenceDetailView(importedEvidence: evidence)
-                }
-            }
-            .alert("証拠データを確認できません", isPresented: Binding(
-                get: { importError != nil },
-                set: { if !$0 { importError = nil } }
-            )) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(importError ?? "")
-            }
-        }
-    }
-
-    private func importPhoto(_ item: PhotosPickerItem) async {
-        do {
-            guard let data = try await item.loadTransferable(type: Data.self) else {
-                importError = "写真データを読み込めませんでした。"
-                return
-            }
-
-            guard let evidence = store.importedEvidence(from: data) else {
-                importError = "この写真には証拠カメラの証拠データが入っていません。"
-                return
-            }
-
-            importedEvidence = evidence
-        } catch {
-            importError = "写真の読み込みに失敗しました。"
         }
     }
 }
@@ -456,57 +409,6 @@ struct MetadataSection: View {
             radiansToDegrees(record.metadata.pitch),
             radiansToDegrees(record.metadata.roll),
             radiansToDegrees(record.metadata.yaw)
-        )
-    }
-}
-
-struct ImportedEvidenceDetailView: View {
-    let importedEvidence: ImportedEvidence
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                VerificationCard(
-                    state: importedEvidence.state,
-                    hash: importedEvidence.payload.hash
-                )
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("読み込んだ証拠データ")
-                        .font(.headline)
-
-                    LabeledContent("撮影日時", value: importedEvidence.payload.metadata.capturedAt.formatted(date: .abbreviated, time: .standard))
-                    LabeledContent("緯度", value: optionalNumber(importedEvidence.payload.metadata.latitude, digits: 6))
-                    LabeledContent("経度", value: optionalNumber(importedEvidence.payload.metadata.longitude, digits: 6))
-                    LabeledContent("住所", value: importedEvidence.payload.metadata.address ?? "未取得")
-                    LabeledContent("方角", value: degreeText(importedEvidence.payload.metadata.trueHeading))
-                    LabeledContent("磁北方角", value: degreeText(importedEvidence.payload.metadata.magneticHeading))
-                    LabeledContent("端末の傾き", value: tiltText)
-                    LabeledContent("端末", value: "\(importedEvidence.payload.metadata.deviceModel) / iOS \(importedEvidence.payload.metadata.systemVersion)")
-                    LabeledContent("連続撮影ログ", value: "#\(importedEvidence.payload.metadata.sequenceNumber)")
-                    LabeledContent("写真ID", value: importedEvidence.payload.recordID.uuidString)
-                    LabeledContent("画像指紋", value: String(importedEvidence.currentImageDigest.prefix(16)))
-                }
-                .font(.subheadline)
-
-                if importedEvidence.state != .verified {
-                    Text("画像の内容または埋め込みデータが撮影時と変わった可能性があります。")
-                        .font(.callout)
-                        .foregroundStyle(.orange)
-                }
-            }
-            .padding()
-        }
-        .navigationTitle("読み込み結果")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var tiltText: String {
-        String(
-            format: "Pitch %.1f / Roll %.1f / Yaw %.1f",
-            radiansToDegrees(importedEvidence.payload.metadata.pitch),
-            radiansToDegrees(importedEvidence.payload.metadata.roll),
-            radiansToDegrees(importedEvidence.payload.metadata.yaw)
         )
     }
 }

@@ -39,7 +39,6 @@ targets:
         NSCameraUsageDescription: "証拠写真を撮影するためにカメラを使います。"
         NSLocationWhenInUseUsageDescription: "撮影場所を証拠情報として記録するために位置情報を使います。"
         NSMotionUsageDescription: "撮影時の端末の傾きを記録するためにモーション情報を使います。"
-        NSPhotoLibraryUsageDescription: "選んだ写真に埋め込まれた証拠データを確認するために写真ライブラリを使います。"
         NSPhotoLibraryAddUsageDescription: "必要に応じて撮影した証拠写真を書き出すために写真ライブラリを使います。"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:

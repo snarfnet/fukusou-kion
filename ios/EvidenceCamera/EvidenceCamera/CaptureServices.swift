@@ -127,7 +127,7 @@ final class CameraModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelega
         guard isReady else { return }
         self.completion = completion
         isCapturing = true
-        let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+        let settings = AVCapturePhotoSettings()
         output.capturePhoto(with: settings, delegate: self)
     }
 
