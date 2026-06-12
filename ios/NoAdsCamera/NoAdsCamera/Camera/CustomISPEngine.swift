@@ -34,8 +34,9 @@ final class CustomISPEngine {
         case .product:
             return applyBaseISP(recovered, saturation: 1.04, contrast: 1.12, sharpness: 0.55)
         case .film:
-            return applyBaseISP(recovered, saturation: 0.92, contrast: 1.08, sharpness: 0.18)
-                .applyingFilter("CIPhotoEffectProcess")
+            return applyFilmTone(
+                applyBaseISP(recovered, saturation: 0.96, contrast: 1.05, sharpness: 0.18)
+            )
         }
     }
 
@@ -59,6 +60,25 @@ final class CustomISPEngine {
             ])
             .applyingFilter("CISharpenLuminance", parameters: [
                 kCIInputSharpnessKey: sharpness
+            ])
+    }
+
+    private func applyFilmTone(_ image: CIImage) -> CIImage {
+        image
+            .applyingFilter("CIColorMatrix", parameters: [
+                "inputRVector": CIVector(x: 1.05, y: 0, z: 0, w: 0),
+                "inputGVector": CIVector(x: 0, y: 0.99, z: 0, w: 0),
+                "inputBVector": CIVector(x: 0, y: 0, z: 0.9, w: 0),
+                "inputAVector": CIVector(x: 0, y: 0, z: 0, w: 1),
+                "inputBiasVector": CIVector(x: 0.006, y: 0.002, z: -0.01, w: 0)
+            ])
+            .applyingFilter("CIColorControls", parameters: [
+                kCIInputSaturationKey: 0.98,
+                kCIInputContrastKey: 1.04,
+                kCIInputBrightnessKey: 0.01
+            ])
+            .applyingFilter("CIVibrance", parameters: [
+                "inputAmount": 0.18
             ])
     }
 }
