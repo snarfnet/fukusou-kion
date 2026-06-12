@@ -1,6 +1,7 @@
 import AVFoundation
 import CoreImage
 import CoreMotion
+import ImageIO
 import MobileCoreServices
 import Photos
 import SwiftUI
@@ -427,17 +428,18 @@ final class CameraController: NSObject, ObservableObject {
     private func adjustedPreviewImageIfNeeded(_ image: UIImage?) -> UIImage? {
         guard selectedMode == .customISP || selectedMode == .purposePro,
               let image,
-              let ciImage = CIImage(image: image) else {
+              let inputImage = CIImage(image: image) else {
             return image
         }
 
+        let ciImage = inputImage.oriented(image.imageOrientation.cgImagePropertyOrientation)
         let preset = selectedMode == .purposePro ? activeISPPreset : .film
         let rendered = customISPEngine.render(ciImage, preset: preset)
         guard let cgImage = processedImageContext.createCGImage(rendered, from: rendered.extent) else {
             return image
         }
 
-        return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
+        return UIImage(cgImage: cgImage, scale: image.scale, orientation: .up)
     }
 
     private func saveToPhotoLibrary(_ captureResult: CaptureResult, successMessage: String = "保存しました") {
@@ -694,4 +696,29 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
 
 private enum CameraError: Error {
     case invalidImage
+}
+
+private extension UIImage.Orientation {
+    var cgImagePropertyOrientation: CGImagePropertyOrientation {
+        switch self {
+        case .up:
+            return .up
+        case .upMirrored:
+            return .upMirrored
+        case .down:
+            return .down
+        case .downMirrored:
+            return .downMirrored
+        case .left:
+            return .left
+        case .leftMirrored:
+            return .leftMirrored
+        case .right:
+            return .right
+        case .rightMirrored:
+            return .rightMirrored
+        @unknown default:
+            return .up
+        }
+    }
 }
