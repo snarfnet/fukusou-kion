@@ -869,6 +869,10 @@ struct ProcedureDetailView: View {
         MunicipalityData.find(displayName: municipality)
     }
 
+    private var cityHall: CityHallOffice? {
+        CityHallData.find(for: selectedMunicipality)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -895,7 +899,7 @@ struct ProcedureDetailView: View {
                     detailBlock("進め方", rows: item.steps, symbol: "list.number")
                     detailBlock("注意点", rows: item.notes, symbol: "exclamationmark.triangle")
                     detailBlock("公式確認先の目安", rows: [item.sourceHint], symbol: "link")
-                    officialLinksBlock
+                    cityHallBlock
                 }
                 .padding(14)
             }
@@ -917,36 +921,43 @@ struct ProcedureDetailView: View {
         }
     }
 
-    private var officialLinksBlock: some View {
-        OfficialCard {
-            VStack(alignment: .leading, spacing: 10) {
-                Label("自治体別の確認", systemImage: "safari")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(AppTheme.navy)
+    @ViewBuilder
+    private var cityHallBlock: some View {
+        if let cityHall {
+            OfficialCard {
+                VStack(alignment: .leading, spacing: 10) {
+                    Label("市役所", systemImage: "building.columns")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(AppTheme.navy)
 
-                Text("選択中: \(municipality)")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AppTheme.grayText)
+                    Text(cityHall.building)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(AppTheme.navy)
 
-                if let selectedMunicipality, let url = URL(string: selectedMunicipality.officialURL) {
-                    Link(destination: url) {
-                        Label("自治体公式サイトを開く", systemImage: "building.2.crop.circle")
-                            .font(.system(size: 14, weight: .bold))
+                    VStack(alignment: .leading, spacing: 7) {
+                        infoLine(title: "所在地", value: cityHall.postalAddress)
+                        infoLine(title: "電話", value: "\(cityHall.tel)（代表）")
                     }
-                }
 
-                if let mynaURL = URL(string: "https://myna.go.jp/search") {
-                    Link(destination: mynaURL) {
-                        Label("マイナポータルで手続きを探す", systemImage: "magnifyingglass.circle")
-                            .font(.system(size: 14, weight: .bold))
-                    }
+                    Text("区役所・町村役場は表示していません。政令市の区を選んだ場合も、市役所の代表情報を表示します。")
+                        .font(.system(size: 11))
+                        .foregroundStyle(AppTheme.grayText)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-
-                Text("自治体ごとに書類名、所得制限、対象年齢、オンライン申請可否が変わる手続きは、ここから公式情報を確認してください。")
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppTheme.grayText)
-                    .fixedSize(horizontal: false, vertical: true)
             }
+        }
+    }
+
+    private func infoLine(title: String, value: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("\(title):")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(AppTheme.navy)
+                .frame(width: 48, alignment: .leading)
+            Text(value)
+                .font(.system(size: 13))
+                .foregroundStyle(AppTheme.grayText)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

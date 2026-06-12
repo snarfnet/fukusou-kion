@@ -26,6 +26,7 @@ targets:
       - path: YakushoTetsuzukiNavi/Assets.xcassets
       - path: YakushoTetsuzukiNavi/PrivacyInfo.xcprivacy
       - path: YakushoTetsuzukiNavi/Municipalities.json
+      - path: YakushoTetsuzukiNavi/CityHalls.json
     settings:
       base:
         PRODUCT_NAME: YakushoTetsuzukiNavi

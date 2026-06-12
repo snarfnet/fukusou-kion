@@ -1,0 +1,7130 @@
+[
+  {
+    "baseCode": "01100",
+    "prefecture": "北海道",
+    "cityName": "札幌市",
+    "building": "札幌市役所",
+    "zipcode": "060-8611",
+    "address": "札幌市中央区北1条西2丁目",
+    "tel": "011-211-2111"
+  },
+  {
+    "baseCode": "01202",
+    "prefecture": "北海道",
+    "cityName": "函館市",
+    "building": "函館市役所",
+    "zipcode": "040-8666",
+    "address": "函館市東雲町4-13",
+    "tel": "0138-21-3111"
+  },
+  {
+    "baseCode": "01203",
+    "prefecture": "北海道",
+    "cityName": "小樽市",
+    "building": "小樽市役所",
+    "zipcode": "047-8660",
+    "address": "小樽市花園2-12-1",
+    "tel": "0134-32-4111"
+  },
+  {
+    "baseCode": "01204",
+    "prefecture": "北海道",
+    "cityName": "旭川市",
+    "building": "旭川市役所",
+    "zipcode": "070-8525",
+    "address": "旭川市7条通9丁目",
+    "tel": "0166-26-1111"
+  },
+  {
+    "baseCode": "01205",
+    "prefecture": "北海道",
+    "cityName": "室蘭市",
+    "building": "室蘭市役所",
+    "zipcode": "051-8511",
+    "address": "室蘭市幸町1-2",
+    "tel": "0143-22-1111"
+  },
+  {
+    "baseCode": "01206",
+    "prefecture": "北海道",
+    "cityName": "釧路市",
+    "building": "釧路市役所",
+    "zipcode": "085-8505",
+    "address": "釧路市黒金町7-5",
+    "tel": "0154-23-5151"
+  },
+  {
+    "baseCode": "01207",
+    "prefecture": "北海道",
+    "cityName": "帯広市",
+    "building": "帯広市役所",
+    "zipcode": "080-8670",
+    "address": "帯広市西5条南7-1",
+    "tel": "0155-24-4111"
+  },
+  {
+    "baseCode": "01208",
+    "prefecture": "北海道",
+    "cityName": "北見市",
+    "building": "北見市役所",
+    "zipcode": "090-8501",
+    "address": "北見市大通西3丁目1番地1",
+    "tel": "0157-23-7111"
+  },
+  {
+    "baseCode": "01209",
+    "prefecture": "北海道",
+    "cityName": "夕張市",
+    "building": "夕張市役所",
+    "zipcode": "068-0492",
+    "address": "夕張市本町4-2",
+    "tel": "0123-52-3131"
+  },
+  {
+    "baseCode": "01210",
+    "prefecture": "北海道",
+    "cityName": "岩見沢市",
+    "building": "岩見沢市役所",
+    "zipcode": "068-8686",
+    "address": "岩見沢市鳩が丘1-1-1",
+    "tel": "0126-23-4111"
+  },
+  {
+    "baseCode": "01211",
+    "prefecture": "北海道",
+    "cityName": "網走市",
+    "building": "網走市役所",
+    "zipcode": "093-8555",
+    "address": "網走市南5条東1丁目10番地",
+    "tel": "0152-44-6111"
+  },
+  {
+    "baseCode": "01212",
+    "prefecture": "北海道",
+    "cityName": "留萌市",
+    "building": "留萌市役所",
+    "zipcode": "077-8601",
+    "address": "留萌市幸町1-11",
+    "tel": "0164-42-1801"
+  },
+  {
+    "baseCode": "01213",
+    "prefecture": "北海道",
+    "cityName": "苫小牧市",
+    "building": "苫小牧市役所",
+    "zipcode": "053-8722",
+    "address": "苫小牧市旭町4-5-6",
+    "tel": "0144-32-6111"
+  },
+  {
+    "baseCode": "01214",
+    "prefecture": "北海道",
+    "cityName": "稚内市",
+    "building": "稚内市役所",
+    "zipcode": "097-8686",
+    "address": "稚内市中央3-2-1",
+    "tel": "0162-23-6161"
+  },
+  {
+    "baseCode": "01215",
+    "prefecture": "北海道",
+    "cityName": "美唄市",
+    "building": "美唄市役所",
+    "zipcode": "072-8660",
+    "address": "美唄市西3条南1-1-1",
+    "tel": "0126-62-3131"
+  },
+  {
+    "baseCode": "01216",
+    "prefecture": "北海道",
+    "cityName": "芦別市",
+    "building": "芦別市役所",
+    "zipcode": "075-8711",
+    "address": "芦別市北1条東1-3",
+    "tel": "0124-22-2111"
+  },
+  {
+    "baseCode": "01217",
+    "prefecture": "北海道",
+    "cityName": "江別市",
+    "building": "江別市役所",
+    "zipcode": "067-8674",
+    "address": "江別市高砂町6",
+    "tel": "011-382-4141"
+  },
+  {
+    "baseCode": "01218",
+    "prefecture": "北海道",
+    "cityName": "赤平市",
+    "building": "赤平市役所",
+    "zipcode": "079-1192",
+    "address": "赤平市泉町4-1",
+    "tel": "0125-32-2211"
+  },
+  {
+    "baseCode": "01219",
+    "prefecture": "北海道",
+    "cityName": "紋別市",
+    "building": "紋別市役所",
+    "zipcode": "094-8707",
+    "address": "紋別市幸町2-1-18",
+    "tel": "0158-24-2111"
+  },
+  {
+    "baseCode": "01220",
+    "prefecture": "北海道",
+    "cityName": "士別市",
+    "building": "士別市役所",
+    "zipcode": "095-8686",
+    "address": "士別市東6条4-1",
+    "tel": "0165-23-3121"
+  },
+  {
+    "baseCode": "01221",
+    "prefecture": "北海道",
+    "cityName": "名寄市",
+    "building": "名寄市役所",
+    "zipcode": "096-8686",
+    "address": "名寄市大通南1-1",
+    "tel": "01654-3-2111"
+  },
+  {
+    "baseCode": "01222",
+    "prefecture": "北海道",
+    "cityName": "三笠市",
+    "building": "三笠市役所",
+    "zipcode": "068-2192",
+    "address": "三笠市幸町2",
+    "tel": "01267-2-3181"
+  },
+  {
+    "baseCode": "01223",
+    "prefecture": "北海道",
+    "cityName": "根室市",
+    "building": "根室市役所",
+    "zipcode": "087-8711",
+    "address": "根室市常盤町2-27",
+    "tel": "0153-23-6111"
+  },
+  {
+    "baseCode": "01224",
+    "prefecture": "北海道",
+    "cityName": "千歳市",
+    "building": "千歳市役所",
+    "zipcode": "066-8686",
+    "address": "千歳市東雲町2-34",
+    "tel": "0123-24-3131"
+  },
+  {
+    "baseCode": "01225",
+    "prefecture": "北海道",
+    "cityName": "滝川市",
+    "building": "滝川市役所",
+    "zipcode": "073-8686",
+    "address": "滝川市大町1-2-15",
+    "tel": "0125-23-1234"
+  },
+  {
+    "baseCode": "01226",
+    "prefecture": "北海道",
+    "cityName": "砂川市",
+    "building": "砂川市役所",
+    "zipcode": "073-0195",
+    "address": "砂川市西7条北2-1-1",
+    "tel": "0125-54-2121"
+  },
+  {
+    "baseCode": "01227",
+    "prefecture": "北海道",
+    "cityName": "歌志内市",
+    "building": "歌志内市役所",
+    "zipcode": "073-0492",
+    "address": "歌志内市字本町5",
+    "tel": "0125-42-3212"
+  },
+  {
+    "baseCode": "01228",
+    "prefecture": "北海道",
+    "cityName": "深川市",
+    "building": "深川市役所",
+    "zipcode": "074-8650",
+    "address": "深川市2条17-17",
+    "tel": "0164-26-2228"
+  },
+  {
+    "baseCode": "01229",
+    "prefecture": "北海道",
+    "cityName": "富良野市",
+    "building": "富良野市役所",
+    "zipcode": "076-8555",
+    "address": "富良野市弥生町1-1",
+    "tel": "0167-39-2300"
+  },
+  {
+    "baseCode": "01230",
+    "prefecture": "北海道",
+    "cityName": "登別市",
+    "building": "登別市役所",
+    "zipcode": "059-8701",
+    "address": "登別市中央町6-11",
+    "tel": "0143-85-2111"
+  },
+  {
+    "baseCode": "01231",
+    "prefecture": "北海道",
+    "cityName": "恵庭市",
+    "building": "恵庭市役所",
+    "zipcode": "061-1498",
+    "address": "恵庭市京町1",
+    "tel": "0123-33-3131"
+  },
+  {
+    "baseCode": "01233",
+    "prefecture": "北海道",
+    "cityName": "伊達市",
+    "building": "伊達市役所",
+    "zipcode": "052-0024",
+    "address": "伊達市鹿島町20-1",
+    "tel": "0142-23-3331"
+  },
+  {
+    "baseCode": "01234",
+    "prefecture": "北海道",
+    "cityName": "北広島市",
+    "building": "北広島市役所",
+    "zipcode": "061-1192",
+    "address": "北広島市中央4-2-1",
+    "tel": "011-372-3311"
+  },
+  {
+    "baseCode": "01235",
+    "prefecture": "北海道",
+    "cityName": "石狩市",
+    "building": "石狩市役所",
+    "zipcode": "061-3292",
+    "address": "石狩市花川北6条1-30-2",
+    "tel": "0133-72-3111"
+  },
+  {
+    "baseCode": "01236",
+    "prefecture": "北海道",
+    "cityName": "北斗市",
+    "building": "北斗市役所",
+    "zipcode": "049-0192",
+    "address": "北斗市中央1-3-10",
+    "tel": "0138-73-3111"
+  },
+  {
+    "baseCode": "02201",
+    "prefecture": "青森県",
+    "cityName": "青森市",
+    "building": "青森市役所",
+    "zipcode": "030-8555",
+    "address": "青森市中央1-22-5",
+    "tel": "017-734-1111"
+  },
+  {
+    "baseCode": "02202",
+    "prefecture": "青森県",
+    "cityName": "弘前市",
+    "building": "弘前市役所",
+    "zipcode": "036-8551",
+    "address": "弘前市大字上白銀町1-1",
+    "tel": "0172-35-1111"
+  },
+  {
+    "baseCode": "02203",
+    "prefecture": "青森県",
+    "cityName": "八戸市",
+    "building": "八戸市役所",
+    "zipcode": "031-8686",
+    "address": "八戸市内丸1-1-1",
+    "tel": "0178-43-2111"
+  },
+  {
+    "baseCode": "02204",
+    "prefecture": "青森県",
+    "cityName": "黒石市",
+    "building": "黒石市役所",
+    "zipcode": "036-0396",
+    "address": "黒石市大字市ノ町11-1",
+    "tel": "0172-52-2111"
+  },
+  {
+    "baseCode": "02205",
+    "prefecture": "青森県",
+    "cityName": "五所川原市",
+    "building": "五所川原市役所",
+    "zipcode": "037-8686",
+    "address": "五所川原市字布屋町41-1",
+    "tel": "0173-35-2111"
+  },
+  {
+    "baseCode": "02206",
+    "prefecture": "青森県",
+    "cityName": "十和田市",
+    "building": "十和田市役所",
+    "zipcode": "034-8615",
+    "address": "十和田市西十二番町6-1",
+    "tel": "0176-23-5111"
+  },
+  {
+    "baseCode": "02207",
+    "prefecture": "青森県",
+    "cityName": "三沢市",
+    "building": "三沢市役所",
+    "zipcode": "033-8666",
+    "address": "三沢市桜町1-1-38",
+    "tel": "0176-53-5111"
+  },
+  {
+    "baseCode": "02208",
+    "prefecture": "青森県",
+    "cityName": "むつ市",
+    "building": "むつ市役所",
+    "zipcode": "035-8686",
+    "address": "むつ市中央1丁目8-1",
+    "tel": "0175-22-1111"
+  },
+  {
+    "baseCode": "02209",
+    "prefecture": "青森県",
+    "cityName": "つがる市",
+    "building": "つがる市役所",
+    "zipcode": "038-3192",
+    "address": "つがる市木造若緑61-1",
+    "tel": "0173-42-2111"
+  },
+  {
+    "baseCode": "02210",
+    "prefecture": "青森県",
+    "cityName": "平川市",
+    "building": "平川市役所",
+    "zipcode": "036-0104",
+    "address": "平川市柏木町藤山25-6",
+    "tel": "0172-44-1111"
+  },
+  {
+    "baseCode": "03201",
+    "prefecture": "岩手県",
+    "cityName": "盛岡市",
+    "building": "盛岡市役所",
+    "zipcode": "020-8530",
+    "address": "盛岡市内丸12-2",
+    "tel": "019-651-4111"
+  },
+  {
+    "baseCode": "03202",
+    "prefecture": "岩手県",
+    "cityName": "宮古市",
+    "building": "宮古市役所",
+    "zipcode": "027-8501",
+    "address": "宮古市宮町1-1-30",
+    "tel": "0193-62-2111"
+  },
+  {
+    "baseCode": "03203",
+    "prefecture": "岩手県",
+    "cityName": "大船渡市",
+    "building": "大船渡市役所",
+    "zipcode": "022-8501",
+    "address": "大船渡市盛町字宇津野沢15",
+    "tel": "0192-27-3111"
+  },
+  {
+    "baseCode": "03205",
+    "prefecture": "岩手県",
+    "cityName": "花巻市",
+    "building": "花巻市役所",
+    "zipcode": "025-8601",
+    "address": "花巻市花城町9-30",
+    "tel": "0198-24-2111"
+  },
+  {
+    "baseCode": "03206",
+    "prefecture": "岩手県",
+    "cityName": "北上市",
+    "building": "北上市役所",
+    "zipcode": "024-8501",
+    "address": "北上市芳町1-1",
+    "tel": "0197-64-2111"
+  },
+  {
+    "baseCode": "03207",
+    "prefecture": "岩手県",
+    "cityName": "久慈市",
+    "building": "久慈市役所",
+    "zipcode": "028-8030",
+    "address": "久慈市川崎町1-1",
+    "tel": "0194-52-2111"
+  },
+  {
+    "baseCode": "03208",
+    "prefecture": "岩手県",
+    "cityName": "遠野市",
+    "building": "遠野市役所",
+    "zipcode": "028-0592",
+    "address": "遠野市中央通り9-1",
+    "tel": "0198-62-2111"
+  },
+  {
+    "baseCode": "03209",
+    "prefecture": "岩手県",
+    "cityName": "一関市",
+    "building": "一関市役所",
+    "zipcode": "021-8501",
+    "address": "一関市竹山町7-2",
+    "tel": "0191-21-2111"
+  },
+  {
+    "baseCode": "03210",
+    "prefecture": "岩手県",
+    "cityName": "陸前高田市",
+    "building": "陸前高田市役所",
+    "zipcode": "029-2292",
+    "address": "陸前高田市高田町字下和野100",
+    "tel": "0192-54-2111"
+  },
+  {
+    "baseCode": "03211",
+    "prefecture": "岩手県",
+    "cityName": "釜石市",
+    "building": "釜石市役所",
+    "zipcode": "026-8686",
+    "address": "釜石市只越町3-9-13",
+    "tel": "0193-22-2111"
+  },
+  {
+    "baseCode": "03213",
+    "prefecture": "岩手県",
+    "cityName": "二戸市",
+    "building": "二戸市役所",
+    "zipcode": "028-6192",
+    "address": "二戸市福岡字川又47",
+    "tel": "0195-23-3111"
+  },
+  {
+    "baseCode": "03214",
+    "prefecture": "岩手県",
+    "cityName": "八幡平市",
+    "building": "八幡平市役所",
+    "zipcode": "028-7397",
+    "address": "八幡平市野駄21-170",
+    "tel": "0195-74-2111"
+  },
+  {
+    "baseCode": "03215",
+    "prefecture": "岩手県",
+    "cityName": "奥州市",
+    "building": "奥州市役所",
+    "zipcode": "023-8501",
+    "address": "奥州市水沢大手町1-1",
+    "tel": "0197-24-2111"
+  },
+  {
+    "baseCode": "03216",
+    "prefecture": "岩手県",
+    "cityName": "滝沢市",
+    "building": "滝沢市役所",
+    "zipcode": "020-0692",
+    "address": "滝沢市中鵜飼55",
+    "tel": "019-684-2111"
+  },
+  {
+    "baseCode": "04100",
+    "prefecture": "宮城県",
+    "cityName": "仙台市",
+    "building": "仙台市役所",
+    "zipcode": "980-8671",
+    "address": "仙台市青葉区国分町3-7-1",
+    "tel": "022-261-1111"
+  },
+  {
+    "baseCode": "04202",
+    "prefecture": "宮城県",
+    "cityName": "石巻市",
+    "building": "石巻市役所",
+    "zipcode": "986-8501",
+    "address": "石巻市穀町14-1",
+    "tel": "0225-95-1111"
+  },
+  {
+    "baseCode": "04203",
+    "prefecture": "宮城県",
+    "cityName": "塩竈市",
+    "building": "塩竈市役所",
+    "zipcode": "985-8501",
+    "address": "塩竈市旭町1-1",
+    "tel": "022-364-1111"
+  },
+  {
+    "baseCode": "04205",
+    "prefecture": "宮城県",
+    "cityName": "気仙沼市",
+    "building": "気仙沼市役所",
+    "zipcode": "988-8501",
+    "address": "気仙沼市八日町1-1-1",
+    "tel": "0226-22-6600"
+  },
+  {
+    "baseCode": "04206",
+    "prefecture": "宮城県",
+    "cityName": "白石市",
+    "building": "白石市役所",
+    "zipcode": "989-0292",
+    "address": "白石市大手町1-1",
+    "tel": "0224-25-2111"
+  },
+  {
+    "baseCode": "04207",
+    "prefecture": "宮城県",
+    "cityName": "名取市",
+    "building": "名取市役所",
+    "zipcode": "981-1292",
+    "address": "名取市増田字柳田80",
+    "tel": "022-384-2111"
+  },
+  {
+    "baseCode": "04208",
+    "prefecture": "宮城県",
+    "cityName": "角田市",
+    "building": "角田市役所",
+    "zipcode": "981-1592",
+    "address": "角田市角田字大坊41",
+    "tel": "0224-63-2111"
+  },
+  {
+    "baseCode": "04209",
+    "prefecture": "宮城県",
+    "cityName": "多賀城市",
+    "building": "多賀城市役所",
+    "zipcode": "985-8531",
+    "address": "多賀城市中央2-1-1",
+    "tel": "022-368-1141"
+  },
+  {
+    "baseCode": "04211",
+    "prefecture": "宮城県",
+    "cityName": "岩沼市",
+    "building": "岩沼市役所",
+    "zipcode": "989-2480",
+    "address": "岩沼市桜1-6-20",
+    "tel": "0223-22-1111"
+  },
+  {
+    "baseCode": "04212",
+    "prefecture": "宮城県",
+    "cityName": "登米市",
+    "building": "登米市役所",
+    "zipcode": "987-0511",
+    "address": "登米市迫町佐沼字中江2-6-1",
+    "tel": "0220-22-2111"
+  },
+  {
+    "baseCode": "04213",
+    "prefecture": "宮城県",
+    "cityName": "栗原市",
+    "building": "栗原市役所",
+    "zipcode": "987-2293",
+    "address": "栗原市築館薬師1-7-1",
+    "tel": "0228-22-1122"
+  },
+  {
+    "baseCode": "04214",
+    "prefecture": "宮城県",
+    "cityName": "東松島市",
+    "building": "東松島市役所",
+    "zipcode": "981-0503",
+    "address": "東松島市矢本字上河戸36-1",
+    "tel": "0225-82-1111"
+  },
+  {
+    "baseCode": "04215",
+    "prefecture": "宮城県",
+    "cityName": "大崎市",
+    "building": "大崎市役所",
+    "zipcode": "989-6188",
+    "address": "大崎市古川七日町1-1",
+    "tel": "0229-23-2111"
+  },
+  {
+    "baseCode": "04216",
+    "prefecture": "宮城県",
+    "cityName": "富谷市",
+    "building": "富谷市役所",
+    "zipcode": "981-3392",
+    "address": "富谷市富谷坂松田30",
+    "tel": "022-358-3111"
+  },
+  {
+    "baseCode": "05201",
+    "prefecture": "秋田県",
+    "cityName": "秋田市",
+    "building": "秋田市役所",
+    "zipcode": "010-8560",
+    "address": "秋田市山王1-1-1",
+    "tel": "018-863-2222"
+  },
+  {
+    "baseCode": "05202",
+    "prefecture": "秋田県",
+    "cityName": "能代市",
+    "building": "能代市役所",
+    "zipcode": "016-8501",
+    "address": "能代市上町1-3",
+    "tel": "0185-52-2111"
+  },
+  {
+    "baseCode": "05203",
+    "prefecture": "秋田県",
+    "cityName": "横手市",
+    "building": "横手市役所",
+    "zipcode": "013-8601",
+    "address": "横手市中央町8-2",
+    "tel": "0182-35-2111"
+  },
+  {
+    "baseCode": "05204",
+    "prefecture": "秋田県",
+    "cityName": "大館市",
+    "building": "大館市役所",
+    "zipcode": "017-8555",
+    "address": "大館市字中城20",
+    "tel": "0186-49-3111"
+  },
+  {
+    "baseCode": "05206",
+    "prefecture": "秋田県",
+    "cityName": "男鹿市",
+    "building": "男鹿市役所",
+    "zipcode": "010-0595",
+    "address": "男鹿市船川港船川字泉台66-1",
+    "tel": "0185-23-2111"
+  },
+  {
+    "baseCode": "05207",
+    "prefecture": "秋田県",
+    "cityName": "湯沢市",
+    "building": "湯沢市役所",
+    "zipcode": "012-8501",
+    "address": "湯沢市佐竹町1-1",
+    "tel": "0183-73-2111"
+  },
+  {
+    "baseCode": "05209",
+    "prefecture": "秋田県",
+    "cityName": "鹿角市",
+    "building": "鹿角市役所",
+    "zipcode": "018-5292",
+    "address": "鹿角市花輪字荒田4-1",
+    "tel": "0186-30-0203"
+  },
+  {
+    "baseCode": "05210",
+    "prefecture": "秋田県",
+    "cityName": "由利本荘市",
+    "building": "由利本荘市役所",
+    "zipcode": "015-8501",
+    "address": "由利本荘市尾崎17",
+    "tel": "0184-24-3321"
+  },
+  {
+    "baseCode": "05211",
+    "prefecture": "秋田県",
+    "cityName": "潟上市",
+    "building": "潟上市役所",
+    "zipcode": "010-0201",
+    "address": "潟上市天王字棒沼台226-1",
+    "tel": "018-853-5301"
+  },
+  {
+    "baseCode": "05212",
+    "prefecture": "秋田県",
+    "cityName": "大仙市",
+    "building": "大仙市役所",
+    "zipcode": "014-8601",
+    "address": "大仙市大曲花園町1-1",
+    "tel": "0187-63-1111"
+  },
+  {
+    "baseCode": "05213",
+    "prefecture": "秋田県",
+    "cityName": "北秋田市",
+    "building": "北秋田市役所",
+    "zipcode": "018-3392",
+    "address": "北秋田市花園町19-1",
+    "tel": "0186-62-1111"
+  },
+  {
+    "baseCode": "05214",
+    "prefecture": "秋田県",
+    "cityName": "にかほ市",
+    "building": "にかほ市役所",
+    "zipcode": "018-0192",
+    "address": "にかほ市象潟町字浜ノ田1",
+    "tel": "0184-43-3200"
+  },
+  {
+    "baseCode": "05215",
+    "prefecture": "秋田県",
+    "cityName": "仙北市",
+    "building": "仙北市役所",
+    "zipcode": "014-1298",
+    "address": "仙北市田沢湖生保内字宮ノ後30",
+    "tel": "0187-43-1111"
+  },
+  {
+    "baseCode": "06201",
+    "prefecture": "山形県",
+    "cityName": "山形市",
+    "building": "山形市役所",
+    "zipcode": "990-8540",
+    "address": "山形市旅篭町2-3-25",
+    "tel": "023-641-1212"
+  },
+  {
+    "baseCode": "06202",
+    "prefecture": "山形県",
+    "cityName": "米沢市",
+    "building": "米沢市役所",
+    "zipcode": "992-8501",
+    "address": "米沢市金池5-2-25",
+    "tel": "0238-22-5111"
+  },
+  {
+    "baseCode": "06203",
+    "prefecture": "山形県",
+    "cityName": "鶴岡市",
+    "building": "鶴岡市役所",
+    "zipcode": "997-8601",
+    "address": "鶴岡市馬場町9-25",
+    "tel": "0235-25-2111"
+  },
+  {
+    "baseCode": "06204",
+    "prefecture": "山形県",
+    "cityName": "酒田市",
+    "building": "酒田市役所",
+    "zipcode": "998-8540",
+    "address": "酒田市本町2-2-45",
+    "tel": "0234-22-5111"
+  },
+  {
+    "baseCode": "06205",
+    "prefecture": "山形県",
+    "cityName": "新庄市",
+    "building": "新庄市役所",
+    "zipcode": "996-8501",
+    "address": "新庄市沖の町10-37",
+    "tel": "0233-22-2111"
+  },
+  {
+    "baseCode": "06206",
+    "prefecture": "山形県",
+    "cityName": "寒河江市",
+    "building": "寒河江市役所",
+    "zipcode": "991-8601",
+    "address": "寒河江市中央1-9-45",
+    "tel": "0237-86-2111"
+  },
+  {
+    "baseCode": "06207",
+    "prefecture": "山形県",
+    "cityName": "上山市",
+    "building": "上山市役所",
+    "zipcode": "999-3192",
+    "address": "上山市河崎1-1-10",
+    "tel": "023-672-1111"
+  },
+  {
+    "baseCode": "06208",
+    "prefecture": "山形県",
+    "cityName": "村山市",
+    "building": "村山市役所",
+    "zipcode": "995-8666",
+    "address": "村山市中央1-3-6",
+    "tel": "0237-55-2111"
+  },
+  {
+    "baseCode": "06209",
+    "prefecture": "山形県",
+    "cityName": "長井市",
+    "building": "長井市役所",
+    "zipcode": "993-8601",
+    "address": "長井市栄町1-1",
+    "tel": "0238-84-2111"
+  },
+  {
+    "baseCode": "06210",
+    "prefecture": "山形県",
+    "cityName": "天童市",
+    "building": "天童市役所",
+    "zipcode": "994-8510",
+    "address": "天童市老野森1-1-1",
+    "tel": "023-654-1111"
+  },
+  {
+    "baseCode": "06211",
+    "prefecture": "山形県",
+    "cityName": "東根市",
+    "building": "東根市役所",
+    "zipcode": "999-3795",
+    "address": "東根市中央1-1-1",
+    "tel": "0237-42-1111"
+  },
+  {
+    "baseCode": "06212",
+    "prefecture": "山形県",
+    "cityName": "尾花沢市",
+    "building": "尾花沢市役所",
+    "zipcode": "999-4292",
+    "address": "尾花沢市若葉町1-2-3",
+    "tel": "0237-22-1111"
+  },
+  {
+    "baseCode": "06213",
+    "prefecture": "山形県",
+    "cityName": "南陽市",
+    "building": "南陽市役所",
+    "zipcode": "999-2292",
+    "address": "南陽市三間通436-1",
+    "tel": "0238-40-3211"
+  },
+  {
+    "baseCode": "07201",
+    "prefecture": "福島県",
+    "cityName": "福島市",
+    "building": "福島市役所",
+    "zipcode": "960-8601",
+    "address": "福島市五老内町3-1",
+    "tel": "024-535-1111"
+  },
+  {
+    "baseCode": "07202",
+    "prefecture": "福島県",
+    "cityName": "会津若松市",
+    "building": "会津若松市役所",
+    "zipcode": "965-8601",
+    "address": "会津若松市東栄町3-46",
+    "tel": "0242-39-1111"
+  },
+  {
+    "baseCode": "07203",
+    "prefecture": "福島県",
+    "cityName": "郡山市",
+    "building": "郡山市役所",
+    "zipcode": "963-8601",
+    "address": "郡山市朝日1-23-7",
+    "tel": "024-924-2491"
+  },
+  {
+    "baseCode": "07204",
+    "prefecture": "福島県",
+    "cityName": "いわき市",
+    "building": "いわき市役所",
+    "zipcode": "970-8686",
+    "address": "いわき市平字梅本21",
+    "tel": "0246-22-1111"
+  },
+  {
+    "baseCode": "07205",
+    "prefecture": "福島県",
+    "cityName": "白河市",
+    "building": "白河市役所",
+    "zipcode": "961-8602",
+    "address": "白河市八幡小路7-1",
+    "tel": "0248-22-1111"
+  },
+  {
+    "baseCode": "07207",
+    "prefecture": "福島県",
+    "cityName": "須賀川市",
+    "building": "須賀川市役所",
+    "zipcode": "962-8601",
+    "address": "須賀川市八幡町135",
+    "tel": "0248-75-1111"
+  },
+  {
+    "baseCode": "07208",
+    "prefecture": "福島県",
+    "cityName": "喜多方市",
+    "building": "喜多方市役所",
+    "zipcode": "966-8601",
+    "address": "喜多方市字御清水東7244-2",
+    "tel": "0241-24-5206"
+  },
+  {
+    "baseCode": "07209",
+    "prefecture": "福島県",
+    "cityName": "相馬市",
+    "building": "相馬市役所",
+    "zipcode": "976-8601",
+    "address": "相馬市中村字北町63-3",
+    "tel": "0244-37-2120"
+  },
+  {
+    "baseCode": "07210",
+    "prefecture": "福島県",
+    "cityName": "二本松市",
+    "building": "二本松市役所",
+    "zipcode": "964-8601",
+    "address": "二本松市金色403-1",
+    "tel": "0243-23-1111"
+  },
+  {
+    "baseCode": "07211",
+    "prefecture": "福島県",
+    "cityName": "田村市",
+    "building": "田村市役所",
+    "zipcode": "963-4393",
+    "address": "田村市船引町船引字畑添76-2",
+    "tel": "0247-81-2111"
+  },
+  {
+    "baseCode": "07212",
+    "prefecture": "福島県",
+    "cityName": "南相馬市",
+    "building": "南相馬市役所",
+    "zipcode": "975-8686",
+    "address": "南相馬市原町区本町2-27",
+    "tel": "0244-22-2111"
+  },
+  {
+    "baseCode": "07213",
+    "prefecture": "福島県",
+    "cityName": "伊達市",
+    "building": "伊達市役所",
+    "zipcode": "960-0692",
+    "address": "伊達市保原町字舟橋180",
+    "tel": "024-575-1111"
+  },
+  {
+    "baseCode": "07214",
+    "prefecture": "福島県",
+    "cityName": "本宮市",
+    "building": "本宮市役所",
+    "zipcode": "969-1192",
+    "address": "本宮市本宮字万世212",
+    "tel": "0243-33-1111"
+  },
+  {
+    "baseCode": "08201",
+    "prefecture": "茨城県",
+    "cityName": "水戸市",
+    "building": "水戸市役所",
+    "zipcode": "310-8610",
+    "address": "水戸市中央1-4-1",
+    "tel": "029-224-1111"
+  },
+  {
+    "baseCode": "08202",
+    "prefecture": "茨城県",
+    "cityName": "日立市",
+    "building": "日立市役所",
+    "zipcode": "317-8601",
+    "address": "日立市助川町1-1-1",
+    "tel": "0294-22-3111"
+  },
+  {
+    "baseCode": "08203",
+    "prefecture": "茨城県",
+    "cityName": "土浦市",
+    "building": "土浦市役所",
+    "zipcode": "300-8686",
+    "address": "土浦市大和町9-1",
+    "tel": "029-826-1111"
+  },
+  {
+    "baseCode": "08204",
+    "prefecture": "茨城県",
+    "cityName": "古河市",
+    "building": "古河市役所",
+    "zipcode": "306-0291",
+    "address": "古河市下大野2248",
+    "tel": "0280-92-3111"
+  },
+  {
+    "baseCode": "08205",
+    "prefecture": "茨城県",
+    "cityName": "石岡市",
+    "building": "石岡市役所",
+    "zipcode": "315-8640",
+    "address": "石岡市石岡1-1-1",
+    "tel": "0299-23-1111"
+  },
+  {
+    "baseCode": "08207",
+    "prefecture": "茨城県",
+    "cityName": "結城市",
+    "building": "結城市役所",
+    "zipcode": "307-8501",
+    "address": "結城市中央町2丁目3番地",
+    "tel": "0296-32-1111"
+  },
+  {
+    "baseCode": "08208",
+    "prefecture": "茨城県",
+    "cityName": "龍ケ崎市",
+    "building": "龍ケ崎市役所",
+    "zipcode": "301-8611",
+    "address": "龍ケ崎市3710",
+    "tel": "0297-64-1111"
+  },
+  {
+    "baseCode": "08210",
+    "prefecture": "茨城県",
+    "cityName": "下妻市",
+    "building": "下妻市役所",
+    "zipcode": "304-8501",
+    "address": "下妻市本城町3-13",
+    "tel": "0296-43-2111"
+  },
+  {
+    "baseCode": "08211",
+    "prefecture": "茨城県",
+    "cityName": "常総市",
+    "building": "常総市役所",
+    "zipcode": "303-8501",
+    "address": "常総市水海道諏訪町3222-3",
+    "tel": "0297-23-2111"
+  },
+  {
+    "baseCode": "08212",
+    "prefecture": "茨城県",
+    "cityName": "常陸太田市",
+    "building": "常陸太田市役所",
+    "zipcode": "313-8611",
+    "address": "常陸太田市金井町3690",
+    "tel": "0294-72-3111"
+  },
+  {
+    "baseCode": "08214",
+    "prefecture": "茨城県",
+    "cityName": "高萩市",
+    "building": "高萩市役所",
+    "zipcode": "318-8511",
+    "address": "高萩市本町1-100-1",
+    "tel": "0293-23-1111"
+  },
+  {
+    "baseCode": "08215",
+    "prefecture": "茨城県",
+    "cityName": "北茨城市",
+    "building": "北茨城市役所",
+    "zipcode": "319-1592",
+    "address": "北茨城市磯原町磯原1630",
+    "tel": "0293-43-1111"
+  },
+  {
+    "baseCode": "08216",
+    "prefecture": "茨城県",
+    "cityName": "笠間市",
+    "building": "笠間市役所",
+    "zipcode": "309-1792",
+    "address": "笠間市中央3-2-1",
+    "tel": "0296-77-1101"
+  },
+  {
+    "baseCode": "08217",
+    "prefecture": "茨城県",
+    "cityName": "取手市",
+    "building": "取手市役所",
+    "zipcode": "302-8585",
+    "address": "取手市寺田5139",
+    "tel": "0297-74-2141"
+  },
+  {
+    "baseCode": "08219",
+    "prefecture": "茨城県",
+    "cityName": "牛久市",
+    "building": "牛久市役所",
+    "zipcode": "300-1292",
+    "address": "牛久市中央3-15-1",
+    "tel": "029-873-2111"
+  },
+  {
+    "baseCode": "08220",
+    "prefecture": "茨城県",
+    "cityName": "つくば市",
+    "building": "つくば市役所",
+    "zipcode": "305-8555",
+    "address": "つくば市研究学園1-1-1",
+    "tel": "029-883-1111"
+  },
+  {
+    "baseCode": "08221",
+    "prefecture": "茨城県",
+    "cityName": "ひたちなか市",
+    "building": "ひたちなか市役所",
+    "zipcode": "312-8501",
+    "address": "ひたちなか市東石川2-10-1",
+    "tel": "029-273-0111"
+  },
+  {
+    "baseCode": "08222",
+    "prefecture": "茨城県",
+    "cityName": "鹿嶋市",
+    "building": "鹿嶋市役所",
+    "zipcode": "314-8655",
+    "address": "鹿嶋市大字平井1187-1",
+    "tel": "0299-82-2911"
+  },
+  {
+    "baseCode": "08223",
+    "prefecture": "茨城県",
+    "cityName": "潮来市",
+    "building": "潮来市役所",
+    "zipcode": "311-2493",
+    "address": "潮来市辻626",
+    "tel": "0299-63-1111"
+  },
+  {
+    "baseCode": "08224",
+    "prefecture": "茨城県",
+    "cityName": "守谷市",
+    "building": "守谷市役所",
+    "zipcode": "302-0198",
+    "address": "守谷市大柏950-1",
+    "tel": "0297-45-1111"
+  },
+  {
+    "baseCode": "08225",
+    "prefecture": "茨城県",
+    "cityName": "常陸大宮市",
+    "building": "常陸大宮市役所",
+    "zipcode": "319-2292",
+    "address": "常陸大宮市中富町3135-6",
+    "tel": "0295-52-1111"
+  },
+  {
+    "baseCode": "08226",
+    "prefecture": "茨城県",
+    "cityName": "那珂市",
+    "building": "那珂市役所",
+    "zipcode": "311-0192",
+    "address": "那珂市福田1819-5",
+    "tel": "029-298-1111"
+  },
+  {
+    "baseCode": "08227",
+    "prefecture": "茨城県",
+    "cityName": "筑西市",
+    "building": "筑西市役所",
+    "zipcode": "308-8616",
+    "address": "筑西市丙360",
+    "tel": "0296-24-2111"
+  },
+  {
+    "baseCode": "08228",
+    "prefecture": "茨城県",
+    "cityName": "坂東市",
+    "building": "坂東市役所",
+    "zipcode": "306-0692",
+    "address": "坂東市岩井4365",
+    "tel": "0297-35-2121"
+  },
+  {
+    "baseCode": "08229",
+    "prefecture": "茨城県",
+    "cityName": "稲敷市",
+    "building": "稲敷市役所",
+    "zipcode": "300-0595",
+    "address": "稲敷市犬塚1570-1",
+    "tel": "029-892-2000"
+  },
+  {
+    "baseCode": "08230",
+    "prefecture": "茨城県",
+    "cityName": "かすみがうら市",
+    "building": "かすみがうら市役所",
+    "zipcode": "315-8512",
+    "address": "かすみがうら市上土田461",
+    "tel": "0299-59-2111"
+  },
+  {
+    "baseCode": "08231",
+    "prefecture": "茨城県",
+    "cityName": "桜川市",
+    "building": "桜川市役所",
+    "zipcode": "309-1293",
+    "address": "桜川市羽田1023",
+    "tel": "0296-58-5111"
+  },
+  {
+    "baseCode": "08232",
+    "prefecture": "茨城県",
+    "cityName": "神栖市",
+    "building": "神栖市役所",
+    "zipcode": "314-0192",
+    "address": "神栖市溝口4991-5",
+    "tel": "0299-90-1111"
+  },
+  {
+    "baseCode": "08233",
+    "prefecture": "茨城県",
+    "cityName": "行方市",
+    "building": "行方市役所",
+    "zipcode": "311-3892",
+    "address": "行方市麻生1561-9",
+    "tel": "0299-72-0811"
+  },
+  {
+    "baseCode": "08234",
+    "prefecture": "茨城県",
+    "cityName": "鉾田市",
+    "building": "鉾田市役所",
+    "zipcode": "311-1592",
+    "address": "鉾田市鉾田1444-1",
+    "tel": "0291-33-2111"
+  },
+  {
+    "baseCode": "08235",
+    "prefecture": "茨城県",
+    "cityName": "つくばみらい市",
+    "building": "つくばみらい市役所",
+    "zipcode": "300-2395",
+    "address": "つくばみらい市福田195",
+    "tel": "0297-58-2111"
+  },
+  {
+    "baseCode": "08236",
+    "prefecture": "茨城県",
+    "cityName": "小美玉市",
+    "building": "小美玉市役所",
+    "zipcode": "319-0192",
+    "address": "小美玉市堅倉835",
+    "tel": "0299-48-1111"
+  },
+  {
+    "baseCode": "09201",
+    "prefecture": "栃木県",
+    "cityName": "宇都宮市",
+    "building": "宇都宮市役所",
+    "zipcode": "320-8540",
+    "address": "宇都宮市旭1-1-5",
+    "tel": "028-632-2222"
+  },
+  {
+    "baseCode": "09202",
+    "prefecture": "栃木県",
+    "cityName": "足利市",
+    "building": "足利市役所",
+    "zipcode": "326-8601",
+    "address": "足利市本城3-2145",
+    "tel": "0284-20-2222"
+  },
+  {
+    "baseCode": "09203",
+    "prefecture": "栃木県",
+    "cityName": "栃木市",
+    "building": "栃木市役所",
+    "zipcode": "328-8686",
+    "address": "栃木市万町9-25",
+    "tel": "0282-22-3535"
+  },
+  {
+    "baseCode": "09204",
+    "prefecture": "栃木県",
+    "cityName": "佐野市",
+    "building": "佐野市役所",
+    "zipcode": "327-8501",
+    "address": "佐野市高砂町1",
+    "tel": "0283-24-5111"
+  },
+  {
+    "baseCode": "09205",
+    "prefecture": "栃木県",
+    "cityName": "鹿沼市",
+    "building": "鹿沼市役所",
+    "zipcode": "322-8601",
+    "address": "鹿沼市今宮町1688-1",
+    "tel": "0289-64-2111"
+  },
+  {
+    "baseCode": "09206",
+    "prefecture": "栃木県",
+    "cityName": "日光市",
+    "building": "日光市役所",
+    "zipcode": "321-1292",
+    "address": "日光市今市本町1",
+    "tel": "0288-22-1111"
+  },
+  {
+    "baseCode": "09208",
+    "prefecture": "栃木県",
+    "cityName": "小山市",
+    "building": "小山市役所",
+    "zipcode": "323-8686",
+    "address": "小山市中央町1-1-1",
+    "tel": "0285-23-1111"
+  },
+  {
+    "baseCode": "09209",
+    "prefecture": "栃木県",
+    "cityName": "真岡市",
+    "building": "真岡市役所",
+    "zipcode": "321-4395",
+    "address": "真岡市荒町5191",
+    "tel": "0285-82-1111"
+  },
+  {
+    "baseCode": "09210",
+    "prefecture": "栃木県",
+    "cityName": "大田原市",
+    "building": "大田原市役所",
+    "zipcode": "324-8641",
+    "address": "大田原市本町1-4-1",
+    "tel": "0287-23-1111"
+  },
+  {
+    "baseCode": "09211",
+    "prefecture": "栃木県",
+    "cityName": "矢板市",
+    "building": "矢板市役所",
+    "zipcode": "329-2192",
+    "address": "矢板市本町5-4",
+    "tel": "0287-43-1111"
+  },
+  {
+    "baseCode": "09213",
+    "prefecture": "栃木県",
+    "cityName": "那須塩原市",
+    "building": "那須塩原市役所",
+    "zipcode": "325-8501",
+    "address": "那須塩原市共墾社108-2",
+    "tel": "0287-62-7111"
+  },
+  {
+    "baseCode": "09214",
+    "prefecture": "栃木県",
+    "cityName": "さくら市",
+    "building": "さくら市役所",
+    "zipcode": "329-1392",
+    "address": "さくら市氏家2771",
+    "tel": "028-681-1111"
+  },
+  {
+    "baseCode": "09215",
+    "prefecture": "栃木県",
+    "cityName": "那須烏山市",
+    "building": "那須烏山市役所",
+    "zipcode": "321-0692",
+    "address": "那須烏山市中央1-1-1",
+    "tel": "0287-83-1111"
+  },
+  {
+    "baseCode": "09216",
+    "prefecture": "栃木県",
+    "cityName": "下野市",
+    "building": "下野市役所",
+    "zipcode": "329-0492",
+    "address": "下野市笹原26",
+    "tel": "0285-32-8888"
+  },
+  {
+    "baseCode": "10201",
+    "prefecture": "群馬県",
+    "cityName": "前橋市",
+    "building": "前橋市役所",
+    "zipcode": "371-8601",
+    "address": "前橋市大手町2-12-1",
+    "tel": "027-224-1111"
+  },
+  {
+    "baseCode": "10202",
+    "prefecture": "群馬県",
+    "cityName": "高崎市",
+    "building": "高崎市役所",
+    "zipcode": "370-8501",
+    "address": "高崎市高松町35-1",
+    "tel": "027-321-1111"
+  },
+  {
+    "baseCode": "10203",
+    "prefecture": "群馬県",
+    "cityName": "桐生市",
+    "building": "桐生市役所",
+    "zipcode": "376-8501",
+    "address": "桐生市織姫町1-1",
+    "tel": "0277-46-1111"
+  },
+  {
+    "baseCode": "10204",
+    "prefecture": "群馬県",
+    "cityName": "伊勢崎市",
+    "building": "伊勢崎市役所",
+    "zipcode": "372-8501",
+    "address": "伊勢崎市今泉町2-410",
+    "tel": "0270-24-5111"
+  },
+  {
+    "baseCode": "10205",
+    "prefecture": "群馬県",
+    "cityName": "太田市",
+    "building": "太田市役所",
+    "zipcode": "373-8718",
+    "address": "太田市浜町2-35",
+    "tel": "0276-47-1111"
+  },
+  {
+    "baseCode": "10206",
+    "prefecture": "群馬県",
+    "cityName": "沼田市",
+    "building": "沼田市役所",
+    "zipcode": "378-8501",
+    "address": "沼田市下之町888",
+    "tel": "0278-23-2111"
+  },
+  {
+    "baseCode": "10207",
+    "prefecture": "群馬県",
+    "cityName": "館林市",
+    "building": "館林市役所",
+    "zipcode": "374-8501",
+    "address": "館林市城町1-1",
+    "tel": "0276-72-4111"
+  },
+  {
+    "baseCode": "10208",
+    "prefecture": "群馬県",
+    "cityName": "渋川市",
+    "building": "渋川市役所",
+    "zipcode": "377-8501",
+    "address": "渋川市石原80",
+    "tel": "0279-22-2111"
+  },
+  {
+    "baseCode": "10209",
+    "prefecture": "群馬県",
+    "cityName": "藤岡市",
+    "building": "藤岡市役所",
+    "zipcode": "375-8601",
+    "address": "藤岡市中栗須327",
+    "tel": "0274-22-1211"
+  },
+  {
+    "baseCode": "10210",
+    "prefecture": "群馬県",
+    "cityName": "富岡市",
+    "building": "富岡市役所",
+    "zipcode": "370-2392",
+    "address": "富岡市富岡1460-1",
+    "tel": "0274-62-1511"
+  },
+  {
+    "baseCode": "10211",
+    "prefecture": "群馬県",
+    "cityName": "安中市",
+    "building": "安中市役所",
+    "zipcode": "379-0192",
+    "address": "安中市安中1-23-13",
+    "tel": "027-382-1111"
+  },
+  {
+    "baseCode": "10212",
+    "prefecture": "群馬県",
+    "cityName": "みどり市",
+    "building": "みどり市役所",
+    "zipcode": "379-2395",
+    "address": "みどり市笠懸町鹿2952",
+    "tel": "0277-76-2111"
+  },
+  {
+    "baseCode": "11100",
+    "prefecture": "埼玉県",
+    "cityName": "さいたま市",
+    "building": "さいたま市役所",
+    "zipcode": "330-9588",
+    "address": "さいたま市浦和区常盤6-4-4",
+    "tel": "048-829-1111"
+  },
+  {
+    "baseCode": "11201",
+    "prefecture": "埼玉県",
+    "cityName": "川越市",
+    "building": "川越市役所",
+    "zipcode": "350-8601",
+    "address": "川越市元町1-3-1",
+    "tel": "049-224-8811"
+  },
+  {
+    "baseCode": "11202",
+    "prefecture": "埼玉県",
+    "cityName": "熊谷市",
+    "building": "熊谷市役所",
+    "zipcode": "360-8601",
+    "address": "熊谷市宮町2-47-1",
+    "tel": "048-524-1111"
+  },
+  {
+    "baseCode": "11203",
+    "prefecture": "埼玉県",
+    "cityName": "川口市",
+    "building": "川口市役所",
+    "zipcode": "332-8601",
+    "address": "川口市青木2-1-1",
+    "tel": "048-258-1110"
+  },
+  {
+    "baseCode": "11206",
+    "prefecture": "埼玉県",
+    "cityName": "行田市",
+    "building": "行田市役所",
+    "zipcode": "361-8601",
+    "address": "行田市本丸2-5",
+    "tel": "048-556-1111"
+  },
+  {
+    "baseCode": "11207",
+    "prefecture": "埼玉県",
+    "cityName": "秩父市",
+    "building": "秩父市役所",
+    "zipcode": "368-8686",
+    "address": "秩父市熊木町8-15",
+    "tel": "0494-22-2211"
+  },
+  {
+    "baseCode": "11208",
+    "prefecture": "埼玉県",
+    "cityName": "所沢市",
+    "building": "所沢市役所",
+    "zipcode": "359-8501",
+    "address": "所沢市並木1-1-1",
+    "tel": "04-2998-1111"
+  },
+  {
+    "baseCode": "11209",
+    "prefecture": "埼玉県",
+    "cityName": "飯能市",
+    "building": "飯能市役所",
+    "zipcode": "357-8501",
+    "address": "飯能市大字双柳1-1",
+    "tel": "042-973-2111"
+  },
+  {
+    "baseCode": "11210",
+    "prefecture": "埼玉県",
+    "cityName": "加須市",
+    "building": "加須市役所",
+    "zipcode": "347-8501",
+    "address": "加須市三俣2-1-1",
+    "tel": "0480-62-1111"
+  },
+  {
+    "baseCode": "11211",
+    "prefecture": "埼玉県",
+    "cityName": "本庄市",
+    "building": "本庄市役所",
+    "zipcode": "367-8501",
+    "address": "本庄市本庄3-5-3",
+    "tel": "0495-25-1111"
+  },
+  {
+    "baseCode": "11212",
+    "prefecture": "埼玉県",
+    "cityName": "東松山市",
+    "building": "東松山市役所",
+    "zipcode": "355-8601",
+    "address": "東松山市松葉町1-1-58",
+    "tel": "0493-23-2221"
+  },
+  {
+    "baseCode": "11214",
+    "prefecture": "埼玉県",
+    "cityName": "春日部市",
+    "building": "春日部市役所",
+    "zipcode": "344-8577",
+    "address": "春日部市中央7-2-1",
+    "tel": "048-736-1111"
+  },
+  {
+    "baseCode": "11215",
+    "prefecture": "埼玉県",
+    "cityName": "狭山市",
+    "building": "狭山市役所",
+    "zipcode": "350-1380",
+    "address": "狭山市入間川1-23-5",
+    "tel": "04-2953-1111"
+  },
+  {
+    "baseCode": "11216",
+    "prefecture": "埼玉県",
+    "cityName": "羽生市",
+    "building": "羽生市役所",
+    "zipcode": "348-8601",
+    "address": "羽生市東6-15",
+    "tel": "048-561-1121"
+  },
+  {
+    "baseCode": "11217",
+    "prefecture": "埼玉県",
+    "cityName": "鴻巣市",
+    "building": "鴻巣市役所",
+    "zipcode": "365-8601",
+    "address": "鴻巣市中央1-1",
+    "tel": "048-541-1321"
+  },
+  {
+    "baseCode": "11218",
+    "prefecture": "埼玉県",
+    "cityName": "深谷市",
+    "building": "深谷市役所",
+    "zipcode": "366-8501",
+    "address": "深谷市仲町11-1",
+    "tel": "048-571-1211"
+  },
+  {
+    "baseCode": "11219",
+    "prefecture": "埼玉県",
+    "cityName": "上尾市",
+    "building": "上尾市役所",
+    "zipcode": "362-8501",
+    "address": "上尾市本町3-1-1",
+    "tel": "048-775-5111"
+  },
+  {
+    "baseCode": "11221",
+    "prefecture": "埼玉県",
+    "cityName": "草加市",
+    "building": "草加市役所",
+    "zipcode": "340-8550",
+    "address": "草加市高砂1-1-1",
+    "tel": "048-922-0151"
+  },
+  {
+    "baseCode": "11222",
+    "prefecture": "埼玉県",
+    "cityName": "越谷市",
+    "building": "越谷市役所",
+    "zipcode": "343-8501",
+    "address": "越谷市越ヶ谷4-2-1",
+    "tel": "048-964-2111"
+  },
+  {
+    "baseCode": "11223",
+    "prefecture": "埼玉県",
+    "cityName": "蕨市",
+    "building": "蕨市役所",
+    "zipcode": "335-8501",
+    "address": "蕨市中央5-14-15",
+    "tel": "048-432-3200"
+  },
+  {
+    "baseCode": "11224",
+    "prefecture": "埼玉県",
+    "cityName": "戸田市",
+    "building": "戸田市役所",
+    "zipcode": "335-8588",
+    "address": "戸田市上戸田1-18-1",
+    "tel": "048-441-1800"
+  },
+  {
+    "baseCode": "11225",
+    "prefecture": "埼玉県",
+    "cityName": "入間市",
+    "building": "入間市役所",
+    "zipcode": "358-8511",
+    "address": "入間市豊岡1-16-1",
+    "tel": "04-2964-1111"
+  },
+  {
+    "baseCode": "11227",
+    "prefecture": "埼玉県",
+    "cityName": "朝霞市",
+    "building": "朝霞市役所",
+    "zipcode": "351-8501",
+    "address": "朝霞市本町1-1-1",
+    "tel": "048-463-1111"
+  },
+  {
+    "baseCode": "11228",
+    "prefecture": "埼玉県",
+    "cityName": "志木市",
+    "building": "志木市役所",
+    "zipcode": "353-8501",
+    "address": "志木市中宗岡1-1-1",
+    "tel": "048-473-1111"
+  },
+  {
+    "baseCode": "11229",
+    "prefecture": "埼玉県",
+    "cityName": "和光市",
+    "building": "和光市役所",
+    "zipcode": "351-0192",
+    "address": "和光市広沢1-5",
+    "tel": "048-464-1111"
+  },
+  {
+    "baseCode": "11230",
+    "prefecture": "埼玉県",
+    "cityName": "新座市",
+    "building": "新座市役所",
+    "zipcode": "352-8623",
+    "address": "新座市野火止1-1-1",
+    "tel": "048-477-1111"
+  },
+  {
+    "baseCode": "11231",
+    "prefecture": "埼玉県",
+    "cityName": "桶川市",
+    "building": "桶川市役所",
+    "zipcode": "363-8501",
+    "address": "桶川市泉1-3-28",
+    "tel": "048-786-3211"
+  },
+  {
+    "baseCode": "11232",
+    "prefecture": "埼玉県",
+    "cityName": "久喜市",
+    "building": "久喜市役所",
+    "zipcode": "346-8501",
+    "address": "久喜市大字下早見85-3",
+    "tel": "0480-22-1111"
+  },
+  {
+    "baseCode": "11233",
+    "prefecture": "埼玉県",
+    "cityName": "北本市",
+    "building": "北本市役所",
+    "zipcode": "364-8633",
+    "address": "北本市本町1-111",
+    "tel": "048-591-1111"
+  },
+  {
+    "baseCode": "11234",
+    "prefecture": "埼玉県",
+    "cityName": "八潮市",
+    "building": "八潮市役所",
+    "zipcode": "340-8588",
+    "address": "八潮市中央1-2-1",
+    "tel": "048-996-2111"
+  },
+  {
+    "baseCode": "11235",
+    "prefecture": "埼玉県",
+    "cityName": "富士見市",
+    "building": "富士見市役所",
+    "zipcode": "354-8511",
+    "address": "富士見市大字鶴馬1800-1",
+    "tel": "049-251-2711"
+  },
+  {
+    "baseCode": "11237",
+    "prefecture": "埼玉県",
+    "cityName": "三郷市",
+    "building": "三郷市役所",
+    "zipcode": "341-8501",
+    "address": "三郷市花和田648-1",
+    "tel": "048-953-1111"
+  },
+  {
+    "baseCode": "11238",
+    "prefecture": "埼玉県",
+    "cityName": "蓮田市",
+    "building": "蓮田市役所",
+    "zipcode": "349-0193",
+    "address": "蓮田市大字黒浜2799-1",
+    "tel": "048-768-3111"
+  },
+  {
+    "baseCode": "11239",
+    "prefecture": "埼玉県",
+    "cityName": "坂戸市",
+    "building": "坂戸市役所",
+    "zipcode": "350-0292",
+    "address": "坂戸市千代田1-1-1",
+    "tel": "049-283-1331"
+  },
+  {
+    "baseCode": "11240",
+    "prefecture": "埼玉県",
+    "cityName": "幸手市",
+    "building": "幸手市役所",
+    "zipcode": "340-0192",
+    "address": "幸手市東4-6-8",
+    "tel": "0480-43-1111"
+  },
+  {
+    "baseCode": "11241",
+    "prefecture": "埼玉県",
+    "cityName": "鶴ヶ島市",
+    "building": "鶴ヶ島市役所",
+    "zipcode": "350-2292",
+    "address": "鶴ヶ島市大字三ツ木16-1",
+    "tel": "049-271-1111"
+  },
+  {
+    "baseCode": "11242",
+    "prefecture": "埼玉県",
+    "cityName": "日高市",
+    "building": "日高市役所",
+    "zipcode": "350-1292",
+    "address": "日高市大字南平沢1020",
+    "tel": "042-989-2111"
+  },
+  {
+    "baseCode": "11243",
+    "prefecture": "埼玉県",
+    "cityName": "吉川市",
+    "building": "吉川市役所",
+    "zipcode": "342-8501",
+    "address": "吉川市きよみ野1-1",
+    "tel": "048-982-5111"
+  },
+  {
+    "baseCode": "11245",
+    "prefecture": "埼玉県",
+    "cityName": "ふじみ野市",
+    "building": "ふじみ野市役所",
+    "zipcode": "356-8501",
+    "address": "ふじみ野市福岡1-1-1",
+    "tel": "049-261-2611"
+  },
+  {
+    "baseCode": "11246",
+    "prefecture": "埼玉県",
+    "cityName": "白岡市",
+    "building": "白岡市役所",
+    "zipcode": "349-0292",
+    "address": "白岡市千駄野432",
+    "tel": "0480-92-1111"
+  },
+  {
+    "baseCode": "12100",
+    "prefecture": "千葉県",
+    "cityName": "千葉市",
+    "building": "千葉市役所",
+    "zipcode": "260-8722",
+    "address": "千葉市中央区千葉港1-1",
+    "tel": "043-245-5111"
+  },
+  {
+    "baseCode": "12202",
+    "prefecture": "千葉県",
+    "cityName": "銚子市",
+    "building": "銚子市役所",
+    "zipcode": "288-8601",
+    "address": "銚子市若宮町1-1",
+    "tel": "0479-24-8181"
+  },
+  {
+    "baseCode": "12203",
+    "prefecture": "千葉県",
+    "cityName": "市川市",
+    "building": "市川市役所",
+    "zipcode": "272-8501",
+    "address": "市川市八幡1-1-1",
+    "tel": "047-334-1111"
+  },
+  {
+    "baseCode": "12204",
+    "prefecture": "千葉県",
+    "cityName": "船橋市",
+    "building": "船橋市役所",
+    "zipcode": "273-8501",
+    "address": "船橋市湊町2-10-25",
+    "tel": "047-436-2111"
+  },
+  {
+    "baseCode": "12205",
+    "prefecture": "千葉県",
+    "cityName": "館山市",
+    "building": "館山市役所",
+    "zipcode": "294-8601",
+    "address": "館山市北条1145-1",
+    "tel": "0470-22-3111"
+  },
+  {
+    "baseCode": "12206",
+    "prefecture": "千葉県",
+    "cityName": "木更津市",
+    "building": "木更津市役所",
+    "zipcode": "292-8501",
+    "address": "木更津市富士見1-2-1",
+    "tel": "0438-23-7111"
+  },
+  {
+    "baseCode": "12207",
+    "prefecture": "千葉県",
+    "cityName": "松戸市",
+    "building": "松戸市役所",
+    "zipcode": "271-8588",
+    "address": "松戸市根本387-5",
+    "tel": "047-366-1111"
+  },
+  {
+    "baseCode": "12208",
+    "prefecture": "千葉県",
+    "cityName": "野田市",
+    "building": "野田市役所",
+    "zipcode": "278-8550",
+    "address": "野田市鶴奉7-1",
+    "tel": "04-7125-1111"
+  },
+  {
+    "baseCode": "12210",
+    "prefecture": "千葉県",
+    "cityName": "茂原市",
+    "building": "茂原市役所",
+    "zipcode": "297-8511",
+    "address": "茂原市道表1",
+    "tel": "0475-23-2111"
+  },
+  {
+    "baseCode": "12211",
+    "prefecture": "千葉県",
+    "cityName": "成田市",
+    "building": "成田市役所",
+    "zipcode": "286-8585",
+    "address": "成田市花崎町760",
+    "tel": "0476-22-1111"
+  },
+  {
+    "baseCode": "12212",
+    "prefecture": "千葉県",
+    "cityName": "佐倉市",
+    "building": "佐倉市役所",
+    "zipcode": "285-8501",
+    "address": "佐倉市海隣寺町97",
+    "tel": "043-484-1111"
+  },
+  {
+    "baseCode": "12213",
+    "prefecture": "千葉県",
+    "cityName": "東金市",
+    "building": "東金市役所",
+    "zipcode": "283-8511",
+    "address": "東金市東岩崎1番地1",
+    "tel": "0475-50-1111"
+  },
+  {
+    "baseCode": "12215",
+    "prefecture": "千葉県",
+    "cityName": "旭市",
+    "building": "旭市役所",
+    "zipcode": "289-2595",
+    "address": "旭市ニの2132",
+    "tel": "0479-62-1212"
+  },
+  {
+    "baseCode": "12216",
+    "prefecture": "千葉県",
+    "cityName": "習志野市",
+    "building": "習志野市役所",
+    "zipcode": "275-8601",
+    "address": "習志野市鷺沼2-1-1",
+    "tel": "047-451-1151"
+  },
+  {
+    "baseCode": "12217",
+    "prefecture": "千葉県",
+    "cityName": "柏市",
+    "building": "柏市役所",
+    "zipcode": "277-8505",
+    "address": "柏市柏5-10-1",
+    "tel": "04-7167-1111"
+  },
+  {
+    "baseCode": "12218",
+    "prefecture": "千葉県",
+    "cityName": "勝浦市",
+    "building": "勝浦市役所",
+    "zipcode": "299-5292",
+    "address": "勝浦市新官1343-1",
+    "tel": "0470-73-1211"
+  },
+  {
+    "baseCode": "12219",
+    "prefecture": "千葉県",
+    "cityName": "市原市",
+    "building": "市原市役所",
+    "zipcode": "290-8501",
+    "address": "市原市国分寺台中央1-1-1",
+    "tel": "0436-22-1111"
+  },
+  {
+    "baseCode": "12220",
+    "prefecture": "千葉県",
+    "cityName": "流山市",
+    "building": "流山市役所",
+    "zipcode": "270-0192",
+    "address": "流山市平和台1-1-1",
+    "tel": "04-7158-1111"
+  },
+  {
+    "baseCode": "12221",
+    "prefecture": "千葉県",
+    "cityName": "八千代市",
+    "building": "八千代市役所",
+    "zipcode": "276-8501",
+    "address": "八千代市大和田新田312-5",
+    "tel": "047-483-1151"
+  },
+  {
+    "baseCode": "12222",
+    "prefecture": "千葉県",
+    "cityName": "我孫子市",
+    "building": "我孫子市役所",
+    "zipcode": "270-1192",
+    "address": "我孫子市我孫子1858",
+    "tel": "04-7185-1111"
+  },
+  {
+    "baseCode": "12223",
+    "prefecture": "千葉県",
+    "cityName": "鴨川市",
+    "building": "鴨川市役所",
+    "zipcode": "296-8601",
+    "address": "鴨川市横渚1450",
+    "tel": "04-7092-1111"
+  },
+  {
+    "baseCode": "12224",
+    "prefecture": "千葉県",
+    "cityName": "鎌ケ谷市",
+    "building": "鎌ケ谷市役所",
+    "zipcode": "273-0195",
+    "address": "鎌ケ谷市新鎌ケ谷2-6-1",
+    "tel": "047-445-1141"
+  },
+  {
+    "baseCode": "12225",
+    "prefecture": "千葉県",
+    "cityName": "君津市",
+    "building": "君津市役所",
+    "zipcode": "299-1192",
+    "address": "君津市久保2-13-1",
+    "tel": "0439-56-1581"
+  },
+  {
+    "baseCode": "12226",
+    "prefecture": "千葉県",
+    "cityName": "富津市",
+    "building": "富津市役所",
+    "zipcode": "293-8506",
+    "address": "富津市下飯野2443",
+    "tel": "0439-80-1222"
+  },
+  {
+    "baseCode": "12227",
+    "prefecture": "千葉県",
+    "cityName": "浦安市",
+    "building": "浦安市役所",
+    "zipcode": "279-8501",
+    "address": "浦安市猫実1-1-1",
+    "tel": "047-351-1111"
+  },
+  {
+    "baseCode": "12228",
+    "prefecture": "千葉県",
+    "cityName": "四街道市",
+    "building": "四街道市役所",
+    "zipcode": "284-8555",
+    "address": "四街道市鹿渡無番地",
+    "tel": "043-421-2111"
+  },
+  {
+    "baseCode": "12229",
+    "prefecture": "千葉県",
+    "cityName": "袖ケ浦市",
+    "building": "袖ケ浦市役所",
+    "zipcode": "299-0292",
+    "address": "袖ケ浦市坂戸市場1-1",
+    "tel": "0438-62-2111"
+  },
+  {
+    "baseCode": "12230",
+    "prefecture": "千葉県",
+    "cityName": "八街市",
+    "building": "八街市役所",
+    "zipcode": "289-1192",
+    "address": "八街市八街ほ35-29",
+    "tel": "043-443-1111"
+  },
+  {
+    "baseCode": "12231",
+    "prefecture": "千葉県",
+    "cityName": "印西市",
+    "building": "印西市役所",
+    "zipcode": "270-1396",
+    "address": "印西市大森2364-2",
+    "tel": "0476-42-5111"
+  },
+  {
+    "baseCode": "12232",
+    "prefecture": "千葉県",
+    "cityName": "白井市",
+    "building": "白井市役所",
+    "zipcode": "270-1492",
+    "address": "白井市復1123",
+    "tel": "047-492-1111"
+  },
+  {
+    "baseCode": "12233",
+    "prefecture": "千葉県",
+    "cityName": "富里市",
+    "building": "富里市役所",
+    "zipcode": "286-0292",
+    "address": "富里市七栄652-1",
+    "tel": "0476-93-1111"
+  },
+  {
+    "baseCode": "12234",
+    "prefecture": "千葉県",
+    "cityName": "南房総市",
+    "building": "南房総市役所",
+    "zipcode": "299-2492",
+    "address": "南房総市富浦町青木28",
+    "tel": "0470-33-1021"
+  },
+  {
+    "baseCode": "12235",
+    "prefecture": "千葉県",
+    "cityName": "匝瑳市",
+    "building": "匝瑳市役所",
+    "zipcode": "289-2198",
+    "address": "匝瑳市八日市場ハ793番地2",
+    "tel": "0479-73-0084"
+  },
+  {
+    "baseCode": "12236",
+    "prefecture": "千葉県",
+    "cityName": "香取市",
+    "building": "香取市役所",
+    "zipcode": "287-8501",
+    "address": "香取市佐原ロ2127",
+    "tel": "0478-54-1111"
+  },
+  {
+    "baseCode": "12237",
+    "prefecture": "千葉県",
+    "cityName": "山武市",
+    "building": "山武市役所",
+    "zipcode": "289-1392",
+    "address": "山武市殿台296",
+    "tel": "0475-80-1112"
+  },
+  {
+    "baseCode": "12238",
+    "prefecture": "千葉県",
+    "cityName": "いすみ市",
+    "building": "いすみ市役所",
+    "zipcode": "298-8501",
+    "address": "いすみ市大原7400-1",
+    "tel": "0470-62-1111"
+  },
+  {
+    "baseCode": "12239",
+    "prefecture": "千葉県",
+    "cityName": "大網白里市",
+    "building": "大網白里市役所",
+    "zipcode": "299-3292",
+    "address": "大網白里市大網115-2",
+    "tel": "0475-70-0300"
+  },
+  {
+    "baseCode": "13201",
+    "prefecture": "東京都",
+    "cityName": "八王子市",
+    "building": "八王子市役所",
+    "zipcode": "192-8501",
+    "address": "八王子市元本郷町3-24-1",
+    "tel": "042-626-3111"
+  },
+  {
+    "baseCode": "13202",
+    "prefecture": "東京都",
+    "cityName": "立川市",
+    "building": "立川市役所",
+    "zipcode": "190-8666",
+    "address": "立川市泉町1156-9",
+    "tel": "042-523-2111"
+  },
+  {
+    "baseCode": "13203",
+    "prefecture": "東京都",
+    "cityName": "武蔵野市",
+    "building": "武蔵野市役所",
+    "zipcode": "180-8777",
+    "address": "武蔵野市緑町2-2-28",
+    "tel": "0422-51-5131"
+  },
+  {
+    "baseCode": "13204",
+    "prefecture": "東京都",
+    "cityName": "三鷹市",
+    "building": "三鷹市役所",
+    "zipcode": "181-8555",
+    "address": "三鷹市野崎1-1-1",
+    "tel": "0422-45-1151"
+  },
+  {
+    "baseCode": "13205",
+    "prefecture": "東京都",
+    "cityName": "青梅市",
+    "building": "青梅市役所",
+    "zipcode": "198-8701",
+    "address": "青梅市東青梅1-11-1",
+    "tel": "0428-22-1111"
+  },
+  {
+    "baseCode": "13206",
+    "prefecture": "東京都",
+    "cityName": "府中市",
+    "building": "府中市役所",
+    "zipcode": "183-8703",
+    "address": "府中市宮西町2-24",
+    "tel": "042-364-4111"
+  },
+  {
+    "baseCode": "13207",
+    "prefecture": "東京都",
+    "cityName": "昭島市",
+    "building": "昭島市役所",
+    "zipcode": "196-8511",
+    "address": "昭島市田中町1-17-1",
+    "tel": "042-544-5111"
+  },
+  {
+    "baseCode": "13208",
+    "prefecture": "東京都",
+    "cityName": "調布市",
+    "building": "調布市役所",
+    "zipcode": "182-8511",
+    "address": "調布市小島町2-35-1",
+    "tel": "042-481-7111"
+  },
+  {
+    "baseCode": "13209",
+    "prefecture": "東京都",
+    "cityName": "町田市",
+    "building": "町田市役所",
+    "zipcode": "194-8520",
+    "address": "町田市森野2-2-22",
+    "tel": "042-722-3111"
+  },
+  {
+    "baseCode": "13210",
+    "prefecture": "東京都",
+    "cityName": "小金井市",
+    "building": "小金井市役所",
+    "zipcode": "184-8504",
+    "address": "小金井市本町6-6-3",
+    "tel": "042-383-1111"
+  },
+  {
+    "baseCode": "13211",
+    "prefecture": "東京都",
+    "cityName": "小平市",
+    "building": "小平市役所",
+    "zipcode": "187-8701",
+    "address": "小平市小川町2-1333",
+    "tel": "042-341-1211"
+  },
+  {
+    "baseCode": "13212",
+    "prefecture": "東京都",
+    "cityName": "日野市",
+    "building": "日野市役所",
+    "zipcode": "191-0016",
+    "address": "日野市神明1-12-1",
+    "tel": "042-585-1111"
+  },
+  {
+    "baseCode": "13213",
+    "prefecture": "東京都",
+    "cityName": "東村山市",
+    "building": "東村山市役所",
+    "zipcode": "189-8501",
+    "address": "東村山市本町1-2-3",
+    "tel": "042-393-5111"
+  },
+  {
+    "baseCode": "13214",
+    "prefecture": "東京都",
+    "cityName": "国分寺市",
+    "building": "国分寺市役所",
+    "zipcode": "185-8501",
+    "address": "国分寺市泉町2-2-18",
+    "tel": "042-325-0111"
+  },
+  {
+    "baseCode": "13215",
+    "prefecture": "東京都",
+    "cityName": "国立市",
+    "building": "国立市役所",
+    "zipcode": "186-8501",
+    "address": "国立市富士見台2-47-1",
+    "tel": "042-576-2111"
+  },
+  {
+    "baseCode": "13218",
+    "prefecture": "東京都",
+    "cityName": "福生市",
+    "building": "福生市役所",
+    "zipcode": "197-8501",
+    "address": "福生市本町5",
+    "tel": "042-551-1511"
+  },
+  {
+    "baseCode": "13219",
+    "prefecture": "東京都",
+    "cityName": "狛江市",
+    "building": "狛江市役所",
+    "zipcode": "201-8585",
+    "address": "狛江市和泉本町1-1-5",
+    "tel": "03-3430-1111"
+  },
+  {
+    "baseCode": "13220",
+    "prefecture": "東京都",
+    "cityName": "東大和市",
+    "building": "東大和市役所",
+    "zipcode": "207-8585",
+    "address": "東大和市中央3-930",
+    "tel": "042-563-2111"
+  },
+  {
+    "baseCode": "13221",
+    "prefecture": "東京都",
+    "cityName": "清瀬市",
+    "building": "清瀬市役所",
+    "zipcode": "204-8511",
+    "address": "清瀬市中里5-842",
+    "tel": "042-492-5111"
+  },
+  {
+    "baseCode": "13222",
+    "prefecture": "東京都",
+    "cityName": "東久留米市",
+    "building": "東久留米市役所",
+    "zipcode": "203-8555",
+    "address": "東久留米市本町3-3-1",
+    "tel": "042-470-7777"
+  },
+  {
+    "baseCode": "13223",
+    "prefecture": "東京都",
+    "cityName": "武蔵村山市",
+    "building": "武蔵村山市役所",
+    "zipcode": "208-8501",
+    "address": "武蔵村山市本町1-1-1",
+    "tel": "042-565-1111"
+  },
+  {
+    "baseCode": "13224",
+    "prefecture": "東京都",
+    "cityName": "多摩市",
+    "building": "多摩市役所",
+    "zipcode": "206-8666",
+    "address": "多摩市関戸6-12-1",
+    "tel": "042-375-8111"
+  },
+  {
+    "baseCode": "13225",
+    "prefecture": "東京都",
+    "cityName": "稲城市",
+    "building": "稲城市役所",
+    "zipcode": "206-8601",
+    "address": "稲城市東長沼2111",
+    "tel": "042-378-2111"
+  },
+  {
+    "baseCode": "13227",
+    "prefecture": "東京都",
+    "cityName": "羽村市",
+    "building": "羽村市役所",
+    "zipcode": "205-8601",
+    "address": "羽村市緑ヶ丘5-2-1",
+    "tel": "042-555-1111"
+  },
+  {
+    "baseCode": "13228",
+    "prefecture": "東京都",
+    "cityName": "あきる野市",
+    "building": "あきる野市役所",
+    "zipcode": "197-0814",
+    "address": "あきる野市二宮350",
+    "tel": "042-558-1111"
+  },
+  {
+    "baseCode": "13229",
+    "prefecture": "東京都",
+    "cityName": "西東京市",
+    "building": "西東京市役所",
+    "zipcode": "188-8666",
+    "address": "西東京市南町5-6-13",
+    "tel": "042-464-1311"
+  },
+  {
+    "baseCode": "14100",
+    "prefecture": "神奈川県",
+    "cityName": "横浜市",
+    "building": "横浜市役所",
+    "zipcode": "231-0005",
+    "address": "横浜市中区本町6-50-10",
+    "tel": "045-671-2121"
+  },
+  {
+    "baseCode": "14130",
+    "prefecture": "神奈川県",
+    "cityName": "川崎市",
+    "building": "川崎市役所",
+    "zipcode": "210-8577",
+    "address": "川崎市川崎区宮本町1",
+    "tel": "044-200-2111"
+  },
+  {
+    "baseCode": "14150",
+    "prefecture": "神奈川県",
+    "cityName": "相模原市",
+    "building": "相模原市役所",
+    "zipcode": "252-5277",
+    "address": "相模原市中央区中央2-11-15",
+    "tel": "042-754-1111"
+  },
+  {
+    "baseCode": "14201",
+    "prefecture": "神奈川県",
+    "cityName": "横須賀市",
+    "building": "横須賀市役所",
+    "zipcode": "238-8550",
+    "address": "横須賀市小川町11",
+    "tel": "046-822-4000"
+  },
+  {
+    "baseCode": "14203",
+    "prefecture": "神奈川県",
+    "cityName": "平塚市",
+    "building": "平塚市役所",
+    "zipcode": "254-8686",
+    "address": "平塚市浅間町9-1",
+    "tel": "0463-23-1111"
+  },
+  {
+    "baseCode": "14204",
+    "prefecture": "神奈川県",
+    "cityName": "鎌倉市",
+    "building": "鎌倉市役所",
+    "zipcode": "248-8686",
+    "address": "鎌倉市御成町18-10",
+    "tel": "0467-23-3000"
+  },
+  {
+    "baseCode": "14205",
+    "prefecture": "神奈川県",
+    "cityName": "藤沢市",
+    "building": "藤沢市役所",
+    "zipcode": "251-8601",
+    "address": "藤沢市朝日町1-1",
+    "tel": "0466-25-1111"
+  },
+  {
+    "baseCode": "14206",
+    "prefecture": "神奈川県",
+    "cityName": "小田原市",
+    "building": "小田原市役所",
+    "zipcode": "250-8555",
+    "address": "小田原市荻窪300",
+    "tel": "0465-33-1300"
+  },
+  {
+    "baseCode": "14207",
+    "prefecture": "神奈川県",
+    "cityName": "茅ヶ崎市",
+    "building": "茅ヶ崎市役所",
+    "zipcode": "253-8686",
+    "address": "茅ヶ崎市茅ヶ崎1-1-1",
+    "tel": "0467-82-1111"
+  },
+  {
+    "baseCode": "14208",
+    "prefecture": "神奈川県",
+    "cityName": "逗子市",
+    "building": "逗子市役所",
+    "zipcode": "249-8686",
+    "address": "逗子市逗子5-2-16",
+    "tel": "046-873-1111"
+  },
+  {
+    "baseCode": "14210",
+    "prefecture": "神奈川県",
+    "cityName": "三浦市",
+    "building": "三浦市役所",
+    "zipcode": "238-0298",
+    "address": "三浦市城山町1-1",
+    "tel": "046-882-1111"
+  },
+  {
+    "baseCode": "14211",
+    "prefecture": "神奈川県",
+    "cityName": "秦野市",
+    "building": "秦野市役所",
+    "zipcode": "257-8501",
+    "address": "秦野市桜町1-3-2",
+    "tel": "0463-82-5111"
+  },
+  {
+    "baseCode": "14212",
+    "prefecture": "神奈川県",
+    "cityName": "厚木市",
+    "building": "厚木市役所",
+    "zipcode": "243-8511",
+    "address": "厚木市中町3-17-17",
+    "tel": "046-223-1511"
+  },
+  {
+    "baseCode": "14213",
+    "prefecture": "神奈川県",
+    "cityName": "大和市",
+    "building": "大和市役所",
+    "zipcode": "242-8601",
+    "address": "大和市下鶴間1-1-1",
+    "tel": "046-263-1111"
+  },
+  {
+    "baseCode": "14214",
+    "prefecture": "神奈川県",
+    "cityName": "伊勢原市",
+    "building": "伊勢原市役所",
+    "zipcode": "259-1188",
+    "address": "伊勢原市田中348",
+    "tel": "0463-94-4711"
+  },
+  {
+    "baseCode": "14215",
+    "prefecture": "神奈川県",
+    "cityName": "海老名市",
+    "building": "海老名市役所",
+    "zipcode": "243-0492",
+    "address": "海老名市勝瀬175-1",
+    "tel": "046-231-2111"
+  },
+  {
+    "baseCode": "14216",
+    "prefecture": "神奈川県",
+    "cityName": "座間市",
+    "building": "座間市役所",
+    "zipcode": "252-8566",
+    "address": "座間市緑ヶ丘1-1-1",
+    "tel": "046-255-1111"
+  },
+  {
+    "baseCode": "14217",
+    "prefecture": "神奈川県",
+    "cityName": "南足柄市",
+    "building": "南足柄市役所",
+    "zipcode": "250-0192",
+    "address": "南足柄市関本440",
+    "tel": "0465-74-2111"
+  },
+  {
+    "baseCode": "14218",
+    "prefecture": "神奈川県",
+    "cityName": "綾瀬市",
+    "building": "綾瀬市役所",
+    "zipcode": "252-1192",
+    "address": "綾瀬市早川550",
+    "tel": "0467-77-1111"
+  },
+  {
+    "baseCode": "15100",
+    "prefecture": "新潟県",
+    "cityName": "新潟市",
+    "building": "新潟市役所",
+    "zipcode": "951-8550",
+    "address": "新潟市中央区学校町通1番町602-1",
+    "tel": "025-228-1000"
+  },
+  {
+    "baseCode": "15202",
+    "prefecture": "新潟県",
+    "cityName": "長岡市",
+    "building": "長岡市役所",
+    "zipcode": "940-8501",
+    "address": "長岡市大手通1-4-10",
+    "tel": "0258-35-1122"
+  },
+  {
+    "baseCode": "15204",
+    "prefecture": "新潟県",
+    "cityName": "三条市",
+    "building": "三条市役所",
+    "zipcode": "955-8686",
+    "address": "三条市旭町2-3-1",
+    "tel": "0256-34-5511"
+  },
+  {
+    "baseCode": "15205",
+    "prefecture": "新潟県",
+    "cityName": "柏崎市",
+    "building": "柏崎市役所",
+    "zipcode": "945-8511",
+    "address": "柏崎市日石町2-1",
+    "tel": "0257-23-5111"
+  },
+  {
+    "baseCode": "15206",
+    "prefecture": "新潟県",
+    "cityName": "新発田市",
+    "building": "新発田市役所",
+    "zipcode": "957-8686",
+    "address": "新発田市中央町3-3-3",
+    "tel": "0254-22-3030"
+  },
+  {
+    "baseCode": "15208",
+    "prefecture": "新潟県",
+    "cityName": "小千谷市",
+    "building": "小千谷市役所",
+    "zipcode": "947-8501",
+    "address": "小千谷市城内2-7-5",
+    "tel": "0258-83-3511"
+  },
+  {
+    "baseCode": "15209",
+    "prefecture": "新潟県",
+    "cityName": "加茂市",
+    "building": "加茂市役所",
+    "zipcode": "959-1392",
+    "address": "加茂市幸町2-3-5",
+    "tel": "0256-52-0080"
+  },
+  {
+    "baseCode": "15210",
+    "prefecture": "新潟県",
+    "cityName": "十日町市",
+    "building": "十日町市役所",
+    "zipcode": "948-8501",
+    "address": "十日町市千歳町3-3",
+    "tel": "025-757-3111"
+  },
+  {
+    "baseCode": "15211",
+    "prefecture": "新潟県",
+    "cityName": "見附市",
+    "building": "見附市役所",
+    "zipcode": "954-8686",
+    "address": "見附市昭和町2-1-1",
+    "tel": "0258-62-1700"
+  },
+  {
+    "baseCode": "15212",
+    "prefecture": "新潟県",
+    "cityName": "村上市",
+    "building": "村上市役所",
+    "zipcode": "958-8501",
+    "address": "村上市三之町1-1",
+    "tel": "0254-53-2111"
+  },
+  {
+    "baseCode": "15213",
+    "prefecture": "新潟県",
+    "cityName": "燕市",
+    "building": "燕市役所",
+    "zipcode": "959-0295",
+    "address": "燕市吉田西太田1934",
+    "tel": "0256-92-1111"
+  },
+  {
+    "baseCode": "15216",
+    "prefecture": "新潟県",
+    "cityName": "糸魚川市",
+    "building": "糸魚川市役所",
+    "zipcode": "941-8501",
+    "address": "糸魚川市一の宮1-2-5",
+    "tel": "025-552-1511"
+  },
+  {
+    "baseCode": "15217",
+    "prefecture": "新潟県",
+    "cityName": "妙高市",
+    "building": "妙高市役所",
+    "zipcode": "944-8686",
+    "address": "妙高市栄町5-1",
+    "tel": "0255-72-5111"
+  },
+  {
+    "baseCode": "15218",
+    "prefecture": "新潟県",
+    "cityName": "五泉市",
+    "building": "五泉市役所",
+    "zipcode": "959-1692",
+    "address": "五泉市太田1094-1",
+    "tel": "0250-43-3911"
+  },
+  {
+    "baseCode": "15222",
+    "prefecture": "新潟県",
+    "cityName": "上越市",
+    "building": "上越市役所",
+    "zipcode": "943-8601",
+    "address": "上越市木田1丁目1-3",
+    "tel": "025-526-5111"
+  },
+  {
+    "baseCode": "15223",
+    "prefecture": "新潟県",
+    "cityName": "阿賀野市",
+    "building": "阿賀野市役所",
+    "zipcode": "959-2092",
+    "address": "阿賀野市岡山町10-15",
+    "tel": "0250-62-2510"
+  },
+  {
+    "baseCode": "15224",
+    "prefecture": "新潟県",
+    "cityName": "佐渡市",
+    "building": "佐渡市役所",
+    "zipcode": "952-1292",
+    "address": "佐渡市千種232",
+    "tel": "0259-63-3111"
+  },
+  {
+    "baseCode": "15225",
+    "prefecture": "新潟県",
+    "cityName": "魚沼市",
+    "building": "魚沼市役所",
+    "zipcode": "946-8601",
+    "address": "魚沼市小出島910",
+    "tel": "025-792-1000"
+  },
+  {
+    "baseCode": "15226",
+    "prefecture": "新潟県",
+    "cityName": "南魚沼市",
+    "building": "南魚沼市役所",
+    "zipcode": "949-6696",
+    "address": "南魚沼市六日町180-1",
+    "tel": "025-773-6660"
+  },
+  {
+    "baseCode": "15227",
+    "prefecture": "新潟県",
+    "cityName": "胎内市",
+    "building": "胎内市役所",
+    "zipcode": "959-2693",
+    "address": "胎内市新和町2-10",
+    "tel": "0254-43-6111"
+  },
+  {
+    "baseCode": "16201",
+    "prefecture": "富山県",
+    "cityName": "富山市",
+    "building": "富山市役所",
+    "zipcode": "930-8510",
+    "address": "富山市新桜町7-38",
+    "tel": "076-431-6111"
+  },
+  {
+    "baseCode": "16202",
+    "prefecture": "富山県",
+    "cityName": "高岡市",
+    "building": "高岡市役所",
+    "zipcode": "933-8601",
+    "address": "高岡市広小路7-50",
+    "tel": "0766-20-1111"
+  },
+  {
+    "baseCode": "16204",
+    "prefecture": "富山県",
+    "cityName": "魚津市",
+    "building": "魚津市役所",
+    "zipcode": "937-8555",
+    "address": "魚津市釈迦堂1-10-1",
+    "tel": "0765-23-1019"
+  },
+  {
+    "baseCode": "16205",
+    "prefecture": "富山県",
+    "cityName": "氷見市",
+    "building": "氷見市役所",
+    "zipcode": "935-8686",
+    "address": "氷見市鞍川1060番地",
+    "tel": "0766-74-8100"
+  },
+  {
+    "baseCode": "16206",
+    "prefecture": "富山県",
+    "cityName": "滑川市",
+    "building": "滑川市役所",
+    "zipcode": "936-8601",
+    "address": "滑川市寺家町104",
+    "tel": "076-475-2111"
+  },
+  {
+    "baseCode": "16207",
+    "prefecture": "富山県",
+    "cityName": "黒部市",
+    "building": "黒部市役所",
+    "zipcode": "938-8555",
+    "address": "黒部市三日市1301",
+    "tel": "0765-54-2111"
+  },
+  {
+    "baseCode": "16208",
+    "prefecture": "富山県",
+    "cityName": "砺波市",
+    "building": "砺波市役所",
+    "zipcode": "939-1398",
+    "address": "砺波市栄町7-3",
+    "tel": "0763-33-1111"
+  },
+  {
+    "baseCode": "16209",
+    "prefecture": "富山県",
+    "cityName": "小矢部市",
+    "building": "小矢部市役所",
+    "zipcode": "932-8611",
+    "address": "小矢部市本町1-1",
+    "tel": "0766-67-1760"
+  },
+  {
+    "baseCode": "16210",
+    "prefecture": "富山県",
+    "cityName": "南砺市",
+    "building": "南砺市役所",
+    "zipcode": "939-1692",
+    "address": "南砺市荒木1550番地",
+    "tel": "0763-23-2003"
+  },
+  {
+    "baseCode": "16211",
+    "prefecture": "富山県",
+    "cityName": "射水市",
+    "building": "射水市役所",
+    "zipcode": "939-0294",
+    "address": "射水市新開発410-1",
+    "tel": "0766-51-6600"
+  },
+  {
+    "baseCode": "17201",
+    "prefecture": "石川県",
+    "cityName": "金沢市",
+    "building": "金沢市役所",
+    "zipcode": "920-8577",
+    "address": "金沢市広坂1-1-1",
+    "tel": "076-220-2111"
+  },
+  {
+    "baseCode": "17202",
+    "prefecture": "石川県",
+    "cityName": "七尾市",
+    "building": "七尾市役所",
+    "zipcode": "926-8611",
+    "address": "七尾市袖ヶ江町イ部25",
+    "tel": "0767-53-1111"
+  },
+  {
+    "baseCode": "17203",
+    "prefecture": "石川県",
+    "cityName": "小松市",
+    "building": "小松市役所",
+    "zipcode": "923-8650",
+    "address": "小松市小馬出町91",
+    "tel": "0761-22-4111"
+  },
+  {
+    "baseCode": "17204",
+    "prefecture": "石川県",
+    "cityName": "輪島市",
+    "building": "輪島市役所",
+    "zipcode": "928-8525",
+    "address": "輪島市二ツ屋町2字29",
+    "tel": "0768-22-2211"
+  },
+  {
+    "baseCode": "17205",
+    "prefecture": "石川県",
+    "cityName": "珠洲市",
+    "building": "珠洲市役所",
+    "zipcode": "927-1295",
+    "address": "珠洲市上戸町北方1の6の2",
+    "tel": "0768-82-2222"
+  },
+  {
+    "baseCode": "17206",
+    "prefecture": "石川県",
+    "cityName": "加賀市",
+    "building": "加賀市役所",
+    "zipcode": "922-8622",
+    "address": "加賀市大聖寺南町ニ41",
+    "tel": "0761-72-1111"
+  },
+  {
+    "baseCode": "17207",
+    "prefecture": "石川県",
+    "cityName": "羽咋市",
+    "building": "羽咋市役所",
+    "zipcode": "925-8501",
+    "address": "羽咋市旭町ア200",
+    "tel": "0767-22-1111"
+  },
+  {
+    "baseCode": "17209",
+    "prefecture": "石川県",
+    "cityName": "かほく市",
+    "building": "かほく市役所",
+    "zipcode": "929-1195",
+    "address": "かほく市宇野気ニ81",
+    "tel": "076-283-1111"
+  },
+  {
+    "baseCode": "17210",
+    "prefecture": "石川県",
+    "cityName": "白山市",
+    "building": "白山市役所",
+    "zipcode": "924-8688",
+    "address": "白山市倉光2-1",
+    "tel": "076-276-1111"
+  },
+  {
+    "baseCode": "17211",
+    "prefecture": "石川県",
+    "cityName": "能美市",
+    "building": "能美市役所",
+    "zipcode": "923-1297",
+    "address": "能美市来丸町1110",
+    "tel": "0761-58-1111"
+  },
+  {
+    "baseCode": "17212",
+    "prefecture": "石川県",
+    "cityName": "野々市市",
+    "building": "野々市市役所",
+    "zipcode": "921-8510",
+    "address": "野々市市三納1-1",
+    "tel": "076-227-6000"
+  },
+  {
+    "baseCode": "18201",
+    "prefecture": "福井県",
+    "cityName": "福井市",
+    "building": "福井市役所",
+    "zipcode": "910-8511",
+    "address": "福井市大手3-10-1",
+    "tel": "0776-20-5111"
+  },
+  {
+    "baseCode": "18202",
+    "prefecture": "福井県",
+    "cityName": "敦賀市",
+    "building": "敦賀市役所",
+    "zipcode": "914-8501",
+    "address": "敦賀市中央町2-1-1",
+    "tel": "0770-21-1111"
+  },
+  {
+    "baseCode": "18204",
+    "prefecture": "福井県",
+    "cityName": "小浜市",
+    "building": "小浜市役所",
+    "zipcode": "917-8585",
+    "address": "小浜市大手町6-3",
+    "tel": "0770-53-1111"
+  },
+  {
+    "baseCode": "18205",
+    "prefecture": "福井県",
+    "cityName": "大野市",
+    "building": "大野市役所",
+    "zipcode": "912-8666",
+    "address": "大野市天神町1-1",
+    "tel": "0779-66-1111"
+  },
+  {
+    "baseCode": "18206",
+    "prefecture": "福井県",
+    "cityName": "勝山市",
+    "building": "勝山市役所",
+    "zipcode": "911-8501",
+    "address": "勝山市元町1-1-1",
+    "tel": "0779-88-1111"
+  },
+  {
+    "baseCode": "18207",
+    "prefecture": "福井県",
+    "cityName": "鯖江市",
+    "building": "鯖江市役所",
+    "zipcode": "916-8666",
+    "address": "鯖江市西山町13-1",
+    "tel": "0778-51-2200"
+  },
+  {
+    "baseCode": "18208",
+    "prefecture": "福井県",
+    "cityName": "あわら市",
+    "building": "あわら市役所",
+    "zipcode": "919-0692",
+    "address": "あわら市市姫3-1-1",
+    "tel": "0776-73-1221"
+  },
+  {
+    "baseCode": "18209",
+    "prefecture": "福井県",
+    "cityName": "越前市",
+    "building": "越前市役所",
+    "zipcode": "915-8530",
+    "address": "越前市府中1-13-7",
+    "tel": "0778-22-3000"
+  },
+  {
+    "baseCode": "18210",
+    "prefecture": "福井県",
+    "cityName": "坂井市",
+    "building": "坂井市役所",
+    "zipcode": "919-0592",
+    "address": "坂井市坂井町下新庄1-1",
+    "tel": "0776-66-1500"
+  },
+  {
+    "baseCode": "19201",
+    "prefecture": "山梨県",
+    "cityName": "甲府市",
+    "building": "甲府市役所",
+    "zipcode": "400-8585",
+    "address": "甲府市丸の内1-18-1",
+    "tel": "055-237-1161"
+  },
+  {
+    "baseCode": "19202",
+    "prefecture": "山梨県",
+    "cityName": "富士吉田市",
+    "building": "富士吉田市役所",
+    "zipcode": "403-8601",
+    "address": "富士吉田市下吉田6-1-1",
+    "tel": "0555-22-1111"
+  },
+  {
+    "baseCode": "19204",
+    "prefecture": "山梨県",
+    "cityName": "都留市",
+    "building": "都留市役所",
+    "zipcode": "402-8501",
+    "address": "都留市上谷1-1-1",
+    "tel": "0554-43-1111"
+  },
+  {
+    "baseCode": "19205",
+    "prefecture": "山梨県",
+    "cityName": "山梨市",
+    "building": "山梨市役所",
+    "zipcode": "405-8501",
+    "address": "山梨市小原西843",
+    "tel": "0553-22-1111"
+  },
+  {
+    "baseCode": "19206",
+    "prefecture": "山梨県",
+    "cityName": "大月市",
+    "building": "大月市役所",
+    "zipcode": "401-8601",
+    "address": "大月市大月2-6-20",
+    "tel": "0554-22-2111"
+  },
+  {
+    "baseCode": "19207",
+    "prefecture": "山梨県",
+    "cityName": "韮崎市",
+    "building": "韮崎市役所",
+    "zipcode": "407-8501",
+    "address": "韮崎市水神1-3-1",
+    "tel": "0551-22-1111"
+  },
+  {
+    "baseCode": "19208",
+    "prefecture": "山梨県",
+    "cityName": "南アルプス市",
+    "building": "南アルプス市役所",
+    "zipcode": "400-0395",
+    "address": "南アルプス市小笠原376",
+    "tel": "055-282-1111"
+  },
+  {
+    "baseCode": "19209",
+    "prefecture": "山梨県",
+    "cityName": "北杜市",
+    "building": "北杜市役所",
+    "zipcode": "408-0188",
+    "address": "北杜市須玉町大豆生田961-1",
+    "tel": "0551-42-1111"
+  },
+  {
+    "baseCode": "19210",
+    "prefecture": "山梨県",
+    "cityName": "甲斐市",
+    "building": "甲斐市役所",
+    "zipcode": "400-0192",
+    "address": "甲斐市篠原2610",
+    "tel": "055-276-2111"
+  },
+  {
+    "baseCode": "19211",
+    "prefecture": "山梨県",
+    "cityName": "笛吹市",
+    "building": "笛吹市役所",
+    "zipcode": "406-8510",
+    "address": "笛吹市石和町市部777",
+    "tel": "055-262-4111"
+  },
+  {
+    "baseCode": "19212",
+    "prefecture": "山梨県",
+    "cityName": "上野原市",
+    "building": "上野原市役所",
+    "zipcode": "409-0192",
+    "address": "上野原市上野原3832",
+    "tel": "0554-62-3111"
+  },
+  {
+    "baseCode": "19213",
+    "prefecture": "山梨県",
+    "cityName": "甲州市",
+    "building": "甲州市役所",
+    "zipcode": "404-8501",
+    "address": "甲州市塩山上於曽1085番地1",
+    "tel": "0553-32-2111"
+  },
+  {
+    "baseCode": "19214",
+    "prefecture": "山梨県",
+    "cityName": "中央市",
+    "building": "中央市役所",
+    "zipcode": "409-3892",
+    "address": "中央市臼井阿原301-1",
+    "tel": "055-274-1111"
+  },
+  {
+    "baseCode": "20201",
+    "prefecture": "長野県",
+    "cityName": "長野市",
+    "building": "長野市役所",
+    "zipcode": "380-8512",
+    "address": "長野市大字鶴賀緑町1613",
+    "tel": "026-226-4911"
+  },
+  {
+    "baseCode": "20202",
+    "prefecture": "長野県",
+    "cityName": "松本市",
+    "building": "松本市役所",
+    "zipcode": "390-8620",
+    "address": "松本市丸の内3-7",
+    "tel": "0263-34-3000"
+  },
+  {
+    "baseCode": "20203",
+    "prefecture": "長野県",
+    "cityName": "上田市",
+    "building": "上田市役所",
+    "zipcode": "386-8601",
+    "address": "上田市大手1-11-16",
+    "tel": "0268-22-4100"
+  },
+  {
+    "baseCode": "20204",
+    "prefecture": "長野県",
+    "cityName": "岡谷市",
+    "building": "岡谷市役所",
+    "zipcode": "394-8510",
+    "address": "岡谷市幸町8-1",
+    "tel": "0266-23-4811"
+  },
+  {
+    "baseCode": "20205",
+    "prefecture": "長野県",
+    "cityName": "飯田市",
+    "building": "飯田市役所",
+    "zipcode": "395-8501",
+    "address": "飯田市大久保町2534",
+    "tel": "0265-22-4511"
+  },
+  {
+    "baseCode": "20206",
+    "prefecture": "長野県",
+    "cityName": "諏訪市",
+    "building": "諏訪市役所",
+    "zipcode": "392-8511",
+    "address": "諏訪市高島1-22-30",
+    "tel": "0266-52-4141"
+  },
+  {
+    "baseCode": "20207",
+    "prefecture": "長野県",
+    "cityName": "須坂市",
+    "building": "須坂市役所",
+    "zipcode": "382-8511",
+    "address": "須坂市大字須坂1528-1",
+    "tel": "026-245-1400"
+  },
+  {
+    "baseCode": "20208",
+    "prefecture": "長野県",
+    "cityName": "小諸市",
+    "building": "小諸市役所",
+    "zipcode": "384-8501",
+    "address": "小諸市相生町3-3-3",
+    "tel": "0267-22-1700"
+  },
+  {
+    "baseCode": "20209",
+    "prefecture": "長野県",
+    "cityName": "伊那市",
+    "building": "伊那市役所",
+    "zipcode": "396-8617",
+    "address": "伊那市下新田3050",
+    "tel": "0265-78-4111"
+  },
+  {
+    "baseCode": "20210",
+    "prefecture": "長野県",
+    "cityName": "駒ヶ根市",
+    "building": "駒ヶ根市役所",
+    "zipcode": "399-4192",
+    "address": "駒ヶ根市赤須町20-1",
+    "tel": "0265-83-2111"
+  },
+  {
+    "baseCode": "20211",
+    "prefecture": "長野県",
+    "cityName": "中野市",
+    "building": "中野市役所",
+    "zipcode": "383-8614",
+    "address": "中野市三好町1-3-19",
+    "tel": "0269-22-2111"
+  },
+  {
+    "baseCode": "20212",
+    "prefecture": "長野県",
+    "cityName": "大町市",
+    "building": "大町市役所",
+    "zipcode": "398-8601",
+    "address": "大町市大町3887",
+    "tel": "0261-22-0420"
+  },
+  {
+    "baseCode": "20213",
+    "prefecture": "長野県",
+    "cityName": "飯山市",
+    "building": "飯山市役所",
+    "zipcode": "389-2292",
+    "address": "飯山市大字飯山1110-1",
+    "tel": "0269-62-3111"
+  },
+  {
+    "baseCode": "20214",
+    "prefecture": "長野県",
+    "cityName": "茅野市",
+    "building": "茅野市役所",
+    "zipcode": "391-8501",
+    "address": "茅野市塚原2-6-1",
+    "tel": "0266-72-2101"
+  },
+  {
+    "baseCode": "20215",
+    "prefecture": "長野県",
+    "cityName": "塩尻市",
+    "building": "塩尻市役所",
+    "zipcode": "399-0786",
+    "address": "塩尻市大門7番町3-3",
+    "tel": "0263-52-0280"
+  },
+  {
+    "baseCode": "20217",
+    "prefecture": "長野県",
+    "cityName": "佐久市",
+    "building": "佐久市役所",
+    "zipcode": "385-8501",
+    "address": "佐久市中込3056",
+    "tel": "0267-62-2111"
+  },
+  {
+    "baseCode": "20218",
+    "prefecture": "長野県",
+    "cityName": "千曲市",
+    "building": "千曲市役所",
+    "zipcode": "387-8511",
+    "address": "千曲市杭瀬下2丁目1番地",
+    "tel": "026-273-1111"
+  },
+  {
+    "baseCode": "20219",
+    "prefecture": "長野県",
+    "cityName": "東御市",
+    "building": "東御市役所",
+    "zipcode": "389-0592",
+    "address": "東御市県281-2",
+    "tel": "0268-62-1111"
+  },
+  {
+    "baseCode": "20220",
+    "prefecture": "長野県",
+    "cityName": "安曇野市",
+    "building": "安曇野市役所",
+    "zipcode": "399-8281",
+    "address": "安曇野市豊科6000",
+    "tel": "0263-71-2000"
+  },
+  {
+    "baseCode": "21201",
+    "prefecture": "岐阜県",
+    "cityName": "岐阜市",
+    "building": "岐阜市役所",
+    "zipcode": "500-8701",
+    "address": "岐阜市司町40番地1",
+    "tel": "058-265-4141"
+  },
+  {
+    "baseCode": "21202",
+    "prefecture": "岐阜県",
+    "cityName": "大垣市",
+    "building": "大垣市役所",
+    "zipcode": "503-8601",
+    "address": "大垣市丸の内2-29",
+    "tel": "0584-81-4111"
+  },
+  {
+    "baseCode": "21203",
+    "prefecture": "岐阜県",
+    "cityName": "高山市",
+    "building": "高山市役所",
+    "zipcode": "506-8555",
+    "address": "高山市花岡町2-18",
+    "tel": "0577-32-3333"
+  },
+  {
+    "baseCode": "21204",
+    "prefecture": "岐阜県",
+    "cityName": "多治見市",
+    "building": "多治見市役所",
+    "zipcode": "507-8703",
+    "address": "多治見市日ノ出町2-15",
+    "tel": "0572-22-1111"
+  },
+  {
+    "baseCode": "21205",
+    "prefecture": "岐阜県",
+    "cityName": "関市",
+    "building": "関市役所",
+    "zipcode": "501-3894",
+    "address": "関市若草通3-1",
+    "tel": "0575-22-3131"
+  },
+  {
+    "baseCode": "21206",
+    "prefecture": "岐阜県",
+    "cityName": "中津川市",
+    "building": "中津川市役所",
+    "zipcode": "508-8501",
+    "address": "中津川市かやの木町2-1",
+    "tel": "0573-66-1111"
+  },
+  {
+    "baseCode": "21207",
+    "prefecture": "岐阜県",
+    "cityName": "美濃市",
+    "building": "美濃市役所",
+    "zipcode": "501-3792",
+    "address": "美濃市1350",
+    "tel": "0575-33-1122"
+  },
+  {
+    "baseCode": "21208",
+    "prefecture": "岐阜県",
+    "cityName": "瑞浪市",
+    "building": "瑞浪市役所",
+    "zipcode": "509-6195",
+    "address": "瑞浪市上平町1-1",
+    "tel": "0572-68-2111"
+  },
+  {
+    "baseCode": "21209",
+    "prefecture": "岐阜県",
+    "cityName": "羽島市",
+    "building": "羽島市役所",
+    "zipcode": "501-6292",
+    "address": "羽島市竹鼻町55",
+    "tel": "058-392-1111"
+  },
+  {
+    "baseCode": "21210",
+    "prefecture": "岐阜県",
+    "cityName": "恵那市",
+    "building": "恵那市役所",
+    "zipcode": "509-7292",
+    "address": "恵那市長島町正家1-1-1",
+    "tel": "0573-26-2111"
+  },
+  {
+    "baseCode": "21211",
+    "prefecture": "岐阜県",
+    "cityName": "美濃加茂市",
+    "building": "美濃加茂市役所",
+    "zipcode": "505-8606",
+    "address": "美濃加茂市太田町3431-1",
+    "tel": "0574-25-2111"
+  },
+  {
+    "baseCode": "21212",
+    "prefecture": "岐阜県",
+    "cityName": "土岐市",
+    "building": "土岐市役所",
+    "zipcode": "509-5192",
+    "address": "土岐市土岐津町土岐口2101",
+    "tel": "0572-54-1111"
+  },
+  {
+    "baseCode": "21213",
+    "prefecture": "岐阜県",
+    "cityName": "各務原市",
+    "building": "各務原市役所",
+    "zipcode": "504-8555",
+    "address": "各務原市那加桜町1-69",
+    "tel": "058-383-1111"
+  },
+  {
+    "baseCode": "21214",
+    "prefecture": "岐阜県",
+    "cityName": "可児市",
+    "building": "可児市役所",
+    "zipcode": "509-0292",
+    "address": "可児市広見1-1",
+    "tel": "0574-62-1111"
+  },
+  {
+    "baseCode": "21215",
+    "prefecture": "岐阜県",
+    "cityName": "山県市",
+    "building": "山県市役所",
+    "zipcode": "501-2192",
+    "address": "山県市高木1000-1",
+    "tel": "0581-22-2111"
+  },
+  {
+    "baseCode": "21216",
+    "prefecture": "岐阜県",
+    "cityName": "瑞穂市",
+    "building": "瑞穂市役所",
+    "zipcode": "501-0293",
+    "address": "瑞穂市別府1288",
+    "tel": "058-327-4111"
+  },
+  {
+    "baseCode": "21217",
+    "prefecture": "岐阜県",
+    "cityName": "飛騨市",
+    "building": "飛騨市役所",
+    "zipcode": "509-4292",
+    "address": "飛騨市古川町本町2-22",
+    "tel": "0577-73-2111"
+  },
+  {
+    "baseCode": "21218",
+    "prefecture": "岐阜県",
+    "cityName": "本巣市",
+    "building": "本巣市役所",
+    "zipcode": "501-0491",
+    "address": "本巣市早野255",
+    "tel": "058-323-1155"
+  },
+  {
+    "baseCode": "21219",
+    "prefecture": "岐阜県",
+    "cityName": "郡上市",
+    "building": "郡上市役所",
+    "zipcode": "501-4297",
+    "address": "郡上市八幡町島谷228",
+    "tel": "0575-67-1121"
+  },
+  {
+    "baseCode": "21220",
+    "prefecture": "岐阜県",
+    "cityName": "下呂市",
+    "building": "下呂市役所",
+    "zipcode": "509-2295",
+    "address": "下呂市森960",
+    "tel": "0576-24-2222"
+  },
+  {
+    "baseCode": "21221",
+    "prefecture": "岐阜県",
+    "cityName": "海津市",
+    "building": "海津市役所",
+    "zipcode": "503-0695",
+    "address": "海津市海津町高須515",
+    "tel": "0584-53-1111"
+  },
+  {
+    "baseCode": "22100",
+    "prefecture": "静岡県",
+    "cityName": "静岡市",
+    "building": "静岡市役所",
+    "zipcode": "420-8602",
+    "address": "静岡市葵区追手町5-1",
+    "tel": "054-254-2111"
+  },
+  {
+    "baseCode": "22130",
+    "prefecture": "静岡県",
+    "cityName": "浜松市",
+    "building": "浜松市役所",
+    "zipcode": "430-8652",
+    "address": "浜松市中央区元城町103-2",
+    "tel": "053-457-2111"
+  },
+  {
+    "baseCode": "22203",
+    "prefecture": "静岡県",
+    "cityName": "沼津市",
+    "building": "沼津市役所",
+    "zipcode": "410-8601",
+    "address": "沼津市御幸町16-1",
+    "tel": "055-931-2500"
+  },
+  {
+    "baseCode": "22205",
+    "prefecture": "静岡県",
+    "cityName": "熱海市",
+    "building": "熱海市役所",
+    "zipcode": "413-8550",
+    "address": "熱海市中央町1-1",
+    "tel": "0557-86-6000"
+  },
+  {
+    "baseCode": "22206",
+    "prefecture": "静岡県",
+    "cityName": "三島市",
+    "building": "三島市役所",
+    "zipcode": "411-8666",
+    "address": "三島市北田町4-47",
+    "tel": "055-975-3111"
+  },
+  {
+    "baseCode": "22207",
+    "prefecture": "静岡県",
+    "cityName": "富士宮市",
+    "building": "富士宮市役所",
+    "zipcode": "418-8601",
+    "address": "富士宮市弓沢町150",
+    "tel": "0544-22-1111"
+  },
+  {
+    "baseCode": "22208",
+    "prefecture": "静岡県",
+    "cityName": "伊東市",
+    "building": "伊東市役所",
+    "zipcode": "414-8555",
+    "address": "伊東市大原二丁目1-1",
+    "tel": "0557-36-0111"
+  },
+  {
+    "baseCode": "22209",
+    "prefecture": "静岡県",
+    "cityName": "島田市",
+    "building": "島田市役所",
+    "zipcode": "427-8501",
+    "address": "島田市中央町1-1",
+    "tel": "0547-37-5111"
+  },
+  {
+    "baseCode": "22210",
+    "prefecture": "静岡県",
+    "cityName": "富士市",
+    "building": "富士市役所",
+    "zipcode": "417-8601",
+    "address": "富士市永田町1-100",
+    "tel": "0545-51-0123"
+  },
+  {
+    "baseCode": "22211",
+    "prefecture": "静岡県",
+    "cityName": "磐田市",
+    "building": "磐田市役所",
+    "zipcode": "438-8650",
+    "address": "磐田市国府台3-1",
+    "tel": "0538-37-2111"
+  },
+  {
+    "baseCode": "22212",
+    "prefecture": "静岡県",
+    "cityName": "焼津市",
+    "building": "焼津市役所",
+    "zipcode": "425-8502",
+    "address": "焼津市本町2-16-32",
+    "tel": "054-626-1111"
+  },
+  {
+    "baseCode": "22213",
+    "prefecture": "静岡県",
+    "cityName": "掛川市",
+    "building": "掛川市役所",
+    "zipcode": "436-8650",
+    "address": "掛川市長谷一丁目1番地の1",
+    "tel": "0537-21-1111"
+  },
+  {
+    "baseCode": "22214",
+    "prefecture": "静岡県",
+    "cityName": "藤枝市",
+    "building": "藤枝市役所",
+    "zipcode": "426-8722",
+    "address": "藤枝市岡出山1-11-1",
+    "tel": "054-643-3111"
+  },
+  {
+    "baseCode": "22215",
+    "prefecture": "静岡県",
+    "cityName": "御殿場市",
+    "building": "御殿場市役所",
+    "zipcode": "412-8601",
+    "address": "御殿場市萩原483",
+    "tel": "0550-83-1212"
+  },
+  {
+    "baseCode": "22216",
+    "prefecture": "静岡県",
+    "cityName": "袋井市",
+    "building": "袋井市役所",
+    "zipcode": "437-8666",
+    "address": "袋井市新屋1-1-1",
+    "tel": "0538-43-2111"
+  },
+  {
+    "baseCode": "22219",
+    "prefecture": "静岡県",
+    "cityName": "下田市",
+    "building": "下田市役所",
+    "zipcode": "415-8501",
+    "address": "下田市東本郷1-5-18",
+    "tel": "0558-22-2211"
+  },
+  {
+    "baseCode": "22220",
+    "prefecture": "静岡県",
+    "cityName": "裾野市",
+    "building": "裾野市役所",
+    "zipcode": "410-1192",
+    "address": "裾野市佐野1059",
+    "tel": "055-992-1111"
+  },
+  {
+    "baseCode": "22221",
+    "prefecture": "静岡県",
+    "cityName": "湖西市",
+    "building": "湖西市役所",
+    "zipcode": "431-0492",
+    "address": "湖西市吉美3268",
+    "tel": "053-576-1111"
+  },
+  {
+    "baseCode": "22222",
+    "prefecture": "静岡県",
+    "cityName": "伊豆市",
+    "building": "伊豆市役所",
+    "zipcode": "410-2413",
+    "address": "伊豆市小立野38-2",
+    "tel": "0558-72-1111"
+  },
+  {
+    "baseCode": "22223",
+    "prefecture": "静岡県",
+    "cityName": "御前崎市",
+    "building": "御前崎市役所",
+    "zipcode": "437-1692",
+    "address": "御前崎市池新田5585",
+    "tel": "0537-85-1111"
+  },
+  {
+    "baseCode": "22224",
+    "prefecture": "静岡県",
+    "cityName": "菊川市",
+    "building": "菊川市役所",
+    "zipcode": "439-8650",
+    "address": "菊川市堀之内61",
+    "tel": "0537-35-2111"
+  },
+  {
+    "baseCode": "22225",
+    "prefecture": "静岡県",
+    "cityName": "伊豆の国市",
+    "building": "伊豆の国市役所",
+    "zipcode": "410-2292",
+    "address": "伊豆の国市長岡340-1",
+    "tel": "055-948-1411"
+  },
+  {
+    "baseCode": "22226",
+    "prefecture": "静岡県",
+    "cityName": "牧之原市",
+    "building": "牧之原市役所",
+    "zipcode": "421-0495",
+    "address": "牧之原市静波447-1",
+    "tel": "0548-23-0001"
+  },
+  {
+    "baseCode": "23100",
+    "prefecture": "愛知県",
+    "cityName": "名古屋市",
+    "building": "名古屋市役所",
+    "zipcode": "460-8508",
+    "address": "名古屋市中区三の丸3-1-1",
+    "tel": "052-961-1111"
+  },
+  {
+    "baseCode": "23201",
+    "prefecture": "愛知県",
+    "cityName": "豊橋市",
+    "building": "豊橋市役所",
+    "zipcode": "440-8501",
+    "address": "豊橋市今橋町1",
+    "tel": "0532-51-2111"
+  },
+  {
+    "baseCode": "23202",
+    "prefecture": "愛知県",
+    "cityName": "岡崎市",
+    "building": "岡崎市役所",
+    "zipcode": "444-8601",
+    "address": "岡崎市十王町2-9",
+    "tel": "0564-23-6000"
+  },
+  {
+    "baseCode": "23203",
+    "prefecture": "愛知県",
+    "cityName": "一宮市",
+    "building": "一宮市役所",
+    "zipcode": "491-8501",
+    "address": "一宮市本町2-5-6",
+    "tel": "0586-28-8100"
+  },
+  {
+    "baseCode": "23204",
+    "prefecture": "愛知県",
+    "cityName": "瀬戸市",
+    "building": "瀬戸市役所",
+    "zipcode": "489-8701",
+    "address": "瀬戸市追分町64-1",
+    "tel": "0561-82-7111"
+  },
+  {
+    "baseCode": "23205",
+    "prefecture": "愛知県",
+    "cityName": "半田市",
+    "building": "半田市役所",
+    "zipcode": "475-8666",
+    "address": "半田市東洋町2-1",
+    "tel": "0569-21-3111"
+  },
+  {
+    "baseCode": "23206",
+    "prefecture": "愛知県",
+    "cityName": "春日井市",
+    "building": "春日井市役所",
+    "zipcode": "486-8686",
+    "address": "春日井市鳥居松町5-44",
+    "tel": "0568-81-5111"
+  },
+  {
+    "baseCode": "23207",
+    "prefecture": "愛知県",
+    "cityName": "豊川市",
+    "building": "豊川市役所",
+    "zipcode": "442-8601",
+    "address": "豊川市諏訪1-1",
+    "tel": "0533-89-2111"
+  },
+  {
+    "baseCode": "23208",
+    "prefecture": "愛知県",
+    "cityName": "津島市",
+    "building": "津島市役所",
+    "zipcode": "496-8686",
+    "address": "津島市立込町2-21",
+    "tel": "0567-24-1111"
+  },
+  {
+    "baseCode": "23209",
+    "prefecture": "愛知県",
+    "cityName": "碧南市",
+    "building": "碧南市役所",
+    "zipcode": "447-8601",
+    "address": "碧南市松本町28",
+    "tel": "0566-41-3311"
+  },
+  {
+    "baseCode": "23210",
+    "prefecture": "愛知県",
+    "cityName": "刈谷市",
+    "building": "刈谷市役所",
+    "zipcode": "448-8501",
+    "address": "刈谷市東陽町1-1",
+    "tel": "0566-23-1111"
+  },
+  {
+    "baseCode": "23211",
+    "prefecture": "愛知県",
+    "cityName": "豊田市",
+    "building": "豊田市役所",
+    "zipcode": "471-8501",
+    "address": "豊田市西町3-60",
+    "tel": "0565-31-1212"
+  },
+  {
+    "baseCode": "23212",
+    "prefecture": "愛知県",
+    "cityName": "安城市",
+    "building": "安城市役所",
+    "zipcode": "446-8501",
+    "address": "安城市桜町18-23",
+    "tel": "0566-76-1111"
+  },
+  {
+    "baseCode": "23213",
+    "prefecture": "愛知県",
+    "cityName": "西尾市",
+    "building": "西尾市役所",
+    "zipcode": "445-8501",
+    "address": "西尾市寄住町下田22",
+    "tel": "0563-56-2111"
+  },
+  {
+    "baseCode": "23214",
+    "prefecture": "愛知県",
+    "cityName": "蒲郡市",
+    "building": "蒲郡市役所",
+    "zipcode": "443-8601",
+    "address": "蒲郡市旭町17-1",
+    "tel": "0533-66-1111"
+  },
+  {
+    "baseCode": "23215",
+    "prefecture": "愛知県",
+    "cityName": "犬山市",
+    "building": "犬山市役所",
+    "zipcode": "484-8501",
+    "address": "犬山市大字犬山字東畑36",
+    "tel": "0568-61-1800"
+  },
+  {
+    "baseCode": "23216",
+    "prefecture": "愛知県",
+    "cityName": "常滑市",
+    "building": "常滑市役所",
+    "zipcode": "479-8610",
+    "address": "常滑市飛香台3-3-5",
+    "tel": "0569-35-5111"
+  },
+  {
+    "baseCode": "23217",
+    "prefecture": "愛知県",
+    "cityName": "江南市",
+    "building": "江南市役所",
+    "zipcode": "483-8701",
+    "address": "江南市赤童子町大堀90",
+    "tel": "0587-54-1111"
+  },
+  {
+    "baseCode": "23219",
+    "prefecture": "愛知県",
+    "cityName": "小牧市",
+    "building": "小牧市役所",
+    "zipcode": "485-8650",
+    "address": "小牧市堀の内3-1",
+    "tel": "0568-72-2101"
+  },
+  {
+    "baseCode": "23220",
+    "prefecture": "愛知県",
+    "cityName": "稲沢市",
+    "building": "稲沢市役所",
+    "zipcode": "492-8269",
+    "address": "稲沢市稲府町1",
+    "tel": "0587-32-1111"
+  },
+  {
+    "baseCode": "23221",
+    "prefecture": "愛知県",
+    "cityName": "新城市",
+    "building": "新城市役所",
+    "zipcode": "441-1392",
+    "address": "新城市字東入船115",
+    "tel": "0536-23-1111"
+  },
+  {
+    "baseCode": "23222",
+    "prefecture": "愛知県",
+    "cityName": "東海市",
+    "building": "東海市役所",
+    "zipcode": "476-8601",
+    "address": "東海市中央町1-1",
+    "tel": "0562-33-1111"
+  },
+  {
+    "baseCode": "23223",
+    "prefecture": "愛知県",
+    "cityName": "大府市",
+    "building": "大府市役所",
+    "zipcode": "474-8701",
+    "address": "大府市中央町5-70",
+    "tel": "0562-47-2111"
+  },
+  {
+    "baseCode": "23224",
+    "prefecture": "愛知県",
+    "cityName": "知多市",
+    "building": "知多市役所",
+    "zipcode": "478-8601",
+    "address": "知多市緑町1",
+    "tel": "0562-33-3151"
+  },
+  {
+    "baseCode": "23225",
+    "prefecture": "愛知県",
+    "cityName": "知立市",
+    "building": "知立市役所",
+    "zipcode": "472-8666",
+    "address": "知立市広見3-1",
+    "tel": "0566-83-1111"
+  },
+  {
+    "baseCode": "23226",
+    "prefecture": "愛知県",
+    "cityName": "尾張旭市",
+    "building": "尾張旭市役所",
+    "zipcode": "488-8666",
+    "address": "尾張旭市東大道町原田2600-1",
+    "tel": "0561-53-2111"
+  },
+  {
+    "baseCode": "23227",
+    "prefecture": "愛知県",
+    "cityName": "高浜市",
+    "building": "高浜市役所",
+    "zipcode": "444-1398",
+    "address": "高浜市青木町4-1-2",
+    "tel": "0566-52-1111"
+  },
+  {
+    "baseCode": "23228",
+    "prefecture": "愛知県",
+    "cityName": "岩倉市",
+    "building": "岩倉市役所",
+    "zipcode": "482-8686",
+    "address": "岩倉市栄町1-66",
+    "tel": "0587-66-1111"
+  },
+  {
+    "baseCode": "23229",
+    "prefecture": "愛知県",
+    "cityName": "豊明市",
+    "building": "豊明市役所",
+    "zipcode": "470-1195",
+    "address": "豊明市新田町子持松1-1",
+    "tel": "0562-92-1111"
+  },
+  {
+    "baseCode": "23230",
+    "prefecture": "愛知県",
+    "cityName": "日進市",
+    "building": "日進市役所",
+    "zipcode": "470-0192",
+    "address": "日進市蟹甲町池下268",
+    "tel": "0561-73-7111"
+  },
+  {
+    "baseCode": "23231",
+    "prefecture": "愛知県",
+    "cityName": "田原市",
+    "building": "田原市役所",
+    "zipcode": "441-3492",
+    "address": "田原市田原町南番場30-1",
+    "tel": "0531-22-1111"
+  },
+  {
+    "baseCode": "23232",
+    "prefecture": "愛知県",
+    "cityName": "愛西市",
+    "building": "愛西市役所",
+    "zipcode": "496-8555",
+    "address": "愛西市稲葉町米野308",
+    "tel": "0567-26-8111"
+  },
+  {
+    "baseCode": "23233",
+    "prefecture": "愛知県",
+    "cityName": "清須市",
+    "building": "清須市役所",
+    "zipcode": "452-8569",
+    "address": "清須市須ケ口1238",
+    "tel": "052-400-2911"
+  },
+  {
+    "baseCode": "23234",
+    "prefecture": "愛知県",
+    "cityName": "北名古屋市",
+    "building": "北名古屋市役所",
+    "zipcode": "481-8531",
+    "address": "北名古屋市西之保清水田15",
+    "tel": "0568-22-1111"
+  },
+  {
+    "baseCode": "23235",
+    "prefecture": "愛知県",
+    "cityName": "弥富市",
+    "building": "弥富市役所",
+    "zipcode": "498-8501",
+    "address": "弥富市前ケ須町南本田335",
+    "tel": "0567-65-1111"
+  },
+  {
+    "baseCode": "23236",
+    "prefecture": "愛知県",
+    "cityName": "みよし市",
+    "building": "みよし市役所",
+    "zipcode": "470-0295",
+    "address": "みよし市三好町小坂50",
+    "tel": "0561-32-2111"
+  },
+  {
+    "baseCode": "23237",
+    "prefecture": "愛知県",
+    "cityName": "あま市",
+    "building": "あま市役所",
+    "zipcode": "497-8602",
+    "address": "あま市七宝町沖之島深秤1",
+    "tel": "052-444-1001"
+  },
+  {
+    "baseCode": "23238",
+    "prefecture": "愛知県",
+    "cityName": "長久手市",
+    "building": "長久手市役所",
+    "zipcode": "480-1196",
+    "address": "長久手市岩作城の内60番地1",
+    "tel": "0561-63-1111"
+  },
+  {
+    "baseCode": "24201",
+    "prefecture": "三重県",
+    "cityName": "津市",
+    "building": "津市役所",
+    "zipcode": "514-8611",
+    "address": "津市西丸之内23-1",
+    "tel": "059-229-3105"
+  },
+  {
+    "baseCode": "24202",
+    "prefecture": "三重県",
+    "cityName": "四日市市",
+    "building": "四日市市役所",
+    "zipcode": "510-8601",
+    "address": "四日市市諏訪町1-5",
+    "tel": "059-354-8104"
+  },
+  {
+    "baseCode": "24203",
+    "prefecture": "三重県",
+    "cityName": "伊勢市",
+    "building": "伊勢市役所",
+    "zipcode": "516-8601",
+    "address": "伊勢市岩渕1-7-29",
+    "tel": "0596-21-5520"
+  },
+  {
+    "baseCode": "24204",
+    "prefecture": "三重県",
+    "cityName": "松阪市",
+    "building": "松阪市役所",
+    "zipcode": "515-8515",
+    "address": "松阪市殿町1340-1",
+    "tel": "0598-53-4312"
+  },
+  {
+    "baseCode": "24205",
+    "prefecture": "三重県",
+    "cityName": "桑名市",
+    "building": "桑名市役所",
+    "zipcode": "511-8601",
+    "address": "桑名市中央町2-37",
+    "tel": "0594-24-1136"
+  },
+  {
+    "baseCode": "24207",
+    "prefecture": "三重県",
+    "cityName": "鈴鹿市",
+    "building": "鈴鹿市役所",
+    "zipcode": "513-8701",
+    "address": "鈴鹿市神戸1-18-18",
+    "tel": "059-382-1100"
+  },
+  {
+    "baseCode": "24208",
+    "prefecture": "三重県",
+    "cityName": "名張市",
+    "building": "名張市役所",
+    "zipcode": "518-0492",
+    "address": "名張市鴻之台1番町1番地",
+    "tel": "0595-63-7402"
+  },
+  {
+    "baseCode": "24209",
+    "prefecture": "三重県",
+    "cityName": "尾鷲市",
+    "building": "尾鷲市役所",
+    "zipcode": "519-3696",
+    "address": "尾鷲市中央町10-43",
+    "tel": "0597-23-8132"
+  },
+  {
+    "baseCode": "24210",
+    "prefecture": "三重県",
+    "cityName": "亀山市",
+    "building": "亀山市役所",
+    "zipcode": "519-0195",
+    "address": "亀山市本丸町577",
+    "tel": "0595-82-1111"
+  },
+  {
+    "baseCode": "24211",
+    "prefecture": "三重県",
+    "cityName": "鳥羽市",
+    "building": "鳥羽市役所",
+    "zipcode": "517-0011",
+    "address": "鳥羽市鳥羽三丁目1番1号",
+    "tel": "0599-25-1112"
+  },
+  {
+    "baseCode": "24212",
+    "prefecture": "三重県",
+    "cityName": "熊野市",
+    "building": "熊野市役所",
+    "zipcode": "519-4392",
+    "address": "熊野市井戸町796",
+    "tel": "0597-89-4111"
+  },
+  {
+    "baseCode": "24214",
+    "prefecture": "三重県",
+    "cityName": "いなべ市",
+    "building": "いなべ市役所",
+    "zipcode": "511-0498",
+    "address": "いなべ市北勢町阿下喜31",
+    "tel": "0594-86-7745"
+  },
+  {
+    "baseCode": "24215",
+    "prefecture": "三重県",
+    "cityName": "志摩市",
+    "building": "志摩市役所",
+    "zipcode": "517-0592",
+    "address": "志摩市阿児町鵜方3098-22",
+    "tel": "0599-44-0001"
+  },
+  {
+    "baseCode": "24216",
+    "prefecture": "三重県",
+    "cityName": "伊賀市",
+    "building": "伊賀市役所",
+    "zipcode": "518-8501",
+    "address": "伊賀市四十九町3184",
+    "tel": "0595-22-9611"
+  },
+  {
+    "baseCode": "25201",
+    "prefecture": "滋賀県",
+    "cityName": "大津市",
+    "building": "大津市役所",
+    "zipcode": "520-8575",
+    "address": "大津市御陵町3-1",
+    "tel": "077-523-1234"
+  },
+  {
+    "baseCode": "25202",
+    "prefecture": "滋賀県",
+    "cityName": "彦根市",
+    "building": "彦根市役所",
+    "zipcode": "522-8501",
+    "address": "彦根市元町4-2",
+    "tel": "0749-22-1411"
+  },
+  {
+    "baseCode": "25203",
+    "prefecture": "滋賀県",
+    "cityName": "長浜市",
+    "building": "長浜市役所",
+    "zipcode": "526-8501",
+    "address": "長浜市八幡東町632",
+    "tel": "0749-62-4111"
+  },
+  {
+    "baseCode": "25204",
+    "prefecture": "滋賀県",
+    "cityName": "近江八幡市",
+    "building": "近江八幡市役所",
+    "zipcode": "523-8501",
+    "address": "近江八幡市桜宮町236",
+    "tel": "0748-33-3111"
+  },
+  {
+    "baseCode": "25206",
+    "prefecture": "滋賀県",
+    "cityName": "草津市",
+    "building": "草津市役所",
+    "zipcode": "525-8588",
+    "address": "草津市草津3-13-30",
+    "tel": "077-563-1234"
+  },
+  {
+    "baseCode": "25207",
+    "prefecture": "滋賀県",
+    "cityName": "守山市",
+    "building": "守山市役所",
+    "zipcode": "524-8585",
+    "address": "守山市吉身2-5-22",
+    "tel": "077-583-2525"
+  },
+  {
+    "baseCode": "25208",
+    "prefecture": "滋賀県",
+    "cityName": "栗東市",
+    "building": "栗東市役所",
+    "zipcode": "520-3088",
+    "address": "栗東市安養寺1-13-33",
+    "tel": "077-553-1234"
+  },
+  {
+    "baseCode": "25209",
+    "prefecture": "滋賀県",
+    "cityName": "甲賀市",
+    "building": "甲賀市役所",
+    "zipcode": "528-8502",
+    "address": "甲賀市水口町水口6053",
+    "tel": "0748-65-0650"
+  },
+  {
+    "baseCode": "25210",
+    "prefecture": "滋賀県",
+    "cityName": "野洲市",
+    "building": "野洲市役所",
+    "zipcode": "520-2395",
+    "address": "野洲市小篠原2100-1",
+    "tel": "077-587-1121"
+  },
+  {
+    "baseCode": "25211",
+    "prefecture": "滋賀県",
+    "cityName": "湖南市",
+    "building": "湖南市役所",
+    "zipcode": "520-3288",
+    "address": "湖南市中央1-1",
+    "tel": "0748-72-1290"
+  },
+  {
+    "baseCode": "25212",
+    "prefecture": "滋賀県",
+    "cityName": "高島市",
+    "building": "高島市役所",
+    "zipcode": "520-1592",
+    "address": "高島市新旭町北畑565",
+    "tel": "0740-25-8000"
+  },
+  {
+    "baseCode": "25213",
+    "prefecture": "滋賀県",
+    "cityName": "東近江市",
+    "building": "東近江市役所",
+    "zipcode": "527-8527",
+    "address": "東近江市八日市緑町10-5",
+    "tel": "0748-24-1234"
+  },
+  {
+    "baseCode": "25214",
+    "prefecture": "滋賀県",
+    "cityName": "米原市",
+    "building": "米原市役所",
+    "zipcode": "521-8501",
+    "address": "米原市米原1016",
+    "tel": "0749-53-5100"
+  },
+  {
+    "baseCode": "26100",
+    "prefecture": "京都府",
+    "cityName": "京都市",
+    "building": "京都市役所",
+    "zipcode": "604-8571",
+    "address": "京都市中京区寺町通御池上る上本能寺前町488",
+    "tel": "075-222-3111"
+  },
+  {
+    "baseCode": "26201",
+    "prefecture": "京都府",
+    "cityName": "福知山市",
+    "building": "福知山市役所",
+    "zipcode": "620-8501",
+    "address": "福知山市字内記13-1",
+    "tel": "0773-22-6111"
+  },
+  {
+    "baseCode": "26202",
+    "prefecture": "京都府",
+    "cityName": "舞鶴市",
+    "building": "舞鶴市役所",
+    "zipcode": "625-8555",
+    "address": "舞鶴市字北吸1044",
+    "tel": "0773-62-2300"
+  },
+  {
+    "baseCode": "26203",
+    "prefecture": "京都府",
+    "cityName": "綾部市",
+    "building": "綾部市役所",
+    "zipcode": "623-8501",
+    "address": "綾部市若竹町8-1",
+    "tel": "0773-42-3280"
+  },
+  {
+    "baseCode": "26204",
+    "prefecture": "京都府",
+    "cityName": "宇治市",
+    "building": "宇治市役所",
+    "zipcode": "611-8501",
+    "address": "宇治市宇治琵琶33",
+    "tel": "0774-22-3141"
+  },
+  {
+    "baseCode": "26205",
+    "prefecture": "京都府",
+    "cityName": "宮津市",
+    "building": "宮津市役所",
+    "zipcode": "626-8501",
+    "address": "宮津市字柳繩手345-1",
+    "tel": "0772-22-2121"
+  },
+  {
+    "baseCode": "26206",
+    "prefecture": "京都府",
+    "cityName": "亀岡市",
+    "building": "亀岡市役所",
+    "zipcode": "621-8501",
+    "address": "亀岡市安町野々神8",
+    "tel": "0771-22-3131"
+  },
+  {
+    "baseCode": "26207",
+    "prefecture": "京都府",
+    "cityName": "城陽市",
+    "building": "城陽市役所",
+    "zipcode": "610-0195",
+    "address": "城陽市寺田東ノ口16・17",
+    "tel": "0774-52-1111"
+  },
+  {
+    "baseCode": "26208",
+    "prefecture": "京都府",
+    "cityName": "向日市",
+    "building": "向日市役所",
+    "zipcode": "617-8665",
+    "address": "向日市寺戸町中野20",
+    "tel": "075-931-1111"
+  },
+  {
+    "baseCode": "26209",
+    "prefecture": "京都府",
+    "cityName": "長岡京市",
+    "building": "長岡京市役所",
+    "zipcode": "617-8501",
+    "address": "長岡京市開田1-1-1",
+    "tel": "075-951-2121"
+  },
+  {
+    "baseCode": "26210",
+    "prefecture": "京都府",
+    "cityName": "八幡市",
+    "building": "八幡市役所",
+    "zipcode": "614-8501",
+    "address": "八幡市八幡園内75",
+    "tel": "075-983-1111"
+  },
+  {
+    "baseCode": "26211",
+    "prefecture": "京都府",
+    "cityName": "京田辺市",
+    "building": "京田辺市役所",
+    "zipcode": "610-0393",
+    "address": "京田辺市田辺80",
+    "tel": "0774-63-1122"
+  },
+  {
+    "baseCode": "26212",
+    "prefecture": "京都府",
+    "cityName": "京丹後市",
+    "building": "京丹後市役所",
+    "zipcode": "627-8567",
+    "address": "京丹後市峰山町杉谷889",
+    "tel": "0772-69-0001"
+  },
+  {
+    "baseCode": "26213",
+    "prefecture": "京都府",
+    "cityName": "南丹市",
+    "building": "南丹市役所",
+    "zipcode": "622-8651",
+    "address": "南丹市園部町小桜町47",
+    "tel": "0771-68-0001"
+  },
+  {
+    "baseCode": "26214",
+    "prefecture": "京都府",
+    "cityName": "木津川市",
+    "building": "木津川市役所",
+    "zipcode": "619-0286",
+    "address": "木津川市木津南垣外110-9",
+    "tel": "0774-72-0501"
+  },
+  {
+    "baseCode": "27100",
+    "prefecture": "大阪府",
+    "cityName": "大阪市",
+    "building": "大阪市役所",
+    "zipcode": "530-8201",
+    "address": "大阪市北区中之島1-3-20",
+    "tel": "06-6208-8181"
+  },
+  {
+    "baseCode": "27140",
+    "prefecture": "大阪府",
+    "cityName": "堺市",
+    "building": "堺市役所",
+    "zipcode": "590-0078",
+    "address": "堺市堺区南瓦町3-1",
+    "tel": "072-233-1101"
+  },
+  {
+    "baseCode": "27202",
+    "prefecture": "大阪府",
+    "cityName": "岸和田市",
+    "building": "岸和田市役所",
+    "zipcode": "596-8510",
+    "address": "岸和田市岸城町7-1",
+    "tel": "072-423-2121"
+  },
+  {
+    "baseCode": "27203",
+    "prefecture": "大阪府",
+    "cityName": "豊中市",
+    "building": "豊中市役所",
+    "zipcode": "561-8501",
+    "address": "豊中市中桜塚3-1-1",
+    "tel": "06-6858-2525"
+  },
+  {
+    "baseCode": "27204",
+    "prefecture": "大阪府",
+    "cityName": "池田市",
+    "building": "池田市役所",
+    "zipcode": "563-8666",
+    "address": "池田市城南1-1-1",
+    "tel": "072-752-1111"
+  },
+  {
+    "baseCode": "27205",
+    "prefecture": "大阪府",
+    "cityName": "吹田市",
+    "building": "吹田市役所",
+    "zipcode": "564-8550",
+    "address": "吹田市泉町1-3-40",
+    "tel": "06-6384-1231"
+  },
+  {
+    "baseCode": "27206",
+    "prefecture": "大阪府",
+    "cityName": "泉大津市",
+    "building": "泉大津市役所",
+    "zipcode": "595-8686",
+    "address": "泉大津市東雲町9-12",
+    "tel": "0725-33-1131"
+  },
+  {
+    "baseCode": "27207",
+    "prefecture": "大阪府",
+    "cityName": "高槻市",
+    "building": "高槻市役所",
+    "zipcode": "569-0067",
+    "address": "高槻市桃園町2-1",
+    "tel": "072-674-7111"
+  },
+  {
+    "baseCode": "27208",
+    "prefecture": "大阪府",
+    "cityName": "貝塚市",
+    "building": "貝塚市役所",
+    "zipcode": "597-8585",
+    "address": "貝塚市畠中1-17-1",
+    "tel": "072-423-2151"
+  },
+  {
+    "baseCode": "27209",
+    "prefecture": "大阪府",
+    "cityName": "守口市",
+    "building": "守口市役所",
+    "zipcode": "570-8666",
+    "address": "守口市京阪本通2-5-5",
+    "tel": "06-6992-1221"
+  },
+  {
+    "baseCode": "27210",
+    "prefecture": "大阪府",
+    "cityName": "枚方市",
+    "building": "枚方市役所",
+    "zipcode": "573-8666",
+    "address": "枚方市大垣内町2-1-20",
+    "tel": "072-841-1221"
+  },
+  {
+    "baseCode": "27211",
+    "prefecture": "大阪府",
+    "cityName": "茨木市",
+    "building": "茨木市役所",
+    "zipcode": "567-8505",
+    "address": "茨木市駅前3-8-13",
+    "tel": "072-622-8121"
+  },
+  {
+    "baseCode": "27212",
+    "prefecture": "大阪府",
+    "cityName": "八尾市",
+    "building": "八尾市役所",
+    "zipcode": "581-0003",
+    "address": "八尾市本町1-1-1",
+    "tel": "072-991-3881"
+  },
+  {
+    "baseCode": "27213",
+    "prefecture": "大阪府",
+    "cityName": "泉佐野市",
+    "building": "泉佐野市役所",
+    "zipcode": "598-8550",
+    "address": "泉佐野市市場東1-1-1",
+    "tel": "072-463-1212"
+  },
+  {
+    "baseCode": "27214",
+    "prefecture": "大阪府",
+    "cityName": "富田林市",
+    "building": "富田林市役所",
+    "zipcode": "584-8511",
+    "address": "富田林市常盤町1-1",
+    "tel": "0721-25-1000"
+  },
+  {
+    "baseCode": "27215",
+    "prefecture": "大阪府",
+    "cityName": "寝屋川市",
+    "building": "寝屋川市役所",
+    "zipcode": "572-8555",
+    "address": "寝屋川市本町1-1",
+    "tel": "072-824-1181"
+  },
+  {
+    "baseCode": "27216",
+    "prefecture": "大阪府",
+    "cityName": "河内長野市",
+    "building": "河内長野市役所",
+    "zipcode": "586-8501",
+    "address": "河内長野市原町1-1-1",
+    "tel": "0721-53-1111"
+  },
+  {
+    "baseCode": "27217",
+    "prefecture": "大阪府",
+    "cityName": "松原市",
+    "building": "松原市役所",
+    "zipcode": "580-8501",
+    "address": "松原市阿保1-1-1",
+    "tel": "072-334-1550"
+  },
+  {
+    "baseCode": "27218",
+    "prefecture": "大阪府",
+    "cityName": "大東市",
+    "building": "大東市役所",
+    "zipcode": "574-8555",
+    "address": "大東市谷川1-1-1",
+    "tel": "072-872-2181"
+  },
+  {
+    "baseCode": "27219",
+    "prefecture": "大阪府",
+    "cityName": "和泉市",
+    "building": "和泉市役所",
+    "zipcode": "594-8501",
+    "address": "和泉市府中町2-7-5",
+    "tel": "0725-41-1551"
+  },
+  {
+    "baseCode": "27220",
+    "prefecture": "大阪府",
+    "cityName": "箕面市",
+    "building": "箕面市役所",
+    "zipcode": "562-0003",
+    "address": "箕面市西小路4-6-1",
+    "tel": "072-723-2121"
+  },
+  {
+    "baseCode": "27221",
+    "prefecture": "大阪府",
+    "cityName": "柏原市",
+    "building": "柏原市役所",
+    "zipcode": "582-8555",
+    "address": "柏原市安堂町1-55",
+    "tel": "072-972-1501"
+  },
+  {
+    "baseCode": "27222",
+    "prefecture": "大阪府",
+    "cityName": "羽曳野市",
+    "building": "羽曳野市役所",
+    "zipcode": "583-8585",
+    "address": "羽曳野市誉田4-1-1",
+    "tel": "072-958-1111"
+  },
+  {
+    "baseCode": "27223",
+    "prefecture": "大阪府",
+    "cityName": "門真市",
+    "building": "門真市役所",
+    "zipcode": "571-8585",
+    "address": "門真市中町1-1",
+    "tel": "06-6902-1231"
+  },
+  {
+    "baseCode": "27224",
+    "prefecture": "大阪府",
+    "cityName": "摂津市",
+    "building": "摂津市役所",
+    "zipcode": "566-8555",
+    "address": "摂津市三島1-1-1",
+    "tel": "06-6383-1111"
+  },
+  {
+    "baseCode": "27225",
+    "prefecture": "大阪府",
+    "cityName": "高石市",
+    "building": "高石市役所",
+    "zipcode": "592-8585",
+    "address": "高石市加茂4-1-1",
+    "tel": "072-265-1001"
+  },
+  {
+    "baseCode": "27226",
+    "prefecture": "大阪府",
+    "cityName": "藤井寺市",
+    "building": "藤井寺市役所",
+    "zipcode": "583-8583",
+    "address": "藤井寺市岡1-1-1",
+    "tel": "072-939-1111"
+  },
+  {
+    "baseCode": "27227",
+    "prefecture": "大阪府",
+    "cityName": "東大阪市",
+    "building": "東大阪市役所",
+    "zipcode": "577-8521",
+    "address": "東大阪市荒本北1-1-1",
+    "tel": "06-4309-3000"
+  },
+  {
+    "baseCode": "27228",
+    "prefecture": "大阪府",
+    "cityName": "泉南市",
+    "building": "泉南市役所",
+    "zipcode": "590-0592",
+    "address": "泉南市樽井1-1-1",
+    "tel": "072-483-0001"
+  },
+  {
+    "baseCode": "27229",
+    "prefecture": "大阪府",
+    "cityName": "四條畷市",
+    "building": "四條畷市役所",
+    "zipcode": "575-8501",
+    "address": "四條畷市中野本町1-1",
+    "tel": "072-877-2121"
+  },
+  {
+    "baseCode": "27230",
+    "prefecture": "大阪府",
+    "cityName": "交野市",
+    "building": "交野市役所",
+    "zipcode": "576-8501",
+    "address": "交野市私部1-1-1",
+    "tel": "072-892-0121"
+  },
+  {
+    "baseCode": "27231",
+    "prefecture": "大阪府",
+    "cityName": "大阪狭山市",
+    "building": "大阪狭山市役所",
+    "zipcode": "589-8501",
+    "address": "大阪狭山市狭山1-2384-1",
+    "tel": "072-366-0011"
+  },
+  {
+    "baseCode": "27232",
+    "prefecture": "大阪府",
+    "cityName": "阪南市",
+    "building": "阪南市役所",
+    "zipcode": "599-0292",
+    "address": "阪南市尾崎町35-1",
+    "tel": "072-471-5678"
+  },
+  {
+    "baseCode": "28100",
+    "prefecture": "兵庫県",
+    "cityName": "神戸市",
+    "building": "神戸市役所",
+    "zipcode": "650-8570",
+    "address": "神戸市中央区加納町6-5-1",
+    "tel": "078-333-3330"
+  },
+  {
+    "baseCode": "28201",
+    "prefecture": "兵庫県",
+    "cityName": "姫路市",
+    "building": "姫路市役所",
+    "zipcode": "670-8501",
+    "address": "姫路市安田4-1",
+    "tel": "079-221-2111"
+  },
+  {
+    "baseCode": "28202",
+    "prefecture": "兵庫県",
+    "cityName": "尼崎市",
+    "building": "尼崎市役所",
+    "zipcode": "660-8501",
+    "address": "尼崎市東七松町1-23-1",
+    "tel": "06-6375-5639"
+  },
+  {
+    "baseCode": "28203",
+    "prefecture": "兵庫県",
+    "cityName": "明石市",
+    "building": "明石市役所",
+    "zipcode": "673-8686",
+    "address": "明石市中崎1-5-1",
+    "tel": "078-912-1111"
+  },
+  {
+    "baseCode": "28204",
+    "prefecture": "兵庫県",
+    "cityName": "西宮市",
+    "building": "西宮市役所",
+    "zipcode": "662-8567",
+    "address": "西宮市六湛寺町10-3",
+    "tel": "0798-35-3151"
+  },
+  {
+    "baseCode": "28205",
+    "prefecture": "兵庫県",
+    "cityName": "洲本市",
+    "building": "洲本市役所",
+    "zipcode": "656-8686",
+    "address": "洲本市本町3-4-10",
+    "tel": "0799-22-3321"
+  },
+  {
+    "baseCode": "28206",
+    "prefecture": "兵庫県",
+    "cityName": "芦屋市",
+    "building": "芦屋市役所",
+    "zipcode": "659-8501",
+    "address": "芦屋市精道町7-6",
+    "tel": "0797-31-2121"
+  },
+  {
+    "baseCode": "28207",
+    "prefecture": "兵庫県",
+    "cityName": "伊丹市",
+    "building": "伊丹市役所",
+    "zipcode": "664-8503",
+    "address": "伊丹市千僧1-1",
+    "tel": "072-783-1234"
+  },
+  {
+    "baseCode": "28208",
+    "prefecture": "兵庫県",
+    "cityName": "相生市",
+    "building": "相生市役所",
+    "zipcode": "678-8585",
+    "address": "相生市旭1-1-3",
+    "tel": "0791-23-7111"
+  },
+  {
+    "baseCode": "28209",
+    "prefecture": "兵庫県",
+    "cityName": "豊岡市",
+    "building": "豊岡市役所",
+    "zipcode": "668-8666",
+    "address": "豊岡市中央町2-4",
+    "tel": "0796-23-1111"
+  },
+  {
+    "baseCode": "28210",
+    "prefecture": "兵庫県",
+    "cityName": "加古川市",
+    "building": "加古川市役所",
+    "zipcode": "675-8501",
+    "address": "加古川市加古川町北在家2000",
+    "tel": "079-421-2000"
+  },
+  {
+    "baseCode": "28212",
+    "prefecture": "兵庫県",
+    "cityName": "赤穂市",
+    "building": "赤穂市役所",
+    "zipcode": "678-0292",
+    "address": "赤穂市加里屋81",
+    "tel": "0791-43-3201"
+  },
+  {
+    "baseCode": "28213",
+    "prefecture": "兵庫県",
+    "cityName": "西脇市",
+    "building": "西脇市役所",
+    "zipcode": "677-8511",
+    "address": "西脇市下戸田128番地の１",
+    "tel": "0795-22-3111"
+  },
+  {
+    "baseCode": "28214",
+    "prefecture": "兵庫県",
+    "cityName": "宝塚市",
+    "building": "宝塚市役所",
+    "zipcode": "665-8665",
+    "address": "宝塚市東洋町1-1",
+    "tel": "0797-71-1141"
+  },
+  {
+    "baseCode": "28215",
+    "prefecture": "兵庫県",
+    "cityName": "三木市",
+    "building": "三木市役所",
+    "zipcode": "673-0492",
+    "address": "三木市上の丸町10番30号",
+    "tel": "0794-82-2000"
+  },
+  {
+    "baseCode": "28216",
+    "prefecture": "兵庫県",
+    "cityName": "高砂市",
+    "building": "高砂市役所",
+    "zipcode": "676-8501",
+    "address": "高砂市荒井町千鳥1-1-1",
+    "tel": "079-442-2101"
+  },
+  {
+    "baseCode": "28217",
+    "prefecture": "兵庫県",
+    "cityName": "川西市",
+    "building": "川西市役所",
+    "zipcode": "666-8501",
+    "address": "川西市中央町12-1",
+    "tel": "072-740-1111"
+  },
+  {
+    "baseCode": "28218",
+    "prefecture": "兵庫県",
+    "cityName": "小野市",
+    "building": "小野市役所",
+    "zipcode": "675-1380",
+    "address": "小野市中島町531",
+    "tel": "0794-63-1000"
+  },
+  {
+    "baseCode": "28219",
+    "prefecture": "兵庫県",
+    "cityName": "三田市",
+    "building": "三田市役所",
+    "zipcode": "669-1595",
+    "address": "三田市三輪2-1-1",
+    "tel": "079-563-1111"
+  },
+  {
+    "baseCode": "28220",
+    "prefecture": "兵庫県",
+    "cityName": "加西市",
+    "building": "加西市役所",
+    "zipcode": "675-2395",
+    "address": "加西市北条町横尾1000",
+    "tel": "0790-42-1110"
+  },
+  {
+    "baseCode": "28221",
+    "prefecture": "兵庫県",
+    "cityName": "丹波篠山市",
+    "building": "丹波篠山市役所",
+    "zipcode": "669-2397",
+    "address": "丹波篠山市北新町41",
+    "tel": "079-552-1111"
+  },
+  {
+    "baseCode": "28222",
+    "prefecture": "兵庫県",
+    "cityName": "養父市",
+    "building": "養父市役所",
+    "zipcode": "667-8651",
+    "address": "養父市八鹿町八鹿1675",
+    "tel": "079-662-3161"
+  },
+  {
+    "baseCode": "28223",
+    "prefecture": "兵庫県",
+    "cityName": "丹波市",
+    "building": "丹波市役所",
+    "zipcode": "669-3692",
+    "address": "丹波市氷上町成松字甲賀1",
+    "tel": "0795-82-1001"
+  },
+  {
+    "baseCode": "28224",
+    "prefecture": "兵庫県",
+    "cityName": "南あわじ市",
+    "building": "南あわじ市役所",
+    "zipcode": "656-0492",
+    "address": "南あわじ市市善光寺22番地1",
+    "tel": "0799-43-5001"
+  },
+  {
+    "baseCode": "28225",
+    "prefecture": "兵庫県",
+    "cityName": "朝来市",
+    "building": "朝来市役所",
+    "zipcode": "669-5292",
+    "address": "朝来市和田山町東谷213-1",
+    "tel": "079-672-3301"
+  },
+  {
+    "baseCode": "28226",
+    "prefecture": "兵庫県",
+    "cityName": "淡路市",
+    "building": "淡路市役所",
+    "zipcode": "656-2292",
+    "address": "淡路市生穂新島8",
+    "tel": "0799-64-0001"
+  },
+  {
+    "baseCode": "28227",
+    "prefecture": "兵庫県",
+    "cityName": "宍粟市",
+    "building": "宍粟市役所",
+    "zipcode": "671-2593",
+    "address": "宍粟市山崎町中広瀬133番地6",
+    "tel": "0790-63-3000"
+  },
+  {
+    "baseCode": "28228",
+    "prefecture": "兵庫県",
+    "cityName": "加東市",
+    "building": "加東市役所",
+    "zipcode": "673-1493",
+    "address": "加東市社50",
+    "tel": "0795-42-3301"
+  },
+  {
+    "baseCode": "28229",
+    "prefecture": "兵庫県",
+    "cityName": "たつの市",
+    "building": "たつの市役所",
+    "zipcode": "679-4192",
+    "address": "たつの市龍野町富永1005-1",
+    "tel": "0791-64-3131"
+  },
+  {
+    "baseCode": "29201",
+    "prefecture": "奈良県",
+    "cityName": "奈良市",
+    "building": "奈良市役所",
+    "zipcode": "630-8580",
+    "address": "奈良市二条大路南一丁目1-1",
+    "tel": "0742-34-1111"
+  },
+  {
+    "baseCode": "29202",
+    "prefecture": "奈良県",
+    "cityName": "大和高田市",
+    "building": "大和高田市役所",
+    "zipcode": "635-8511",
+    "address": "大和高田市大字大中98番地4",
+    "tel": "0745-22-1101"
+  },
+  {
+    "baseCode": "29203",
+    "prefecture": "奈良県",
+    "cityName": "大和郡山市",
+    "building": "大和郡山市役所",
+    "zipcode": "639-1198",
+    "address": "大和郡山市北郡山町248-4",
+    "tel": "0743-53-1151"
+  },
+  {
+    "baseCode": "29204",
+    "prefecture": "奈良県",
+    "cityName": "天理市",
+    "building": "天理市役所",
+    "zipcode": "632-8555",
+    "address": "天理市川原城町605",
+    "tel": "0743-63-1001"
+  },
+  {
+    "baseCode": "29205",
+    "prefecture": "奈良県",
+    "cityName": "橿原市",
+    "building": "橿原市役所",
+    "zipcode": "634-8586",
+    "address": "橿原市八木町1-1-18",
+    "tel": "0744-22-4001"
+  },
+  {
+    "baseCode": "29206",
+    "prefecture": "奈良県",
+    "cityName": "桜井市",
+    "building": "桜井市役所",
+    "zipcode": "633-8585",
+    "address": "桜井市大字粟殿432-1",
+    "tel": "0744-42-9111"
+  },
+  {
+    "baseCode": "29207",
+    "prefecture": "奈良県",
+    "cityName": "五條市",
+    "building": "五條市役所",
+    "zipcode": "637-8501",
+    "address": "五條市岡口1丁目3番1号",
+    "tel": "0747-22-4001"
+  },
+  {
+    "baseCode": "29208",
+    "prefecture": "奈良県",
+    "cityName": "御所市",
+    "building": "御所市役所",
+    "zipcode": "639-2298",
+    "address": "御所市1-3",
+    "tel": "0745-62-3001"
+  },
+  {
+    "baseCode": "29209",
+    "prefecture": "奈良県",
+    "cityName": "生駒市",
+    "building": "生駒市役所",
+    "zipcode": "630-0288",
+    "address": "生駒市東新町8-38",
+    "tel": "0743-74-1111"
+  },
+  {
+    "baseCode": "29210",
+    "prefecture": "奈良県",
+    "cityName": "香芝市",
+    "building": "香芝市役所",
+    "zipcode": "639-0292",
+    "address": "香芝市本町1397",
+    "tel": "0745-76-2001"
+  },
+  {
+    "baseCode": "29211",
+    "prefecture": "奈良県",
+    "cityName": "葛城市",
+    "building": "葛城市役所",
+    "zipcode": "639-2195",
+    "address": "葛城市柿本166",
+    "tel": "0745-69-3001"
+  },
+  {
+    "baseCode": "29212",
+    "prefecture": "奈良県",
+    "cityName": "宇陀市",
+    "building": "宇陀市役所",
+    "zipcode": "633-0292",
+    "address": "宇陀市榛原下井足17-3",
+    "tel": "0745-82-8000"
+  },
+  {
+    "baseCode": "30201",
+    "prefecture": "和歌山県",
+    "cityName": "和歌山市",
+    "building": "和歌山市役所",
+    "zipcode": "640-8511",
+    "address": "和歌山市七番丁23",
+    "tel": "073-432-0001"
+  },
+  {
+    "baseCode": "30202",
+    "prefecture": "和歌山県",
+    "cityName": "海南市",
+    "building": "海南市役所",
+    "zipcode": "642-8501",
+    "address": "海南市南赤坂11",
+    "tel": "073-482-4111"
+  },
+  {
+    "baseCode": "30203",
+    "prefecture": "和歌山県",
+    "cityName": "橋本市",
+    "building": "橋本市役所",
+    "zipcode": "648-8585",
+    "address": "橋本市東家1-1-1",
+    "tel": "0736-33-1111"
+  },
+  {
+    "baseCode": "30204",
+    "prefecture": "和歌山県",
+    "cityName": "有田市",
+    "building": "有田市役所",
+    "zipcode": "649-0392",
+    "address": "有田市箕島50",
+    "tel": "0737-83-1111"
+  },
+  {
+    "baseCode": "30205",
+    "prefecture": "和歌山県",
+    "cityName": "御坊市",
+    "building": "御坊市役所",
+    "zipcode": "644-8686",
+    "address": "御坊市薗350",
+    "tel": "0738-22-4111"
+  },
+  {
+    "baseCode": "30206",
+    "prefecture": "和歌山県",
+    "cityName": "田辺市",
+    "building": "田辺市役所",
+    "zipcode": "646-8545",
+    "address": "田辺市東山1-5-1",
+    "tel": "0739-22-5300"
+  },
+  {
+    "baseCode": "30207",
+    "prefecture": "和歌山県",
+    "cityName": "新宮市",
+    "building": "新宮市役所",
+    "zipcode": "647-8555",
+    "address": "新宮市春日1-1",
+    "tel": "0735-23-3333"
+  },
+  {
+    "baseCode": "30208",
+    "prefecture": "和歌山県",
+    "cityName": "紀の川市",
+    "building": "紀の川市役所",
+    "zipcode": "649-6492",
+    "address": "紀の川市西大井338",
+    "tel": "0736-77-2511"
+  },
+  {
+    "baseCode": "30209",
+    "prefecture": "和歌山県",
+    "cityName": "岩出市",
+    "building": "岩出市役所",
+    "zipcode": "649-6292",
+    "address": "岩出市西野209",
+    "tel": "0736-62-2141"
+  },
+  {
+    "baseCode": "31201",
+    "prefecture": "鳥取県",
+    "cityName": "鳥取市",
+    "building": "鳥取市役所",
+    "zipcode": "680-8571",
+    "address": "鳥取市幸町71番地",
+    "tel": "0857-22-8111"
+  },
+  {
+    "baseCode": "31202",
+    "prefecture": "鳥取県",
+    "cityName": "米子市",
+    "building": "米子市役所",
+    "zipcode": "683-8686",
+    "address": "米子市加茂町1-1",
+    "tel": "0859-22-7111"
+  },
+  {
+    "baseCode": "31203",
+    "prefecture": "鳥取県",
+    "cityName": "倉吉市",
+    "building": "倉吉市役所",
+    "zipcode": "682-8611",
+    "address": "倉吉市葵町722",
+    "tel": "0858-22-8111"
+  },
+  {
+    "baseCode": "31204",
+    "prefecture": "鳥取県",
+    "cityName": "境港市",
+    "building": "境港市役所",
+    "zipcode": "684-8501",
+    "address": "境港市上道町3000",
+    "tel": "0859-44-2111"
+  },
+  {
+    "baseCode": "32201",
+    "prefecture": "島根県",
+    "cityName": "松江市",
+    "building": "松江市役所",
+    "zipcode": "690-8540",
+    "address": "松江市末次町86",
+    "tel": "0852-55-5555"
+  },
+  {
+    "baseCode": "32202",
+    "prefecture": "島根県",
+    "cityName": "浜田市",
+    "building": "浜田市役所",
+    "zipcode": "697-8501",
+    "address": "浜田市殿町1",
+    "tel": "0855-22-2612"
+  },
+  {
+    "baseCode": "32203",
+    "prefecture": "島根県",
+    "cityName": "出雲市",
+    "building": "出雲市役所",
+    "zipcode": "693-8530",
+    "address": "出雲市今市町70",
+    "tel": "0853-21-2211"
+  },
+  {
+    "baseCode": "32204",
+    "prefecture": "島根県",
+    "cityName": "益田市",
+    "building": "益田市役所",
+    "zipcode": "698-8650",
+    "address": "益田市常盤町1-1",
+    "tel": "0856-31-0100"
+  },
+  {
+    "baseCode": "32205",
+    "prefecture": "島根県",
+    "cityName": "大田市",
+    "building": "大田市役所",
+    "zipcode": "694-0064",
+    "address": "大田市大田町大田ロ1111",
+    "tel": "0854-82-1600"
+  },
+  {
+    "baseCode": "32206",
+    "prefecture": "島根県",
+    "cityName": "安来市",
+    "building": "安来市役所",
+    "zipcode": "692-8686",
+    "address": "安来市安来町878-2",
+    "tel": "0854-23-3000"
+  },
+  {
+    "baseCode": "32207",
+    "prefecture": "島根県",
+    "cityName": "江津市",
+    "building": "江津市役所",
+    "zipcode": "695-8501",
+    "address": "江津市江津町1016-4",
+    "tel": "0855-52-2501"
+  },
+  {
+    "baseCode": "32209",
+    "prefecture": "島根県",
+    "cityName": "雲南市",
+    "building": "雲南市役所",
+    "zipcode": "699-1392",
+    "address": "雲南市木次町里方521-1",
+    "tel": "0854-40-1000"
+  },
+  {
+    "baseCode": "33100",
+    "prefecture": "岡山県",
+    "cityName": "岡山市",
+    "building": "岡山市役所",
+    "zipcode": "700-8544",
+    "address": "岡山市北区大供1-1-1",
+    "tel": "086-803-1000"
+  },
+  {
+    "baseCode": "33202",
+    "prefecture": "岡山県",
+    "cityName": "倉敷市",
+    "building": "倉敷市役所",
+    "zipcode": "710-8565",
+    "address": "倉敷市西中新田640",
+    "tel": "086-426-3030"
+  },
+  {
+    "baseCode": "33203",
+    "prefecture": "岡山県",
+    "cityName": "津山市",
+    "building": "津山市役所",
+    "zipcode": "708-8501",
+    "address": "津山市山北520",
+    "tel": "0868-32-2052"
+  },
+  {
+    "baseCode": "33204",
+    "prefecture": "岡山県",
+    "cityName": "玉野市",
+    "building": "玉野市役所",
+    "zipcode": "706-8510",
+    "address": "玉野市宇野1-27-1",
+    "tel": "0863-32-5588"
+  },
+  {
+    "baseCode": "33205",
+    "prefecture": "岡山県",
+    "cityName": "笠岡市",
+    "building": "笠岡市役所",
+    "zipcode": "714-8601",
+    "address": "笠岡市中央町1-1",
+    "tel": "0865-69-2121"
+  },
+  {
+    "baseCode": "33207",
+    "prefecture": "岡山県",
+    "cityName": "井原市",
+    "building": "井原市役所",
+    "zipcode": "715-8601",
+    "address": "井原市井原町311-1",
+    "tel": "0866-62-9500"
+  },
+  {
+    "baseCode": "33208",
+    "prefecture": "岡山県",
+    "cityName": "総社市",
+    "building": "総社市役所",
+    "zipcode": "719-1192",
+    "address": "総社市中央1-1-1",
+    "tel": "0866-92-8200"
+  },
+  {
+    "baseCode": "33209",
+    "prefecture": "岡山県",
+    "cityName": "高梁市",
+    "building": "高梁市役所",
+    "zipcode": "716-8501",
+    "address": "高梁市松原通2043",
+    "tel": "0866-21-0200"
+  },
+  {
+    "baseCode": "33210",
+    "prefecture": "岡山県",
+    "cityName": "新見市",
+    "building": "新見市役所",
+    "zipcode": "718-8501",
+    "address": "新見市新見310-3",
+    "tel": "0867-72-6111"
+  },
+  {
+    "baseCode": "33211",
+    "prefecture": "岡山県",
+    "cityName": "備前市",
+    "building": "備前市役所",
+    "zipcode": "705-8602",
+    "address": "備前市東片上126",
+    "tel": "0869-64-3301"
+  },
+  {
+    "baseCode": "33212",
+    "prefecture": "岡山県",
+    "cityName": "瀬戸内市",
+    "building": "瀬戸内市役所",
+    "zipcode": "701-4292",
+    "address": "瀬戸内市邑久町尾張300-1",
+    "tel": "0869-22-1111"
+  },
+  {
+    "baseCode": "33213",
+    "prefecture": "岡山県",
+    "cityName": "赤磐市",
+    "building": "赤磐市役所",
+    "zipcode": "709-0898",
+    "address": "赤磐市下市344",
+    "tel": "086-955-1111"
+  },
+  {
+    "baseCode": "33214",
+    "prefecture": "岡山県",
+    "cityName": "真庭市",
+    "building": "真庭市役所",
+    "zipcode": "719-3292",
+    "address": "真庭市久世2927-2",
+    "tel": "0867-42-1111"
+  },
+  {
+    "baseCode": "33215",
+    "prefecture": "岡山県",
+    "cityName": "美作市",
+    "building": "美作市役所",
+    "zipcode": "707-8501",
+    "address": "美作市美来1番地",
+    "tel": "0868-72-1111"
+  },
+  {
+    "baseCode": "33216",
+    "prefecture": "岡山県",
+    "cityName": "浅口市",
+    "building": "浅口市役所",
+    "zipcode": "719-0295",
+    "address": "浅口市鴨方町六条院中3050",
+    "tel": "0865-44-7000"
+  },
+  {
+    "baseCode": "34100",
+    "prefecture": "広島県",
+    "cityName": "広島市",
+    "building": "広島市役所",
+    "zipcode": "730-8586",
+    "address": "広島市中区国泰寺町1-6-34",
+    "tel": "082-245-2111"
+  },
+  {
+    "baseCode": "34202",
+    "prefecture": "広島県",
+    "cityName": "呉市",
+    "building": "呉市役所",
+    "zipcode": "737-8501",
+    "address": "呉市中央4-1-6",
+    "tel": "0823-25-3100"
+  },
+  {
+    "baseCode": "34203",
+    "prefecture": "広島県",
+    "cityName": "竹原市",
+    "building": "竹原市役所",
+    "zipcode": "725-8666",
+    "address": "竹原市中央5-6-28",
+    "tel": "0846-22-7719"
+  },
+  {
+    "baseCode": "34204",
+    "prefecture": "広島県",
+    "cityName": "三原市",
+    "building": "三原市役所",
+    "zipcode": "723-8601",
+    "address": "三原市港町3-5-1",
+    "tel": "0848-64-2111"
+  },
+  {
+    "baseCode": "34205",
+    "prefecture": "広島県",
+    "cityName": "尾道市",
+    "building": "尾道市役所",
+    "zipcode": "722-8501",
+    "address": "尾道市久保1-15-1",
+    "tel": "0848-38-9111"
+  },
+  {
+    "baseCode": "34207",
+    "prefecture": "広島県",
+    "cityName": "福山市",
+    "building": "福山市役所",
+    "zipcode": "720-8501",
+    "address": "福山市東桜町3-5",
+    "tel": "084-921-2111"
+  },
+  {
+    "baseCode": "34208",
+    "prefecture": "広島県",
+    "cityName": "府中市",
+    "building": "府中市役所",
+    "zipcode": "726-8601",
+    "address": "府中市府川町315",
+    "tel": "0847-43-7111"
+  },
+  {
+    "baseCode": "34209",
+    "prefecture": "広島県",
+    "cityName": "三次市",
+    "building": "三次市役所",
+    "zipcode": "728-8501",
+    "address": "三次市十日市中2-8-1",
+    "tel": "0824-62-6111"
+  },
+  {
+    "baseCode": "34210",
+    "prefecture": "広島県",
+    "cityName": "庄原市",
+    "building": "庄原市役所",
+    "zipcode": "727-8501",
+    "address": "庄原市中本町1-10-1",
+    "tel": "0824-73-1111"
+  },
+  {
+    "baseCode": "34211",
+    "prefecture": "広島県",
+    "cityName": "大竹市",
+    "building": "大竹市役所",
+    "zipcode": "739-0692",
+    "address": "大竹市小方1-11-1",
+    "tel": "0827-59-2111"
+  },
+  {
+    "baseCode": "34212",
+    "prefecture": "広島県",
+    "cityName": "東広島市",
+    "building": "東広島市役所",
+    "zipcode": "739-8601",
+    "address": "東広島市西条栄町8-29",
+    "tel": "082-422-2111"
+  },
+  {
+    "baseCode": "34213",
+    "prefecture": "広島県",
+    "cityName": "廿日市市",
+    "building": "廿日市市役所",
+    "zipcode": "738-8501",
+    "address": "廿日市市下平良1-11-1",
+    "tel": "0829-20-0001"
+  },
+  {
+    "baseCode": "34214",
+    "prefecture": "広島県",
+    "cityName": "安芸高田市",
+    "building": "安芸高田市役所",
+    "zipcode": "731-0592",
+    "address": "安芸高田市吉田町吉田791",
+    "tel": "0826-42-2111"
+  },
+  {
+    "baseCode": "34215",
+    "prefecture": "広島県",
+    "cityName": "江田島市",
+    "building": "江田島市役所",
+    "zipcode": "737-2297",
+    "address": "江田島市大柿町大原505",
+    "tel": "0823-43-1111"
+  },
+  {
+    "baseCode": "35201",
+    "prefecture": "山口県",
+    "cityName": "下関市",
+    "building": "下関市役所",
+    "zipcode": "750-8521",
+    "address": "下関市南部町1-1",
+    "tel": "083-231-1111"
+  },
+  {
+    "baseCode": "35202",
+    "prefecture": "山口県",
+    "cityName": "宇部市",
+    "building": "宇部市役所",
+    "zipcode": "755-8601",
+    "address": "宇部市常盤町1-7-1",
+    "tel": "0836-31-4111"
+  },
+  {
+    "baseCode": "35203",
+    "prefecture": "山口県",
+    "cityName": "山口市",
+    "building": "山口市役所",
+    "zipcode": "753-8650",
+    "address": "山口市亀山町2-1",
+    "tel": "083-922-4111"
+  },
+  {
+    "baseCode": "35204",
+    "prefecture": "山口県",
+    "cityName": "萩市",
+    "building": "萩市役所",
+    "zipcode": "758-8555",
+    "address": "萩市江向510",
+    "tel": "0838-25-3131"
+  },
+  {
+    "baseCode": "35206",
+    "prefecture": "山口県",
+    "cityName": "防府市",
+    "building": "防府市役所",
+    "zipcode": "747-8501",
+    "address": "防府市寿町7-1",
+    "tel": "0835-23-2111"
+  },
+  {
+    "baseCode": "35207",
+    "prefecture": "山口県",
+    "cityName": "下松市",
+    "building": "下松市役所",
+    "zipcode": "744-8585",
+    "address": "下松市大手町3-3-3",
+    "tel": "0833-45-1700"
+  },
+  {
+    "baseCode": "35208",
+    "prefecture": "山口県",
+    "cityName": "岩国市",
+    "building": "岩国市役所",
+    "zipcode": "740-8585",
+    "address": "岩国市今津町1-14-51",
+    "tel": "0827-29-5000"
+  },
+  {
+    "baseCode": "35210",
+    "prefecture": "山口県",
+    "cityName": "光市",
+    "building": "光市役所",
+    "zipcode": "743-8501",
+    "address": "光市中央6-1-1",
+    "tel": "0833-72-1401"
+  },
+  {
+    "baseCode": "35211",
+    "prefecture": "山口県",
+    "cityName": "長門市",
+    "building": "長門市役所",
+    "zipcode": "759-4192",
+    "address": "長門市東深川1339-2",
+    "tel": "0837-22-2111"
+  },
+  {
+    "baseCode": "35212",
+    "prefecture": "山口県",
+    "cityName": "柳井市",
+    "building": "柳井市役所",
+    "zipcode": "742-8714",
+    "address": "柳井市南町1-10-2",
+    "tel": "0820-22-2111"
+  },
+  {
+    "baseCode": "35213",
+    "prefecture": "山口県",
+    "cityName": "美祢市",
+    "building": "美祢市役所",
+    "zipcode": "759-2292",
+    "address": "美祢市大嶺町東分326-1",
+    "tel": "0837-52-1110"
+  },
+  {
+    "baseCode": "35215",
+    "prefecture": "山口県",
+    "cityName": "周南市",
+    "building": "周南市役所",
+    "zipcode": "745-8655",
+    "address": "周南市岐山通1-1",
+    "tel": "0834-22-8211"
+  },
+  {
+    "baseCode": "35216",
+    "prefecture": "山口県",
+    "cityName": "山陽小野田市",
+    "building": "山陽小野田市役所",
+    "zipcode": "756-8601",
+    "address": "山陽小野田市日の出1-1-1",
+    "tel": "0836-82-1111"
+  },
+  {
+    "baseCode": "36201",
+    "prefecture": "徳島県",
+    "cityName": "徳島市",
+    "building": "徳島市役所",
+    "zipcode": "770-8571",
+    "address": "徳島市幸町2-5",
+    "tel": "088-621-5111"
+  },
+  {
+    "baseCode": "36202",
+    "prefecture": "徳島県",
+    "cityName": "鳴門市",
+    "building": "鳴門市役所",
+    "zipcode": "772-8501",
+    "address": "鳴門市撫養町南浜字東浜170",
+    "tel": "088-684-1111"
+  },
+  {
+    "baseCode": "36203",
+    "prefecture": "徳島県",
+    "cityName": "小松島市",
+    "building": "小松島市役所",
+    "zipcode": "773-8501",
+    "address": "小松島市横須町1-1",
+    "tel": "0885-32-2111"
+  },
+  {
+    "baseCode": "36204",
+    "prefecture": "徳島県",
+    "cityName": "阿南市",
+    "building": "阿南市役所",
+    "zipcode": "774-8501",
+    "address": "阿南市富岡町トノ町12-3",
+    "tel": "0884-22-1111"
+  },
+  {
+    "baseCode": "36205",
+    "prefecture": "徳島県",
+    "cityName": "吉野川市",
+    "building": "吉野川市役所",
+    "zipcode": "776-8611",
+    "address": "吉野川市鴨島町鴨島115-1",
+    "tel": "0883-22-2222"
+  },
+  {
+    "baseCode": "36206",
+    "prefecture": "徳島県",
+    "cityName": "阿波市",
+    "building": "阿波市役所",
+    "zipcode": "771-1695",
+    "address": "阿波市市場町切幡字古田201-1",
+    "tel": "0883-36-8700"
+  },
+  {
+    "baseCode": "36207",
+    "prefecture": "徳島県",
+    "cityName": "美馬市",
+    "building": "美馬市役所",
+    "zipcode": "777-8577",
+    "address": "美馬市穴吹町穴吹字九反地5",
+    "tel": "0883-52-1212"
+  },
+  {
+    "baseCode": "36208",
+    "prefecture": "徳島県",
+    "cityName": "三好市",
+    "building": "三好市役所",
+    "zipcode": "778-8501",
+    "address": "三好市池田町サラダ1610-1",
+    "tel": "0883-72-7600"
+  },
+  {
+    "baseCode": "37201",
+    "prefecture": "香川県",
+    "cityName": "高松市",
+    "building": "高松市役所",
+    "zipcode": "760-8571",
+    "address": "高松市番町1-8-15",
+    "tel": "087-839-2011"
+  },
+  {
+    "baseCode": "37202",
+    "prefecture": "香川県",
+    "cityName": "丸亀市",
+    "building": "丸亀市役所",
+    "zipcode": "763-8501",
+    "address": "丸亀市大手町二丁目4番21号",
+    "tel": "0877-23-2111"
+  },
+  {
+    "baseCode": "37203",
+    "prefecture": "香川県",
+    "cityName": "坂出市",
+    "building": "坂出市役所",
+    "zipcode": "762-8601",
+    "address": "坂出市室町2-3-5",
+    "tel": "0877-46-3111"
+  },
+  {
+    "baseCode": "37204",
+    "prefecture": "香川県",
+    "cityName": "善通寺市",
+    "building": "善通寺市役所",
+    "zipcode": "765-8503",
+    "address": "善通寺市文京町2-1-1",
+    "tel": "0877-62-2121"
+  },
+  {
+    "baseCode": "37205",
+    "prefecture": "香川県",
+    "cityName": "観音寺市",
+    "building": "観音寺市役所",
+    "zipcode": "768-8601",
+    "address": "観音寺市坂本町一丁目1-1",
+    "tel": "0875-23-3900"
+  },
+  {
+    "baseCode": "37206",
+    "prefecture": "香川県",
+    "cityName": "さぬき市",
+    "building": "さぬき市役所",
+    "zipcode": "769-2195",
+    "address": "さぬき市志度5385-8",
+    "tel": "087-894-1111"
+  },
+  {
+    "baseCode": "37207",
+    "prefecture": "香川県",
+    "cityName": "東かがわ市",
+    "building": "東かがわ市役所",
+    "zipcode": "769-2792",
+    "address": "東かがわ市湊1847-1",
+    "tel": "0879-26-1214"
+  },
+  {
+    "baseCode": "37208",
+    "prefecture": "香川県",
+    "cityName": "三豊市",
+    "building": "三豊市役所",
+    "zipcode": "767-8585",
+    "address": "三豊市高瀬町下勝間2373-1",
+    "tel": "0875-73-3000"
+  },
+  {
+    "baseCode": "38201",
+    "prefecture": "愛媛県",
+    "cityName": "松山市",
+    "building": "松山市役所",
+    "zipcode": "790-8571",
+    "address": "松山市二番町4-7-2",
+    "tel": "089-948-6688"
+  },
+  {
+    "baseCode": "38202",
+    "prefecture": "愛媛県",
+    "cityName": "今治市",
+    "building": "今治市役所",
+    "zipcode": "794-8511",
+    "address": "今治市別宮町1-4-1",
+    "tel": "0898-32-5200"
+  },
+  {
+    "baseCode": "38203",
+    "prefecture": "愛媛県",
+    "cityName": "宇和島市",
+    "building": "宇和島市役所",
+    "zipcode": "798-8601",
+    "address": "宇和島市曙町1",
+    "tel": "0895-24-1111"
+  },
+  {
+    "baseCode": "38204",
+    "prefecture": "愛媛県",
+    "cityName": "八幡浜市",
+    "building": "八幡浜市役所",
+    "zipcode": "796-8501",
+    "address": "八幡浜市北浜1-1-1",
+    "tel": "0894-22-3111"
+  },
+  {
+    "baseCode": "38205",
+    "prefecture": "愛媛県",
+    "cityName": "新居浜市",
+    "building": "新居浜市役所",
+    "zipcode": "792-8585",
+    "address": "新居浜市一宮町1-5-1",
+    "tel": "0897-65-1234"
+  },
+  {
+    "baseCode": "38206",
+    "prefecture": "愛媛県",
+    "cityName": "西条市",
+    "building": "西条市役所",
+    "zipcode": "793-8601",
+    "address": "西条市明屋敷164",
+    "tel": "0897-56-5151"
+  },
+  {
+    "baseCode": "38207",
+    "prefecture": "愛媛県",
+    "cityName": "大洲市",
+    "building": "大洲市役所",
+    "zipcode": "795-8601",
+    "address": "大洲市大洲690-1",
+    "tel": "0893-24-2111"
+  },
+  {
+    "baseCode": "38210",
+    "prefecture": "愛媛県",
+    "cityName": "伊予市",
+    "building": "伊予市役所",
+    "zipcode": "799-3193",
+    "address": "伊予市米湊820",
+    "tel": "089-982-1111"
+  },
+  {
+    "baseCode": "38213",
+    "prefecture": "愛媛県",
+    "cityName": "四国中央市",
+    "building": "四国中央市役所",
+    "zipcode": "799-0497",
+    "address": "四国中央市三島宮川4-6-55",
+    "tel": "0896-28-6000"
+  },
+  {
+    "baseCode": "38214",
+    "prefecture": "愛媛県",
+    "cityName": "西予市",
+    "building": "西予市役所",
+    "zipcode": "797-8501",
+    "address": "西予市宇和町卯之町3-434-1",
+    "tel": "0894-62-1111"
+  },
+  {
+    "baseCode": "38215",
+    "prefecture": "愛媛県",
+    "cityName": "東温市",
+    "building": "東温市役所",
+    "zipcode": "791-0292",
+    "address": "東温市見奈良530-1",
+    "tel": "089-964-2001"
+  },
+  {
+    "baseCode": "39201",
+    "prefecture": "高知県",
+    "cityName": "高知市",
+    "building": "高知市役所",
+    "zipcode": "780-8571",
+    "address": "高知市本町5-1-45",
+    "tel": "088-822-8111"
+  },
+  {
+    "baseCode": "39202",
+    "prefecture": "高知県",
+    "cityName": "室戸市",
+    "building": "室戸市役所",
+    "zipcode": "781-7185",
+    "address": "室戸市浮津25-1",
+    "tel": "0887-22-1111"
+  },
+  {
+    "baseCode": "39203",
+    "prefecture": "高知県",
+    "cityName": "安芸市",
+    "building": "安芸市役所",
+    "zipcode": "784-8501",
+    "address": "安芸市土居82-1",
+    "tel": "0887-34-1111"
+  },
+  {
+    "baseCode": "39204",
+    "prefecture": "高知県",
+    "cityName": "南国市",
+    "building": "南国市役所",
+    "zipcode": "783-8501",
+    "address": "南国市大そね甲2301",
+    "tel": "088-863-2111"
+  },
+  {
+    "baseCode": "39205",
+    "prefecture": "高知県",
+    "cityName": "土佐市",
+    "building": "土佐市役所",
+    "zipcode": "781-1192",
+    "address": "土佐市高岡町甲2017-1",
+    "tel": "088-852-1111"
+  },
+  {
+    "baseCode": "39206",
+    "prefecture": "高知県",
+    "cityName": "須崎市",
+    "building": "須崎市役所",
+    "zipcode": "785-8601",
+    "address": "須崎市山手町1-7",
+    "tel": "0889-42-2311"
+  },
+  {
+    "baseCode": "39208",
+    "prefecture": "高知県",
+    "cityName": "宿毛市",
+    "building": "宿毛市役所",
+    "zipcode": "788-8686",
+    "address": "宿毛市希望ヶ丘1番地",
+    "tel": "0880-62-1111"
+  },
+  {
+    "baseCode": "39209",
+    "prefecture": "高知県",
+    "cityName": "土佐清水市",
+    "building": "土佐清水市役所",
+    "zipcode": "787-0392",
+    "address": "土佐清水市天神町11-2",
+    "tel": "0880-82-1111"
+  },
+  {
+    "baseCode": "39210",
+    "prefecture": "高知県",
+    "cityName": "四万十市",
+    "building": "四万十市役所",
+    "zipcode": "787-8501",
+    "address": "四万十市中村大橋通4-10",
+    "tel": "0880-34-1111"
+  },
+  {
+    "baseCode": "39211",
+    "prefecture": "高知県",
+    "cityName": "香南市",
+    "building": "香南市役所",
+    "zipcode": "781-5292",
+    "address": "香南市野市町西野2706",
+    "tel": "0887-56-0511"
+  },
+  {
+    "baseCode": "39212",
+    "prefecture": "高知県",
+    "cityName": "香美市",
+    "building": "香美市役所",
+    "zipcode": "782-8501",
+    "address": "香美市土佐山田町宝町1-2-1",
+    "tel": "0887-53-3111"
+  },
+  {
+    "baseCode": "40100",
+    "prefecture": "福岡県",
+    "cityName": "北九州市",
+    "building": "北九州市役所",
+    "zipcode": "803-8501",
+    "address": "北九州市小倉北区城内1-1",
+    "tel": "093-582-2525"
+  },
+  {
+    "baseCode": "40130",
+    "prefecture": "福岡県",
+    "cityName": "福岡市",
+    "building": "福岡市役所",
+    "zipcode": "810-8620",
+    "address": "福岡市中央区天神1-8-1",
+    "tel": "092-711-4111"
+  },
+  {
+    "baseCode": "40202",
+    "prefecture": "福岡県",
+    "cityName": "大牟田市",
+    "building": "大牟田市役所",
+    "zipcode": "836-8666",
+    "address": "大牟田市有明町2-3",
+    "tel": "0944-41-2222"
+  },
+  {
+    "baseCode": "40203",
+    "prefecture": "福岡県",
+    "cityName": "久留米市",
+    "building": "久留米市役所",
+    "zipcode": "830-8520",
+    "address": "久留米市城南町15-3",
+    "tel": "0942-30-9000"
+  },
+  {
+    "baseCode": "40204",
+    "prefecture": "福岡県",
+    "cityName": "直方市",
+    "building": "直方市役所",
+    "zipcode": "822-8501",
+    "address": "直方市殿町7-1",
+    "tel": "0949-25-2000"
+  },
+  {
+    "baseCode": "40205",
+    "prefecture": "福岡県",
+    "cityName": "飯塚市",
+    "building": "飯塚市役所",
+    "zipcode": "820-8501",
+    "address": "飯塚市新立岩5-5",
+    "tel": "0948-22-5500"
+  },
+  {
+    "baseCode": "40206",
+    "prefecture": "福岡県",
+    "cityName": "田川市",
+    "building": "田川市役所",
+    "zipcode": "825-8501",
+    "address": "田川市中央町1-1",
+    "tel": "0947-44-2000"
+  },
+  {
+    "baseCode": "40207",
+    "prefecture": "福岡県",
+    "cityName": "柳川市",
+    "building": "柳川市役所",
+    "zipcode": "832-8601",
+    "address": "柳川市本町87-1",
+    "tel": "0944-73-8111"
+  },
+  {
+    "baseCode": "40210",
+    "prefecture": "福岡県",
+    "cityName": "八女市",
+    "building": "八女市役所",
+    "zipcode": "834-8585",
+    "address": "八女市本町647",
+    "tel": "0943-23-1111"
+  },
+  {
+    "baseCode": "40211",
+    "prefecture": "福岡県",
+    "cityName": "筑後市",
+    "building": "筑後市役所",
+    "zipcode": "833-8601",
+    "address": "筑後市大字山ノ井898",
+    "tel": "0942-53-4111"
+  },
+  {
+    "baseCode": "40212",
+    "prefecture": "福岡県",
+    "cityName": "大川市",
+    "building": "大川市役所",
+    "zipcode": "831-8601",
+    "address": "大川市大字酒見256-1",
+    "tel": "0944-87-2101"
+  },
+  {
+    "baseCode": "40213",
+    "prefecture": "福岡県",
+    "cityName": "行橋市",
+    "building": "行橋市役所",
+    "zipcode": "824-8601",
+    "address": "行橋市中央1-1-1",
+    "tel": "0930-25-1111"
+  },
+  {
+    "baseCode": "40214",
+    "prefecture": "福岡県",
+    "cityName": "豊前市",
+    "building": "豊前市役所",
+    "zipcode": "828-8501",
+    "address": "豊前市大字吉木955",
+    "tel": "0979-82-1111"
+  },
+  {
+    "baseCode": "40215",
+    "prefecture": "福岡県",
+    "cityName": "中間市",
+    "building": "中間市役所",
+    "zipcode": "809-8501",
+    "address": "中間市中間1-1-1",
+    "tel": "093-244-1111"
+  },
+  {
+    "baseCode": "40216",
+    "prefecture": "福岡県",
+    "cityName": "小郡市",
+    "building": "小郡市役所",
+    "zipcode": "838-0198",
+    "address": "小郡市小郡255-1",
+    "tel": "0942-72-2111"
+  },
+  {
+    "baseCode": "40217",
+    "prefecture": "福岡県",
+    "cityName": "筑紫野市",
+    "building": "筑紫野市役所",
+    "zipcode": "818-8686",
+    "address": "筑紫野市石崎1-1-1",
+    "tel": "092-923-1111"
+  },
+  {
+    "baseCode": "40218",
+    "prefecture": "福岡県",
+    "cityName": "春日市",
+    "building": "春日市役所",
+    "zipcode": "816-8501",
+    "address": "春日市原町3-1-5",
+    "tel": "092-584-1111"
+  },
+  {
+    "baseCode": "40219",
+    "prefecture": "福岡県",
+    "cityName": "大野城市",
+    "building": "大野城市役所",
+    "zipcode": "816-8510",
+    "address": "大野城市曙町2-2-1",
+    "tel": "092-501-2211"
+  },
+  {
+    "baseCode": "40220",
+    "prefecture": "福岡県",
+    "cityName": "宗像市",
+    "building": "宗像市役所",
+    "zipcode": "811-3492",
+    "address": "宗像市東郷1-1-1",
+    "tel": "0940-36-1121"
+  },
+  {
+    "baseCode": "40221",
+    "prefecture": "福岡県",
+    "cityName": "太宰府市",
+    "building": "太宰府市役所",
+    "zipcode": "818-0198",
+    "address": "太宰府市観世音寺1-1-1",
+    "tel": "092-921-2121"
+  },
+  {
+    "baseCode": "40223",
+    "prefecture": "福岡県",
+    "cityName": "古賀市",
+    "building": "古賀市役所",
+    "zipcode": "811-3192",
+    "address": "古賀市駅東1-1-1",
+    "tel": "092-942-1111"
+  },
+  {
+    "baseCode": "40224",
+    "prefecture": "福岡県",
+    "cityName": "福津市",
+    "building": "福津市役所",
+    "zipcode": "811-3293",
+    "address": "福津市中央1-1-1",
+    "tel": "0940-42-1111"
+  },
+  {
+    "baseCode": "40225",
+    "prefecture": "福岡県",
+    "cityName": "うきは市",
+    "building": "うきは市役所",
+    "zipcode": "839-1393",
+    "address": "うきは市吉井町新治316",
+    "tel": "0943-75-3111"
+  },
+  {
+    "baseCode": "40226",
+    "prefecture": "福岡県",
+    "cityName": "宮若市",
+    "building": "宮若市役所",
+    "zipcode": "823-0011",
+    "address": "宮若市宮田29-1",
+    "tel": "0949-32-0510"
+  },
+  {
+    "baseCode": "40227",
+    "prefecture": "福岡県",
+    "cityName": "嘉麻市",
+    "building": "嘉麻市役所",
+    "zipcode": "820-0292",
+    "address": "嘉麻市岩崎1180-1",
+    "tel": "0948-42-7414"
+  },
+  {
+    "baseCode": "40228",
+    "prefecture": "福岡県",
+    "cityName": "朝倉市",
+    "building": "朝倉市役所",
+    "zipcode": "838-8601",
+    "address": "朝倉市甘木232-1",
+    "tel": "0946-22-1111"
+  },
+  {
+    "baseCode": "40229",
+    "prefecture": "福岡県",
+    "cityName": "みやま市",
+    "building": "みやま市役所",
+    "zipcode": "835-8601",
+    "address": "みやま市瀬高町小川5",
+    "tel": "0944-63-6111"
+  },
+  {
+    "baseCode": "40230",
+    "prefecture": "福岡県",
+    "cityName": "糸島市",
+    "building": "糸島市役所",
+    "zipcode": "819-1192",
+    "address": "糸島市前原西一丁目1番1号",
+    "tel": "092-323-1111"
+  },
+  {
+    "baseCode": "40231",
+    "prefecture": "福岡県",
+    "cityName": "那珂川市",
+    "building": "那珂川市役所",
+    "zipcode": "811-1292",
+    "address": "那珂川市西隈1-1-1",
+    "tel": "092-953-2211"
+  },
+  {
+    "baseCode": "41201",
+    "prefecture": "佐賀県",
+    "cityName": "佐賀市",
+    "building": "佐賀市役所",
+    "zipcode": "840-8501",
+    "address": "佐賀市栄町1-1",
+    "tel": "0952-24-3151"
+  },
+  {
+    "baseCode": "41202",
+    "prefecture": "佐賀県",
+    "cityName": "唐津市",
+    "building": "唐津市役所",
+    "zipcode": "847-8511",
+    "address": "唐津市西城内1-1",
+    "tel": "0955-72-9111"
+  },
+  {
+    "baseCode": "41203",
+    "prefecture": "佐賀県",
+    "cityName": "鳥栖市",
+    "building": "鳥栖市役所",
+    "zipcode": "841-8511",
+    "address": "鳥栖市宿町1118",
+    "tel": "0942-85-3500"
+  },
+  {
+    "baseCode": "41204",
+    "prefecture": "佐賀県",
+    "cityName": "多久市",
+    "building": "多久市役所",
+    "zipcode": "846-8501",
+    "address": "多久市北多久町大字小侍7-1",
+    "tel": "0952-75-2111"
+  },
+  {
+    "baseCode": "41205",
+    "prefecture": "佐賀県",
+    "cityName": "伊万里市",
+    "building": "伊万里市役所",
+    "zipcode": "848-8501",
+    "address": "伊万里市立花町1355-1",
+    "tel": "0955-23-2111"
+  },
+  {
+    "baseCode": "41206",
+    "prefecture": "佐賀県",
+    "cityName": "武雄市",
+    "building": "武雄市役所",
+    "zipcode": "843-8639",
+    "address": "武雄市武雄町大字昭和12-10",
+    "tel": "0954-23-9111"
+  },
+  {
+    "baseCode": "41207",
+    "prefecture": "佐賀県",
+    "cityName": "鹿島市",
+    "building": "鹿島市役所",
+    "zipcode": "849-1312",
+    "address": "鹿島市大字納富分2643-1",
+    "tel": "0954-63-2111"
+  },
+  {
+    "baseCode": "41208",
+    "prefecture": "佐賀県",
+    "cityName": "小城市",
+    "building": "小城市役所",
+    "zipcode": "845-8511",
+    "address": "小城市三日月町長神田2312-2",
+    "tel": "0952-37-6111"
+  },
+  {
+    "baseCode": "41209",
+    "prefecture": "佐賀県",
+    "cityName": "嬉野市",
+    "building": "嬉野市役所",
+    "zipcode": "849-1492",
+    "address": "嬉野市塩田町大字馬場下甲1769",
+    "tel": "0954-66-3111"
+  },
+  {
+    "baseCode": "41210",
+    "prefecture": "佐賀県",
+    "cityName": "神埼市",
+    "building": "神埼市役所",
+    "zipcode": "842-8601",
+    "address": "神埼市神埼町鶴3542-1",
+    "tel": "0952-52-1111"
+  },
+  {
+    "baseCode": "42201",
+    "prefecture": "長崎県",
+    "cityName": "長崎市",
+    "building": "長崎市役所",
+    "zipcode": "850-8685",
+    "address": "長崎市魚の町4番1号",
+    "tel": "095-822-8888"
+  },
+  {
+    "baseCode": "42202",
+    "prefecture": "長崎県",
+    "cityName": "佐世保市",
+    "building": "佐世保市役所",
+    "zipcode": "857-8585",
+    "address": "佐世保市八幡町1-10",
+    "tel": "0956-24-1111"
+  },
+  {
+    "baseCode": "42203",
+    "prefecture": "長崎県",
+    "cityName": "島原市",
+    "building": "島原市役所",
+    "zipcode": "855-8555",
+    "address": "島原市上の町537",
+    "tel": "0957-63-1111"
+  },
+  {
+    "baseCode": "42204",
+    "prefecture": "長崎県",
+    "cityName": "諫早市",
+    "building": "諫早市役所",
+    "zipcode": "854-8601",
+    "address": "諫早市東小路町7-1",
+    "tel": "0957-22-1500"
+  },
+  {
+    "baseCode": "42205",
+    "prefecture": "長崎県",
+    "cityName": "大村市",
+    "building": "大村市役所",
+    "zipcode": "856-8686",
+    "address": "大村市玖島1-25",
+    "tel": "0957-53-4111"
+  },
+  {
+    "baseCode": "42207",
+    "prefecture": "長崎県",
+    "cityName": "平戸市",
+    "building": "平戸市役所",
+    "zipcode": "859-5192",
+    "address": "平戸市岩の上町1508-3",
+    "tel": "0950-22-4111"
+  },
+  {
+    "baseCode": "42208",
+    "prefecture": "長崎県",
+    "cityName": "松浦市",
+    "building": "松浦市役所",
+    "zipcode": "859-4598",
+    "address": "松浦市志佐町里免365",
+    "tel": "0956-72-1111"
+  },
+  {
+    "baseCode": "42209",
+    "prefecture": "長崎県",
+    "cityName": "対馬市",
+    "building": "対馬市役所",
+    "zipcode": "817-8510",
+    "address": "対馬市厳原町国分1441",
+    "tel": "0920-53-6111"
+  },
+  {
+    "baseCode": "42210",
+    "prefecture": "長崎県",
+    "cityName": "壱岐市",
+    "building": "壱岐市役所",
+    "zipcode": "811-5192",
+    "address": "壱岐市郷ノ浦町本村触562",
+    "tel": "0920-48-1111"
+  },
+  {
+    "baseCode": "42211",
+    "prefecture": "長崎県",
+    "cityName": "五島市",
+    "building": "五島市役所",
+    "zipcode": "853-8501",
+    "address": "五島市福江町1-1",
+    "tel": "0959-72-6111"
+  },
+  {
+    "baseCode": "42212",
+    "prefecture": "長崎県",
+    "cityName": "西海市",
+    "building": "西海市役所",
+    "zipcode": "857-2392",
+    "address": "西海市大瀬戸町瀬戸樫浦郷2222",
+    "tel": "0959-37-0011"
+  },
+  {
+    "baseCode": "42213",
+    "prefecture": "長崎県",
+    "cityName": "雲仙市",
+    "building": "雲仙市役所",
+    "zipcode": "859-1107",
+    "address": "雲仙市吾妻町牛口名714",
+    "tel": "0957-38-3111"
+  },
+  {
+    "baseCode": "42214",
+    "prefecture": "長崎県",
+    "cityName": "南島原市",
+    "building": "南島原市役所",
+    "zipcode": "859-2211",
+    "address": "南島原市西有家町里坊96-2",
+    "tel": "0957-73-6600"
+  },
+  {
+    "baseCode": "43100",
+    "prefecture": "熊本県",
+    "cityName": "熊本市",
+    "building": "熊本市役所",
+    "zipcode": "860-8601",
+    "address": "熊本市中央区手取本町1-1",
+    "tel": "096-328-2111"
+  },
+  {
+    "baseCode": "43202",
+    "prefecture": "熊本県",
+    "cityName": "八代市",
+    "building": "八代市役所",
+    "zipcode": "866-8601",
+    "address": "八代市松江城町1-25",
+    "tel": "0965-33-4111"
+  },
+  {
+    "baseCode": "43203",
+    "prefecture": "熊本県",
+    "cityName": "人吉市",
+    "building": "人吉市役所",
+    "zipcode": "868-8601",
+    "address": "人吉市西間下町字永溝7番地1",
+    "tel": "0966-22-2111"
+  },
+  {
+    "baseCode": "43204",
+    "prefecture": "熊本県",
+    "cityName": "荒尾市",
+    "building": "荒尾市役所",
+    "zipcode": "864-8686",
+    "address": "荒尾市宮内出目390",
+    "tel": "0968-63-1111"
+  },
+  {
+    "baseCode": "43205",
+    "prefecture": "熊本県",
+    "cityName": "水俣市",
+    "building": "水俣市役所",
+    "zipcode": "867-8555",
+    "address": "水俣市陣内1-1-1",
+    "tel": "0966-63-1111"
+  },
+  {
+    "baseCode": "43206",
+    "prefecture": "熊本県",
+    "cityName": "玉名市",
+    "building": "玉名市役所",
+    "zipcode": "865-8501",
+    "address": "玉名市岩崎163",
+    "tel": "0968-75-1111"
+  },
+  {
+    "baseCode": "43208",
+    "prefecture": "熊本県",
+    "cityName": "山鹿市",
+    "building": "山鹿市役所",
+    "zipcode": "861-0592",
+    "address": "山鹿市山鹿987-3",
+    "tel": "0968-43-1117"
+  },
+  {
+    "baseCode": "43210",
+    "prefecture": "熊本県",
+    "cityName": "菊池市",
+    "building": "菊池市役所",
+    "zipcode": "861-1392",
+    "address": "菊池市隈府888",
+    "tel": "0968-25-7111"
+  },
+  {
+    "baseCode": "43211",
+    "prefecture": "熊本県",
+    "cityName": "宇土市",
+    "building": "宇土市役所",
+    "zipcode": "869-0492",
+    "address": "宇土市浦田町51",
+    "tel": "0964-22-1111"
+  },
+  {
+    "baseCode": "43212",
+    "prefecture": "熊本県",
+    "cityName": "上天草市",
+    "building": "上天草市役所",
+    "zipcode": "869-3692",
+    "address": "上天草市大矢野町上1514",
+    "tel": "0964-56-1111"
+  },
+  {
+    "baseCode": "43213",
+    "prefecture": "熊本県",
+    "cityName": "宇城市",
+    "building": "宇城市役所",
+    "zipcode": "869-0592",
+    "address": "宇城市松橋町大野85",
+    "tel": "0964-32-1111"
+  },
+  {
+    "baseCode": "43214",
+    "prefecture": "熊本県",
+    "cityName": "阿蘇市",
+    "building": "阿蘇市役所",
+    "zipcode": "869-2695",
+    "address": "阿蘇市一の宮町宮地504-1",
+    "tel": "0967-22-3111"
+  },
+  {
+    "baseCode": "43215",
+    "prefecture": "熊本県",
+    "cityName": "天草市",
+    "building": "天草市役所",
+    "zipcode": "863-8631",
+    "address": "天草市東浜町8-1",
+    "tel": "0969-23-1111"
+  },
+  {
+    "baseCode": "43216",
+    "prefecture": "熊本県",
+    "cityName": "合志市",
+    "building": "合志市役所",
+    "zipcode": "861-1195",
+    "address": "合志市竹迫2140",
+    "tel": "096-248-1111"
+  },
+  {
+    "baseCode": "44201",
+    "prefecture": "大分県",
+    "cityName": "大分市",
+    "building": "大分市役所",
+    "zipcode": "870-8504",
+    "address": "大分市荷揚町2-31",
+    "tel": "097-534-6111"
+  },
+  {
+    "baseCode": "44202",
+    "prefecture": "大分県",
+    "cityName": "別府市",
+    "building": "別府市役所",
+    "zipcode": "874-8511",
+    "address": "別府市上野口町1-15",
+    "tel": "0977-21-1111"
+  },
+  {
+    "baseCode": "44203",
+    "prefecture": "大分県",
+    "cityName": "中津市",
+    "building": "中津市役所",
+    "zipcode": "871-8501",
+    "address": "中津市豊田町14-3",
+    "tel": "0979-22-1111"
+  },
+  {
+    "baseCode": "44204",
+    "prefecture": "大分県",
+    "cityName": "日田市",
+    "building": "日田市役所",
+    "zipcode": "877-8601",
+    "address": "日田市田島2-6-1",
+    "tel": "0973-23-3111"
+  },
+  {
+    "baseCode": "44205",
+    "prefecture": "大分県",
+    "cityName": "佐伯市",
+    "building": "佐伯市役所",
+    "zipcode": "876-8585",
+    "address": "佐伯市中村南町1-1",
+    "tel": "0972-22-3111"
+  },
+  {
+    "baseCode": "44206",
+    "prefecture": "大分県",
+    "cityName": "臼杵市",
+    "building": "臼杵市役所",
+    "zipcode": "875-8501",
+    "address": "臼杵市大字臼杵72-1",
+    "tel": "0972-63-1111"
+  },
+  {
+    "baseCode": "44207",
+    "prefecture": "大分県",
+    "cityName": "津久見市",
+    "building": "津久見市役所",
+    "zipcode": "879-2435",
+    "address": "津久見市宮本町20-15",
+    "tel": "0972-82-4111"
+  },
+  {
+    "baseCode": "44208",
+    "prefecture": "大分県",
+    "cityName": "竹田市",
+    "building": "竹田市役所",
+    "zipcode": "878-8555",
+    "address": "竹田市大字会々1650",
+    "tel": "0974-63-1111"
+  },
+  {
+    "baseCode": "44209",
+    "prefecture": "大分県",
+    "cityName": "豊後高田市",
+    "building": "豊後高田市役所",
+    "zipcode": "879-0692",
+    "address": "豊後高田市是永町39-3",
+    "tel": "0978-22-3100"
+  },
+  {
+    "baseCode": "44210",
+    "prefecture": "大分県",
+    "cityName": "杵築市",
+    "building": "杵築市役所",
+    "zipcode": "873-0001",
+    "address": "杵築市大字杵築377-1",
+    "tel": "0978-62-3131"
+  },
+  {
+    "baseCode": "44211",
+    "prefecture": "大分県",
+    "cityName": "宇佐市",
+    "building": "宇佐市役所",
+    "zipcode": "879-0492",
+    "address": "宇佐市大字上田1030-1",
+    "tel": "0978-32-1111"
+  },
+  {
+    "baseCode": "44212",
+    "prefecture": "大分県",
+    "cityName": "豊後大野市",
+    "building": "豊後大野市役所",
+    "zipcode": "879-7198",
+    "address": "豊後大野市三重町市場1200",
+    "tel": "0974-22-1001"
+  },
+  {
+    "baseCode": "44213",
+    "prefecture": "大分県",
+    "cityName": "由布市",
+    "building": "由布市役所",
+    "zipcode": "879-5498",
+    "address": "由布市庄内町柿原302",
+    "tel": "097-582-1111"
+  },
+  {
+    "baseCode": "44214",
+    "prefecture": "大分県",
+    "cityName": "国東市",
+    "building": "国東市役所",
+    "zipcode": "873-0503",
+    "address": "国東市国東町鶴川149",
+    "tel": "0978-72-1111"
+  },
+  {
+    "baseCode": "45201",
+    "prefecture": "宮崎県",
+    "cityName": "宮崎市",
+    "building": "宮崎市役所",
+    "zipcode": "880-8505",
+    "address": "宮崎市橘通西1-1-1",
+    "tel": "0985-25-2111"
+  },
+  {
+    "baseCode": "45202",
+    "prefecture": "宮崎県",
+    "cityName": "都城市",
+    "building": "都城市役所",
+    "zipcode": "885-8555",
+    "address": "都城市姫城町6街区21号",
+    "tel": "0986-23-2111"
+  },
+  {
+    "baseCode": "45203",
+    "prefecture": "宮崎県",
+    "cityName": "延岡市",
+    "building": "延岡市役所",
+    "zipcode": "882-8686",
+    "address": "延岡市東本小路2-1",
+    "tel": "0982-34-2111"
+  },
+  {
+    "baseCode": "45204",
+    "prefecture": "宮崎県",
+    "cityName": "日南市",
+    "building": "日南市役所",
+    "zipcode": "887-8585",
+    "address": "日南市中央通1-1-1",
+    "tel": "0987-31-1100"
+  },
+  {
+    "baseCode": "45205",
+    "prefecture": "宮崎県",
+    "cityName": "小林市",
+    "building": "小林市役所",
+    "zipcode": "886-8501",
+    "address": "小林市細野300",
+    "tel": "0984-23-1111"
+  },
+  {
+    "baseCode": "45206",
+    "prefecture": "宮崎県",
+    "cityName": "日向市",
+    "building": "日向市役所",
+    "zipcode": "883-8555",
+    "address": "日向市本町10-5",
+    "tel": "0982-52-2111"
+  },
+  {
+    "baseCode": "45207",
+    "prefecture": "宮崎県",
+    "cityName": "串間市",
+    "building": "串間市役所",
+    "zipcode": "888-8555",
+    "address": "串間市大字西方5550",
+    "tel": "0987-72-1111"
+  },
+  {
+    "baseCode": "45208",
+    "prefecture": "宮崎県",
+    "cityName": "西都市",
+    "building": "西都市役所",
+    "zipcode": "881-8501",
+    "address": "西都市聖陵町2-1",
+    "tel": "0983-43-1111"
+  },
+  {
+    "baseCode": "45209",
+    "prefecture": "宮崎県",
+    "cityName": "えびの市",
+    "building": "えびの市役所",
+    "zipcode": "889-4292",
+    "address": "えびの市大字栗下1292",
+    "tel": "0984-35-1111"
+  },
+  {
+    "baseCode": "46201",
+    "prefecture": "鹿児島県",
+    "cityName": "鹿児島市",
+    "building": "鹿児島市役所",
+    "zipcode": "892-8677",
+    "address": "鹿児島市山下町11-1",
+    "tel": "099-224-1111"
+  },
+  {
+    "baseCode": "46203",
+    "prefecture": "鹿児島県",
+    "cityName": "鹿屋市",
+    "building": "鹿屋市役所",
+    "zipcode": "893-8501",
+    "address": "鹿屋市共栄町20-1",
+    "tel": "0994-43-2111"
+  },
+  {
+    "baseCode": "46204",
+    "prefecture": "鹿児島県",
+    "cityName": "枕崎市",
+    "building": "枕崎市役所",
+    "zipcode": "898-8501",
+    "address": "枕崎市千代田町27",
+    "tel": "0993-72-1111"
+  },
+  {
+    "baseCode": "46206",
+    "prefecture": "鹿児島県",
+    "cityName": "阿久根市",
+    "building": "阿久根市役所",
+    "zipcode": "899-1696",
+    "address": "阿久根市鶴見町200",
+    "tel": "0996-73-1211"
+  },
+  {
+    "baseCode": "46208",
+    "prefecture": "鹿児島県",
+    "cityName": "出水市",
+    "building": "出水市役所",
+    "zipcode": "899-0292",
+    "address": "出水市緑町1-3",
+    "tel": "0996-63-2111"
+  },
+  {
+    "baseCode": "46210",
+    "prefecture": "鹿児島県",
+    "cityName": "指宿市",
+    "building": "指宿市役所",
+    "zipcode": "891-0497",
+    "address": "指宿市十町2424",
+    "tel": "0993-22-2111"
+  },
+  {
+    "baseCode": "46213",
+    "prefecture": "鹿児島県",
+    "cityName": "西之表市",
+    "building": "西之表市役所",
+    "zipcode": "891-3193",
+    "address": "西之表市西之表7612",
+    "tel": "0997-22-1111"
+  },
+  {
+    "baseCode": "46214",
+    "prefecture": "鹿児島県",
+    "cityName": "垂水市",
+    "building": "垂水市役所",
+    "zipcode": "891-2192",
+    "address": "垂水市上町114",
+    "tel": "0994-32-1111"
+  },
+  {
+    "baseCode": "46215",
+    "prefecture": "鹿児島県",
+    "cityName": "薩摩川内市",
+    "building": "薩摩川内市役所",
+    "zipcode": "895-8650",
+    "address": "薩摩川内市神田町3-22",
+    "tel": "0996-23-5111"
+  },
+  {
+    "baseCode": "46216",
+    "prefecture": "鹿児島県",
+    "cityName": "日置市",
+    "building": "日置市役所",
+    "zipcode": "899-2592",
+    "address": "日置市伊集院町郡1-100",
+    "tel": "099-273-2111"
+  },
+  {
+    "baseCode": "46217",
+    "prefecture": "鹿児島県",
+    "cityName": "曽於市",
+    "building": "曽於市役所",
+    "zipcode": "899-8692",
+    "address": "曽於市末吉町二之方1980",
+    "tel": "0986-76-1111"
+  },
+  {
+    "baseCode": "46218",
+    "prefecture": "鹿児島県",
+    "cityName": "霧島市",
+    "building": "霧島市役所",
+    "zipcode": "899-4394",
+    "address": "霧島市国分中央3-45-1",
+    "tel": "0995-45-5111"
+  },
+  {
+    "baseCode": "46219",
+    "prefecture": "鹿児島県",
+    "cityName": "いちき串木野市",
+    "building": "いちき串木野市役所",
+    "zipcode": "896-8601",
+    "address": "いちき串木野市昭和通133-1",
+    "tel": "0996-32-3111"
+  },
+  {
+    "baseCode": "46220",
+    "prefecture": "鹿児島県",
+    "cityName": "南さつま市",
+    "building": "南さつま市役所",
+    "zipcode": "897-8501",
+    "address": "南さつま市加世田川畑2648",
+    "tel": "0993-53-2111"
+  },
+  {
+    "baseCode": "46221",
+    "prefecture": "鹿児島県",
+    "cityName": "志布志市",
+    "building": "志布志市役所",
+    "zipcode": "899-7192",
+    "address": "志布志市志布志町志布志2-1-1",
+    "tel": "099-472-1111"
+  },
+  {
+    "baseCode": "46222",
+    "prefecture": "鹿児島県",
+    "cityName": "奄美市",
+    "building": "奄美市役所",
+    "zipcode": "894-8555",
+    "address": "奄美市名瀬幸町25-8",
+    "tel": "0997-52-1111"
+  },
+  {
+    "baseCode": "46223",
+    "prefecture": "鹿児島県",
+    "cityName": "南九州市",
+    "building": "南九州市役所",
+    "zipcode": "897-0392",
+    "address": "南九州市知覧町郡6204",
+    "tel": "0993-83-2511"
+  },
+  {
+    "baseCode": "46224",
+    "prefecture": "鹿児島県",
+    "cityName": "伊佐市",
+    "building": "伊佐市役所",
+    "zipcode": "895-2511",
+    "address": "伊佐市大口里1888",
+    "tel": "0995-23-1311"
+  },
+  {
+    "baseCode": "46225",
+    "prefecture": "鹿児島県",
+    "cityName": "姶良市",
+    "building": "姶良市役所",
+    "zipcode": "899-5492",
+    "address": "姶良市宮島町25",
+    "tel": "0995-66-3111"
+  },
+  {
+    "baseCode": "47201",
+    "prefecture": "沖縄県",
+    "cityName": "那覇市",
+    "building": "那覇市役所",
+    "zipcode": "900-8585",
+    "address": "那覇市泉崎1-1-1",
+    "tel": "098-867-0111"
+  },
+  {
+    "baseCode": "47205",
+    "prefecture": "沖縄県",
+    "cityName": "宜野湾市",
+    "building": "宜野湾市役所",
+    "zipcode": "901-2710",
+    "address": "宜野湾市野嵩1-1-1",
+    "tel": "098-893-4411"
+  },
+  {
+    "baseCode": "47207",
+    "prefecture": "沖縄県",
+    "cityName": "石垣市",
+    "building": "石垣市役所",
+    "zipcode": "907-8501",
+    "address": "石垣市字真栄里672",
+    "tel": "0980-82-9911"
+  },
+  {
+    "baseCode": "47208",
+    "prefecture": "沖縄県",
+    "cityName": "浦添市",
+    "building": "浦添市役所",
+    "zipcode": "901-2501",
+    "address": "浦添市安波茶1-1-1",
+    "tel": "098-876-1234"
+  },
+  {
+    "baseCode": "47209",
+    "prefecture": "沖縄県",
+    "cityName": "名護市",
+    "building": "名護市役所",
+    "zipcode": "905-8540",
+    "address": "名護市港1-1-1",
+    "tel": "0980-53-1212"
+  },
+  {
+    "baseCode": "47210",
+    "prefecture": "沖縄県",
+    "cityName": "糸満市",
+    "building": "糸満市役所",
+    "zipcode": "901-0392",
+    "address": "糸満市潮崎町1-1",
+    "tel": "098-840-8111"
+  },
+  {
+    "baseCode": "47211",
+    "prefecture": "沖縄県",
+    "cityName": "沖縄市",
+    "building": "沖縄市役所",
+    "zipcode": "904-8501",
+    "address": "沖縄市仲宗根町26-1",
+    "tel": "098-939-1212"
+  },
+  {
+    "baseCode": "47212",
+    "prefecture": "沖縄県",
+    "cityName": "豊見城市",
+    "building": "豊見城市役所",
+    "zipcode": "901-0292",
+    "address": "豊見城市宜保1-1-1",
+    "tel": "098-850-0024"
+  },
+  {
+    "baseCode": "47213",
+    "prefecture": "沖縄県",
+    "cityName": "うるま市",
+    "building": "うるま市役所",
+    "zipcode": "904-2292",
+    "address": "うるま市みどり町1-1-1",
+    "tel": "098-974-3111"
+  },
+  {
+    "baseCode": "47214",
+    "prefecture": "沖縄県",
+    "cityName": "宮古島市",
+    "building": "宮古島市役所",
+    "zipcode": "906-8501",
+    "address": "宮古島市平良字西里1140",
+    "tel": "0980-72-3751"
+  },
+  {
+    "baseCode": "47215",
+    "prefecture": "沖縄県",
+    "cityName": "南城市",
+    "building": "南城市役所",
+    "zipcode": "901-1495",
+    "address": "南城市佐敷字新里1870",
+    "tel": "098-917-5309"
+  }
+]
