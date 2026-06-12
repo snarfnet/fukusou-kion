@@ -30,7 +30,7 @@ jobs:
         working-directory: ios/EvidenceCamera
     env:
       APP_BUNDLE_ID: com.tokyonasu.evidencecamera
-      APP_NAME: "証拠カメラ"
+      APP_NAME: "証拠カメラ 現場記録"
       APP_SKU: evidence-camera-ios
       BUNDLE_NAME: EvidenceCamera
       PROFILE_NAME: "EvidenceCamera App Store"

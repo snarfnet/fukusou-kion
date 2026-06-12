@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.evidencecamera")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "EvidenceCamera")
-APP_NAME = os.environ.get("APP_NAME", "証拠カメラ")
+APP_NAME = os.environ.get("APP_NAME", "証拠カメラ 現場記録")
 APP_SKU = os.environ.get("APP_SKU", "evidence-camera-ios")
 
 
