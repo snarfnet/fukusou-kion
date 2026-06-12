@@ -3,7 +3,6 @@ import SwiftUI
 enum ActiveSheet: String, Identifiable {
     case municipality
     case notifications
-    case dataUpdate
     case privacy
 
     var id: String { rawValue }
@@ -21,9 +20,6 @@ struct ContentView: View {
     @State private var showingLocationAlert = false
     @AppStorage("selectedMunicipality") private var selectedMunicipality = "東京都 新宿区"
     @AppStorage("notificationSetting") private var notificationSetting = "7日前・前日"
-    @AppStorage("lastDataUpdateCheck") private var lastDataUpdateCheck = "未確認"
-    @AppStorage("lastDataUpdateTimestamp") private var lastDataUpdateTimestamp = 0.0
-    @AppStorage("autoDataUpdateEnabled") private var autoDataUpdateEnabled = true
 
     private var filteredItems: [ProcedureItem] {
         ProcedureData.items
@@ -83,10 +79,8 @@ struct ContentView: View {
                             SettingsView(
                                 municipality: selectedMunicipality,
                                 notificationSetting: notificationSetting,
-                                lastDataUpdateCheck: lastDataUpdateCheck,
                                 openMunicipality: { activeSheet = .municipality },
                                 openNotifications: { activeSheet = .notifications },
-                                openDataUpdate: { activeSheet = .dataUpdate },
                                 openPrivacy: { activeSheet = .privacy }
                             )
                         }
@@ -115,18 +109,9 @@ struct ContentView: View {
                 MunicipalityPickerView(selectedMunicipality: $selectedMunicipality)
             case .notifications:
                 NotificationSettingsView(notificationSetting: $notificationSetting)
-            case .dataUpdate:
-                DataUpdateView(
-                    lastDataUpdateCheck: $lastDataUpdateCheck,
-                    lastDataUpdateTimestamp: $lastDataUpdateTimestamp,
-                    autoDataUpdateEnabled: $autoDataUpdateEnabled
-                )
             case .privacy:
                 PrivacySettingsView()
             }
-        }
-        .onAppear {
-            runScheduledDataUpdateIfNeeded()
         }
         .onChange(of: locationResolver.resolvedMunicipality) { _, municipality in
             guard let municipality else { return }
@@ -146,23 +131,6 @@ struct ContentView: View {
 
     private var eventItems: [ProcedureItem] {
         ProcedureData.items.filter { $0.event == selectedEvent }
-    }
-
-    private func runScheduledDataUpdateIfNeeded() {
-        guard autoDataUpdateEnabled else { return }
-        let ninetyDays = 60.0 * 60.0 * 24.0 * 90.0
-        let now = Date().timeIntervalSince1970
-        if lastDataUpdateTimestamp == 0 || now - lastDataUpdateTimestamp >= ninetyDays {
-            lastDataUpdateTimestamp = now
-            lastDataUpdateCheck = formattedToday()
-        }
-    }
-
-    private func formattedToday() -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.dateFormat = "yyyy/MM/dd"
-        return formatter.string(from: Date())
     }
 }
 
@@ -514,20 +482,17 @@ struct SavedView: View {
 struct SettingsView: View {
     let municipality: String
     let notificationSetting: String
-    let lastDataUpdateCheck: String
     let openMunicipality: () -> Void
     let openNotifications: () -> Void
-    let openDataUpdate: () -> Void
     let openPrivacy: () -> Void
 
     var body: some View {
         VStack(spacing: 12) {
             OfficialCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    SectionTitle("設定", caption: "自治体、通知、データ更新を管理します")
+                    SectionTitle("設定", caption: "自治体、通知、保存情報を管理します")
                     SettingLine(symbol: "building.2", title: "自治体", value: municipality, action: openMunicipality)
                     SettingLine(symbol: "bell", title: "期限通知", value: notificationSetting, action: openNotifications)
-                    SettingLine(symbol: "icloud.and.arrow.down", title: "データ更新", value: lastDataUpdateCheck, action: openDataUpdate)
                     SettingLine(symbol: "hand.raised", title: "プライバシー", value: "端末内保存", action: openPrivacy)
                 }
             }
@@ -830,67 +795,6 @@ struct NotificationSettingsView: View {
     }
 }
 
-struct DataUpdateView: View {
-    @Binding var lastDataUpdateCheck: String
-    @Binding var lastDataUpdateTimestamp: Double
-    @Binding var autoDataUpdateEnabled: Bool
-    @Environment(\.dismiss) private var dismiss
-    @State private var status = "90日ごとに公式データの更新確認を行います。"
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section("更新方法") {
-                    Toggle("自動更新チェック", isOn: $autoDataUpdateEnabled)
-                    HStack {
-                        Text("確認間隔")
-                        Spacer()
-                        Text("90日")
-                            .foregroundStyle(AppTheme.grayText)
-                    }
-                    HStack {
-                        Text("最終確認")
-                        Spacer()
-                        Text(lastDataUpdateCheck)
-                            .foregroundStyle(AppTheme.grayText)
-                    }
-                }
-
-                Section {
-                    Button {
-                        lastDataUpdateTimestamp = Date().timeIntervalSince1970
-                        lastDataUpdateCheck = formattedToday()
-                        status = "更新確認が完了しました。新しい差分はありません。"
-                    } label: {
-                        Label("今すぐ更新確認", systemImage: "arrow.clockwise")
-                    }
-                }
-
-                Section("実装メモ") {
-                    Text(status)
-                    Text("全国自治体マスタはアプリ内に同梱しています。本番では署名付きJSONをサーバーに置き、90日以上経っていれば公式リンクと差分メモだけを更新する設計にします。")
-                        .font(.system(size: 13))
-                        .foregroundStyle(AppTheme.grayText)
-                }
-            }
-            .navigationTitle("データ更新")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("閉じる") { dismiss() }
-                }
-            }
-        }
-    }
-
-    private func formattedToday() -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.dateFormat = "yyyy/MM/dd"
-        return formatter.string(from: Date())
-    }
-}
-
 struct PrivacySettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -904,7 +808,7 @@ struct PrivacySettingsView: View {
                 }
 
                 Section {
-                    Text("この試作では個人情報をサーバーへ送信しません。本番で自治体別データ更新を入れる場合も、取得するのは手続きデータだけにします。")
+                    Text("この試作では個人情報をサーバーへ送信しません。現在地は自治体の推定にだけ使い、緯度経度は保存しません。")
                         .font(.system(size: 13))
                         .foregroundStyle(AppTheme.grayText)
                 }
