@@ -26,6 +26,7 @@ struct EvidenceRecord: Codable, Identifiable, Equatable {
     var imageFileName: String
     var metadata: CaptureMetadata
     var hash: String
+    var imageDigest: String?
 
     var shortHash: String {
         String(hash.prefix(12))
@@ -37,6 +38,22 @@ struct EvidenceRecord: Codable, Identifiable, Equatable {
         }
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
+}
+
+struct EmbeddedEvidencePayload: Codable, Equatable {
+    var schemaVersion: Int
+    var appName: String
+    var recordID: UUID
+    var imageDigest: String
+    var hash: String
+    var metadata: CaptureMetadata
+}
+
+struct ImportedEvidence: Identifiable, Equatable {
+    var id: UUID
+    var payload: EmbeddedEvidencePayload
+    var currentImageDigest: String
+    var state: VerificationState
 }
 
 enum VerificationState: Equatable {
