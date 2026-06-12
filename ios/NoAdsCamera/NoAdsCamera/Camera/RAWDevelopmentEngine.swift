@@ -34,7 +34,7 @@ final class RAWDevelopmentEngine {
         }
 
         image = applyWhiteBalance(to: image, temperature: settings.temperature, tint: settings.tint)
-        image = applyToneRecovery(to: image, shadows: settings.shadowBoost)
+        image = applyToneRecovery(to: image, shadows: settings.shadowBoost, highlights: settings.highlightRecovery)
 
         guard let cgImage = context.createCGImage(image, from: image.extent) else {
             throw RAWDevelopmentError.renderFailed
@@ -65,11 +65,11 @@ final class RAWDevelopmentEngine {
         return filter.outputImage ?? image
     }
 
-    private func applyToneRecovery(to image: CIImage, shadows: Float) -> CIImage {
+    private func applyToneRecovery(to image: CIImage, shadows: Float, highlights: Float) -> CIImage {
         let filter = CIFilter.highlightShadowAdjust()
         filter.inputImage = image
         filter.shadowAmount = shadows
-        filter.highlightAmount = 0.8
+        filter.highlightAmount = highlights
         return filter.outputImage ?? image
     }
 }

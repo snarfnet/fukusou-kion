@@ -35,6 +35,8 @@ final class CameraController: NSObject, ObservableObject {
     private let videoOutput = AVCaptureVideoDataOutput()
     private let customISPEngine = CustomISPEngine()
     private let semanticExposureEngine = SemanticExposureEngine()
+    private let hdrFusionEngine = HDRFusionEngine()
+    private let rawDevelopmentEngine = RAWDevelopmentEngine()
     private let processedImageContext = CIContext()
     private let sessionQueue = DispatchQueue(label: "camera.session.queue")
     private let videoQueue = DispatchQueue(label: "camera.video.analysis.queue")
@@ -141,10 +143,19 @@ final class CameraController: NSObject, ObservableObject {
         case .hdrBracket:
             captureExposureBracket()
             return
+        case .nightStack:
+            captureNightStack()
+            return
         case .auto, .zen, .strongShake:
             readinessText = "Moment"
         default:
             break
+        }
+
+        if selectedMode == .strongShake, shakeLevel > 0.22 {
+            isSaving = false
+            statusText = "手ブレが強いです。少し止めてください"
+            return
         }
 
         let settings = AVCapturePhotoSettings()
@@ -167,7 +178,7 @@ final class CameraController: NSObject, ObservableObject {
         activePurposeGuide = guide
         activeExposurePriority = guide.exposurePriority
         activeISPPreset = guide.ispPreset
-        statusText = "\(guide.preset.rawValue)向けに調整中"
+        statusText = AppText.pick(ja: "\(guide.preset.title)向けに調整中", en: "Tuning for \(guide.preset.title)")
     }
 
     func lockManualSettings(iso: Float?, exposureDuration: CMTime?, whiteBalance: AVCaptureDevice.WhiteBalanceGains?) {
@@ -267,6 +278,26 @@ final class CameraController: NSObject, ObservableObject {
         statusText = "3枚ブラケットで撮影中"
     }
 
+    private func captureNightStack() {
+        guard output.maxBracketedCapturePhotoCount >= 3 else {
+            isSaving = false
+            statusText = "この端末は低照度合成に非対応です"
+            return
+        }
+
+        let bracketedSettings = [
+            AVCaptureAutoExposureBracketedStillImageSettings.autoExposureSettings(exposureTargetBias: -0.35),
+            AVCaptureAutoExposureBracketedStillImageSettings.autoExposureSettings(exposureTargetBias: 0.0),
+            AVCaptureAutoExposureBracketedStillImageSettings.autoExposureSettings(exposureTargetBias: 0.35)
+        ]
+        let processedFormat: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.hevc]
+        let settings = AVCapturePhotoBracketSettings(rawPixelFormatType: 0, processedFormat: processedFormat, bracketedSettings: bracketedSettings)
+        settings.flashMode = .off
+        settings.photoQualityPrioritization = .quality
+        capture(with: settings)
+        statusText = "低照度スタックで撮影中"
+    }
+
     private func configureMomentCaptureIfAvailable() {
         if output.isZeroShutterLagSupported {
             output.isZeroShutterLagEnabled = true
@@ -286,7 +317,7 @@ final class CameraController: NSObject, ObservableObject {
         switch selectedMode {
         case .strongShake, .auto:
             return .speed
-        case .zen:
+        case .zen, .nightStack:
             return .balanced
         default:
             return .quality
@@ -308,10 +339,19 @@ final class CameraController: NSObject, ObservableObject {
 
         switch result {
         case .success(let captureResult):
-            let adjustedImage = adjustedPreviewImageIfNeeded(captureResult.previewImage)
+            if let fusedImage = fusedImageIfNeeded(from: captureResult) {
+                lastSavedImage = fusedImage
+                saveToPhotoLibrary(fusedImage, successMessage: selectedMode == .nightStack ? "低照度合成で保存しました" : "HDR合成で保存しました")
+                return
+            }
+
+            let rawDevelopedResult = rawDevelopedCaptureResultIfNeeded(captureResult)
+            let adjustedImage = adjustedPreviewImageIfNeeded(rawDevelopedResult?.previewImage ?? captureResult.previewImage)
             lastSavedImage = adjustedImage ?? captureResult.previewImage
             if let adjustedImage, selectedMode == .customISP || selectedMode == .purposePro {
                 saveToPhotoLibrary(adjustedImage)
+            } else if let rawDevelopedResult {
+                saveToPhotoLibrary(rawDevelopedResult, successMessage: "RAW現像を保存しました")
             } else {
                 saveToPhotoLibrary(captureResult)
             }
@@ -319,6 +359,69 @@ final class CameraController: NSObject, ObservableObject {
             statusText = "撮影に失敗しました"
         }
         photoDelegate = nil
+    }
+
+    private func fusedImageIfNeeded(from captureResult: CaptureResult) -> UIImage? {
+        guard selectedMode == .hdrBracket || selectedMode == .nightStack else { return nil }
+        let images = captureResult.items.compactMap { item -> CIImage? in
+            guard item.resourceType == .photo else { return nil }
+            return CIImage(data: item.data)
+        }
+        guard images.count >= 2 else { return captureResult.previewImage }
+
+        do {
+            if selectedMode == .nightStack {
+                return try hdrFusionEngine.makeNightStack(images: images, shadowBoost: shadowBoostForCurrentScene())
+            }
+            return try hdrFusionEngine.fuseBracket(images: images)
+        } catch {
+            statusText = selectedMode == .nightStack ? "低照度合成に失敗しました" : "HDR合成に失敗しました"
+            return captureResult.previewImage
+        }
+    }
+
+    private func rawDevelopedCaptureResultIfNeeded(_ captureResult: CaptureResult) -> CaptureResult? {
+        guard selectedMode == .rawMaterial,
+              let rawItem = captureResult.items.first(where: { $0.resourceType == .alternatePhoto }) else {
+            return nil
+        }
+
+        let settings = RAWDevelopmentSettings(
+            exposure: rawExposureAdjustmentForCurrentScene(),
+            highlightRecovery: Float(min(max(highlightClippingRatio * 8, 0.65), 1.0)),
+            shadowBoost: Float(min(max(shadowCrushRatio * 4, 0.18), 0.75)),
+            temperature: 6500,
+            tint: 0,
+            noiseReduction: Float(min(max(shadowCrushRatio * 3, 0.25), 0.8)),
+            sharpness: 0.38
+        )
+
+        do {
+            let developedImage = try rawDevelopmentEngine.develop(rawData: rawItem.data, settings: settings)
+            guard let developedData = rawDevelopmentEngine.heifData(from: developedImage) else {
+                lastSavedImage = developedImage
+                return nil
+            }
+            let developedItem = CaptureItem(data: developedData, uniformTypeIdentifier: "public.heic", resourceType: .photo)
+            return CaptureResult(items: [developedItem, rawItem], previewImage: developedImage)
+        } catch {
+            statusText = "RAW現像に失敗しました"
+            return nil
+        }
+    }
+
+    private func shadowBoostForCurrentScene() -> Float {
+        Float(min(max(shadowCrushRatio * 3.2, 0.42), 0.85))
+    }
+
+    private func rawExposureAdjustmentForCurrentScene() -> Float {
+        if highlightClippingRatio > 0.06 {
+            return -0.25
+        }
+        if shadowCrushRatio > 0.18 {
+            return 0.18
+        }
+        return 0
     }
 
     private func adjustedPreviewImageIfNeeded(_ image: UIImage?) -> UIImage? {
@@ -337,7 +440,7 @@ final class CameraController: NSObject, ObservableObject {
         return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
     }
 
-    private func saveToPhotoLibrary(_ captureResult: CaptureResult) {
+    private func saveToPhotoLibrary(_ captureResult: CaptureResult, successMessage: String = "保存しました") {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             guard status == .authorized || status == .limited else {
                 DispatchQueue.main.async { self.statusText = "写真への保存を許可してください" }
@@ -353,13 +456,13 @@ final class CameraController: NSObject, ObservableObject {
                 }
             } completionHandler: { success, _ in
                 DispatchQueue.main.async {
-                    self.statusText = success ? "保存しました" : "保存に失敗しました"
+                    self.statusText = success ? successMessage : "保存に失敗しました"
                 }
             }
         }
     }
 
-    private func saveToPhotoLibrary(_ image: UIImage) {
+    private func saveToPhotoLibrary(_ image: UIImage, successMessage: String = "用途別の絵作りで保存しました") {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             guard status == .authorized || status == .limited else {
                 DispatchQueue.main.async { self.statusText = "写真への保存を許可してください" }
@@ -370,7 +473,7 @@ final class CameraController: NSObject, ObservableObject {
                 PHAssetChangeRequest.creationRequestForAsset(from: image)
             } completionHandler: { success, _ in
                 DispatchQueue.main.async {
-                    self.statusText = success ? "用途別の絵作りで保存しました" : "保存に失敗しました"
+                    self.statusText = success ? successMessage : "保存に失敗しました"
                 }
             }
         }

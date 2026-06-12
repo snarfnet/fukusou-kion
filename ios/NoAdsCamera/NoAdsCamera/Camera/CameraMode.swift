@@ -11,6 +11,7 @@ enum CameraMode: String, CaseIterable, Identifiable {
     case rawMaterial = "Pro素材"
     case manual = "Manual"
     case hdrBracket = "HDR"
+    case nightStack = "Night"
     case depth = "Depth"
     case dual = "Dual"
     case sound = "音シャッター"
@@ -22,44 +23,89 @@ enum CameraMode: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    var title: String {
+        switch self {
+        case .auto:
+            "Auto"
+        case .customISP:
+            AppText.pick(ja: "自前ISP", en: "Custom ISP")
+        case .aiDevelop:
+            AppText.pick(ja: "AI現像", en: "AI Develop")
+        case .semanticExposure:
+            AppText.pick(ja: "意味露出", en: "Smart Exposure")
+        case .purposePro:
+            AppText.pick(ja: "目的別Pro", en: "Purpose Pro")
+        case .motionSubject:
+            AppText.pick(ja: "動体別処理", en: "Motion Split")
+        case .privacyCheck:
+            AppText.pick(ja: "投稿前チェック", en: "Privacy Check")
+        case .rawMaterial:
+            AppText.pick(ja: "Pro素材", en: "RAW Material")
+        case .manual:
+            "Manual"
+        case .hdrBracket:
+            "HDR"
+        case .nightStack:
+            "Night"
+        case .depth:
+            "Depth"
+        case .dual:
+            "Dual"
+        case .sound:
+            AppText.pick(ja: "音シャッター", en: "Sound Shot")
+        case .director:
+            AppText.pick(ja: "カメラ監督", en: "Director")
+        case .zen:
+            "Zen"
+        case .ghostAlign:
+            "Ghost"
+        case .document:
+            "Doc"
+        case .strongShake:
+            AppText.pick(ja: "最強手ブレ", en: "Stability")
+        }
+    }
+
     var caption: String {
         switch self {
         case .auto:
-            "速く撮る"
+            AppText.pick(ja: "速く撮る", en: "Fast capture")
         case .customISP:
-            "別カメラの絵"
+            AppText.pick(ja: "別カメラの絵", en: "Own color")
         case .aiDevelop:
-            "被写体別補正"
+            AppText.pick(ja: "被写体別補正", en: "Subject tuned")
         case .semanticExposure:
-            "写したい物優先"
+            AppText.pick(ja: "写したい物優先", en: "Target first")
         case .purposePro:
-            "用途別プロ判断"
+            AppText.pick(ja: "用途別プロ判断", en: "Use-case guide")
         case .motionSubject:
-            "動く部分だけ補正"
+            AppText.pick(ja: "動く部分だけ補正", en: "Moving areas")
         case .privacyCheck:
-            "写り込み警告"
+            AppText.pick(ja: "写り込み警告", en: "Leak warning")
         case .rawMaterial:
-            "RAW+JPEG保存"
+            AppText.pick(ja: "RAW+JPEG保存", en: "RAW+JPEG")
         case .manual:
-            "固定して撮る"
+            AppText.pick(ja: "固定して撮る", en: "Lock values")
         case .hdrBracket:
-            "逆光に強く"
+            AppText.pick(ja: "逆光に強く", en: "Backlight")
+        case .nightStack:
+            AppText.pick(ja: "暗所を重ねる", en: "Low light")
         case .depth:
-            "奥行き素材"
+            AppText.pick(ja: "奥行き素材", en: "Depth data")
         case .dual:
-            "前後同時"
+            AppText.pick(ja: "前後同時", en: "Dual camera")
         case .sound:
-            "声や音で撮る"
+            AppText.pick(ja: "声や音で撮る", en: "Voice trigger")
         case .director:
-            "撮影指示"
+            AppText.pick(ja: "撮影指示", en: "Shot advice")
         case .zen:
-            "通知も迷いも消す"
+            AppText.pick(ja: "通知も迷いも消す", en: "Clean screen")
         case .ghostAlign:
-            "前の構図に重ねる"
+            AppText.pick(ja: "前の構図に重ねる", en: "Match framing")
         case .document:
-            "文字をまっすぐ"
+            AppText.pick(ja: "文字をまっすぐ", en: "Straight text")
         case .strongShake:
-            "揺れが止まる瞬間を狙う"
+            AppText.pick(ja: "揺れが止まる瞬間を狙う", en: "Steady moment")
         }
     }
 }

@@ -1,13 +1,28 @@
 import Foundation
 
 enum PurposeProPreset: String, CaseIterable, Identifiable {
-    case marketplace = "メルカリ"
+    case marketplace = "商品撮影"
     case nail = "ネイル"
     case food = "料理"
     case storeAd = "店舗広告"
     case snsIcon = "SNSアイコン"
 
     var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .marketplace:
+            AppText.pick(ja: "商品撮影", en: "Product Listing")
+        case .nail:
+            AppText.pick(ja: "ネイル", en: "Nails")
+        case .food:
+            AppText.pick(ja: "料理", en: "Food")
+        case .storeAd:
+            AppText.pick(ja: "店舗広告", en: "Store Ad")
+        case .snsIcon:
+            AppText.pick(ja: "SNSアイコン", en: "Profile")
+        }
+    }
 
     var iconName: String {
         switch self {
@@ -53,51 +68,51 @@ final class PurposeProEngine: ObservableObject {
             return PurposeProGuide(
                 preset: preset,
                 targetAspect: "1:1",
-                primaryGuide: "商品を中央に置いてください",
-                secondaryGuide: "背景をシンプルに。影は少なめ。",
+                primaryGuide: AppText.pick(ja: "商品を中央に置いてください", en: "Place the product in the center"),
+                secondaryGuide: AppText.pick(ja: "背景をシンプルに。影は少なめ。", en: "Keep the background simple and shadows soft."),
                 exposurePriority: .product,
                 ispPreset: .product,
-                checklist: ["中央", "明るい", "正方形", "背景整理"]
+                checklist: AppText.isJapanese ? ["中央", "明るい", "正方形", "背景整理"] : ["Centered", "Bright", "Square", "Clean background"]
             )
         case .nail:
             return PurposeProGuide(
                 preset: preset,
                 targetAspect: "4:5",
-                primaryGuide: "爪先にピントを合わせます",
-                secondaryGuide: "手を少し斜めに。反射は抑えめ。",
+                primaryGuide: AppText.pick(ja: "爪先にピントを合わせます", en: "Focus on the nail tips"),
+                secondaryGuide: AppText.pick(ja: "手を少し斜めに。反射は抑えめ。", en: "Angle the hand slightly and reduce glare."),
                 exposurePriority: .product,
                 ispPreset: .portrait,
-                checklist: ["爪先ピント", "肌色自然", "反射少なめ", "手の角度"]
+                checklist: AppText.isJapanese ? ["爪先ピント", "肌色自然", "反射少なめ", "手の角度"] : ["Nail focus", "Natural skin", "Low glare", "Hand angle"]
             )
         case .food:
             return PurposeProGuide(
                 preset: preset,
                 targetAspect: "4:5",
-                primaryGuide: "斜め45度から狙いましょう",
-                secondaryGuide: "皿の白飛びを抑えて、ツヤを残します。",
+                primaryGuide: AppText.pick(ja: "斜め45度から狙いましょう", en: "Shoot from a 45-degree angle"),
+                secondaryGuide: AppText.pick(ja: "皿の白飛びを抑えて、ツヤを残します。", en: "Protect white plates while keeping shine."),
                 exposurePriority: .skySafe,
                 ispPreset: .food,
-                checklist: ["45度", "暖色", "皿を飛ばさない", "ツヤ"]
+                checklist: AppText.isJapanese ? ["45度", "暖色", "皿を飛ばさない", "ツヤ"] : ["45 degrees", "Warm color", "Plate detail", "Shine"]
             )
         case .storeAd:
             return PurposeProGuide(
                 preset: preset,
                 targetAspect: "16:9",
-                primaryGuide: "看板と入口を入れてください",
-                secondaryGuide: "文字入れ用の余白を片側に残します。",
+                primaryGuide: AppText.pick(ja: "看板と入口を入れてください", en: "Include the sign and entrance"),
+                secondaryGuide: AppText.pick(ja: "文字入れ用の余白を片側に残します。", en: "Leave space on one side for text."),
                 exposurePriority: .document,
                 ispPreset: .neutral,
-                checklist: ["入口", "看板", "清潔感", "余白"]
+                checklist: AppText.isJapanese ? ["入口", "看板", "清潔感", "余白"] : ["Entrance", "Sign", "Clean look", "Text space"]
             )
         case .snsIcon:
             return PurposeProGuide(
                 preset: preset,
                 targetAspect: "1:1",
-                primaryGuide: "顔を明るく、中央少し上へ",
-                secondaryGuide: "丸型で切れても見える余白を残します。",
+                primaryGuide: AppText.pick(ja: "顔を明るく、中央少し上へ", en: "Keep the face bright and slightly high"),
+                secondaryGuide: AppText.pick(ja: "丸型で切れても見える余白を残します。", en: "Leave safe space for circular crops."),
                 exposurePriority: .face,
                 ispPreset: .portrait,
-                checklist: ["顔明るい", "目線", "背景ぼけ", "丸型余白"]
+                checklist: AppText.isJapanese ? ["顔明るい", "目線", "背景ぼけ", "丸型余白"] : ["Bright face", "Eye line", "Soft background", "Crop space"]
             )
         }
     }
@@ -108,18 +123,18 @@ final class PurposeProEngine: ObservableObject {
 
         if shakeLevel > 0.18 {
             score -= 18
-            message = "少し止まって撮りましょう"
+            message = AppText.pick(ja: "少し止まって撮りましょう", en: "Hold still before shooting")
         } else if abs(horizonTilt) > 0.10 {
             score -= 10
-            message = "水平を少し直しましょう"
+            message = AppText.pick(ja: "水平を少し直しましょう", en: "Level the camera slightly")
         } else if highlightRatio > highlightLimit(for: selectedPreset) {
             score -= 14
             message = highlightMessage(for: selectedPreset)
         } else if shadowRatio > shadowLimit(for: selectedPreset) {
             score -= 12
-            message = "少し明るくしましょう"
+            message = AppText.pick(ja: "少し明るくしましょう", en: "Make it a little brighter")
         } else if score > 82 {
-            message = "今が撮りどきです"
+            message = AppText.pick(ja: "今が撮りどきです", en: "Now is a good moment")
         }
 
         return PurposeProAssessment(score: max(0, min(100, score)), message: message)
@@ -152,15 +167,15 @@ final class PurposeProEngine: ObservableObject {
     private func highlightMessage(for preset: PurposeProPreset) -> String {
         switch preset {
         case .food:
-            "皿が白飛びしています"
+            AppText.pick(ja: "皿が白飛びしています", en: "The plate is overexposed")
         case .nail:
-            "爪の反射を少し抑えましょう"
+            AppText.pick(ja: "爪の反射を少し抑えましょう", en: "Reduce nail glare slightly")
         case .marketplace:
-            "商品が明るすぎます"
+            AppText.pick(ja: "商品が明るすぎます", en: "The product is too bright")
         case .storeAd:
-            "看板の文字が飛びそうです"
+            AppText.pick(ja: "看板の文字が飛びそうです", en: "The sign text may blow out")
         case .snsIcon:
-            "顔の明るい部分を抑えます"
+            AppText.pick(ja: "顔の明るい部分を抑えます", en: "Reduce bright areas on the face")
         }
     }
 }

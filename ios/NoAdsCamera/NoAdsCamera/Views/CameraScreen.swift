@@ -114,7 +114,7 @@ struct CameraScreen: View {
                 ShakeMeter(level: camera.shakeLevel, message: camera.shakeMessage)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            if camera.selectedMode == .auto || camera.selectedMode == .rawMaterial || camera.selectedMode == .hdrBracket {
+            if camera.selectedMode == .auto || camera.selectedMode == .rawMaterial || camera.selectedMode == .hdrBracket || camera.selectedMode == .nightStack {
                 MomentCaptureBadge(camera: camera)
             }
             if !camera.realtimeWarnings.isEmpty {
@@ -191,7 +191,7 @@ struct CameraScreen: View {
                         camera.selectedMode = mode
                     } label: {
                         VStack(spacing: 3) {
-                            Text(mode.rawValue)
+                            Text(mode.title)
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
                             Text(mode.caption)
                                 .font(.system(size: 9, weight: .medium, design: .rounded))
@@ -202,7 +202,7 @@ struct CameraScreen: View {
                         .padding(.vertical, 9)
                         .background(camera.selectedMode == mode ? .white : .black.opacity(0.42), in: Capsule())
                     }
-                    .accessibilityLabel(mode.rawValue)
+                    .accessibilityLabel(mode.title)
                 }
             }
             .padding(.horizontal, 1)
@@ -247,6 +247,8 @@ struct CameraScreen: View {
             ManualOverlay()
         case .hdrBracket:
             HDROverlay()
+        case .nightStack:
+            NightStackOverlay()
         case .depth:
             DepthOverlay()
         case .dual:
@@ -287,20 +289,21 @@ private struct FeatureHelpSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     private let rows: [FeatureHelpRowData] = [
-        .init(icon: "camera.aperture", title: "RAW素材", detail: "RAW+JPEG、低ノイズRAW、編集前提の素材保存に使います。"),
-        .init(icon: "bolt.fill", title: "決定的瞬間", detail: "ゼロシャッターラグ系の設定で、子供・ペット・動きものを狙います。"),
-        .init(icon: "square.stack.3d.up.fill", title: "HDRブラケット", detail: "暗め・標準・明るめを撮って、逆光や夜景の失敗を減らします。"),
-        .init(icon: "waveform.path.ecg", title: "最強手ブレ", detail: "揺れを見て、今撮るべきか止めるべきかを表示します。"),
-        .init(icon: "scope", title: "目的別Pro", detail: "メルカリ、ネイル、料理など用途ごとに構図と露出の見方を変えます。"),
-        .init(icon: "shield.lefthalf.filled", title: "投稿前チェック", detail: "住所、QR、カード、顔など写り込みリスクを警告します。"),
-        .init(icon: "person.wave.2.fill", title: "カメラ監督", detail: "明るさ、傾き、ブレを見て撮影指示を出します。")
+        .init(icon: "camera.aperture", title: AppText.pick(ja: "RAW素材", en: "RAW Material"), detail: AppText.pick(ja: "RAW+JPEG、低ノイズRAW、編集前提の素材保存に使います。", en: "Capture RAW+JPEG material for editing with controlled noise and color.")),
+        .init(icon: "bolt.fill", title: AppText.pick(ja: "決定的瞬間", en: "Decisive Moment"), detail: AppText.pick(ja: "ゼロシャッターラグ系の設定で、子供・ペット・動きものを狙います。", en: "Uses fast capture settings for kids, pets, movement, and expressions.")),
+        .init(icon: "square.stack.3d.up.fill", title: AppText.pick(ja: "HDRブラケット", en: "HDR Bracket"), detail: AppText.pick(ja: "暗め・標準・明るめを撮って、逆光や夜景の失敗を減らします。", en: "Combines darker, normal, and brighter shots to protect highlights and shadows.")),
+        .init(icon: "moon.stars.fill", title: AppText.pick(ja: "低照度スタック", en: "Low-Light Stack"), detail: AppText.pick(ja: "暗所で複数枚を重ね、ノイズと黒つぶれを抑えます。三脚や固定撮影と相性が良いです。", en: "Stacks multiple low-light frames to reduce noise and crushed shadows. Best with a steady phone.")),
+        .init(icon: "waveform.path.ecg", title: AppText.pick(ja: "最強手ブレ", en: "Stability"), detail: AppText.pick(ja: "揺れを見て、今撮るべきか止めるべきかを表示します。", en: "Reads shake and tells you whether to shoot or hold still.")),
+        .init(icon: "scope", title: AppText.pick(ja: "目的別Pro", en: "Purpose Pro"), detail: AppText.pick(ja: "商品撮影、ネイル、料理など用途ごとに構図と露出の見方を変えます。", en: "Adapts framing and exposure for product listings, nails, food, shop ads, and profile photos.")),
+        .init(icon: "shield.lefthalf.filled", title: AppText.pick(ja: "投稿前チェック", en: "Privacy Check"), detail: AppText.pick(ja: "住所、QR、カード、顔など写り込みリスクを警告します。", en: "Warns about visible addresses, QR codes, cards, faces, and other posting risks.")),
+        .init(icon: "person.wave.2.fill", title: AppText.pick(ja: "カメラ監督", en: "Camera Director"), detail: AppText.pick(ja: "明るさ、傾き、ブレを見て撮影指示を出します。", en: "Gives shooting advice based on brightness, tilt, and shake."))
     ]
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("OAHSPE:α78 は、撮る前に失敗を減らすためのカメラです。")
+                    Text(AppText.pick(ja: "OAHSPE:α78 は、撮る前に失敗を減らすためのカメラです。", en: "OAHSPE:α78 helps reduce mistakes before you take the shot."))
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundStyle(.secondary)
                         .padding(.bottom, 4)
@@ -311,10 +314,10 @@ private struct FeatureHelpSheet: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("機能説明")
+            .navigationTitle(AppText.pick(ja: "機能説明", en: "Feature Guide"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("閉じる") {
+                    Button(AppText.pick(ja: "閉じる", en: "Close")) {
                         dismiss()
                     }
                 }
@@ -367,7 +370,7 @@ private struct PurposeProPanel: View {
                         Button {
                             engine.selectedPreset = preset
                         } label: {
-                            Label(preset.rawValue, systemImage: preset.iconName)
+                            Label(preset.title, systemImage: preset.iconName)
                                 .font(.system(size: 12, weight: .bold, design: .rounded))
                                 .foregroundStyle(engine.selectedPreset == preset ? .black : .white)
                                 .padding(.horizontal, 10)
@@ -761,6 +764,24 @@ private struct HDROverlay: View {
         }
         .padding(.bottom, 158)
         .frame(maxHeight: .infinity, alignment: .bottom)
+    }
+}
+
+private struct NightStackOverlay: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "moon.stars.fill")
+                .font(.system(size: 30, weight: .bold))
+            Text(AppText.pick(ja: "低照度スタック", en: "Low-Light Stack"))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+            Text(AppText.pick(ja: "固定して撮ると強い", en: "Best when steady"))
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white.opacity(0.78))
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 14)
+        .background(.black.opacity(0.46), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
