@@ -127,6 +127,13 @@ final class CameraModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelega
         guard isReady else { return }
         self.completion = completion
         isCapturing = true
+        if let connection = output.connection(with: .video) {
+            if connection.isVideoRotationAngleSupported(90) {
+                connection.videoRotationAngle = 90
+            } else if connection.isVideoOrientationSupported {
+                connection.videoOrientation = .portrait
+            }
+        }
         let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         output.capturePhoto(with: settings, delegate: self)
     }

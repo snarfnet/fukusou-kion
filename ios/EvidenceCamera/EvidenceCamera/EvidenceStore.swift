@@ -36,6 +36,7 @@ final class EvidenceStore: ObservableObject {
         let id = UUID()
         let imageFileName = "\(id.uuidString).jpg"
         let imageURL = imagesDirectory.appendingPathComponent(imageFileName)
+        let normalizedImageData = try Self.normalizedJPEGData(from: imageData)
 
         let firstPayload = EmbeddedEvidencePayload(
             schemaVersion: 1,
@@ -45,7 +46,7 @@ final class EvidenceStore: ObservableObject {
             hash: "",
             metadata: metadata
         )
-        let firstImageData = try Self.embed(payload: firstPayload, into: imageData)
+        let firstImageData = try Self.embed(payload: firstPayload, into: normalizedImageData)
         let firstDigest = try Self.imageDigest(from: firstImageData)
         let firstHash = try Self.hash(imageDigest: firstDigest, metadata: metadata)
         let finalPayload = EmbeddedEvidencePayload(
@@ -207,8 +208,10 @@ final class EvidenceStore: ObservableObject {
         let metadata = (CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any]) ?? [:]
         var mutableMetadata = metadata
         let payloadText = evidencePrefix + String(data: try payloadJSON(payload), encoding: .utf8)!
+        mutableMetadata[kCGImagePropertyOrientation as String] = 1
 
         var tiff = (mutableMetadata[kCGImagePropertyTIFFDictionary as String] as? [String: Any]) ?? [:]
+        tiff[kCGImagePropertyTIFFOrientation as String] = 1
         tiff[kCGImagePropertyTIFFImageDescription as String] = payloadText
         mutableMetadata[kCGImagePropertyTIFFDictionary as String] = tiff
 
@@ -227,6 +230,30 @@ final class EvidenceStore: ObservableObject {
         }
 
         return output as Data
+    }
+
+    nonisolated static func normalizedJPEGData(from imageData: Data) throws -> Data {
+        guard let image = UIImage(data: imageData) else {
+            throw EvidenceStoreError.invalidImage
+        }
+
+        if image.imageOrientation == .up, imageData.starts(with: [0xFF, 0xD8]) {
+            return imageData
+        }
+
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: image.size, format: format)
+        let uprightImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+        }
+
+        guard let jpegData = uprightImage.jpegData(compressionQuality: 0.95) else {
+            throw EvidenceStoreError.invalidImage
+        }
+
+        return jpegData
     }
 
     nonisolated static func extractPayload(from imageData: Data) throws -> EmbeddedEvidencePayload {
