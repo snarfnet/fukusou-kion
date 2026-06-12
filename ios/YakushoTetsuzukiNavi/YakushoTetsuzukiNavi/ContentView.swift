@@ -1,11 +1,26 @@
 import SwiftUI
 
+enum ActiveSheet: String, Identifiable {
+    case municipality
+    case notifications
+    case dataUpdate
+    case privacy
+
+    var id: String { rawValue }
+}
+
 struct ContentView: View {
     @State private var selectedTab: MainTab = .home
     @State private var selectedEvent: LifeEvent = .moving
     @State private var selectedItem: ProcedureItem?
     @State private var searchText = ""
     @State private var savedIDs: Set<String> = ["move-002", "birth-002", "inherit-007"]
+    @State private var activeSheet: ActiveSheet?
+    @AppStorage("selectedMunicipality") private var selectedMunicipality = "東京都 新宿区"
+    @AppStorage("notificationSetting") private var notificationSetting = "7日前・前日"
+    @AppStorage("lastDataUpdateCheck") private var lastDataUpdateCheck = "未確認"
+    @AppStorage("lastDataUpdateTimestamp") private var lastDataUpdateTimestamp = 0.0
+    @AppStorage("autoDataUpdateEnabled") private var autoDataUpdateEnabled = true
 
     private var filteredItems: [ProcedureItem] {
         ProcedureData.items
@@ -23,7 +38,12 @@ struct ContentView: View {
             AppTheme.background.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HeaderView(searchText: $searchText)
+                HeaderView(
+                    searchText: $searchText,
+                    municipality: selectedMunicipality,
+                    openMunicipality: { activeSheet = .municipality },
+                    openNotifications: { activeSheet = .notifications }
+                )
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 12) {
@@ -55,7 +75,15 @@ struct ContentView: View {
                                 selectedItem: $selectedItem
                             )
                         case .settings:
-                            SettingsView()
+                            SettingsView(
+                                municipality: selectedMunicipality,
+                                notificationSetting: notificationSetting,
+                                lastDataUpdateCheck: lastDataUpdateCheck,
+                                openMunicipality: { activeSheet = .municipality },
+                                openNotifications: { activeSheet = .notifications },
+                                openDataUpdate: { activeSheet = .dataUpdate },
+                                openPrivacy: { activeSheet = .privacy }
+                            )
                         }
                     }
                     .padding(.horizontal, 14)
@@ -76,15 +104,54 @@ struct ContentView: View {
                 }
             }
         }
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .municipality:
+                MunicipalityPickerView(selectedMunicipality: $selectedMunicipality)
+            case .notifications:
+                NotificationSettingsView(notificationSetting: $notificationSetting)
+            case .dataUpdate:
+                DataUpdateView(
+                    lastDataUpdateCheck: $lastDataUpdateCheck,
+                    lastDataUpdateTimestamp: $lastDataUpdateTimestamp,
+                    autoDataUpdateEnabled: $autoDataUpdateEnabled
+                )
+            case .privacy:
+                PrivacySettingsView()
+            }
+        }
+        .onAppear {
+            runScheduledDataUpdateIfNeeded()
+        }
     }
 
     private var eventItems: [ProcedureItem] {
         ProcedureData.items.filter { $0.event == selectedEvent }
     }
+
+    private func runScheduledDataUpdateIfNeeded() {
+        guard autoDataUpdateEnabled else { return }
+        let ninetyDays = 60.0 * 60.0 * 24.0 * 90.0
+        let now = Date().timeIntervalSince1970
+        if lastDataUpdateTimestamp == 0 || now - lastDataUpdateTimestamp >= ninetyDays {
+            lastDataUpdateTimestamp = now
+            lastDataUpdateCheck = formattedToday()
+        }
+    }
+
+    private func formattedToday() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.dateFormat = "yyyy/MM/dd"
+        return formatter.string(from: Date())
+    }
 }
 
 struct HeaderView: View {
     @Binding var searchText: String
+    let municipality: String
+    let openMunicipality: () -> Void
+    let openNotifications: () -> Void
 
     var body: some View {
         VStack(spacing: 10) {
@@ -107,24 +174,34 @@ struct HeaderView: View {
 
                 Spacer()
 
-                Image(systemName: "bell.badge")
-                    .font(.system(size: 19, weight: .semibold))
-                    .foregroundStyle(.white)
+                Button(action: openNotifications) {
+                    Image(systemName: "bell.badge")
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 38, height: 38)
+                }
+                .buttonStyle(.plain)
             }
 
-            HStack(spacing: 8) {
-                Label("東京都 新宿区", systemImage: "mappin.and.ellipse")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(AppTheme.navy)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            Button(action: openMunicipality) {
+                HStack(spacing: 8) {
+                    Label(municipality, systemImage: "mappin.and.ellipse")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(AppTheme.navy)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                Text("自治体変更")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(AppTheme.blue)
+                    Text("自治体変更")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(AppTheme.blue)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(AppTheme.blue)
+                }
+                .padding(10)
+                .background(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
             }
-            .padding(10)
-            .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .buttonStyle(.plain)
 
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
@@ -397,16 +474,23 @@ struct SavedView: View {
 }
 
 struct SettingsView: View {
+    let municipality: String
+    let notificationSetting: String
+    let lastDataUpdateCheck: String
+    let openMunicipality: () -> Void
+    let openNotifications: () -> Void
+    let openDataUpdate: () -> Void
+    let openPrivacy: () -> Void
+
     var body: some View {
         VStack(spacing: 12) {
             OfficialCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    SectionTitle("設定", caption: "試作版の想定項目")
-                    SettingLine(symbol: "building.2", title: "自治体", value: "東京都 新宿区")
-                    SettingLine(symbol: "bell", title: "期限通知", value: "7日前・前日")
-                    SettingLine(symbol: "icloud.and.arrow.down", title: "データ更新", value: "公式情報を確認")
-                    SettingLine(symbol: "yensign.circle", title: "価格", value: "App Store 100円")
-                    SettingLine(symbol: "hand.raised", title: "プライバシー", value: "個人情報は端末内")
+                    SectionTitle("設定", caption: "自治体、通知、データ更新を管理します")
+                    SettingLine(symbol: "building.2", title: "自治体", value: municipality, action: openMunicipality)
+                    SettingLine(symbol: "bell", title: "期限通知", value: notificationSetting, action: openNotifications)
+                    SettingLine(symbol: "icloud.and.arrow.down", title: "データ更新", value: lastDataUpdateCheck, action: openDataUpdate)
+                    SettingLine(symbol: "hand.raised", title: "プライバシー", value: "端末内保存", action: openPrivacy)
                 }
             }
 
@@ -419,19 +503,30 @@ struct SettingLine: View {
     let symbol: String
     let title: String
     let value: String
+    let action: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: symbol)
-                .foregroundStyle(AppTheme.blue)
-                .frame(width: 24)
-            Text(title)
-                .font(.system(size: 14, weight: .bold))
-            Spacer()
-            Text(value)
-                .font(.system(size: 13))
-                .foregroundStyle(AppTheme.grayText)
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: symbol)
+                    .foregroundStyle(AppTheme.blue)
+                    .frame(width: 24)
+                Text(title)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(AppTheme.navy)
+                Spacer()
+                Text(value)
+                    .font(.system(size: 13))
+                    .foregroundStyle(AppTheme.grayText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(AppTheme.grayText)
+            }
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .padding(.vertical, 6)
         .overlay(alignment: .bottom) {
             Rectangle()
@@ -545,6 +640,200 @@ struct OfficialNotice: View {
                     .font(.system(size: 12))
                     .foregroundStyle(AppTheme.grayText)
                     .lineSpacing(2)
+            }
+        }
+    }
+}
+
+struct MunicipalityPickerView: View {
+    @Binding var selectedMunicipality: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var query = ""
+
+    private let municipalities = [
+        "東京都 新宿区", "東京都 世田谷区", "東京都 渋谷区", "東京都 杉並区",
+        "神奈川県 横浜市", "神奈川県 川崎市", "埼玉県 さいたま市", "千葉県 千葉市",
+        "大阪府 大阪市", "京都府 京都市", "兵庫県 神戸市", "愛知県 名古屋市",
+        "福岡県 福岡市", "北海道 札幌市", "宮城県 仙台市", "広島県 広島市"
+    ]
+
+    private var filtered: [String] {
+        query.isEmpty ? municipalities : municipalities.filter { $0.localizedStandardContains(query) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(AppTheme.grayText)
+                    TextField("自治体名を検索", text: $query)
+                        .font(.system(size: 14))
+                }
+                .padding(.horizontal, 11)
+                .frame(height: 42)
+                .background(AppTheme.background)
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+
+                List(filtered, id: \.self) { municipality in
+                    Button {
+                        selectedMunicipality = municipality
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Text(municipality)
+                                .foregroundStyle(AppTheme.navy)
+                            Spacer()
+                            if selectedMunicipality == municipality {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(AppTheme.blue)
+                            }
+                        }
+                    }
+                }
+                .listStyle(.plain)
+            }
+            .padding()
+            .navigationTitle("自治体変更")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("閉じる") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+struct NotificationSettingsView: View {
+    @Binding var notificationSetting: String
+    @Environment(\.dismiss) private var dismiss
+
+    private let options = ["通知しない", "前日", "3日前・前日", "7日前・前日", "14日前・7日前・前日"]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("期限通知") {
+                    ForEach(options, id: \.self) { option in
+                        Button {
+                            notificationSetting = option
+                        } label: {
+                            HStack {
+                                Text(option)
+                                    .foregroundStyle(AppTheme.navy)
+                                Spacer()
+                                if notificationSetting == option {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(AppTheme.blue)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Section {
+                    Text("実リリースでは、ここでローカル通知の許可を取り、保存した手続きの期限から通知日を計算します。")
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppTheme.grayText)
+                }
+            }
+            .navigationTitle("通知設定")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("閉じる") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+struct DataUpdateView: View {
+    @Binding var lastDataUpdateCheck: String
+    @Binding var lastDataUpdateTimestamp: Double
+    @Binding var autoDataUpdateEnabled: Bool
+    @Environment(\.dismiss) private var dismiss
+    @State private var status = "90日ごとに公式データの更新確認を行います。"
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("更新方法") {
+                    Toggle("自動更新チェック", isOn: $autoDataUpdateEnabled)
+                    HStack {
+                        Text("確認間隔")
+                        Spacer()
+                        Text("90日")
+                            .foregroundStyle(AppTheme.grayText)
+                    }
+                    HStack {
+                        Text("最終確認")
+                        Spacer()
+                        Text(lastDataUpdateCheck)
+                            .foregroundStyle(AppTheme.grayText)
+                    }
+                }
+
+                Section {
+                    Button {
+                        lastDataUpdateTimestamp = Date().timeIntervalSince1970
+                        lastDataUpdateCheck = formattedToday()
+                        status = "更新確認が完了しました。新しい差分はありません。"
+                    } label: {
+                        Label("今すぐ更新確認", systemImage: "arrow.clockwise")
+                    }
+                }
+
+                Section("実装メモ") {
+                    Text(status)
+                    Text("本番では、アプリ内の固定データに加えて、署名付きJSONをサーバーに置きます。アプリ起動時に90日以上経っていれば差分だけ取得し、公式リンクと更新日を差し替える設計にできます。")
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppTheme.grayText)
+                }
+            }
+            .navigationTitle("データ更新")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("閉じる") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func formattedToday() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.dateFormat = "yyyy/MM/dd"
+        return formatter.string(from: Date())
+    }
+}
+
+struct PrivacySettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("保存する情報") {
+                    Label("選択した自治体", systemImage: "building.2")
+                    Label("保存した手続き", systemImage: "bookmark")
+                    Label("通知設定", systemImage: "bell")
+                }
+
+                Section {
+                    Text("この試作では個人情報をサーバーへ送信しません。本番で自治体別データ更新を入れる場合も、取得するのは手続きデータだけにします。")
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppTheme.grayText)
+                }
+            }
+            .navigationTitle("プライバシー")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("閉じる") { dismiss() }
+                }
             }
         }
     }
