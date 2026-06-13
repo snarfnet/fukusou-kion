@@ -36,6 +36,7 @@ META = {
         "whatsNew": "初回リリースです。",
         "promotionalText": "RAW、HDR、低照度、手ブレ、目的別Proをまとめた広告なしの買い切りカメラ。",
         "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": (
@@ -56,6 +57,7 @@ META = {
         "whatsNew": "Initial release.",
         "promotionalText": "A no-ads, one-time purchase camera for RAW, HDR, low light, stability, and purpose modes.",
         "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
 }
 
@@ -423,6 +425,14 @@ def create_screenshot_set(localization_id, display_type):
     return response.json()["data"]["id"]
 
 
+def screenshot_count(set_id):
+    response = api("GET", f"/appScreenshotSets/{set_id}/appScreenshots?limit=200")
+    if response.status_code != 200:
+        print(f"List screenshots {set_id}: {response.status_code} {response.text[:500]}")
+        return 0
+    return len(response.json().get("data", []))
+
+
 def upload_screenshot(set_id, path):
     data = Path(path).read_bytes()
     response = api("POST", "/appScreenshots", data=json_body({
@@ -477,6 +487,9 @@ def ensure_screenshots(version_id):
                     set_id = sets[0]["id"]
                 else:
                     set_id = create_screenshot_set(loc["id"], display_type)
+                if screenshot_count(set_id) > 0:
+                    print(f"Screenshot already uploaded {locale} {display_type}")
+                    continue
                 path = tmp_dir / f"oahspe-{locale}-{display_type}.png"
                 generate_screenshot(path, size, locale, display_type)
                 upload_screenshot(set_id, path)
