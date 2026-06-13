@@ -224,6 +224,7 @@ jobs:
           APP_VERSION: ${{ env.MARKETING_VERSION }}
           PRICE_JPY: "1200"
           PREPARE_ONLY: ${{ github.event.inputs.prepare_only == 'true' && '1' || '0' }}
+          PYTHONUNBUFFERED: "1"
           SUBMIT_BUILD_NUMBER: ${{ github.event.inputs.submit_build_number }}
         run: |
           . .venv/bin/activate
