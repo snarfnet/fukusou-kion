@@ -1,0 +1,118 @@
+name: Expire ShokuninSumahoDX TestFlight Build 27
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  expire-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expire only the mistaken TestFlight build
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pyjwt cryptography requests
+          python3 - <<'PY'
+          import base64
+          import os
+          import time
+
+          import jwt
+          import requests
+
+          BUNDLE_ID = "com.tokyonasu.shokuninsumahodx"
+          VERSION = "1.1"
+          BUILD_NUMBER = "27"
+
+          key_id = os.environ["ASC_KEY_ID"]
+          issuer_id = os.environ["ASC_ISSUER_ID"]
+          private_key = os.environ.get("ASC_PRIVATE_KEY", "")
+          if not private_key:
+              encoded_key = os.environ["ASC_API_KEY_CONTENT"]
+              private_key = base64.b64decode(encoded_key).decode("utf-8")
+
+          now = int(time.time())
+          token = jwt.encode(
+              {"iss": issuer_id, "iat": now, "exp": now + 20 * 60, "aud": "appstoreconnect-v1"},
+              private_key,
+              algorithm="ES256",
+              headers={"kid": key_id, "typ": "JWT"},
+          )
+
+          session = requests.Session()
+          session.headers.update(
+              {
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json",
+              }
+          )
+
+          def request(method, url, **kwargs):
+              response = session.request(method, url, timeout=30, **kwargs)
+              if response.status_code >= 400:
+                  raise SystemExit(f"{method} {url} failed: {response.status_code} {response.text}")
+              return response.json() if response.text else {}
+
+          base_url = "https://api.appstoreconnect.apple.com/v1"
+          apps = request("GET", f"{base_url}/apps", params={"filter[bundleId]": BUNDLE_ID, "limit": 2})["data"]
+          if len(apps) != 1:
+              raise SystemExit(f"Expected exactly one app for {BUNDLE_ID}, found {len(apps)}")
+
+          app_id = apps[0]["id"]
+          builds = request(
+              "GET",
+              f"{base_url}/builds",
+              params={
+                  "filter[app]": app_id,
+                  "filter[version]": VERSION,
+                  "filter[buildNumber]": BUILD_NUMBER,
+                  "fields[builds]": "version,buildNumber,expired,processingState,uploadedDate",
+                  "limit": 10,
+              },
+          )["data"]
+          if len(builds) != 1:
+              raise SystemExit(f"Expected exactly one build {VERSION} ({BUILD_NUMBER}), found {len(builds)}")
+
+          build = builds[0]
+          attrs = build["attributes"]
+          print(
+              "Target build:",
+              f"id={build['id']}",
+              f"version={attrs.get('version')}",
+              f"buildNumber={attrs.get('buildNumber')}",
+              f"expired={attrs.get('expired')}",
+          )
+
+          if attrs.get("expired") is True:
+              print("Build is already expired.")
+          else:
+              request(
+                  "PATCH",
+                  f"{base_url}/builds/{build['id']}",
+                  json={"data": {"type": "builds", "id": build["id"], "attributes": {"expired": True}}},
+              )
+              print("Expiration request sent.")
+
+          confirmed = request(
+              "GET",
+              f"{base_url}/builds/{build['id']}",
+              params={"fields[builds]": "version,buildNumber,expired,processingState,uploadedDate"},
+          )["data"]
+          confirmed_attrs = confirmed["attributes"]
+          if confirmed_attrs.get("expired") is not True:
+              raise SystemExit(f"Expiration was not confirmed: {confirmed_attrs}")
+          print(
+              "Confirmed expired:",
+              f"id={confirmed['id']}",
+              f"version={confirmed_attrs.get('version')}",
+              f"buildNumber={confirmed_attrs.get('buildNumber')}",
+              f"expired={confirmed_attrs.get('expired')}",
+          )
+          PY
