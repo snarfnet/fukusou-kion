@@ -57,3 +57,7 @@ open CellArtisan.xcodeproj
 - Excel内に元画像と設定メモを別シートで保存
 - 色パレットの手動編集
 - A4印刷用の設計図PDF
+
+## 販売方針
+
+初期価格は日本ストア100円を想定しています。価格設定はApp Store Connectの価格と配信状況で行います。
