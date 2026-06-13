@@ -356,20 +356,61 @@ def find_reusable_submission():
 
 
 def submit_for_review(version_id):
-    response = api("POST", "/appStoreVersionSubmissions", data=json_body({
+    cancel_open_review_submissions()
+    response = api("POST", "/reviewSubmissions", data=json_body({
         "data": {
-            "type": "appStoreVersionSubmissions",
+            "type": "reviewSubmissions",
+            "attributes": {"platform": "IOS"},
             "relationships": {
-                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
             },
         }
     }))
-    print(f"App Store version submission: {response.status_code}")
-    if response.status_code in (200, 201, 409):
-        if response.text:
+    print(f"Review submission create: {response.status_code}")
+    if response.status_code == 201:
+        submission_id = response.json()["data"]["id"]
+    elif response.status_code == 409:
+        print(response.text[:1000])
+        submission_id = find_reusable_submission()
+        if not submission_id:
+            raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
+    else:
+        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1000]}")
+
+    for attempt in range(20):
+        response = api("POST", "/reviewSubmissionItems", data=json_body({
+            "data": {
+                "type": "reviewSubmissionItems",
+                "relationships": {
+                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                },
+            }
+        }))
+        print(f"Review item {attempt + 1}/20: {response.status_code}")
+        if response.status_code in (200, 201):
+            break
+        if response.status_code == 409:
             print(response.text[:1000])
-        return
-    raise RuntimeError(f"Review submit failed {response.status_code}: {response.text[:1000]}")
+            break
+        time.sleep(30)
+    else:
+        raise RuntimeError(f"Review item create failed {response.status_code}: {response.text[:1000]}")
+
+    last_response = None
+    for attempt in range(1, 31):
+        response = api("PATCH", f"/reviewSubmissions/{submission_id}", data=json_body({
+            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+        }))
+        if response.status_code == 200:
+            state = response.json()["data"]["attributes"].get("state")
+            print(f"Submitted for App Review: {state}")
+            return
+        last_response = response
+        print(f"Review submit {attempt}/30: {response.status_code} {response.text[:500]}")
+        time.sleep(60)
+    raise RuntimeError(f"Review submit failed {last_response.status_code}: {last_response.text[:1000]}")
 
 
 def main():
