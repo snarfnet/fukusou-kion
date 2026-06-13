@@ -31,6 +31,7 @@ jobs:
     env:
       APP_BUNDLE_ID: com.tokyonasu.saisuncamera
       APP_NAME: "採寸カメラ"
+      APP_ID: "6779920437"
       APP_SKU: saisun-camera-ios
       BUNDLE_NAME: SaisunSnap
       PROFILE_NAME: "SaisunSnap App Store"
@@ -83,7 +84,7 @@ jobs:
         run: |
           . .venv/bin/activate
           python scripts/ensure_asc_app.py | tee /tmp/saisunsnap-app.log
-          grep '^APP_ID=' /tmp/saisunsnap-app.log >> "$GITHUB_ENV"
+          grep '^APP_ID=' /tmp/saisunsnap-app.log >> "$GITHUB_ENV" || echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
 
       - name: Create distribution certificate
         env:
