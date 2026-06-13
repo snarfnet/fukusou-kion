@@ -5,7 +5,7 @@ import re
 import sys
 import time
 
-from asc_helpers import api, api_json, query
+from asc_helpers import api, api_json, headers, query
 import requests
 
 
@@ -236,13 +236,13 @@ def ensure_release_prerequisites(version_id):
 
 
 def ensure_privacy_answers():
-    body = api_json("GET", f"/apps/{APP_ID}/dataUsagePublishState")
+    body = iris_json("GET", f"/apps/{APP_ID}/dataUsagePublishState")
     state = body.get("data")
     if not state:
         print("Privacy answers: publish state not found")
         return
 
-    response = api(
+    response = iris_api(
         "PATCH",
         f"/appDataUsagesPublishState/{state['id']}",
         json={
@@ -256,6 +256,28 @@ def ensure_privacy_answers():
     print(f"Privacy answers publish: {response.status_code}")
     if response.status_code not in (200, 201, 204, 409):
         print(response.text[:1000])
+
+
+def iris_api(method, path, **kwargs):
+    url = f"https://appstoreconnect.apple.com/iris/v1{path}"
+    last_response = None
+    for _ in range(6):
+        last_response = requests.request(method, url, headers=headers(), timeout=120, **kwargs)
+        if last_response.status_code not in (401, 429, 500, 502, 503, 504):
+            return last_response
+        time.sleep(20)
+    return last_response
+
+
+def iris_json(method, path, **kwargs):
+    response = iris_api(method, path, **kwargs)
+    try:
+        body = response.json()
+    except Exception:
+        body = {}
+    if response.status_code not in (200, 201, 204):
+        raise RuntimeError(f"{method} iris {path} failed {response.status_code}: {response.text[:1000]}")
+    return body
 
 
 def ensure_jpy_price():
