@@ -236,7 +236,11 @@ def ensure_release_prerequisites(version_id):
 
 
 def ensure_privacy_answers():
-    body = iris_json("GET", f"/apps/{APP_ID}/dataUsagePublishState")
+    try:
+        body = iris_json("GET", f"/apps/{APP_ID}/dataUsagePublishState")
+    except Exception as error:
+        print(f"Privacy answers publish skipped: {error}")
+        return
     state = body.get("data")
     if not state:
         print("Privacy answers: publish state not found")
