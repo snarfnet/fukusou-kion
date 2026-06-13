@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
+import hashlib
 import os
+import tempfile
 import time
+from pathlib import Path
 
+import requests
 from asc_helpers import api, api_json, fail, json_body, query
 
 
@@ -10,6 +14,7 @@ APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 BUILD_NUMBER = os.environ["BUILD_NUMBER"]
 PRICE_JPY = os.environ.get("PRICE_JPY", "1200")
 PRIVACY_URL = os.environ.get("PRIVACY_URL", "https://snarfnet.github.io/privacy.html")
+ROOT = Path(__file__).resolve().parents[1]
 
 META = {
     "ja": {
@@ -297,6 +302,186 @@ def update_metadata(version_id):
         print(f"Metadata {locale}: {response.status_code}")
 
 
+def load_font(size, bold=False):
+    from PIL import ImageFont
+
+    candidates = [
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/System/Library/Fonts/Supplemental/Helvetica Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Helvetica.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+    ]
+    for path in candidates:
+        if path and Path(path).exists():
+            return ImageFont.truetype(path, size)
+    return ImageFont.load_default()
+
+
+def cover(image, size):
+    image = image.convert("RGB")
+    src_ratio = image.width / image.height
+    dst_ratio = size[0] / size[1]
+    if src_ratio > dst_ratio:
+        new_h = size[1]
+        new_w = int(new_h * src_ratio)
+    else:
+        new_w = size[0]
+        new_h = int(new_w / src_ratio)
+    image = image.resize((new_w, new_h))
+    left = (new_w - size[0]) // 2
+    top = (new_h - size[1]) // 2
+    return image.crop((left, top, left + size[0], top + size[1]))
+
+
+def generate_screenshot(path, size, locale, display_type):
+    from PIL import Image, ImageDraw, ImageFilter
+
+    width, height = size
+    icon_path = ROOT / "NoAdsCamera" / "Assets.xcassets" / "AppIcon.appiconset" / "icon-1024.png"
+    icon = Image.open(icon_path).convert("RGB")
+    bg = cover(icon.filter(ImageFilter.GaussianBlur(22)), size)
+    image = Image.alpha_composite(bg.convert("RGBA"), Image.new("RGBA", size, (3, 9, 14, 132)))
+    draw = ImageDraw.Draw(image)
+
+    margin = int(width * 0.07)
+    top = int(height * 0.075)
+    title_font = load_font(int(width * 0.071), True)
+    body_font = load_font(int(width * 0.032), False)
+    small_font = load_font(int(width * 0.026), False)
+    badge_font = load_font(int(width * 0.024), True)
+
+    draw.text((margin, top), "OAHSPE:alpha78", fill=(248, 250, 252, 255), font=title_font)
+    subtitle = "RAW / HDR / Stability / Purpose Pro" if locale == "ja" else "RAW, HDR, stability, and purpose modes"
+    draw.text((margin, top + int(width * 0.085)), subtitle, fill=(207, 226, 238, 255), font=body_font)
+
+    preview_top = top + int(width * 0.18)
+    preview_h = int(height * 0.56)
+    preview_box = (margin, preview_top, width - margin, preview_top + preview_h)
+    draw.rounded_rectangle(preview_box, radius=int(width * 0.045), fill=(10, 16, 21, 232), outline=(112, 214, 255, 150), width=max(2, int(width * 0.004)))
+
+    cx = width // 2
+    cy = preview_top + preview_h // 2
+    for step in range(5):
+        radius = int(width * (0.11 + step * 0.075))
+        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=(120, 225, 255, max(40, 150 - step * 23)), width=max(2, int(width * 0.004)))
+    draw.ellipse((cx - int(width * 0.11), cy - int(width * 0.11), cx + int(width * 0.11), cy + int(width * 0.11)), fill=(5, 12, 20, 255), outline=(234, 244, 255, 210), width=max(3, int(width * 0.005)))
+    draw.ellipse((cx - int(width * 0.052), cy - int(width * 0.052), cx + int(width * 0.052), cy + int(width * 0.052)), fill=(22, 73, 110, 255), outline=(151, 227, 255, 180), width=max(2, int(width * 0.004)))
+    draw.ellipse((cx - int(width * 0.018), cy - int(width * 0.018), cx + int(width * 0.018), cy + int(width * 0.018)), fill=(220, 245, 255, 255))
+
+    pill_y = preview_top + int(width * 0.045)
+    pill_x = margin + int(width * 0.04)
+    for label in ["RAW", "HDR", "LOW LIGHT", "STABLE"]:
+        text_w = draw.textlength(label, font=badge_font)
+        box = (pill_x, pill_y, pill_x + int(text_w) + int(width * 0.06), pill_y + int(width * 0.052))
+        draw.rounded_rectangle(box, radius=int(width * 0.026), fill=(21, 31, 38, 225), outline=(126, 224, 255, 130), width=max(1, int(width * 0.002)))
+        draw.text((pill_x + int(width * 0.03), pill_y + int(width * 0.012)), label, fill=(235, 249, 255, 255), font=badge_font)
+        pill_x = box[2] + int(width * 0.015)
+
+    bottom_y = preview_box[3] + int(height * 0.035)
+    cards = [
+        ("Custom ISP", "Balanced color after capture"),
+        ("Privacy Check", "Notice private details"),
+        ("Purpose Pro", "Product, food, nail, profile"),
+    ]
+    card_gap = int(width * 0.022)
+    card_w = (width - margin * 2 - card_gap * 2) // 3
+    for index, (head, desc) in enumerate(cards):
+        x = margin + index * (card_w + card_gap)
+        box = (x, bottom_y, x + card_w, bottom_y + int(height * 0.14))
+        draw.rounded_rectangle(box, radius=int(width * 0.025), fill=(248, 250, 252, 235))
+        draw.text((x + int(width * 0.025), bottom_y + int(width * 0.025)), head, fill=(12, 20, 28, 255), font=badge_font)
+        draw.text((x + int(width * 0.025), bottom_y + int(width * 0.068)), desc, fill=(54, 72, 88, 255), font=small_font)
+
+    footer = "No ads. One-time purchase." if locale != "ja" else "No ads. Buy once."
+    draw.text((margin, height - int(height * 0.07)), footer, fill=(232, 244, 250, 255), font=body_font)
+    image.convert("RGB").save(path, "PNG", optimize=True)
+    print(f"Generated screenshot {display_type} {locale}: {path} {width}x{height}")
+
+
+def list_screenshot_sets(localization_id):
+    response = api("GET", f"/appStoreVersionLocalizations/{localization_id}/appScreenshotSets?limit=200")
+    if response.status_code != 200:
+        print(f"List screenshot sets {localization_id}: {response.status_code} {response.text[:500]}")
+        return []
+    return response.json().get("data", [])
+
+
+def create_screenshot_set(localization_id, display_type):
+    response = api("POST", "/appScreenshotSets", data=json_body({
+        "data": {
+            "type": "appScreenshotSets",
+            "attributes": {"screenshotDisplayType": display_type},
+            "relationships": {
+                "appStoreVersionLocalization": {
+                    "data": {"type": "appStoreVersionLocalizations", "id": localization_id}
+                }
+            },
+        }
+    }))
+    print(f"Create screenshot set {display_type}: {response.status_code}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Screenshot set create failed {response.status_code}: {response.text[:1000]}")
+    return response.json()["data"]["id"]
+
+
+def upload_screenshot(set_id, path):
+    data = Path(path).read_bytes()
+    response = api("POST", "/appScreenshots", data=json_body({
+        "data": {
+            "type": "appScreenshots",
+            "attributes": {"fileName": Path(path).name, "fileSize": len(data)},
+            "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}},
+        }
+    }))
+    print(f"Reserve screenshot {Path(path).name}: {response.status_code}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Screenshot reserve failed {response.status_code}: {response.text[:1000]}")
+    screenshot = response.json()["data"]
+    screenshot_id = screenshot["id"]
+    for operation in screenshot["attributes"].get("uploadOperations", []):
+        headers = {item["name"]: item["value"] for item in operation.get("requestHeaders", [])}
+        offset = int(operation.get("offset", 0))
+        length = int(operation.get("length", len(data)))
+        upload_response = requests.request(operation["method"], operation["url"], headers=headers, data=data[offset:offset + length], timeout=300)
+        print(f"Upload screenshot chunk: {upload_response.status_code}")
+        if upload_response.status_code not in (200, 201, 204):
+            raise RuntimeError(f"Screenshot upload failed {upload_response.status_code}: {upload_response.text[:500]}")
+    response = api("PATCH", f"/appScreenshots/{screenshot_id}", data=json_body({
+        "data": {
+            "type": "appScreenshots",
+            "id": screenshot_id,
+            "attributes": {"uploaded": True, "sourceFileChecksum": hashlib.md5(data).hexdigest()},
+        }
+    }))
+    print(f"Commit screenshot {Path(path).name}: {response.status_code}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Screenshot commit failed {response.status_code}: {response.text[:1000]}")
+
+
+def ensure_screenshots(version_id):
+    specs = {
+        "APP_IPHONE_65": (1242, 2688),
+        "APP_IPAD_PRO_3GEN_129": (2048, 2732),
+    }
+    localizations = list_all(f"/appStoreVersions/{version_id}/appStoreVersionLocalizations?limit=200")
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_dir = Path(tmp)
+        for loc in localizations:
+            locale = loc["attributes"]["locale"]
+            for display_type, size in specs.items():
+                sets = [
+                    item for item in list_screenshot_sets(loc["id"])
+                    if item.get("attributes", {}).get("screenshotDisplayType") == display_type
+                ]
+                if sets:
+                    print(f"Screenshot set exists {locale} {display_type}: {sets[0]['id']}")
+                    set_id = sets[0]["id"]
+                else:
+                    set_id = create_screenshot_set(loc["id"], display_type)
+                path = tmp_dir / f"oahspe-{locale}-{display_type}.png"
+                generate_screenshot(path, size, locale, display_type)
+                upload_screenshot(set_id, path)
+
+
 def wait_for_build():
     params = query({
         "filter[app]": APP_ID,
@@ -363,7 +548,6 @@ def submit_for_review(version_id):
             "attributes": {"platform": "IOS"},
             "relationships": {
                 "app": {"data": {"type": "apps", "id": APP_ID}},
-                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
             },
         }
     }))
@@ -393,7 +577,7 @@ def submit_for_review(version_id):
             break
         if response.status_code == 409:
             print(response.text[:1000])
-            break
+            raise RuntimeError(f"Review item create failed {response.status_code}: {response.text[:1000]}")
         time.sleep(30)
     else:
         raise RuntimeError(f"Review item create failed {response.status_code}: {response.text[:1000]}")
@@ -425,6 +609,7 @@ def main():
 
     update_release_prerequisites(version_id)
     update_metadata(version_id)
+    ensure_screenshots(version_id)
     if os.environ.get("PREPARE_ONLY") == "1":
         print("Prepared App Store Connect metadata only.")
         return
