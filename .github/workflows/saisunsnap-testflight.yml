@@ -88,20 +88,20 @@ jobs:
 
       - name: Import distribution certificate
         env:
-          CERT_B64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
         shell: bash
         run: |
-          test -n "$CERT_B64"
-          test -n "$P12_PASSWORD"
+          test -n "$IOS_DISTRIBUTION_P12_BASE64"
+          test -n "$IOS_DISTRIBUTION_P12_PASSWORD"
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
-          echo "$CERT_B64" | base64 --decode > /tmp/saisunsnap-cert.p12
-          security import /tmp/saisunsnap-cert.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/saisunsnap-cert.p12
+          security import /tmp/saisunsnap-cert.p12 -k build.keychain -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
           security find-certificate -a -c "Apple Distribution" -Z build.keychain |
             awk '/SHA-1 hash:/ { print "IOS_DISTRIBUTION_CERT_SHA1=" $3; exit }' >> "$GITHUB_ENV"
