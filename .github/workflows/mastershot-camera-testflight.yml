@@ -14,6 +14,22 @@ on:
         description: "Delete existing distribution certificates if Apple blocks creating a CI certificate"
         required: false
         default: "false"
+      submit_only:
+        description: "Skip build/upload and submit an existing TestFlight build"
+        required: false
+        default: "false"
+      submit_for_review:
+        description: "Submit to App Review after build processing or submit_only"
+        required: false
+        default: "false"
+      submit_build_number:
+        description: "Existing TestFlight build number to submit. Empty uses this workflow run number."
+        required: false
+        default: ""
+      prepare_only:
+        description: "Prepare metadata and price without final review submit"
+        required: false
+        default: "false"
   push:
     branches:
       - codex/mastershot-camera-testflight
@@ -82,7 +98,7 @@ jobs:
           chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
 
       - name: Install distribution certificate
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
@@ -120,7 +136,7 @@ jobs:
           fi
 
       - name: Stop after App Store Connect registration
-        if: ${{ github.event.inputs.register_only == 'true' }}
+        if: ${{ github.event.inputs.register_only == 'true' && github.event.inputs.submit_only != 'true' }}
         run: echo "Registration complete."
 
       - name: Update App Store Connect app name
@@ -131,7 +147,7 @@ jobs:
           python scripts/update_asc_app_name.py
 
       - name: Resolve app bundle
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -140,7 +156,7 @@ jobs:
           grep '^APP_BUNDLE_ID=' /tmp/mastershot-camera-bundle.log >> "$GITHUB_ENV"
 
       - name: Prepare provisioning profile
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -148,11 +164,11 @@ jobs:
           python scripts/prepare_profile.py
 
       - name: Generate Xcode project
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         run: xcodegen generate
 
       - name: Archive
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -175,7 +191,7 @@ jobs:
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
 
       - name: Export and upload IPA
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -192,7 +208,7 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
       - name: Wait for TestFlight build processing
-        if: ${{ github.event.inputs.register_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           WAIT_SECONDS: "1800"
@@ -200,6 +216,21 @@ jobs:
         run: |
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
+
+      - name: Submit for App Review
+        if: ${{ github.event.inputs.submit_for_review == 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_VERSION: ${{ env.MARKETING_VERSION }}
+          PRICE_JPY: "1200"
+          PREPARE_ONLY: ${{ github.event.inputs.prepare_only == 'true' && '1' || '0' }}
+          SUBMIT_BUILD_NUMBER: ${{ github.event.inputs.submit_build_number }}
+        run: |
+          . .venv/bin/activate
+          if [ -n "$SUBMIT_BUILD_NUMBER" ]; then
+            export BUILD_NUMBER="$SUBMIT_BUILD_NUMBER"
+          fi
+          python scripts/submit_production.py
 
       - name: Upload IPA artifact
         if: always()
