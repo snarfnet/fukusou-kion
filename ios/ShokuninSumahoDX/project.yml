@@ -30,7 +30,7 @@ targets:
         CFBundleName: "職人スマホSuper DX"
         CFBundleDisplayName: "職人スマホSuper DX"
         CFBundleIconName: AppIcon
-        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         UILaunchScreen:
