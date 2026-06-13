@@ -14,7 +14,7 @@ struct CityHallOffice: Codable, Identifiable, Hashable {
 }
 
 enum CityHallData {
-    static let sourceName = "ASTI 地方公共団体の位置データ"
+    static let sourceName = "ASTI 地方公共団体の位置データ / 東京都 官公署一覧"
     static let lastBundledUpdate = "2026/01"
     static let all: [CityHallOffice] = loadCityHalls()
 
@@ -30,6 +30,10 @@ enum CityHallData {
 
     private static func parentCityName(from municipalityName: String) -> String? {
         if municipalityName.hasSuffix("市"), !municipalityName.contains(" ") {
+            return municipalityName
+        }
+
+        if municipalityName.hasSuffix("区"), !municipalityName.contains(" ") {
             return municipalityName
         }
 

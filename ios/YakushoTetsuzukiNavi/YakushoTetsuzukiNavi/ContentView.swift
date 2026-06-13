@@ -156,9 +156,6 @@ struct HeaderView: View {
                     Text("役所手続きナビ")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(.white)
-                    Text("買い切り100円・広告なし")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.78))
                 }
 
                 Spacer()
@@ -926,7 +923,7 @@ struct ProcedureDetailView: View {
         if let cityHall {
             OfficialCard {
                 VStack(alignment: .leading, spacing: 10) {
-                    Label("市役所", systemImage: "building.columns")
+                    Label("役所", systemImage: "building.columns")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(AppTheme.navy)
 
@@ -939,7 +936,7 @@ struct ProcedureDetailView: View {
                         infoLine(title: "電話", value: "\(cityHall.tel)（代表）")
                     }
 
-                    Text("区役所・町村役場は表示していません。政令市の区を選んだ場合も、市役所の代表情報を表示します。")
+                    Text("市と東京23区の代表情報を表示します。政令市の区を選んだ場合は、市役所の代表情報を表示します。")
                         .font(.system(size: 11))
                         .foregroundStyle(AppTheme.grayText)
                         .fixedSize(horizontal: false, vertical: true)

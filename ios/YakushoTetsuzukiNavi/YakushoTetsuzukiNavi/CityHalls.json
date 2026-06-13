@@ -2223,6 +2223,213 @@
     "tel": "0475-70-0300"
   },
   {
+    "baseCode": "13101",
+    "prefecture": "東京都",
+    "cityName": "千代田区",
+    "building": "千代田区役所",
+    "zipcode": "102-8688",
+    "address": "千代田区九段南 1-2-1",
+    "tel": "03-3264-2111"
+  },
+  {
+    "baseCode": "13102",
+    "prefecture": "東京都",
+    "cityName": "中央区",
+    "building": "中央区役所",
+    "zipcode": "104-8404",
+    "address": "中央区築地 1-1-1",
+    "tel": "03-3543-0211"
+  },
+  {
+    "baseCode": "13103",
+    "prefecture": "東京都",
+    "cityName": "港区",
+    "building": "港区役所",
+    "zipcode": "105-8511",
+    "address": "港区芝公園 1-5-25",
+    "tel": "03-3578-2111"
+  },
+  {
+    "baseCode": "13104",
+    "prefecture": "東京都",
+    "cityName": "新宿区",
+    "building": "新宿区役所",
+    "zipcode": "160-8484",
+    "address": "新宿区歌舞伎町 1-4-1",
+    "tel": "03-3209-1111"
+  },
+  {
+    "baseCode": "13105",
+    "prefecture": "東京都",
+    "cityName": "文京区",
+    "building": "文京区役所",
+    "zipcode": "112-8555",
+    "address": "文京区春日 1-16-21",
+    "tel": "03-3812-7111"
+  },
+  {
+    "baseCode": "13106",
+    "prefecture": "東京都",
+    "cityName": "台東区",
+    "building": "台東区役所",
+    "zipcode": "110-8615",
+    "address": "台東区東上野 4-5-6",
+    "tel": "03-5246-1111"
+  },
+  {
+    "baseCode": "13107",
+    "prefecture": "東京都",
+    "cityName": "墨田区",
+    "building": "墨田区役所",
+    "zipcode": "130-8640",
+    "address": "墨田区吾妻橋 1-23-20",
+    "tel": "03-5608-1111"
+  },
+  {
+    "baseCode": "13108",
+    "prefecture": "東京都",
+    "cityName": "江東区",
+    "building": "江東区役所",
+    "zipcode": "135-8383",
+    "address": "江東区東陽 4-11-28",
+    "tel": "03-3647-9111"
+  },
+  {
+    "baseCode": "13109",
+    "prefecture": "東京都",
+    "cityName": "品川区",
+    "building": "品川区役所",
+    "zipcode": "140-8715",
+    "address": "品川区広町 2-1-36",
+    "tel": "03-3777-1111"
+  },
+  {
+    "baseCode": "13110",
+    "prefecture": "東京都",
+    "cityName": "目黒区",
+    "building": "目黒区役所",
+    "zipcode": "153-8573",
+    "address": "目黒区上目黒 2-19-15",
+    "tel": "03-3715-1111"
+  },
+  {
+    "baseCode": "13111",
+    "prefecture": "東京都",
+    "cityName": "大田区",
+    "building": "大田区役所",
+    "zipcode": "144-8621",
+    "address": "大田区蒲田 5-13-14",
+    "tel": "03-5744-1111"
+  },
+  {
+    "baseCode": "13112",
+    "prefecture": "東京都",
+    "cityName": "世田谷区",
+    "building": "世田谷区役所",
+    "zipcode": "154-8504",
+    "address": "世田谷区世田谷 4-21-27",
+    "tel": "03-5432-1111"
+  },
+  {
+    "baseCode": "13113",
+    "prefecture": "東京都",
+    "cityName": "渋谷区",
+    "building": "渋谷区役所",
+    "zipcode": "150-8010",
+    "address": "渋谷区宇田川町 1-1",
+    "tel": "03-3463-1211"
+  },
+  {
+    "baseCode": "13114",
+    "prefecture": "東京都",
+    "cityName": "中野区",
+    "building": "中野区役所",
+    "zipcode": "164-8501",
+    "address": "中野区中野 4-11-19",
+    "tel": "03-3389-1111"
+  },
+  {
+    "baseCode": "13115",
+    "prefecture": "東京都",
+    "cityName": "杉並区",
+    "building": "杉並区役所",
+    "zipcode": "166-8570",
+    "address": "杉並区阿佐谷南 1-15-1",
+    "tel": "03-3312-2111"
+  },
+  {
+    "baseCode": "13116",
+    "prefecture": "東京都",
+    "cityName": "豊島区",
+    "building": "豊島区役所",
+    "zipcode": "171-8422",
+    "address": "豊島区南池袋 2-45-1",
+    "tel": "03-3981-1111"
+  },
+  {
+    "baseCode": "13117",
+    "prefecture": "東京都",
+    "cityName": "北区",
+    "building": "北区役所",
+    "zipcode": "114-8508",
+    "address": "北区王子本町 1-15-22",
+    "tel": "03-3908-1111"
+  },
+  {
+    "baseCode": "13118",
+    "prefecture": "東京都",
+    "cityName": "荒川区",
+    "building": "荒川区役所",
+    "zipcode": "116-8501",
+    "address": "荒川区荒川 2-2-3",
+    "tel": "03-3802-3111"
+  },
+  {
+    "baseCode": "13119",
+    "prefecture": "東京都",
+    "cityName": "板橋区",
+    "building": "板橋区役所",
+    "zipcode": "173-8501",
+    "address": "板橋区板橋 2-66-1",
+    "tel": "03-3964-1111"
+  },
+  {
+    "baseCode": "13120",
+    "prefecture": "東京都",
+    "cityName": "練馬区",
+    "building": "練馬区役所",
+    "zipcode": "176-8501",
+    "address": "練馬区豊玉北 6-12-1",
+    "tel": "03-3993-1111"
+  },
+  {
+    "baseCode": "13121",
+    "prefecture": "東京都",
+    "cityName": "足立区",
+    "building": "足立区役所",
+    "zipcode": "120-8510",
+    "address": "足立区中央本町 1-17-1",
+    "tel": "03-3880-5111"
+  },
+  {
+    "baseCode": "13122",
+    "prefecture": "東京都",
+    "cityName": "葛飾区",
+    "building": "葛飾区役所",
+    "zipcode": "124-8555",
+    "address": "葛飾区立石 5-13-1",
+    "tel": "03-3695-1111"
+  },
+  {
+    "baseCode": "13123",
+    "prefecture": "東京都",
+    "cityName": "江戸川区",
+    "building": "江戸川区役所",
+    "zipcode": "132-8501",
+    "address": "江戸川区中央 1-4-1",
+    "tel": "03-3652-1151"
+  },
+  {
     "baseCode": "13201",
     "prefecture": "東京都",
     "cityName": "八王子市",
