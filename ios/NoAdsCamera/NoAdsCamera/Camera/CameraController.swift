@@ -2,10 +2,10 @@ import AVFoundation
 import CoreImage
 import CoreMotion
 import ImageIO
-import MobileCoreServices
 import Photos
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 final class CameraController: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
@@ -160,20 +160,13 @@ final class CameraController: NSObject, ObservableObject {
             return
         }
 
-        let settings = AVCapturePhotoSettings()
+        let settings = output.availablePhotoCodecTypes.contains(.hevc)
+            ? AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+            : AVCapturePhotoSettings()
         settings.flashMode = .off
-        settings.photoQualityPrioritization = selectedMode == .strongShake ? .speed : .quality
-        enableAuxiliaryDeliveryIfAvailable(settings)
         settings.photoQualityPrioritization = prioritizationForCurrentMode()
-
-        if output.availablePhotoCodecTypes.contains(.hevc) {
-            let hevcSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
-            hevcSettings.flashMode = settings.flashMode
-            hevcSettings.photoQualityPrioritization = settings.photoQualityPrioritization
-            capture(with: hevcSettings)
-        } else {
-            capture(with: settings)
-        }
+        enableAuxiliaryDeliveryIfAvailable(settings)
+        capture(with: settings)
     }
 
     func applyPurposeGuide(_ guide: PurposeProGuide) {
@@ -383,7 +376,7 @@ final class CameraController: NSObject, ObservableObject {
         guard selectedMode == .hdrBracket || selectedMode == .nightStack else { return nil }
         let images = captureResult.items.compactMap { item -> CIImage? in
             guard item.resourceType == .photo else { return nil }
-            return CIImage(data: item.data)
+            return CIImage(data: item.data, options: [.applyOrientationProperty: true])
         }
         guard images.count >= 2 else { return captureResult.previewImage }
 
@@ -420,7 +413,7 @@ final class CameraController: NSObject, ObservableObject {
                 lastSavedImage = developedImage
                 return nil
             }
-            let developedItem = CaptureItem(data: developedData, uniformTypeIdentifier: "public.heic", resourceType: .photo)
+            let developedItem = CaptureItem(data: developedData, uniformTypeIdentifier: UTType.heic.identifier, resourceType: .photo)
             return CaptureResult(items: [developedItem, rawItem], previewImage: developedImage)
         } catch {
             statusText = "RAW現像に失敗しました"
@@ -676,7 +669,7 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
         items.append(
             CaptureItem(
                 data: data,
-                uniformTypeIdentifier: photo.isRawPhoto ? "com.adobe.raw-image" : "public.heic",
+                uniformTypeIdentifier: photo.isRawPhoto ? "com.adobe.raw-image" : Self.processedUniformTypeIdentifier(for: data),
                 resourceType: photo.isRawPhoto ? .alternatePhoto : .photo
             )
         )
@@ -692,7 +685,7 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
         items.append(
             CaptureItem(
                 data: data,
-                uniformTypeIdentifier: "public.heic",
+                uniformTypeIdentifier: Self.processedUniformTypeIdentifier(for: data),
                 resourceType: .photoProxy
             )
         )
@@ -708,6 +701,20 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
         } else {
             completion(.success(CaptureResult(items: items, previewImage: previewImage)))
         }
+    }
+
+    private static func processedUniformTypeIdentifier(for data: Data) -> String {
+        let jpegSignature: [UInt8] = [0xFF, 0xD8, 0xFF]
+        if data.prefix(jpegSignature.count).elementsEqual(jpegSignature) {
+            return UTType.jpeg.identifier
+        }
+
+        if data.count >= 12,
+           String(data: data.subdata(in: 4..<8), encoding: .ascii) == "ftyp" {
+            return UTType.heic.identifier
+        }
+
+        return UTType.heic.identifier
     }
 }
 
