@@ -1,0 +1,58 @@
+name: CellArtisan
+options:
+  bundleIdPrefix: com.tokyonasu
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.4"
+
+packages:
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation
+    from: "0.9.19"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: 83VGKGSQUH
+
+targets:
+  CellArtisan:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - CellArtisan
+    settings:
+      base:
+        PRODUCT_NAME: CellArtisan
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.cellartisan
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: CellArtisan/Resources/Info.plist
+    dependencies:
+      - package: ZIPFoundation
+        product: ZIPFoundation
+    info:
+      path: CellArtisan/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: "セル絵職人"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSRequiresIPhoneOS: true
+        LSApplicationCategoryType: public.app-category.graphics-design
+        ITSAppUsesNonExemptEncryption: false
+        NSPhotoLibraryUsageDescription: "画像をExcelセルアートに変換するために写真を読み込みます。"
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIUserInterfaceStyle: Light
+    scheme:
+      testTargets: []
