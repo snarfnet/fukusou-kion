@@ -2,6 +2,7 @@ import AudioToolbox
 import AVFoundation
 import CoreImage.CIFilterBuiltins
 import CoreMotion
+import Photos
 import PhotosUI
 import Speech
 import SwiftUI
@@ -777,6 +778,7 @@ private struct PhotoOverlayTool: View {
     @State private var label = "水平OK"
     @State private var annotationStyle: PhotoAnnotationStyle = .arrowCircle
     @State private var status = "写真を選ぶと、測定ラベル付きで保存できます。"
+    @State private var isSaving = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -809,18 +811,13 @@ private struct PhotoOverlayTool: View {
 
             Button {
                 guard let image else { return }
-                UIImageWriteToSavedPhotosAlbum(renderOverlay(on: image), nil, nil, nil)
-                notes.insert(MeasurementNote(siteName: siteName, title: "写真", value: label, memo: "写真へ測定ラベルを追加", tag: NoteTag.photo.rawValue), at: 0)
-                var stamp = stampsBySite[siteName] ?? SiteStamp()
-                stamp.photoDone = true
-                stampsBySite[siteName] = stamp
-                status = "写真アプリへ保存しました。"
+                saveRenderedPhoto(renderOverlay(on: image))
             } label: {
-                Label("ラベル付き写真を保存", systemImage: "square.and.arrow.down")
+                Label(isSaving ? "保存中" : "ラベル付き写真を保存", systemImage: "square.and.arrow.down")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(CraftButtonStyle(color: CraftTheme.orange))
-            .disabled(image == nil)
+            .disabled(image == nil || isSaving)
 
             Text(status)
                 .font(.footnote)
@@ -832,16 +829,21 @@ private struct PhotoOverlayTool: View {
         Task {
             guard let data = try? await item?.loadTransferable(type: Data.self),
                   let picked = UIImage(data: data) else { return }
-            await MainActor.run { image = picked }
+            await MainActor.run {
+                image = picked.normalizedForDrawing()
+                status = "写真を読み込みました。ラベルを確認して保存できます。"
+            }
         }
     }
 
     private func renderOverlay(on image: UIImage) -> UIImage {
+        let image = image.normalizedForDrawing()
         let renderer = UIGraphicsImageRenderer(size: image.size)
         return renderer.image { context in
             image.draw(in: CGRect(origin: .zero, size: image.size))
-            let scale = image.size.width / 1200
-            let box = CGRect(x: 36 * scale, y: 36 * scale, width: image.size.width - 72 * scale, height: 150 * scale)
+            let scale = PhotoLayout.scale(for: image.size)
+            let margin = 36 * scale
+            let box = CGRect(x: margin, y: margin, width: max(1, image.size.width - margin * 2), height: 150 * scale)
             UIColor.black.withAlphaComponent(0.68).setFill()
             UIBezierPath(roundedRect: box, cornerRadius: 24 * scale).fill()
             let attrs: [NSAttributedString.Key: Any] = [
@@ -870,6 +872,27 @@ private struct PhotoOverlayTool: View {
             }
         }
     }
+
+    private func saveRenderedPhoto(_ output: UIImage) {
+        isSaving = true
+        status = "保存しています。"
+        Task {
+            let result = await PhotoLibraryWriter.save(output)
+            await MainActor.run {
+                isSaving = false
+                switch result {
+                case .success:
+                    notes.insert(MeasurementNote(siteName: siteName, title: "写真", value: label.trimmed.isEmpty ? "測定ラベル" : label, memo: "写真へ測定ラベルを追加", tag: NoteTag.photo.rawValue), at: 0)
+                    var stamp = stampsBySite[siteName] ?? SiteStamp()
+                    stamp.photoDone = true
+                    stampsBySite[siteName] = stamp
+                    status = "写真アプリへ保存しました。"
+                case .failure(let message):
+                    status = message
+                }
+            }
+        }
+    }
 }
 
 private enum PhotoAnnotationStyle: String, CaseIterable, Identifiable {
@@ -893,6 +916,7 @@ private struct CenterGuideTool: View {
     @State private var horizontalOffset = 0.0
     @State private var showThirds = true
     @State private var status = "写真に中心線を重ねて、位置合わせのメモとして保存できます。"
+    @State private var isSaving = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -935,27 +959,19 @@ private struct CenterGuideTool: View {
 
             Button {
                 guard let image else { return }
-                let output = afterImage == nil ? renderGuide(on: image) : renderBeforeAfter(before: image, after: afterImage!)
-                UIImageWriteToSavedPhotosAlbum(output, nil, nil, nil)
-                notes.insert(
-                    MeasurementNote(
-                        siteName: siteName,
-                        title: "中心線",
-                        value: "縦 \(verticalOffset.rounded1)% / 横 \(horizontalOffset.rounded1)%",
-                        memo: showThirds ? "三分割ガイドあり" : "中心線のみ"
-                    ),
-                    at: 0
-                )
-                var stamp = stampsBySite[siteName] ?? SiteStamp()
-                stamp.photoDone = true
-                stampsBySite[siteName] = stamp
-                status = "中心線付き写真を保存しました。"
+                let output: UIImage
+                if let afterImage {
+                    output = renderBeforeAfter(before: image, after: afterImage)
+                } else {
+                    output = renderGuide(on: image)
+                }
+                saveRenderedGuide(output)
             } label: {
-                Label("中心線付き写真を保存", systemImage: "square.and.arrow.down")
+                Label(isSaving ? "保存中" : "中心線付き写真を保存", systemImage: "square.and.arrow.down")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(CraftButtonStyle(color: CraftTheme.orange))
-            .disabled(image == nil)
+            .disabled(image == nil || isSaving)
 
             Text(status)
                 .font(.footnote)
@@ -967,7 +983,10 @@ private struct CenterGuideTool: View {
         Task {
             guard let data = try? await item?.loadTransferable(type: Data.self),
                   let picked = UIImage(data: data) else { return }
-            await MainActor.run { image = picked }
+            await MainActor.run {
+                image = picked.normalizedForDrawing()
+                status = "施工前写真を読み込みました。"
+            }
         }
     }
 
@@ -975,18 +994,22 @@ private struct CenterGuideTool: View {
         Task {
             guard let data = try? await item?.loadTransferable(type: Data.self),
                   let picked = UIImage(data: data) else { return }
-            await MainActor.run { afterImage = picked }
+            await MainActor.run {
+                afterImage = picked.normalizedForDrawing()
+                status = "施工後写真を読み込みました。"
+            }
         }
     }
 
     private func renderGuide(on image: UIImage) -> UIImage {
+        let image = image.normalizedForDrawing()
         let renderer = UIGraphicsImageRenderer(size: image.size)
         return renderer.image { context in
             image.draw(in: CGRect(origin: .zero, size: image.size))
             let cg = context.cgContext
-            let x = image.size.width * (0.5 + verticalOffset / 100)
-            let y = image.size.height * (0.5 + horizontalOffset / 100)
-            let scale = image.size.width / 1200
+            let x = image.size.width * (0.5 + horizontalOffset / 100)
+            let y = image.size.height * (0.5 + verticalOffset / 100)
+            let scale = PhotoLayout.scale(for: image.size)
 
             if showThirds {
                 cg.setStrokeColor(UIColor.white.withAlphaComponent(0.55).cgColor)
@@ -1030,6 +1053,36 @@ private struct CenterGuideTool: View {
             let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.boldSystemFont(ofSize: 44), .foregroundColor: UIColor.white]
             "Before".draw(at: CGPoint(x: 38, y: 38), withAttributes: attrs)
             "After".draw(at: CGPoint(x: 838, y: 38), withAttributes: attrs)
+        }
+    }
+
+    private func saveRenderedGuide(_ output: UIImage) {
+        isSaving = true
+        status = "保存しています。"
+        Task {
+            let result = await PhotoLibraryWriter.save(output)
+            await MainActor.run {
+                isSaving = false
+                switch result {
+                case .success:
+                    notes.insert(
+                        MeasurementNote(
+                            siteName: siteName,
+                            title: "中心線",
+                            value: "縦 \(verticalOffset.rounded1)% / 横 \(horizontalOffset.rounded1)%",
+                            memo: showThirds ? "三分割ガイドあり" : "中心線のみ",
+                            tag: NoteTag.photo.rawValue
+                        ),
+                        at: 0
+                    )
+                    var stamp = stampsBySite[siteName] ?? SiteStamp()
+                    stamp.photoDone = true
+                    stampsBySite[siteName] = stamp
+                    status = "写真アプリへ保存しました。"
+                case .failure(let message):
+                    status = message
+                }
+            }
         }
     }
 }
@@ -1357,6 +1410,39 @@ private enum AppStore {
     }
 }
 
+private enum PhotoLayout {
+    static func scale(for size: CGSize) -> CGFloat {
+        max(0.45, min(size.width, size.height) / 1200)
+    }
+}
+
+private enum PhotoSaveResult {
+    case success
+    case failure(String)
+}
+
+private enum PhotoLibraryWriter {
+    static func save(_ image: UIImage) async -> PhotoSaveResult {
+        let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+        guard status == .authorized || status == .limited else {
+            return .failure("写真への追加が許可されていません。設定アプリで写真の追加を許可してください。")
+        }
+
+        return await withCheckedContinuation { continuation in
+            PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            } completionHandler: { success, error in
+                if success {
+                    continuation.resume(returning: .success)
+                } else {
+                    let message = error?.localizedDescription ?? "写真アプリへの保存に失敗しました。"
+                    continuation.resume(returning: .failure(message))
+                }
+            }
+        }
+    }
+}
+
 private enum PDFReport {
     static func make(notes: [MeasurementNote], stamp: SiteStamp) -> URL {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("shokunin-dx-report.pdf")
@@ -1449,7 +1535,8 @@ private enum ExpressionCalculator {
         let allowed = CharacterSet(charactersIn: "0123456789.+-*/() ")
         guard expression.unicodeScalars.allSatisfy({ allowed.contains($0) }) else { return nil }
         var parser = Parser(Array(expression.filter { !$0.isWhitespace }))
-        return parser.parseExpression()
+        guard let value = parser.parseExpression(), parser.isAtEnd else { return nil }
+        return value
     }
 
     private struct Parser {
@@ -1502,6 +1589,10 @@ private enum ExpressionCalculator {
 
         private func peek() -> Character? {
             index < chars.count ? chars[index] : nil
+        }
+
+        var isAtEnd: Bool {
+            index >= chars.count
         }
 
         mutating private func advance() {
@@ -1610,6 +1701,15 @@ private extension View {
 
 private extension String {
     var trimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
+}
+
+private extension UIImage {
+    func normalizedForDrawing() -> UIImage {
+        guard imageOrientation != .up else { return self }
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
 }
 
 private extension Double {
