@@ -19,6 +19,7 @@ SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone67_01_home.png", "iphone67_02_procedure.png", "iphone67_03_office.png"]),
     ("APP_IPHONE_65", ["iphone65_01_home.png", "iphone65_02_procedure.png", "iphone65_03_office.png"]),
     ("APP_IPHONE_55", ["iphone55_01_home.png", "iphone55_02_procedure.png", "iphone55_03_office.png"]),
+    ("APP_IPAD_PRO_3GEN_129", ["ipad129_01_home.png", "ipad129_02_procedure.png", "ipad129_03_office.png"]),
 ]
 
 META = {
@@ -230,7 +231,31 @@ def ensure_release_prerequisites(version_id):
     )
     print(f"Version attributes: {response.status_code}")
     ensure_jpy_price()
+    ensure_privacy_answers()
     ensure_review_detail(version_id)
+
+
+def ensure_privacy_answers():
+    body = api_json("GET", f"/apps/{APP_ID}/dataUsagePublishState")
+    state = body.get("data")
+    if not state:
+        print("Privacy answers: publish state not found")
+        return
+
+    response = api(
+        "PATCH",
+        f"/appDataUsagesPublishState/{state['id']}",
+        json={
+            "data": {
+                "type": "appDataUsagesPublishState",
+                "id": state["id"],
+                "attributes": {"published": True},
+            }
+        },
+    )
+    print(f"Privacy answers publish: {response.status_code}")
+    if response.status_code not in (200, 201, 204, 409):
+        print(response.text[:1000])
 
 
 def ensure_jpy_price():
