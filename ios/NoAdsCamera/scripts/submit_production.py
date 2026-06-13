@@ -14,26 +14,44 @@ PRIVACY_URL = os.environ.get("PRIVACY_URL", "https://snarfnet.github.io/privacy.
 META = {
     "ja": {
         "description": (
-            "OAHSPE:α78は、撮る前に失敗を減らすためのプロカメラです。\n\n"
-            "RAW素材、HDRブラケット、低照度スタック、最強手ブレ、目的別Pro、"
-            "プライバシーチェック、撮影ガイドをまとめました。\n\n"
-            "商品、料理、ネイル、旅、記録写真まで、広告なしの買い切りで使えます。"
+            "OAHSPE:α78は、広告なし・買い切りの高機能カメラです。\n\n"
+            "ただ綺麗に撮るだけではなく、撮る前に失敗を見つけ、撮った後に素材として使いやすい写真を残すことを目指しました。"
+            "日常の写真、商品撮影、料理、ネイル、旅行、記録写真、SNS用の写真まで、幅広い場面で使えます。\n\n"
+            "RAW素材モードでは、編集前提の写真を残せます。RAWと処理済み写真を扱えるので、あとから色や明るさを調整したい人に向いています。"
+            "自前ISPモードでは、iPhone標準の見た目とは少し違う、独自の色作りで写真を仕上げます。\n\n"
+            "HDRブラケットでは、暗め・標準・明るめの写真をもとに、白飛びや黒つぶれを抑えた写真を狙います。"
+            "逆光、室内、夜景のように明暗差が大きい場面で役立ちます。低照度スタックは、暗い場所で複数枚を重ね、ノイズを抑えた写真を目指すモードです。\n\n"
+            "最強手ブレモードは、撮影中の揺れを見て、今撮るべきか、少し待つべきかを判断しやすくします。"
+            "子ども、ペット、料理、商品など、撮り直しにくい場面で便利です。\n\n"
+            "目的別Proでは、商品撮影、料理、ネイル、プロフィール写真など、用途に合わせて見方を変えます。"
+            "構図、明るさ、被写体の見え方を意識しながら撮れるので、写真に慣れていない人でも使いやすい設計です。\n\n"
+            "プライバシーチェックや撮影ガイドも搭載しています。投稿前に気になる写り込みを意識したい時や、水平、明るさ、ブレを確認しながら撮りたい時に役立ちます。\n\n"
+            "OAHSPE:α78は、毎月の料金も広告もありません。1回購入すれば、集中して写真を撮るための道具として使えます。"
         ),
         "keywords": "カメラ,RAW,HDR,手ブレ,写真,夜景,商品撮影,料理,ネイル,プロカメラ",
         "whatsNew": "初回リリースです。",
-        "promotionalText": "RAW、HDR、低照度、手ブレ、目的別Proをまとめた買い切りカメラ。",
+        "promotionalText": "RAW、HDR、低照度、手ブレ、目的別Proをまとめた広告なしの買い切りカメラ。",
         "marketingUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": (
-            "OAHSPE:α78 is a pro camera built to prevent failed shots before you take them.\n\n"
-            "It combines RAW material capture, HDR bracketing, low-light stacking, stability guidance, "
-            "Purpose Pro modes, privacy checks, and shooting direction.\n\n"
-            "Use it for products, food, nails, travel, and records with a one-time purchase and no ads."
+            "OAHSPE:α78 is a one-time purchase camera with no ads.\n\n"
+            "It is designed not only to take better photos, but also to help you notice problems before you press the shutter. "
+            "Use it for everyday photos, product listings, food, nails, travel, records, and social posts.\n\n"
+            "RAW Material mode is made for people who want room to edit later. It helps you keep photo material that can be adjusted after capture. "
+            "Custom ISP mode gives photos a different look from the standard camera, with OAHSPE:α78's own color processing.\n\n"
+            "HDR Bracket mode uses darker, normal, and brighter captures to reduce blown highlights and crushed shadows. "
+            "It is useful for backlight, indoor scenes, night views, and other high-contrast situations. Low-Light Stack mode combines multiple captures to aim for cleaner photos in dark places.\n\n"
+            "Stability mode watches camera shake and helps you decide whether to shoot now or hold still for a moment. "
+            "It is useful when photographing children, pets, food, products, or anything that is hard to repeat.\n\n"
+            "Purpose Pro changes the way the camera guides you depending on what you are shooting. "
+            "Product photos, food, nails, profile images, and other scenes each need a different way of looking at framing, brightness, and subject placement.\n\n"
+            "Privacy Check and shooting guidance are included as practical tools. They help you notice possible privacy risks, tilt, brightness issues, and shake before saving or sharing a photo.\n\n"
+            "OAHSPE:α78 has no subscription and no advertising. Buy it once and use it as a focused tool for taking photos."
         ),
         "keywords": "camera,RAW,HDR,stabilizer,photo,night,product,food,nails,pro camera",
         "whatsNew": "Initial release.",
-        "promotionalText": "A one-time purchase pro camera for RAW, HDR, low light, stability, and purpose modes.",
+        "promotionalText": "A no-ads, one-time purchase camera for RAW, HDR, low light, stability, and purpose modes.",
         "marketingUrl": "https://snarfnet.github.io/",
     },
 }
