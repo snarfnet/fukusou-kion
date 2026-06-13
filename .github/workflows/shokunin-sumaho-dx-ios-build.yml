@@ -11,6 +11,14 @@ on:
         options:
           - "false"
           - "true"
+      expire_testflight_build:
+        description: "Expire a specific TestFlight build only"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
       submit_production:
         description: "Upload and submit to App Store Connect"
         required: true
@@ -48,7 +56,95 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  expire-testflight-build:
+    if: github.event_name == 'workflow_dispatch' && inputs.expire_testflight_build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expire only the selected TestFlight build
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APP_BUNDLE_ID: com.tokyonasu.shokuninsumahodx
+          TARGET_VERSION: ${{ inputs.version }}
+          TARGET_BUILD_NUMBER: ${{ inputs.build_number }}
+        run: |
+          set -euo pipefail
+          test "$TARGET_VERSION" = "1.1"
+          test "$TARGET_BUILD_NUMBER" = "27"
+          python3 -m pip install --quiet pyjwt cryptography requests
+          python3 - <<'PY'
+          import base64
+          import os
+          import time
+
+          import jwt
+          import requests
+
+          bundle_id = os.environ["APP_BUNDLE_ID"]
+          target_version = os.environ["TARGET_VERSION"]
+          target_build_number = os.environ["TARGET_BUILD_NUMBER"]
+          key_id = os.environ["ASC_KEY_ID"]
+          issuer_id = os.environ["ASC_ISSUER_ID"]
+          private_key = os.environ.get("ASC_PRIVATE_KEY", "")
+          if not private_key:
+              private_key = base64.b64decode(os.environ["ASC_API_KEY_CONTENT"]).decode("utf-8")
+
+          now = int(time.time())
+          token = jwt.encode(
+              {"iss": issuer_id, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+              private_key,
+              algorithm="ES256",
+              headers={"kid": key_id, "typ": "JWT"},
+          )
+          session = requests.Session()
+          session.headers.update({"Authorization": f"Bearer {token}", "Content-Type": "application/json"})
+          base_url = "https://api.appstoreconnect.apple.com/v1"
+
+          def api(method, path, **kwargs):
+              response = session.request(method, f"{base_url}{path}", timeout=30, **kwargs)
+              if response.status_code >= 400:
+                  raise SystemExit(f"{method} {path} failed: {response.status_code} {response.text}")
+              return response.json() if response.text else {}
+
+          apps = api("GET", "/apps", params={"filter[bundleId]": bundle_id, "limit": 2})["data"]
+          if len(apps) != 1:
+              raise SystemExit(f"Expected one app for {bundle_id}, found {len(apps)}")
+          app_id = apps[0]["id"]
+
+          builds = api(
+              "GET",
+              "/builds",
+              params={
+                  "filter[app]": app_id,
+                  "filter[version]": target_version,
+                  "filter[buildNumber]": target_build_number,
+                  "fields[builds]": "version,buildNumber,expired,processingState",
+                  "limit": 10,
+              },
+          )["data"]
+          if len(builds) != 1:
+              raise SystemExit(f"Expected one build {target_version} ({target_build_number}), found {len(builds)}")
+
+          build = builds[0]
+          attrs = build["attributes"]
+          print(f"Target build id={build['id']} version={attrs.get('version')} build={attrs.get('buildNumber')} expired={attrs.get('expired')}")
+          if attrs.get("expired") is not True:
+              api(
+                  "PATCH",
+                  f"/builds/{build['id']}",
+                  json={"data": {"type": "builds", "id": build["id"], "attributes": {"expired": True}}},
+              )
+
+          confirmed = api("GET", f"/builds/{build['id']}", params={"fields[builds]": "expired"})["data"]
+          if confirmed["attributes"].get("expired") is not True:
+              raise SystemExit("Build expiration was not confirmed")
+          print("Confirmed expired=true")
+          PY
+
   build:
+    if: github.event_name != 'workflow_dispatch' || inputs.expire_testflight_build != 'true'
     runs-on: macos-26
     defaults:
       run:
