@@ -30,6 +30,10 @@ on:
         description: "Prepare metadata and price without final review submit"
         required: false
         default: "false"
+      list_builds_only:
+        description: "Only list recent App Store Connect builds"
+        required: false
+        default: "false"
   push:
     branches:
       - codex/mastershot-camera-testflight
@@ -136,10 +140,19 @@ jobs:
           fi
 
       - name: Stop after App Store Connect registration
-        if: ${{ github.event.inputs.register_only == 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only == 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         run: echo "Registration complete."
 
+      - name: List App Store Connect builds
+        if: ${{ github.event.inputs.list_builds_only == 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/list_builds.py
+
       - name: Update App Store Connect app name
+        if: ${{ github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -147,7 +160,7 @@ jobs:
           python scripts/update_asc_app_name.py
 
       - name: Resolve app bundle
-        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -156,7 +169,7 @@ jobs:
           grep '^APP_BUNDLE_ID=' /tmp/mastershot-camera-bundle.log >> "$GITHUB_ENV"
 
       - name: Prepare provisioning profile
-        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -164,11 +177,11 @@ jobs:
           python scripts/prepare_profile.py
 
       - name: Generate Xcode project
-        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         run: xcodegen generate
 
       - name: Archive
-        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -191,7 +204,7 @@ jobs:
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
 
       - name: Export and upload IPA
-        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -208,7 +221,7 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
       - name: Wait for TestFlight build processing
-        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' }}
+        if: ${{ github.event.inputs.register_only != 'true' && github.event.inputs.submit_only != 'true' && github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           WAIT_SECONDS: "1800"
@@ -218,7 +231,7 @@ jobs:
           python scripts/wait_for_testflight_build.py
 
       - name: Submit for App Review
-        if: ${{ github.event.inputs.submit_for_review == 'true' }}
+        if: ${{ github.event.inputs.submit_for_review == 'true' && github.event.inputs.list_builds_only != 'true' }}
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
           APP_VERSION: ${{ env.MARKETING_VERSION }}
