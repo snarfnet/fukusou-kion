@@ -1,0 +1,24 @@
+name: SaisunSnap
+options:
+  bundleIdPrefix: com.tokyonasu
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  SaisunSnap:
+    type: application
+    platform: iOS
+    sources: [SaisunSnap]
+    info:
+      path: SaisunSnap/Info.plist
+      properties:
+        CFBundleDisplayName: 採寸カメラ
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        NSPhotoLibraryAddUsageDescription: 寸法を書き込んだ画像を保存するために使用します。
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.saisuncamera
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
