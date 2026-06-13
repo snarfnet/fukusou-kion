@@ -30,7 +30,7 @@ jobs:
         working-directory: ios/CellArtisan
     env:
       APP_BUNDLE_ID: com.tokyonasu.cellartisan
-      APP_NAME: "セル絵職人"
+      APP_NAME: "たまにいるエクセル職人"
       APP_SKU: cell-artisan-ios
       BUNDLE_NAME: CellArtisan
       PROFILE_NAME: "CellArtisan App Store"

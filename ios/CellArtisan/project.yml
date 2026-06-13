@@ -38,7 +38,7 @@ targets:
     info:
       path: CellArtisan/Resources/Info.plist
       properties:
-        CFBundleDisplayName: "セル絵職人"
+        CFBundleDisplayName: "たまにいるエクセル職人"
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true

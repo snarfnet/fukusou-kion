@@ -57,9 +57,10 @@ struct ContentView: View {
                     Text("CELL ARTISAN")
                         .font(.caption.weight(.black))
                         .foregroundStyle(AppStyle.excelGreen)
-                    Text("セル絵職人")
+                    Text("たまにいる\nエクセル職人")
                         .font(.system(size: 42, weight: .black, design: .rounded))
                         .foregroundStyle(AppStyle.ink)
+                        .lineSpacing(0)
                 }
                 Spacer()
                 ZStack {
