@@ -155,8 +155,6 @@ jobs:
             -authenticationKeyPath "$ASC_P8_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=83VGKGSQUH \
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             CURRENT_PROJECT_VERSION="$BUILD_NUM"
 
