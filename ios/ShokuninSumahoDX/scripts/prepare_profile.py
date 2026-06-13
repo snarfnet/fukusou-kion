@@ -3,7 +3,6 @@ import base64
 import hashlib
 import os
 from pathlib import Path
-from urllib.parse import quote
 
 from asc_helpers import api_json, decode_profile, fail
 
@@ -46,26 +45,15 @@ def profile_certificate_ids(profile_id):
     return {item["id"] for item in data}
 
 
-def profiles_by_name():
-    return api_json("GET", f"/profiles?filter[name]={quote(PROFILE_NAME)}&limit=200").get("data", [])
-
-
-def delete_profile(profile):
-    api_json("DELETE", f"/profiles/{profile['id']}")
-    print(f"Deleted duplicate provisioning profile: {profile['id']}")
-
-
 def find_or_create_profile(bundle_id, certificate_id):
-    existing = profiles_by_name()
+    existing = api_json("GET", f"/profiles?filter[name]={PROFILE_NAME}&limit=20").get("data", [])
     for profile in existing:
         attrs = profile.get("attributes", {})
         if attrs.get("profileState") != "ACTIVE":
             continue
         if certificate_id in profile_certificate_ids(profile["id"]) and attrs.get("profileContent"):
             return profile
-
-    for profile in existing:
-        delete_profile(profile)
+        api_json("DELETE", f"/profiles/{profile['id']}")
 
     payload = {
         "data": {
@@ -77,14 +65,7 @@ def find_or_create_profile(bundle_id, certificate_id):
             },
         }
     }
-    try:
-        return api_json("POST", "/profiles", json=payload)["data"]
-    except RuntimeError as error:
-        if "Multiple profiles found" not in str(error):
-            raise
-        for profile in profiles_by_name():
-            delete_profile(profile)
-        return api_json("POST", "/profiles", json=payload)["data"]
+    return api_json("POST", "/profiles", json=payload)["data"]
 
 
 def main():
