@@ -118,18 +118,22 @@ jobs:
               "/builds",
               params={
                   "filter[app]": app_id,
-                  "filter[version]": target_version,
-                  "filter[buildNumber]": target_build_number,
-                  "fields[builds]": "version,buildNumber,expired,processingState",
+                  "filter[version]": target_build_number,
+                  "fields[builds]": "version,expired,processingState",
                   "limit": 10,
               },
-          )["data"]
+          )
+          builds = builds["data"]
+          builds = [
+              build for build in builds
+              if build.get("attributes", {}).get("version") == target_build_number
+          ]
           if len(builds) != 1:
               raise SystemExit(f"Expected one build {target_version} ({target_build_number}), found {len(builds)}")
 
           build = builds[0]
           attrs = build["attributes"]
-          print(f"Target build id={build['id']} version={attrs.get('version')} build={attrs.get('buildNumber')} expired={attrs.get('expired')}")
+          print(f"Target build id={build['id']} build={attrs.get('version')} expired={attrs.get('expired')}")
           if attrs.get("expired") is not True:
               api(
                   "PATCH",
