@@ -2,6 +2,7 @@
 import hashlib
 import os
 import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 
 from asc_helpers import api_json, fail, json_body
@@ -38,24 +39,60 @@ def generate_csr():
 def create_certificate():
     csr_content = CSR_PATH.read_text(encoding="utf-8")
     last_error = None
-    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
-        payload = {
-            "data": {
-                "type": "certificates",
-                "attributes": {
-                    "certificateType": certificate_type,
-                    "csrContent": csr_content,
-                },
+    for attempt in range(2):
+        for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
+            payload = {
+                "data": {
+                    "type": "certificates",
+                    "attributes": {
+                        "certificateType": certificate_type,
+                        "csrContent": csr_content,
+                    },
+                }
             }
-        }
-        try:
-            certificate = api_json("POST", "/certificates", data=json_body(payload))["data"]
-            print(f"Created certificate: {certificate['id']} ({certificate_type})")
-            return certificate
-        except Exception as error:
-            last_error = error
-            print(f"Certificate create failed for {certificate_type}: {error}")
+            try:
+                certificate = api_json("POST", "/certificates", data=json_body(payload))["data"]
+                print(f"Created certificate: {certificate['id']} ({certificate_type})")
+                return certificate
+            except Exception as error:
+                last_error = error
+                print(f"Certificate create failed for {certificate_type}: {error}")
+        if attempt == 0:
+            delete_blocking_certificates()
     raise RuntimeError(last_error)
+
+
+def delete_blocking_certificates():
+    known_invalid = {
+        value.strip().upper()
+        for value in os.environ.get("KNOWN_INVALID_CERT_SERIALS", "").split(",")
+        if value.strip()
+    }
+    deleted = 0
+    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
+        certificates = api_json("GET", f"/certificates?filter[certificateType]={certificate_type}&limit=50").get("data", [])
+        for certificate in certificates:
+            attrs = certificate.get("attributes", {})
+            serial = (attrs.get("serialNumber") or "").upper()
+            expiration = attrs.get("expirationDate") or ""
+            has_content = bool(attrs.get("certificateContent"))
+            should_delete = serial in known_invalid or not has_content or is_expired(expiration)
+            if should_delete:
+                print(f"Deleting blocking certificate: id={certificate['id']} type={certificate_type} serial={serial} expiration={expiration}")
+                api_json("DELETE", f"/certificates/{certificate['id']}")
+                deleted += 1
+    print(f"Deleted blocking certificates: {deleted}")
+
+
+def is_expired(expiration):
+    if not expiration:
+        return False
+    try:
+        normalized = expiration.replace("Z", "+00:00")
+        expires_at = datetime.fromisoformat(normalized)
+        return expires_at <= datetime.now(timezone.utc)
+    except ValueError:
+        return False
 
 
 def import_certificate(certificate):
