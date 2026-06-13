@@ -69,18 +69,27 @@ def delete_blocking_certificates():
         if value.strip()
     }
     deleted = 0
-    for certificate_type in ("DISTRIBUTION", "IOS_DISTRIBUTION"):
-        certificates = api_json("GET", f"/certificates?filter[certificateType]={certificate_type}&limit=50").get("data", [])
-        for certificate in certificates:
-            attrs = certificate.get("attributes", {})
-            serial = (attrs.get("serialNumber") or "").upper()
-            expiration = attrs.get("expirationDate") or ""
-            has_content = bool(attrs.get("certificateContent"))
-            should_delete = serial in known_invalid or not has_content or is_expired(expiration)
-            if should_delete:
-                print(f"Deleting blocking certificate: id={certificate['id']} type={certificate_type} serial={serial} expiration={expiration}")
-                api_json("DELETE", f"/certificates/{certificate['id']}")
-                deleted += 1
+    seen = {}
+    for path in (
+        "/certificates?limit=200",
+        "/certificates?filter[certificateType]=DISTRIBUTION&limit=50",
+        "/certificates?filter[certificateType]=IOS_DISTRIBUTION&limit=50",
+    ):
+        for certificate in api_json("GET", path).get("data", []):
+            seen[certificate["id"]] = certificate
+
+    for certificate in seen.values():
+        attrs = certificate.get("attributes", {})
+        cert_type = attrs.get("certificateType", "")
+        serial = (attrs.get("serialNumber") or "").upper()
+        expiration = attrs.get("expirationDate") or ""
+        has_content = bool(attrs.get("certificateContent"))
+        print(f"Certificate: id={certificate['id']} type={cert_type} serial={serial} expiration={expiration} hasContent={has_content}")
+        should_delete = serial in known_invalid or not has_content or is_expired(expiration)
+        if should_delete:
+            print(f"Deleting blocking certificate: id={certificate['id']} type={cert_type} serial={serial} expiration={expiration}")
+            api_json("DELETE", f"/certificates/{certificate['id']}")
+            deleted += 1
     print(f"Deleted blocking certificates: {deleted}")
 
 
