@@ -14,19 +14,18 @@ PRIVACY_URL = os.environ.get("PRIVACY_URL", "https://snarfnet.github.io/privacy.
 META = {
     "ja": {
         "description": (
-            "OAHSPE:α78は、広告なし・買い切りの高機能カメラです。\n\n"
-            "ただ綺麗に撮るだけではなく、撮る前に失敗を見つけ、撮った後に素材として使いやすい写真を残すことを目指しました。"
-            "日常の写真、商品撮影、料理、ネイル、旅行、記録写真、SNS用の写真まで、幅広い場面で使えます。\n\n"
-            "RAW素材モードでは、編集前提の写真を残せます。RAWと処理済み写真を扱えるので、あとから色や明るさを調整したい人に向いています。"
-            "自前ISPモードでは、iPhone標準の見た目とは少し違う、独自の色作りで写真を仕上げます。\n\n"
-            "HDRブラケットでは、暗め・標準・明るめの写真をもとに、白飛びや黒つぶれを抑えた写真を狙います。"
-            "逆光、室内、夜景のように明暗差が大きい場面で役立ちます。低照度スタックは、暗い場所で複数枚を重ね、ノイズを抑えた写真を目指すモードです。\n\n"
-            "最強手ブレモードは、撮影中の揺れを見て、今撮るべきか、少し待つべきかを判断しやすくします。"
-            "子ども、ペット、料理、商品など、撮り直しにくい場面で便利です。\n\n"
-            "目的別Proでは、商品撮影、料理、ネイル、プロフィール写真など、用途に合わせて見方を変えます。"
-            "構図、明るさ、被写体の見え方を意識しながら撮れるので、写真に慣れていない人でも使いやすい設計です。\n\n"
-            "プライバシーチェックや撮影ガイドも搭載しています。投稿前に気になる写り込みを意識したい時や、水平、明るさ、ブレを確認しながら撮りたい時に役立ちます。\n\n"
-            "OAHSPE:α78は、毎月の料金も広告もありません。1回購入すれば、集中して写真を撮るための道具として使えます。"
+            "OAHSPE:α78は、広告なし・買い切りの本格カメラアプリです。\n\n"
+            "目指したのは、ただシャッターを押すだけのカメラではありません。撮る前に失敗を見つけ、撮る瞬間のブレや明るさを意識し、撮った後に編集しやすい写真を残す。そんな「撮影前から仕上げまで」を考えたカメラです。\n\n"
+            "日常の写真、旅行、料理、商品撮影、ネイル、SNSアイコン、記録写真、室内、夜景、逆光の場面まで、幅広い撮影に向けて作っています。写真に慣れている人は細かく追い込めます。写真が苦手な人でも、ガイドを見ながら落ち着いて撮れます。\n\n"
+            "RAW素材モードでは、あとから編集しやすい写真を残せます。色、明るさ、シャドウ、ハイライトを後で調整したい人に向いたモードです。撮って終わりではなく、現像や加工のための素材として写真を残したい時に役立ちます。\n\n"
+            "自前ISPモードでは、独自の色作りで写真を仕上げます。iPhone標準カメラとは違う雰囲気を狙い、青みや色かぶりを抑えながら、見やすく扱いやすい写真を目指します。商品、料理、机の上の小物、SNS用の写真など、自然で使いやすい仕上がりを意識しています。\n\n"
+            "HDRブラケットは、暗め・標準・明るめの写真を使い、白飛びや黒つぶれを抑えるためのモードです。窓際、逆光、室内、夜景のように明暗差が大きい場面で力を発揮します。明るい部分だけ飛ぶ、暗い部分だけ潰れる。そんな失敗を減らすための機能です。\n\n"
+            "低照度スタックは、暗い場所で複数枚を重ね、ノイズを抑えた写真を目指します。夜の部屋、暗めの店内、夕方の街、ライトが少ない場所など、普通に撮ると荒れやすい場面を助けます。\n\n"
+            "最強手ブレモードは、撮影中の揺れを見ながら、今撮るべきか、少し待つべきかを判断しやすくします。子ども、ペット、料理、商品、メモ代わりの写真など、撮り直しにくい場面で便利です。保存後の向きにも配慮し、縦横どちらでも自然に見られる写真を目指します。\n\n"
+            "目的別Proでは、撮りたいものに合わせてカメラの見方を変えます。商品撮影では中央配置や明るさを意識し、料理では白飛びや質感を見やすくします。ネイルでは指先、プロフィール写真では顔の明るさや余白を意識できます。海外向けにも使いやすいよう、商品撮影はeBayなどの出品写真にも合う考え方にしています。\n\n"
+            "プライバシーチェックは、投稿前に気になる写り込みを意識するための機能です。住所、書類、画面、名札、ナンバー、QRコードなど、写真を公開する前に確認したい情報へ注意を向けやすくします。\n\n"
+            "水準器、グリッド、ヒストグラム、白飛び警告、フォーカスや露出の補助など、撮影時に役立つ道具も入れています。派手な加工より、失敗を減らし、あとで使いやすい写真を残すことを重視しました。\n\n"
+            "OAHSPE:α78には広告がありません。月額料金もありません。1回購入すれば、集中して写真を撮るための道具として使えます。仕事用の写真にも、趣味の写真にも、日常の記録にも使えるカメラです。"
         ),
         "keywords": "カメラ,RAW,HDR,手ブレ,写真,夜景,商品撮影,料理,ネイル,プロカメラ",
         "whatsNew": "初回リリースです。",
@@ -35,19 +34,18 @@ META = {
     },
     "en-US": {
         "description": (
-            "OAHSPE:α78 is a one-time purchase camera with no ads.\n\n"
-            "It is designed not only to take better photos, but also to help you notice problems before you press the shutter. "
-            "Use it for everyday photos, product listings, food, nails, travel, records, and social posts.\n\n"
-            "RAW Material mode is made for people who want room to edit later. It helps you keep photo material that can be adjusted after capture. "
-            "Custom ISP mode gives photos a different look from the standard camera, with OAHSPE:α78's own color processing.\n\n"
-            "HDR Bracket mode uses darker, normal, and brighter captures to reduce blown highlights and crushed shadows. "
-            "It is useful for backlight, indoor scenes, night views, and other high-contrast situations. Low-Light Stack mode combines multiple captures to aim for cleaner photos in dark places.\n\n"
-            "Stability mode watches camera shake and helps you decide whether to shoot now or hold still for a moment. "
-            "It is useful when photographing children, pets, food, products, or anything that is hard to repeat.\n\n"
-            "Purpose Pro changes the way the camera guides you depending on what you are shooting. "
-            "Product photos, food, nails, profile images, and other scenes each need a different way of looking at framing, brightness, and subject placement.\n\n"
-            "Privacy Check and shooting guidance are included as practical tools. They help you notice possible privacy risks, tilt, brightness issues, and shake before saving or sharing a photo.\n\n"
-            "OAHSPE:α78 has no subscription and no advertising. Buy it once and use it as a focused tool for taking photos."
+            "OAHSPE:α78 is a serious camera app with no ads and no subscription.\n\n"
+            "It is built for people who want more than a quick shutter button. The app helps you notice problems before capture, think about shake and exposure while shooting, and save photos that are easier to edit afterward. It is a camera for the full flow: before the shot, during the shot, and after the shot.\n\n"
+            "Use it for everyday photos, travel, food, product listings, nails, profile images, records, indoor scenes, night views, and backlit situations. Experienced users can work with more control. Beginners can follow the guides and shoot with more confidence.\n\n"
+            "RAW Material mode is made for editing. It helps you keep image material that can be adjusted later for color, brightness, shadows, and highlights. When you want a photo that is not locked into a finished look right away, RAW Material gives you more room to work.\n\n"
+            "Custom ISP mode applies OAHSPE:α78's own image processing. It aims for a clean, usable look while reducing unwanted color casts. It is useful for products, food, desk objects, social posts, and other photos where a natural finish matters.\n\n"
+            "HDR Bracket mode uses darker, normal, and brighter captures to reduce blown highlights and crushed shadows. It is useful near windows, in backlight, indoors, at night, and in other high-contrast scenes. The goal is simple: keep bright areas from turning white and dark areas from disappearing.\n\n"
+            "Low-Light Stack mode combines multiple captures to aim for cleaner photos in dark places. It helps in dim rooms, restaurants, evening streets, and scenes where normal photos can become noisy.\n\n"
+            "Stability mode watches camera shake and helps you decide whether to shoot now or hold still for a moment. It is useful for children, pets, food, products, notes, and moments that are hard to repeat. The app also pays attention to saved photo orientation, so portrait and landscape shots are easier to view correctly afterward.\n\n"
+            "Purpose Pro changes the camera guidance based on what you are shooting. Product mode focuses on framing, subject size, and brightness for listing photos such as eBay items. Food mode helps you watch highlights and texture. Nail mode focuses on fingertips. Profile mode helps with face brightness and space around the subject.\n\n"
+            "Privacy Check helps you notice things you may not want to share. It is designed to draw attention to possible private details such as addresses, documents, screens, name tags, license plates, and QR codes before you post or save a photo publicly.\n\n"
+            "The app also includes practical shooting tools such as a level, grid, histogram, highlight warning, focus help, and exposure guidance. OAHSPE:α78 puts less focus on flashy filters and more focus on reducing mistakes and saving photos that are useful later.\n\n"
+            "OAHSPE:α78 has no ads. It has no monthly fee. Buy it once and use it as a focused tool for work photos, personal photos, creative shooting, and everyday records."
         ),
         "keywords": "camera,RAW,HDR,stabilizer,photo,night,product,food,nails,pro camera",
         "whatsNew": "Initial release.",
