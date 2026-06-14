@@ -21,11 +21,14 @@ final class ImageArtGenerator {
             throw ImageArtError.cannotReadImage
         }
 
-        let sourceWidth = CGFloat(cgImage.width)
-        let sourceHeight = CGFloat(cgImage.height)
+        let workingImage = settings.trimBackground
+            ? autoCroppedImage(from: cgImage)
+            : cgImage
+        let sourceWidth = CGFloat(workingImage.width)
+        let sourceHeight = CGFloat(workingImage.height)
         let targetWidth = max(16, min(settings.width, 260))
         let targetHeight = max(8, Int(round(CGFloat(targetWidth) * sourceHeight / sourceWidth)))
-        let rawPixels = try drawPixels(from: cgImage, width: targetWidth, height: targetHeight)
+        let rawPixels = try drawPixels(from: workingImage, width: targetWidth, height: targetHeight)
         let tunedPixels = rawPixels.map {
             enhance($0, contrast: settings.contrastBoost, saturation: settings.saturationBoost)
         }
@@ -44,6 +47,98 @@ final class ImageArtGenerator {
         }
 
         return CellArtDocument(width: targetWidth, height: targetHeight, cells: cells, palette: palette)
+    }
+
+    private func autoCroppedImage(from image: CGImage) -> CGImage {
+        let probeWidth = 240
+        let probeHeight = max(1, Int(round(Double(probeWidth) * Double(image.height) / Double(image.width))))
+        guard let probePixels = try? drawPixels(from: image, width: probeWidth, height: probeHeight) else {
+            return image
+        }
+
+        let background = estimatedBackgroundColor(from: probePixels, width: probeWidth, height: probeHeight)
+        var columnScores = Array(repeating: 0, count: probeWidth)
+        var rowScores = Array(repeating: 0, count: probeHeight)
+
+        for y in 0..<probeHeight {
+            for x in 0..<probeWidth {
+                let color = probePixels[y * probeWidth + x]
+                if isForeground(color, against: background) {
+                    columnScores[x] += 1
+                    rowScores[y] += 1
+                }
+            }
+        }
+
+        let minColumnScore = max(2, Int(Double(probeHeight) * 0.015))
+        let minRowScore = max(2, Int(Double(probeWidth) * 0.015))
+        let foregroundColumns = columnScores.enumerated().filter { $0.element >= minColumnScore }.map(\.offset)
+        let foregroundRows = rowScores.enumerated().filter { $0.element >= minRowScore }.map(\.offset)
+
+        guard let firstColumn = foregroundColumns.first,
+              let lastColumn = foregroundColumns.last,
+              let firstRow = foregroundRows.first,
+              let lastRow = foregroundRows.last else {
+            return image
+        }
+
+        var minX = firstColumn
+        var minY = firstRow
+        var maxX = lastColumn
+        var maxY = lastRow
+        guard minX < maxX, minY < maxY else {
+            return image
+        }
+
+        let detectedWidth = maxX - minX + 1
+        let detectedHeight = maxY - minY + 1
+        let paddingX = max(8, Int(Double(detectedWidth) * 0.16))
+        let paddingY = max(8, Int(Double(detectedHeight) * 0.06))
+        minX = max(0, minX - paddingX)
+        minY = max(0, minY - paddingY)
+        maxX = min(probeWidth - 1, maxX + paddingX)
+        maxY = min(probeHeight - 1, maxY + paddingY)
+
+        let scaleX = Double(image.width) / Double(probeWidth)
+        let scaleY = Double(image.height) / Double(probeHeight)
+        let fullRect = CGRect(x: 0, y: 0, width: CGFloat(image.width), height: CGFloat(image.height))
+        let cropRect = CGRect(
+            x: CGFloat(floor(Double(minX) * scaleX)),
+            y: CGFloat(floor(Double(minY) * scaleY)),
+            width: CGFloat(ceil(Double(maxX - minX + 1) * scaleX)),
+            height: CGFloat(ceil(Double(maxY - minY + 1) * scaleY))
+        ).intersection(fullRect).integral
+
+        let cropIsMeaningful = cropRect.width < CGFloat(image.width) * 0.98 || cropRect.height < CGFloat(image.height) * 0.98
+        guard cropRect.width > 8, cropRect.height > 8, cropIsMeaningful else {
+            return image
+        }
+        return image.cropping(to: cropRect) ?? image
+    }
+
+    private func estimatedBackgroundColor(from pixels: [CellColor], width: Int, height: Int) -> CellColor {
+        let cornerSize = max(6, min(width, height) / 10)
+        var sum = ColorVector(red: 0, green: 0, blue: 0)
+        var count = 0
+
+        for y in 0..<cornerSize {
+            for x in 0..<cornerSize {
+                sum = sum + pixels[y * width + x].vector
+                sum = sum + pixels[y * width + (width - 1 - x)].vector
+                sum = sum + pixels[(height - 1 - y) * width + x].vector
+                sum = sum + pixels[(height - 1 - y) * width + (width - 1 - x)].vector
+                count += 4
+            }
+        }
+
+        let divisor = Double(max(1, count))
+        return ColorVector(red: sum.red / divisor, green: sum.green / divisor, blue: sum.blue / divisor).color
+    }
+
+    private func isForeground(_ color: CellColor, against background: CellColor) -> Bool {
+        let difference = distance(color, background)
+        let lumaGap = abs(luminance(color) - luminance(background))
+        return difference > 6_500 || lumaGap > 35
     }
 
     private func drawPixels(from image: CGImage, width: Int, height: Int) throws -> [CellColor] {

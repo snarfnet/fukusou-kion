@@ -171,7 +171,14 @@ struct ContentView: View {
                 display: "\(Int(settings.cellSize))"
             )
 
-            HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle(isOn: $settings.trimBackground) {
+                    Label("余白カット", systemImage: "crop")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(AppStyle.ink)
+                }
+                .toggleStyle(SwitchToggleStyle(tint: AppStyle.excelGreen))
+
                 Toggle(isOn: $settings.dither) {
                     Label("ディザ", systemImage: "circle.grid.cross")
                         .font(.subheadline.weight(.bold))
@@ -279,6 +286,7 @@ struct ContentView: View {
         settings.width = width
         settings.paletteSize = palette
         settings.cellSize = cell
+        settings.trimBackground = true
         settings.dither = true
         settings.showGrid = false
     }
