@@ -191,6 +191,14 @@ jobs:
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
 
+      - name: Assign build to TestFlight groups
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
+        run: |
+          . .venv/bin/activate
+          python scripts/assign_build_to_beta_groups.py
+
       - name: Upload IPA artifact
         if: always()
         uses: actions/upload-artifact@v4
