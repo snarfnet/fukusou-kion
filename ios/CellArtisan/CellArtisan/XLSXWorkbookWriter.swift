@@ -47,8 +47,9 @@ final class XLSXWorkbookWriter {
     }
 
     private func sheetXML(for document: CellArtDocument, settings: CellArtSettings) -> String {
-        let columnWidth = max(0.8, min(3.2, settings.cellSize / 8.5))
-        let rowHeight = max(5.0, min(22.0, settings.cellSize * 0.72))
+        let fitColumnWidth = 72.0 / Double(max(1, document.width))
+        let columnWidth = max(0.22, min(0.9, min(settings.cellSize / 22.0, fitColumnWidth)))
+        let rowHeight = max(2.5, min(8.0, columnWidth * 6.1))
         let zoom = initialZoomScale(for: document.width)
         let columns = (1...document.width)
             .map { "<col min=\"\($0)\" max=\"\($0)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>" }
@@ -78,13 +79,13 @@ final class XLSXWorkbookWriter {
     private func initialZoomScale(for width: Int) -> Int {
         switch width {
         case ..<90:
-            return 85
+            return 70
         case ..<140:
-            return 65
-        case ..<190:
             return 50
+        case ..<190:
+            return 35
         default:
-            return 38
+            return 25
         }
     }
 
