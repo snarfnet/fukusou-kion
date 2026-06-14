@@ -17,7 +17,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 14) {
                     header
                     imagePanel
                     controlsPanel
@@ -58,7 +58,7 @@ struct ContentView: View {
                         .font(.caption.weight(.black))
                         .foregroundStyle(AppStyle.excelGreen)
                     Text("たまにいる\nエクセル職人")
-                        .font(.system(size: 42, weight: .black, design: .rounded))
+                        .font(.system(size: 40, weight: .black, design: .rounded))
                         .foregroundStyle(AppStyle.ink)
                         .lineSpacing(0)
                 }
@@ -73,7 +73,7 @@ struct ContentView: View {
                 .frame(width: 58, height: 58)
             }
 
-            Text("写真やイラストを、Excelのセル塗りつぶしだけで作ったアートに変換します。書き出した.xlsxはExcelやNumbersで開けます。")
+            Text("写真やイラストを、セル塗りつぶしだけの.xlsxに変換します。")
                 .font(.subheadline)
                 .foregroundStyle(AppStyle.muted)
                 .lineSpacing(4)
@@ -104,9 +104,9 @@ struct ContentView: View {
                     VStack(spacing: 10) {
                         Image(systemName: "photo.badge.plus")
                             .font(.system(size: 44, weight: .bold))
-                        Text("写真を選択")
+                        Text("画像を選択")
                             .font(.headline.weight(.black))
-                        Text("ロゴ、キャラ絵、風景写真もOK")
+                        Text("写真、ロゴ、キャラ絵に対応")
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.72))
                     }
@@ -136,33 +136,56 @@ struct ContentView: View {
     private var controlsPanel: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionTitle("職人設定", icon: "slider.horizontal.3")
+
+            HStack(spacing: 8) {
+                PresetButton(title: "軽め", icon: "bolt", isActive: settings.width == 96) {
+                    applyPreset(width: 96, palette: 40, cell: 14)
+                }
+                PresetButton(title: "写真", icon: "camera.macro", isActive: settings.width == 160) {
+                    applyPreset(width: 160, palette: 72, cell: 10)
+                }
+                PresetButton(title: "本気", icon: "sparkles", isActive: settings.width == 220) {
+                    applyPreset(width: 220, palette: 96, cell: 8)
+                }
+            }
+
             SettingSlider(
                 title: "横セル数",
                 value: Binding(get: { Double(settings.width) }, set: { settings.width = Int($0) }),
-                range: 16...120,
+                range: 24...240,
                 step: 4,
                 display: "\(settings.width)"
             )
             SettingSlider(
                 title: "色数",
                 value: Binding(get: { Double(settings.paletteSize) }, set: { settings.paletteSize = Int($0) }),
-                range: 4...48,
+                range: 8...96,
                 step: 2,
                 display: "\(settings.paletteSize)"
             )
             SettingSlider(
                 title: "セルサイズ",
                 value: $settings.cellSize,
-                range: 10...28,
+                range: 7...22,
                 step: 1,
                 display: "\(Int(settings.cellSize))"
             )
-            Toggle(isOn: $settings.showGrid) {
-                Label("Excelのグリッド線を表示", systemImage: "grid")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(AppStyle.ink)
+
+            HStack(spacing: 12) {
+                Toggle(isOn: $settings.dither) {
+                    Label("ディザ", systemImage: "circle.grid.cross")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(AppStyle.ink)
+                }
+                .toggleStyle(SwitchToggleStyle(tint: AppStyle.excelGreen))
+
+                Toggle(isOn: $settings.showGrid) {
+                    Label("罫線", systemImage: "grid")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(AppStyle.ink)
+                }
+                .toggleStyle(SwitchToggleStyle(tint: AppStyle.excelGreen))
             }
-            .toggleStyle(SwitchToggleStyle(tint: AppStyle.excelGreen))
         }
         .padding(16)
         .background(AppStyle.panel, in: RoundedRectangle(cornerRadius: 8))
@@ -177,7 +200,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, minHeight: 180)
             } else if let document {
                 CellArtPreview(document: document)
-                    .frame(height: 260)
+                    .frame(height: 280)
                 paletteStrip(document.palette)
             } else {
                 EmptyPreview()
@@ -252,6 +275,14 @@ struct ContentView: View {
         }
     }
 
+    private func applyPreset(width: Int, palette: Int, cell: Double) {
+        settings.width = width
+        settings.paletteSize = palette
+        settings.cellSize = cell
+        settings.dither = true
+        settings.showGrid = false
+    }
+
     private func generatePreview() {
         guard let sourceImage else { return }
         isProcessing = true
@@ -306,22 +337,26 @@ struct CellArtPreview: View {
             let cell = min(proxy.size.width / CGFloat(document.width), proxy.size.height / CGFloat(document.height))
             let width = CGFloat(document.width) * cell
             let height = CGFloat(document.height) * cell
+            let origin = CGPoint(x: (proxy.size.width - width) / 2, y: (proxy.size.height - height) / 2)
 
-            ZStack(alignment: .topLeading) {
-                ForEach(document.cells) { pixel in
-                    Rectangle()
-                        .fill(pixel.color.swiftUIColor)
-                        .frame(width: max(1, cell), height: max(1, cell))
-                        .position(
-                            x: CGFloat(pixel.column - 1) * cell + cell / 2,
-                            y: CGFloat(pixel.row - 1) * cell + cell / 2
-                        )
+            Canvas { context, _ in
+                context.fill(Path(CGRect(origin: origin, size: CGSize(width: width, height: height))), with: .color(.white))
+                for pixel in document.cells {
+                    let rect = CGRect(
+                        x: origin.x + CGFloat(pixel.column - 1) * cell,
+                        y: origin.y + CGFloat(pixel.row - 1) * cell,
+                        width: max(1, cell),
+                        height: max(1, cell)
+                    )
+                    context.fill(Path(rect), with: .color(pixel.color.swiftUIColor))
                 }
             }
-            .frame(width: width, height: height)
-            .background(.white)
-            .overlay(Rectangle().stroke(AppStyle.line))
-            .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
+            .overlay {
+                Rectangle()
+                    .stroke(AppStyle.line)
+                    .frame(width: width, height: height)
+                    .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
+            }
         }
         .background(AppStyle.ink, in: RoundedRectangle(cornerRadius: 8))
         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -335,7 +370,7 @@ struct EmptyPreview: View {
                 .font(.system(size: 42, weight: .bold))
             Text("ここにセル絵が出ます")
                 .font(.headline.weight(.black))
-            Text("横セル数を上げるほど細かく、色数を下げるほど職人感が出ます。")
+            Text("横セル数を上げるほど細かく、色数を上げるほど写真に近づきます。")
                 .font(.subheadline)
                 .foregroundStyle(AppStyle.muted)
                 .multilineTextAlignment(.center)
@@ -366,6 +401,26 @@ struct SettingSlider: View {
                     .foregroundStyle(AppStyle.excelGreen)
             }
             Slider(value: $value, in: range, step: step)
+        }
+    }
+}
+
+struct PresetButton: View {
+    let title: String
+    let icon: String
+    let isActive: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: icon)
+                .font(.caption.weight(.black))
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .foregroundStyle(isActive ? .white : AppStyle.ink)
+                .background(isActive ? AppStyle.excelGreen : .white.opacity(0.82), in: RoundedRectangle(cornerRadius: 8))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppStyle.line))
         }
     }
 }
@@ -428,7 +483,6 @@ enum AppStyle {
     static let ink = Color(red: 0.08, green: 0.12, blue: 0.10)
     static let muted = Color(red: 0.39, green: 0.43, blue: 0.40)
     static let excelGreen = Color(red: 0.05, green: 0.48, blue: 0.27)
-    static let gold = Color(red: 0.83, green: 0.60, blue: 0.18)
     static let line = Color.black.opacity(0.12)
     static let panel = Color(red: 0.98, green: 0.985, blue: 0.94).opacity(0.95)
     static let background = LinearGradient(

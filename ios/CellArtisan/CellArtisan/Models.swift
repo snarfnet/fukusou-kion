@@ -3,10 +3,13 @@ import SwiftUI
 import UIKit
 
 struct CellArtSettings: Equatable {
-    var width: Int = 48
-    var paletteSize: Int = 24
-    var cellSize: Double = 18
-    var showGrid: Bool = true
+    var width: Int = 128
+    var paletteSize: Int = 56
+    var cellSize: Double = 12
+    var showGrid: Bool = false
+    var dither: Bool = true
+    var contrastBoost: Double = 1.10
+    var saturationBoost: Double = 1.04
 }
 
 struct PixelCell: Identifiable, Equatable {
