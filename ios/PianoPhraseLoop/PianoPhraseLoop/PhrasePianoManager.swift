@@ -3,7 +3,7 @@ import SwiftUI
 
 @MainActor
 final class PhrasePianoManager: ObservableObject {
-    @Published var bars: Double = 4
+    @Published var bars: Double = 2
     @Published var mood: PhraseMood = .mellow
     @Published var phrase: PianoPhrase
     @Published var isPlaying = false
@@ -18,7 +18,7 @@ final class PhrasePianoManager: ObservableObject {
 
     init() {
         let initialMood: PhraseMood = .mellow
-        self.phrase = PianoPhraseGenerator().makePhrase(bars: 4, mood: initialMood)
+        self.phrase = PianoPhraseGenerator().makePhrase(bars: 2, mood: initialMood)
     }
 
     func generate() {

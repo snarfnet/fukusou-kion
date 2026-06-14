@@ -103,7 +103,7 @@ struct ContentView: View {
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                 }
-                Slider(value: $manager.bars, in: 1...16, step: 1) {
+                Slider(value: $manager.bars, in: 1...8, step: 1) {
                     Text("長さ")
                 }
             }
@@ -175,7 +175,7 @@ struct ContentView: View {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(Color.white.opacity(0.08))
 
-                    ForEach(manager.phrase.notes.prefix(80)) { note in
+                    ForEach(manager.phrase.notes.prefix(48)) { note in
                         let x = max(0, min(width - 6, CGFloat(note.start / manager.phrase.duration) * width))
                         let normalizedPitch = CGFloat(note.pitch - 36) / 48.0
                         let y = max(6, min(height - 10, height - normalizedPitch * height))

@@ -23,6 +23,7 @@ struct PianoPhraseGenerator {
         let totalSteps = barCount * barSteps
         let seconds = Double(totalSteps) * step
         let progression = emotionalProgression(for: mood)
+        let density = Double.random(in: 0.42...0.68)
         var notes: [PianoNote] = []
 
         for cursor in stride(from: 0, to: totalSteps, by: barSteps) {
@@ -39,6 +40,7 @@ struct PianoPhraseGenerator {
                 cursor: cursor,
                 step: step,
                 energy: energy,
+                density: density,
                 isResolution: isResolution,
                 notes: &notes
             )
@@ -52,6 +54,7 @@ struct PianoPhraseGenerator {
                 mood: mood,
                 barIndex: barIndex,
                 energy: energy,
+                density: density,
                 isPeak: isPeak,
                 isResolution: isResolution,
                 notes: &notes
@@ -112,22 +115,25 @@ struct PianoPhraseGenerator {
         switch mood {
         case .mellow:
             return [
-                canonMinor,
-                canonMajor,
-                [minorI, flatVI, flatIII, majorV, minorI, minorIV, flatVI, majorV]
-            ].randomElement() ?? canonMinor
+                Array(canonMinor.prefix(4)),
+                [minorI, flatVI, majorV, minorI],
+                [majorI, majorVPop, majorVI, majorIV],
+                [minorI, minorIV, flatVI, majorV]
+            ].randomElement() ?? [minorI, flatVI, majorV, minorI]
         case .bright:
             return [
-                canonMajor,
-                [majorI, majorVPop, majorVI, majorIII, majorIV, flatVIInMajor, majorIV, majorVPop],
-                [majorI, majorVI, majorIV, majorVPop, majorI, borrowedIV, majorIV, majorVPop]
-            ].randomElement() ?? canonMajor
+                Array(canonMajor.prefix(4)),
+                [majorI, majorVI, majorIV, majorVPop],
+                [majorI, flatVIInMajor, majorIV, majorVPop],
+                [majorI, borrowedIV, majorVI, majorVPop]
+            ].randomElement() ?? [majorI, majorVI, majorIV, majorVPop]
         case .midnight:
             return [
-                canonMinor,
-                [minorI, flatVII, flatVI, majorV, minorI, flatIII, minorIV, majorV],
-                [minorI, borrowedIV, flatVI, majorV, minorI, minorIV, flatVI, majorV]
-            ].randomElement() ?? canonMinor
+                Array(canonMinor.prefix(4)),
+                [minorI, flatVII, flatVI, majorV],
+                [minorI, flatIII, minorIV, majorV],
+                [minorI, borrowedIV, flatVI, majorV]
+            ].randomElement() ?? [minorI, flatVII, flatVI, majorV]
         }
     }
 
@@ -146,27 +152,31 @@ struct PianoPhraseGenerator {
         cursor: Int,
         step: Double,
         energy: Double,
+        density: Double,
         isResolution: Bool,
         notes: inout [PianoNote]
     ) {
         let root = keyRoot + chord.root
         let bassRoot = keyRoot + chord.bassMotion
-        let bassDuration = step * (isResolution ? 16.0 : 12.5)
+        let bassDuration = step * (isResolution ? 12.0 : Double.random(in: 6.0...10.5))
         notes.append(PianoNote(pitch: bassRoot - 24, velocity: velocity(50, energy), start: Double(cursor) * step, duration: bassDuration))
-        notes.append(PianoNote(pitch: bassRoot - 12, velocity: velocity(30, energy), start: Double(cursor + 8) * step, duration: step * 4.0))
 
-        let arpeggioOffsets = [2, 5, 8, 11, 14]
+        if density > 0.58 && !isResolution && Bool.random() {
+            notes.append(PianoNote(pitch: bassRoot - 12, velocity: velocity(28, energy), start: Double(cursor + 8) * step, duration: step * 2.6))
+        }
+
+        let arpeggioOffsets = [[3, 8], [2, 6, 11], [5, 10], [2, 9, 13]].randomElement() ?? [3, 8]
         let arpeggioTones = chord.tones + [chord.colorTones.first ?? chord.tones[1], chord.tones[2] + 12]
         for (index, offset) in arpeggioOffsets.enumerated() {
             let tone = arpeggioTones[index % arpeggioTones.count]
             let start = Double(cursor + offset) * step
-            let duration = step * (index == arpeggioOffsets.count - 1 ? 3.8 : 3.0)
-            notes.append(PianoNote(pitch: root + tone - 12, velocity: velocity(34 + index * 4, energy), start: start, duration: duration))
+            let duration = step * Double.random(in: 2.2...3.6)
+            notes.append(PianoNote(pitch: root + tone - 12, velocity: velocity(30 + index * 4, energy), start: start, duration: duration))
         }
 
-        if chord.surprise > 0.55 {
+        if chord.surprise > 0.55 && Double.random(in: 0...1) < density {
             let color = chord.colorTones.randomElement() ?? chord.tones[1]
-            notes.append(PianoNote(pitch: root + color, velocity: velocity(48, energy), start: Double(cursor + 10) * step, duration: step * 3.0))
+            notes.append(PianoNote(pitch: root + color, velocity: velocity(42, energy), start: Double(cursor + 10) * step, duration: step * 2.2))
         }
     }
 
@@ -179,27 +189,33 @@ struct PianoPhraseGenerator {
         mood: PhraseMood,
         barIndex: Int,
         energy: Double,
+        density: Double,
         isPeak: Bool,
         isResolution: Bool,
         notes: inout [PianoNote]
     ) {
         let root = keyRoot + chord.root
         let contour = melodicContour(for: mood, isPeak: isPeak, isResolution: isResolution)
-        let motifOffsets = [0, 4, 7, 10, 12]
-        let motifLengths = [3, 2, 2, 2, 5]
+        let motifOffsets = [[0, 5, 11], [1, 6, 10, 13], [0, 4, 9], [3, 8, 12]].randomElement() ?? [0, 5, 11]
+        let motifLengths = [3.0, 2.4, 2.8, 3.4]
         let baseOctave = isPeak ? 24 : 12
 
         for index in motifOffsets.indices {
             let startStep = cursor + motifOffsets[index]
             guard startStep < totalSteps else { continue }
 
-            let targetTone = canonGuideTone(barIndex: barIndex, noteIndex: index, mood: mood) ?? contour[index % contour.count]
+            if index > 1 && Double.random(in: 0...1) > density {
+                continue
+            }
+
+            let canonTone = Double.random(in: 0...1) < 0.28 ? canonGuideTone(barIndex: barIndex, noteIndex: index, mood: mood) : nil
+            let targetTone = canonTone ?? contour[index % contour.count]
             let chordTone = nearestChordTone(targetTone, in: chord)
             let target = root + chordTone + baseOctave
-            let duration = Double(motifLengths[index]) * step * 0.9
+            let duration = motifLengths[index % motifLengths.count] * step * Double.random(in: 0.75...1.08)
             let accent = index == 0 || index == motifOffsets.count - 1 || chord.surprise > 0.55
 
-            if accent && !isResolution && startStep + 1 < totalSteps {
+            if accent && !isResolution && startStep + 1 < totalSteps && Double.random(in: 0...1) < 0.62 {
                 let lean = tearfulLean(for: mood, index: index)
                 notes.append(PianoNote(pitch: target + lean, velocity: velocity(58, energy), start: Double(startStep) * step, duration: step * 0.72))
                 notes.append(PianoNote(pitch: target, velocity: velocity(76, energy), start: Double(startStep + 1) * step, duration: max(step * 1.2, duration - step)))
@@ -208,20 +224,20 @@ struct PianoPhraseGenerator {
             }
 
             let echoStep = startStep + 4
-            if index < 3 && echoStep < totalSteps && !isResolution {
-                notes.append(PianoNote(pitch: target - 12, velocity: velocity(32, energy), start: Double(echoStep) * step, duration: duration * 0.9))
+            if index == 0 && echoStep < totalSteps && !isResolution && Double.random(in: 0...1) < 0.35 {
+                notes.append(PianoNote(pitch: target - 12, velocity: velocity(28, energy), start: Double(echoStep) * step, duration: duration * 0.75))
             }
         }
 
-        if !isResolution && cursor + 15 < totalSteps {
+        if !isResolution && cursor + 15 < totalSteps && Double.random(in: 0...1) < 0.42 {
             let suspension = root + (chord.colorTones.first ?? 10) + baseOctave
             let resolution = root + nearestChordTone(7, in: chord) + baseOctave
             notes.append(PianoNote(pitch: suspension, velocity: velocity(46, energy), start: Double(cursor + 13) * step, duration: step * 1.5))
             notes.append(PianoNote(pitch: resolution, velocity: velocity(62, energy), start: Double(cursor + 15) * step, duration: step * 2.2))
         }
 
-        if isResolution {
-            notes.append(PianoNote(pitch: keyRoot + 12, velocity: velocity(74, 0.55), start: Double(cursor + 13) * step, duration: step * 7.5))
+        if isResolution && Bool.random() {
+            notes.append(PianoNote(pitch: keyRoot + 12, velocity: velocity(70, 0.55), start: Double(cursor + 12) * step, duration: step * 4.5))
         }
     }
 
