@@ -7,7 +7,7 @@ final class PhrasePianoManager: ObservableObject {
     @Published var mood: PhraseMood = .mellow
     @Published var phrase: PianoPhrase
     @Published var isPlaying = false
-    @Published var isEndless = false
+    @Published var isLooping = false
     @Published var savedMIDIURL: URL?
     @Published var lastError: String?
 
@@ -21,30 +21,33 @@ final class PhrasePianoManager: ObservableObject {
     }
 
     func generate() {
+        stop()
         phrase = generator.makePhrase(seconds: seconds, mood: mood)
         savedMIDIURL = nil
     }
 
-    func playOnce() {
-        isEndless = false
-        generate()
-        playCurrent(scheduleNext: false)
+    func togglePlayback() {
+        if isPlaying && !isLooping {
+            stop()
+        } else {
+            isLooping = false
+            playCurrent(shouldLoop: false)
+        }
     }
 
-    func toggleEndless() {
-        isEndless ? stop() : startEndless()
-    }
-
-    func startEndless() {
-        isEndless = true
-        generate()
-        playCurrent(scheduleNext: true)
+    func toggleLoop() {
+        if isLooping {
+            stop()
+        } else {
+            isLooping = true
+            playCurrent(shouldLoop: true)
+        }
     }
 
     func stop() {
         playToken = UUID()
         isPlaying = false
-        isEndless = false
+        isLooping = false
         synth.stopAll()
     }
 
@@ -57,7 +60,7 @@ final class PhrasePianoManager: ObservableObject {
         }
     }
 
-    private func playCurrent(scheduleNext: Bool) {
+    private func playCurrent(shouldLoop: Bool) {
         let token = UUID()
         playToken = token
         isPlaying = true
@@ -92,9 +95,8 @@ final class PhrasePianoManager: ObservableObject {
                 self.synth.stopAll()
                 self.isPlaying = false
 
-                if scheduleNext, self.isEndless {
-                    self.generate()
-                    self.playCurrent(scheduleNext: true)
+                if shouldLoop, self.isLooping {
+                    self.playCurrent(shouldLoop: true)
                 }
             }
         }

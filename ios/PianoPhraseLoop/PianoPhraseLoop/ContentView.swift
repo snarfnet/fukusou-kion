@@ -108,31 +108,30 @@ struct ContentView: View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
                 Button {
-                    manager.playOnce()
+                    manager.generate()
                 } label: {
-                    Label("生成して再生", systemImage: "play.fill")
+                    Label("作成", systemImage: "sparkles")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PrimaryButtonStyle())
 
                 Button {
-                    manager.toggleEndless()
+                    manager.togglePlayback()
                 } label: {
-                    Image(systemName: manager.isEndless ? "stop.fill" : "infinity")
-                        .frame(width: 48, height: 48)
+                    Label(manager.isPlaying && !manager.isLooping ? "停止" : "再生", systemImage: manager.isPlaying && !manager.isLooping ? "stop.fill" : "play.fill")
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(IconButtonStyle(isActive: manager.isEndless))
-                .accessibilityLabel(manager.isEndless ? "停止" : "無限生成")
+                .buttonStyle(PrimaryButtonStyle())
             }
 
             HStack(spacing: 12) {
                 Button {
-                    manager.generate()
+                    manager.toggleLoop()
                 } label: {
-                    Label("次の候補", systemImage: "shuffle")
+                    Label(manager.isLooping ? "ループ停止" : "ループ", systemImage: manager.isLooping ? "stop.circle" : "repeat")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(SecondaryButtonStyle())
+                .buttonStyle(SecondaryButtonStyle(isActive: manager.isLooping))
 
                 Button {
                     manager.saveMIDI()
@@ -189,23 +188,21 @@ private struct PrimaryButtonStyle: ButtonStyle {
 }
 
 private struct SecondaryButtonStyle: ButtonStyle {
+    var isActive = false
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(.white)
             .padding(.vertical, 14)
-            .background(Color.white.opacity(configuration.isPressed ? 0.12 : 0.18), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background(backgroundColor(isPressed: configuration.isPressed), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
-}
 
-private struct IconButtonStyle: ButtonStyle {
-    let isActive: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.title3.weight(.bold))
-            .foregroundStyle(.white)
-            .background(isActive ? Color.red.opacity(0.86) : Color.orange.opacity(configuration.isPressed ? 0.58 : 0.78), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    private func backgroundColor(isPressed: Bool) -> Color {
+        if isActive {
+            return Color.orange.opacity(isPressed ? 0.62 : 0.78)
+        }
+        return Color.white.opacity(isPressed ? 0.12 : 0.18)
     }
 }
 
