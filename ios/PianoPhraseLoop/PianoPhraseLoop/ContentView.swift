@@ -88,6 +88,12 @@ struct ContentView: View {
                     Text("\(manager.phrase.noteCount) notes")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                    if manager.isLooping {
+                        Text("Bar \(manager.currentBarNumber)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.orange)
+                            .monospacedDigit()
+                    }
                 }
                 Spacer()
                 Image(systemName: manager.isPlaying ? "waveform" : "sparkles")

@@ -9,6 +9,8 @@ final class PianoSynthesizer {
         let frequency: Double
         let velocity: Float
         let startedAt: Double
+        let brightness: Double
+        let pan: Float
         var releasedAt: Double?
         var phase: Double = 0
 
@@ -17,6 +19,8 @@ final class PianoSynthesizer {
             self.frequency = 440.0 * pow(2.0, Double(note - 69) / 12.0)
             self.velocity = Float(velocity) / 127.0
             self.startedAt = startedAt
+            self.brightness = 0.65 + Double(velocity) / 127.0 * 0.55
+            self.pan = max(-0.32, min(0.32, Float(note - 60) / 72.0))
         }
     }
 
@@ -33,7 +37,7 @@ final class PianoSynthesizer {
         guard let self else { return noErr }
         let buffers = UnsafeMutableAudioBufferListPointer(audioBufferList)
         let twoPi = Double.pi * 2
-        let releaseSeconds = 0.34
+        let releaseSeconds = 0.82
         let now = CACurrentMediaTime()
 
         self.lock.lock()
@@ -41,32 +45,39 @@ final class PianoSynthesizer {
 
         for frame in 0..<Int(frameCount) {
             let frameTime = now + Double(frame) / self.sampleRate
-            var sample: Float = 0
+            var leftSample: Float = 0
+            var rightSample: Float = 0
 
             for voice in self.voices {
                 let age = max(0, frameTime - voice.startedAt)
-                var envelope = min(1.0, age / 0.012)
-                if age > 0.05 {
-                    envelope = 0.62 + (0.38 * exp(-3.5 * (age - 0.05)))
-                }
+                let attack = min(1.0, age / 0.006)
+                var envelope = attack * (0.34 + 0.66 * exp(-1.25 * age))
                 if let releasedAt = voice.releasedAt {
                     let releaseAge = max(0, frameTime - releasedAt)
-                    envelope *= max(0, 1.0 - releaseAge / releaseSeconds)
+                    envelope *= exp(-5.0 * releaseAge)
                 }
 
                 let fundamental = sin(voice.phase)
-                let bell = 0.35 * sin(voice.phase * 2.01)
-                let air = 0.12 * sin(voice.phase * 3.02)
-                sample += Float((fundamental + bell + air) * envelope) * voice.velocity * 0.13
+                let second = 0.48 * sin(voice.phase * 2.003) * exp(-0.62 * age)
+                let third = 0.26 * sin(voice.phase * 3.012) * exp(-1.05 * age)
+                let fourth = 0.14 * sin(voice.phase * 4.021) * exp(-1.85 * age)
+                let fifth = 0.07 * sin(voice.phase * 5.034) * exp(-2.7 * age)
+                let hammer = 0.08 * voice.brightness * sin(voice.phase * 13.73) * exp(-95.0 * age)
+                let body = (fundamental + second + third + fourth + fifth + hammer) * envelope
+                let sample = Float(body) * voice.velocity * 0.16
+                let leftGain = 0.82 - voice.pan * 0.28
+                let rightGain = 0.82 + voice.pan * 0.28
+                leftSample += sample * leftGain
+                rightSample += sample * rightGain
                 voice.phase += twoPi * voice.frequency / self.sampleRate
                 if voice.phase > twoPi {
                     voice.phase -= twoPi
                 }
             }
 
-            for buffer in buffers {
+            for (index, buffer) in buffers.enumerated() {
                 let pointer = buffer.mData?.assumingMemoryBound(to: Float.self)
-                pointer?[frame] = sample
+                pointer?[frame] = index == 0 ? leftSample : rightSample
             }
         }
 
