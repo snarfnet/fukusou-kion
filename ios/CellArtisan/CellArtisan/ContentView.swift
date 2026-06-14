@@ -139,18 +139,18 @@ struct ContentView: View {
                 PresetButton(title: "軽め", icon: "bolt", isActive: settings.width == 96) {
                     applyPreset(width: 96, palette: 40, cell: 14)
                 }
-                PresetButton(title: "写真", icon: "camera.macro", isActive: settings.width == 120) {
-                    applyPreset(width: 120, palette: 64, cell: 10)
+                PresetButton(title: "写真", icon: "camera.macro", isActive: settings.width == 160) {
+                    applyPreset(width: 160, palette: 72, cell: 10)
                 }
-                PresetButton(title: "本気", icon: "sparkles", isActive: settings.width == 160) {
-                    applyPreset(width: 160, palette: 88, cell: 9)
+                PresetButton(title: "本気", icon: "sparkles", isActive: settings.width == 220) {
+                    applyPreset(width: 220, palette: 96, cell: 8)
                 }
             }
 
             SettingSlider(
                 title: "横セル数",
                 value: Binding(get: { Double(settings.width) }, set: { settings.width = Int($0) }),
-                range: 24...180,
+                range: 24...240,
                 step: 4,
                 display: "\(settings.width)"
             )
