@@ -73,8 +73,8 @@ final class XLSXWorkbookWriter {
     }
 
     private func sheetXML(for document: CellArtDocument, settings: CellArtSettings, mode: SheetMode) -> String {
-        let columnWidth = mode == .overview ? 1.4 : max(0.8, min(3.2, settings.cellSize / 8.5))
-        let rowHeight = mode == .overview ? 10.0 : max(5.0, min(22.0, settings.cellSize * 0.72))
+        let columnWidth = mode == .overview ? 1.4 : max(7.0, min(22.0, settings.cellSize))
+        let rowHeight = mode == .overview ? 10.0 : max(7.0, min(22.0, settings.cellSize))
         let zoom = mode == .overview ? 100 : initialZoomScale(for: document.width)
         let columns = "<col min=\"1\" max=\"\(document.width)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>"
         let dimension = "A1:\(columnName(document.width))\(document.height)"
