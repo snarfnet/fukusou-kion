@@ -3,8 +3,8 @@ import SwiftUI
 import UIKit
 
 struct CellArtSettings: Equatable {
-    var width: Int = 160
-    var paletteSize: Int = 72
+    var width: Int = 120
+    var paletteSize: Int = 64
     var cellSize: Double = 10
     var showGrid: Bool = false
     var trimBackground: Bool = true
