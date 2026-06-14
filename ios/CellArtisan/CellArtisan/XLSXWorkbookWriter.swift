@@ -30,7 +30,9 @@ final class XLSXWorkbookWriter {
         try add("xl/workbook.xml", to: archive, content: workbookXML)
         try add("xl/_rels/workbook.xml.rels", to: archive, content: workbookRelationshipsXML)
         try add("xl/styles.xml", to: archive, content: stylesXML(for: document.palette))
-        try add("xl/worksheets/sheet1.xml", to: archive, content: sheetXML(for: document, settings: settings))
+        let overview = overviewDocument(from: document, maxWidth: 44)
+        try add("xl/worksheets/sheet1.xml", to: archive, content: sheetXML(for: overview, settings: settings, mode: .overview))
+        try add("xl/worksheets/sheet2.xml", to: archive, content: sheetXML(for: document, settings: settings, mode: .detail))
         try add("docProps/core.xml", to: archive, content: coreXML)
         try add("docProps/app.xml", to: archive, content: appXML)
 
@@ -46,10 +48,34 @@ final class XLSXWorkbookWriter {
         })
     }
 
-    private func sheetXML(for document: CellArtDocument, settings: CellArtSettings) -> String {
-        let columnWidth = max(0.8, min(3.2, settings.cellSize / 8.5))
-        let rowHeight = max(5.0, min(22.0, settings.cellSize * 0.72))
-        let zoom = initialZoomScale(for: document.width)
+    private func overviewDocument(from document: CellArtDocument, maxWidth: Int) -> CellArtDocument {
+        guard document.width > maxWidth else { return document }
+        let targetWidth = maxWidth
+        let targetHeight = max(1, Int(round(Double(targetWidth) * Double(document.height) / Double(document.width))))
+        let colorsByPosition = Dictionary(uniqueKeysWithValues: document.cells.map { (positionKey(row: $0.row, column: $0.column, width: document.width), $0.color) })
+
+        var cells: [PixelCell] = []
+        cells.reserveCapacity(targetWidth * targetHeight)
+        for row in 0..<targetHeight {
+            for column in 0..<targetWidth {
+                let sourceColumn = min(document.width, max(1, Int(round((Double(column) + 0.5) * Double(document.width) / Double(targetWidth)))))
+                let sourceRow = min(document.height, max(1, Int(round((Double(row) + 0.5) * Double(document.height) / Double(targetHeight)))))
+                let color = colorsByPosition[positionKey(row: sourceRow, column: sourceColumn, width: document.width)] ?? CellColor(red: 255, green: 255, blue: 255)
+                cells.append(PixelCell(row: row + 1, column: column + 1, color: color))
+            }
+        }
+
+        return CellArtDocument(width: targetWidth, height: targetHeight, cells: cells, palette: document.palette)
+    }
+
+    private func positionKey(row: Int, column: Int, width: Int) -> Int {
+        row * (width + 1) + column
+    }
+
+    private func sheetXML(for document: CellArtDocument, settings: CellArtSettings, mode: SheetMode) -> String {
+        let columnWidth = mode == .overview ? 1.55 : max(0.8, min(3.2, settings.cellSize / 8.5))
+        let rowHeight = mode == .overview ? 11.0 : max(5.0, min(22.0, settings.cellSize * 0.72))
+        let zoom = mode == .overview ? 100 : initialZoomScale(for: document.width)
         let columns = (1...document.width)
             .map { "<col min=\"\($0)\" max=\"\($0)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>" }
             .joined()
@@ -73,6 +99,11 @@ final class XLSXWorkbookWriter {
           <sheetData>\(rows)</sheetData>
         </worksheet>
         """
+    }
+
+    private enum SheetMode: Equatable {
+        case overview
+        case detail
     }
 
     private func initialZoomScale(for width: Int) -> Int {
@@ -132,6 +163,7 @@ final class XLSXWorkbookWriter {
           <Default Extension="xml" ContentType="application/xml"/>
           <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
           <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+          <Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
           <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
           <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
           <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
@@ -154,7 +186,7 @@ final class XLSXWorkbookWriter {
         """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-          <sheets><sheet name="セルアート" sheetId="1" r:id="rId1"/></sheets>
+          <sheets><sheet name="全体表示" sheetId="1" r:id="rId1"/><sheet name="高精細" sheetId="2" r:id="rId2"/></sheets>
         </workbook>
         """
     }
@@ -164,7 +196,8 @@ final class XLSXWorkbookWriter {
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
           <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
-          <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+          <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>
+          <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
         </Relationships>
         """
     }
