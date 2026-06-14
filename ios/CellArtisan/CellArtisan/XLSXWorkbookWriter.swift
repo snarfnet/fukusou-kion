@@ -47,8 +47,9 @@ final class XLSXWorkbookWriter {
     }
 
     private func sheetXML(for document: CellArtDocument, settings: CellArtSettings) -> String {
-        let columnWidth = max(2.2, min(6.0, settings.cellSize / 5.5))
-        let rowHeight = max(8.0, min(36.0, settings.cellSize))
+        let columnWidth = max(0.8, min(3.2, settings.cellSize / 8.5))
+        let rowHeight = max(5.0, min(22.0, settings.cellSize * 0.72))
+        let zoom = initialZoomScale(for: document.width)
         let columns = (1...document.width)
             .map { "<col min=\"\($0)\" max=\"\($0)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>" }
             .joined()
@@ -67,11 +68,24 @@ final class XLSXWorkbookWriter {
         return """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-          <sheetViews><sheetView showGridLines="\(grid)" workbookViewId="0"/></sheetViews>
+          <sheetViews><sheetView showGridLines="\(grid)" zoomScale="\(zoom)" zoomScaleNormal="\(zoom)" workbookViewId="0"/></sheetViews>
           <cols>\(columns)</cols>
           <sheetData>\(rows)</sheetData>
         </worksheet>
         """
+    }
+
+    private func initialZoomScale(for width: Int) -> Int {
+        switch width {
+        case ..<90:
+            return 85
+        case ..<140:
+            return 65
+        case ..<190:
+            return 50
+        default:
+            return 38
+        }
     }
 
     private func stylesXML(for palette: [CellColor]) -> String {
