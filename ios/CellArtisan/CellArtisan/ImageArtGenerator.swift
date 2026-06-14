@@ -110,7 +110,10 @@ final class ImageArtGenerator {
         ).intersection(fullRect).integral
 
         let cropIsMeaningful = cropRect.width < CGFloat(image.width) * 0.98 || cropRect.height < CGFloat(image.height) * 0.98
-        guard cropRect.width > 8, cropRect.height > 8, cropIsMeaningful else {
+        let widthCoverage = cropRect.width / CGFloat(image.width)
+        let heightCoverage = cropRect.height / CGFloat(image.height)
+        let cropKeepsEnoughImage = widthCoverage >= 0.45 && heightCoverage >= 0.68
+        guard cropRect.width > 8, cropRect.height > 8, cropIsMeaningful, cropKeepsEnoughImage else {
             return image
         }
         return image.cropping(to: cropRect) ?? image
