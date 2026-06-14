@@ -53,9 +53,16 @@ def main():
         return
 
     assigned = 0
+    internal_groups = 0
     for group in groups:
         group_id = group["id"]
-        name = group.get("attributes", {}).get("name", group_id)
+        attrs = group.get("attributes", {})
+        name = attrs.get("name", group_id)
+        is_internal = attrs.get("isInternalGroup", False)
+        if is_internal:
+            internal_groups += 1
+            print(f"Internal TestFlight group found: {name}. Apple does not allow API build assignment for internal groups.")
+            continue
         try:
             assign_build(group_id, build_id)
             assigned += 1
@@ -63,8 +70,11 @@ def main():
         except Exception as error:
             print(f"Could not assign build {BUILD_NUMBER} to group {name}: {error}")
 
-    if assigned == 0:
+    if assigned == 0 and internal_groups == 0:
         raise RuntimeError(f"Build {BUILD_NUMBER} is VALID, but it could not be assigned to any TestFlight group.")
+
+    if assigned == 0 and internal_groups > 0:
+        print(f"Build {BUILD_NUMBER} is VALID. Internal testing groups should receive valid builds automatically when testers are enabled.")
 
 
 if __name__ == "__main__":
