@@ -8,22 +8,25 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Image("PianoForestBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .overlay(
-                        LinearGradient(
-                            colors: [
-                                Color.black.opacity(0.56),
-                                Color.black.opacity(0.38),
-                                Color.black.opacity(0.68)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
+                GeometryReader { proxy in
+                    Image("PianoForestBackground")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
+                        .overlay(
+                            LinearGradient(
+                                colors: [
+                                    Color.black.opacity(0.56),
+                                    Color.black.opacity(0.38),
+                                    Color.black.opacity(0.68)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
-                        .ignoresSafeArea()
-                    )
+                }
+                .ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 18) {
@@ -33,6 +36,8 @@ struct ContentView: View {
                         keyboardPreview
                     }
                     .padding(20)
+                    .frame(maxWidth: 560)
+                    .frame(maxWidth: .infinity)
                 }
             }
             .navigationTitle("Phrase Piano")
@@ -140,6 +145,8 @@ struct ContentView: View {
                 } label: {
                     Label(manager.isLooping ? "ループ停止" : "ループ", systemImage: manager.isLooping ? "stop.circle" : "repeat")
                         .frame(maxWidth: .infinity)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
                 }
                 .buttonStyle(SecondaryButtonStyle(isActive: manager.isLooping))
 
