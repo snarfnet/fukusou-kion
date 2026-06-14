@@ -10,6 +10,14 @@ struct PianoPhraseGenerator {
         let bassMotion: Int
     }
 
+    private struct HookMotif {
+        let offsets: [Int]
+        let lengths: [Double]
+        let call: [Int]
+        let answer: [Int]
+        let echoInterval: Int
+    }
+
     private let keys: [(name: String, root: Int)] = [
         ("C", 60), ("D", 62), ("E", 64), ("F", 65), ("G", 67), ("A", 69)
     ]
@@ -24,6 +32,7 @@ struct PianoPhraseGenerator {
         let seconds = Double(totalSteps) * step
         let progression = emotionalProgression(for: mood)
         let density = Double.random(in: 0.32...0.54)
+        let hook = hookMotif(for: mood)
         var notes: [PianoNote] = []
 
         for cursor in stride(from: 0, to: totalSteps, by: barSteps) {
@@ -53,6 +62,7 @@ struct PianoPhraseGenerator {
                 step: step,
                 mood: mood,
                 barIndex: barIndex,
+                hook: hook,
                 energy: energy,
                 density: density,
                 isPeak: isPeak,
@@ -188,6 +198,7 @@ struct PianoPhraseGenerator {
         step: Double,
         mood: PhraseMood,
         barIndex: Int,
+        hook: HookMotif,
         energy: Double,
         density: Double,
         isPeak: Bool,
@@ -195,8 +206,8 @@ struct PianoPhraseGenerator {
         notes: inout [PianoNote]
     ) {
         let root = keyRoot + chord.root
-        let motifOffsets = [[0, 5, 9, 13], [1, 4, 8, 12], [2, 7, 11], [0, 6, 10]].randomElement() ?? [0, 5, 9, 13]
-        let motifLengths = [2.7, 2.2, 2.4, 3.2]
+        let motifOffsets = hook.offsets
+        let motifLengths = hook.lengths
         let baseOctave = isPeak ? 24 : 12
 
         for index in motifOffsets.indices {
@@ -207,12 +218,12 @@ struct PianoPhraseGenerator {
                 continue
             }
 
-            let targetTone = tearfulMelodyTone(barIndex: barIndex, noteIndex: index, mood: mood, isPeak: isPeak, isResolution: isResolution)
+            let targetTone = hookTone(hook: hook, barIndex: barIndex, noteIndex: index, mood: mood, isPeak: isPeak, isResolution: isResolution)
             let target = keyRoot + targetTone + baseOctave
             let duration = motifLengths[index % motifLengths.count] * step * Double.random(in: 0.75...1.08)
             let accent = index == 0 || index == motifOffsets.count - 1 || chord.surprise > 0.55
 
-            if accent && startStep + 1 < totalSteps && Double.random(in: 0...1) < 0.78 {
+            if accent && startStep + 1 < totalSteps && Double.random(in: 0...1) < 0.84 {
                 let lean = tearfulLean(for: mood, index: index)
                 notes.append(PianoNote(pitch: target + lean, velocity: velocity(54, energy), start: Double(startStep) * step, duration: step * 0.85))
                 notes.append(PianoNote(pitch: target, velocity: velocity(72, energy), start: Double(startStep + 1) * step, duration: max(step * 1.4, duration - step)))
@@ -221,8 +232,8 @@ struct PianoPhraseGenerator {
             }
 
             let echoStep = startStep + 4
-            if index == 0 && echoStep < totalSteps && !isResolution && Double.random(in: 0...1) < 0.35 {
-                notes.append(PianoNote(pitch: target - 12, velocity: velocity(24, energy), start: Double(echoStep) * step, duration: duration * 0.7))
+            if index == 0 && echoStep < totalSteps && !isResolution && Double.random(in: 0...1) < 0.48 {
+                notes.append(PianoNote(pitch: target + hook.echoInterval, velocity: velocity(23, energy), start: Double(echoStep) * step, duration: duration * 0.68))
             }
         }
 
@@ -240,61 +251,53 @@ struct PianoPhraseGenerator {
         }
     }
 
-    private func tearfulMelodyTone(
+    private func hookMotif(for mood: PhraseMood) -> HookMotif {
+        switch mood {
+        case .bright:
+            return [
+                HookMotif(offsets: [0, 3, 7, 12], lengths: [2.1, 2.4, 3.2, 4.0], call: [7, 11, 14, 16], answer: [14, 12, 11, 7], echoInterval: -12),
+                HookMotif(offsets: [1, 5, 8, 13], lengths: [2.4, 2.2, 3.0, 3.8], call: [9, 12, 16, 14], answer: [16, 14, 12, 11], echoInterval: -5),
+                HookMotif(offsets: [0, 4, 6, 11], lengths: [2.8, 1.8, 2.7, 4.2], call: [11, 12, 16, 14], answer: [14, 11, 9, 7], echoInterval: -12)
+            ].randomElement() ?? HookMotif(offsets: [0, 3, 7, 12], lengths: [2.1, 2.4, 3.2, 4.0], call: [7, 11, 14, 16], answer: [14, 12, 11, 7], echoInterval: -12)
+        case .mellow:
+            return [
+                HookMotif(offsets: [0, 4, 7, 12], lengths: [2.8, 2.0, 3.0, 4.0], call: [10, 15, 14, 12], answer: [15, 14, 12, 10], echoInterval: -12),
+                HookMotif(offsets: [1, 5, 9, 13], lengths: [2.4, 2.4, 2.8, 3.8], call: [7, 12, 15, 14], answer: [14, 12, 10, 7], echoInterval: -5),
+                HookMotif(offsets: [0, 3, 8, 12], lengths: [2.2, 2.4, 3.0, 4.2], call: [12, 17, 15, 14], answer: [15, 14, 12, 10], echoInterval: -12)
+            ].randomElement() ?? HookMotif(offsets: [0, 4, 7, 12], lengths: [2.8, 2.0, 3.0, 4.0], call: [10, 15, 14, 12], answer: [15, 14, 12, 10], echoInterval: -12)
+        case .midnight:
+            return [
+                HookMotif(offsets: [0, 5, 8, 13], lengths: [3.0, 2.0, 2.8, 4.0], call: [7, 12, 10, 8], answer: [15, 14, 12, 10], echoInterval: -12),
+                HookMotif(offsets: [2, 6, 10, 14], lengths: [2.2, 2.5, 2.5, 3.8], call: [10, 15, 17, 15], answer: [14, 12, 10, 7], echoInterval: -5),
+                HookMotif(offsets: [0, 4, 9, 12], lengths: [2.6, 2.1, 3.3, 3.6], call: [12, 10, 15, 14], answer: [12, 10, 8, 7], echoInterval: -12)
+            ].randomElement() ?? HookMotif(offsets: [0, 5, 8, 13], lengths: [3.0, 2.0, 2.8, 4.0], call: [7, 12, 10, 8], answer: [15, 14, 12, 10], echoInterval: -12)
+        }
+    }
+
+    private func hookTone(
+        hook: HookMotif,
         barIndex: Int,
         noteIndex: Int,
         mood: PhraseMood,
         isPeak: Bool,
         isResolution: Bool
     ) -> Int {
-        if isResolution {
-            let endings = mood == .bright
-                ? [[14, 12, 11, 7], [11, 9, 7, 0], [16, 14, 12, 11]]
-                : [[15, 14, 12, 10], [14, 12, 10, 7], [17, 15, 14, 12]]
-            return endings.randomElement()?[noteIndex % 4] ?? 12
+        let source = (barIndex % 2 == 0 && !isResolution) ? hook.call : hook.answer
+        let phraseTurn = barIndex % 4
+        let variation: Int
+        switch phraseTurn {
+        case 1:
+            variation = mood == .bright ? -2 : -3
+        case 2:
+            variation = isPeak ? 2 : 0
+        case 3:
+            variation = isResolution ? 0 : -5
+        default:
+            variation = 0
         }
-
-        let brightLines = [
-            [11, 14, 16, 14],
-            [9, 12, 14, 11],
-            [16, 14, 12, 11],
-            [7, 11, 12, 9]
-        ]
-        let sadLines = [
-            [10, 15, 14, 12],
-            [7, 12, 10, 8],
-            [15, 14, 12, 10],
-            [12, 17, 15, 14]
-        ]
-        let lines = mood == .bright ? brightLines : sadLines
-        let line = lines[barIndex % lines.count]
         let peakLift = isPeak && noteIndex == 1 ? 12 : 0
-        return line[noteIndex % line.count] + peakLift
-    }
-
-    private func canonGuideTone(barIndex: Int, noteIndex: Int, mood: PhraseMood) -> Int? {
-        let majorGuide = [
-            [7, 11, 14, 12, 11],
-            [7, 9, 11, 9, 7],
-            [9, 12, 14, 12, 11],
-            [7, 11, 12, 11, 9],
-            [5, 9, 12, 11, 9],
-            [4, 7, 11, 9, 7],
-            [5, 9, 11, 12, 14],
-            [7, 11, 14, 16, 14]
-        ]
-        let minorGuide = [
-            [7, 10, 14, 12, 10],
-            [7, 10, 12, 10, 7],
-            [8, 12, 15, 14, 12],
-            [7, 10, 12, 10, 8],
-            [5, 8, 10, 12, 10],
-            [3, 7, 10, 8, 7],
-            [5, 8, 10, 12, 14],
-            [7, 11, 14, 15, 14]
-        ]
-        let guide = mood == .bright ? majorGuide : minorGuide
-        return guide[barIndex % guide.count][noteIndex % guide[0].count]
+        let endingPull = isResolution && noteIndex >= source.count - 2 ? -2 : 0
+        return source[noteIndex % source.count] + variation + peakLift + endingPull
     }
 
     private func tearfulLean(for mood: PhraseMood, index: Int) -> Int {
@@ -302,23 +305,6 @@ struct PianoPhraseGenerator {
             return [1, 2, -1, 1, -2][index % 5]
         }
         return [1, -1, 2, 1, -2][index % 5]
-    }
-
-    private func melodicContour(for mood: PhraseMood, isPeak: Bool, isResolution: Bool) -> [Int] {
-        if isResolution {
-            return [7, 4, 2, 0, 0]
-        }
-        if isPeak {
-            return [3, 7, 10, 12, 11]
-        }
-        switch mood {
-        case .mellow:
-            return [[3, 5, 7, 5, 3], [7, 10, 8, 7, 5]].randomElement() ?? [3, 5, 7, 5, 3]
-        case .bright:
-            return [[4, 7, 9, 7, 12], [7, 9, 11, 12, 9]].randomElement() ?? [4, 7, 9, 7, 12]
-        case .midnight:
-            return [[3, 7, 8, 7, 3], [10, 8, 7, 5, 3]].randomElement() ?? [3, 7, 8, 7, 3]
-        }
     }
 
     private func nearestChordTone(_ target: Int, in chord: EmotionalChord) -> Int {
