@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var isShowingShare = false
     @State private var isProcessing = false
     @State private var generationSerial = 0
+    @State private var exportSerial = 0
     @State private var message = "画像を選ぶと、Excelセルで描いたアートに変換します。"
 
     private let generator = ImageArtGenerator()
@@ -37,6 +38,8 @@ struct ContentView: View {
             PhotoPicker { image in
                 sourceImage = image
                 document = nil
+                exportSerial += 1
+                isShowingShare = false
                 exportedWorkbook = nil
                 generatePreview()
             }
@@ -291,7 +294,9 @@ struct ContentView: View {
         guard let sourceImage else { return }
         generationSerial += 1
         let serial = generationSerial
+        exportSerial += 1
         isProcessing = true
+        isShowingShare = false
         document = nil
         exportedWorkbook = nil
         let activeSettings = settings
@@ -317,7 +322,11 @@ struct ContentView: View {
 
     private func exportWorkbook() {
         guard let document else { return }
+        exportSerial += 1
+        let exportID = exportSerial
+        let documentSerial = generationSerial
         isProcessing = true
+        isShowingShare = false
         exportedWorkbook = nil
         let activeSettings = settings
 
@@ -325,12 +334,14 @@ struct ContentView: View {
             do {
                 let workbook = try writer.write(document: document, settings: activeSettings)
                 DispatchQueue.main.async {
+                    guard exportID == exportSerial, documentSerial == generationSerial else { return }
                     exportedWorkbook = workbook
                     isProcessing = false
                     message = "Excelファイルの作成が完了しました。"
                 }
             } catch {
                 DispatchQueue.main.async {
+                    guard exportID == exportSerial, documentSerial == generationSerial else { return }
                     isProcessing = false
                     message = error.localizedDescription
                 }
