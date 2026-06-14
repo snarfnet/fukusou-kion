@@ -20,7 +20,7 @@ struct PianoPhraseGenerator {
     }
 
     private let keys: [(name: String, root: Int)] = [
-        ("C", 60), ("D", 62), ("E", 64), ("F", 65), ("G", 67), ("A", 69)
+        ("C", 60), ("D", 62), ("E", 52), ("F", 53), ("G", 55), ("A", 57)
     ]
 
     func makePhrase(bars: Int, mood: PhraseMood) -> PianoPhrase {
@@ -82,7 +82,7 @@ struct PianoPhraseGenerator {
             notes: &notes
         )
 
-        let expressiveNotes = applyExpressiveFluctuation(to: notes, step: step, seconds: seconds, leadThreshold: key.root + 24)
+        let expressiveNotes = applyExpressiveFluctuation(to: notes, step: step, seconds: seconds, leadThreshold: key.root + 12)
         let trimmed = expressiveNotes
             .filter { $0.start < seconds - 0.05 }
             .map {
@@ -265,7 +265,7 @@ struct PianoPhraseGenerator {
         let root = keyRoot + chord.root
         let motifOffsets = hook.offsets
         let motifLengths = hook.lengths
-        let baseOctave = isPeak ? 24 : 12
+        let baseOctave = 12
 
         for index in motifOffsets.indices {
             let startStep = cursor + motifOffsets[index]
@@ -355,7 +355,7 @@ struct PianoPhraseGenerator {
         notes: inout [PianoNote]
     ) {
         let shape = cryingShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
-        let baseOctave = mood == .midnight ? 12 : 24
+        let baseOctave = 12
 
         for index in shape.indices {
             let event = shape[index]
@@ -369,10 +369,14 @@ struct PianoPhraseGenerator {
             let isFinal = index == shape.indices.last
 
             if event.role == .lean && event.step + 1 < totalSteps {
-                notes.append(PianoNote(pitch: pitch + event.lean, velocity: velocity(62, energy), start: start, duration: step * 0.9))
-                notes.append(PianoNote(pitch: pitch, velocity: velocity(88, energy), start: Double(event.step + 1) * step, duration: max(step * 1.4, duration - step)))
+                notes.append(PianoNote(pitch: pitch + event.lean, velocity: velocity(54, energy), start: start, duration: step * 0.85))
+                notes.append(PianoNote(pitch: pitch, velocity: velocity(78, energy), start: Double(event.step + 1) * step, duration: max(step * 1.8, duration - step)))
             } else {
-                let baseVelocity = isPeak ? 96 : (isRelease || isFinal ? 82 : 74)
+                if isRelease && event.step > 1 {
+                    let sighStart = max(0, Double(event.step) * step - step * 0.72)
+                    notes.append(PianoNote(pitch: pitch + 1, velocity: velocity(42, energy), start: sighStart, duration: step * 0.62))
+                }
+                let baseVelocity = isPeak ? 86 : (isRelease || isFinal ? 74 : 66)
                 notes.append(PianoNote(pitch: pitch, velocity: velocity(baseVelocity, energy), start: start, duration: duration))
             }
 
@@ -449,9 +453,9 @@ struct PianoPhraseGenerator {
                 LeadEvent(step: barSteps, tone: 11, length: 2, role: .lean, lean: 1),
                 LeadEvent(step: barSteps + 2, tone: 12, length: 3, role: .plain, lean: 0),
                 LeadEvent(step: barSteps + 6, tone: 17, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: peakStep, tone: 19, length: 7, role: .peak, lean: 0),
-                LeadEvent(step: peakStep + 8, tone: 18, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: peakStep + 11, tone: 16, length: 3, role: .release, lean: 0),
+                LeadEvent(step: peakStep, tone: 17, length: 7, role: .peak, lean: 0),
+                LeadEvent(step: peakStep + 8, tone: 16, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: peakStep + 11, tone: 14, length: 4, role: .release, lean: 0),
                 LeadEvent(step: phraseEnd - 6, tone: 12, length: 2, role: .plain, lean: 0),
                 LeadEvent(step: phraseEnd - 3, tone: 11, length: 2, role: .lean, lean: -1),
                 LeadEvent(step: phraseEnd, tone: 7, length: 6, role: .release, lean: 0)
@@ -465,9 +469,9 @@ struct PianoPhraseGenerator {
                 LeadEvent(step: barSteps, tone: 10, length: 2, role: .lean, lean: 1),
                 LeadEvent(step: barSteps + 2, tone: 12, length: 3, role: .plain, lean: 0),
                 LeadEvent(step: barSteps + 6, tone: 17, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: peakStep, tone: 19, length: 7, role: .peak, lean: 0),
-                LeadEvent(step: peakStep + 8, tone: 18, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: peakStep + 11, tone: 15, length: 3, role: .release, lean: 0),
+                LeadEvent(step: peakStep, tone: 17, length: 7, role: .peak, lean: 0),
+                LeadEvent(step: peakStep + 8, tone: 16, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: peakStep + 11, tone: 15, length: 4, role: .release, lean: 0),
                 LeadEvent(step: phraseEnd - 8, tone: 14, length: 2, role: .plain, lean: 0),
                 LeadEvent(step: phraseEnd - 5, tone: 12, length: 2, role: .plain, lean: 0),
                 LeadEvent(step: phraseEnd - 2, tone: 10, length: 2, role: .lean, lean: -1),
@@ -480,8 +484,8 @@ struct PianoPhraseGenerator {
                 LeadEvent(step: 7, tone: 17, length: 7, role: .peak, lean: 0),
                 LeadEvent(step: barSteps + 1, tone: 15, length: 2, role: .lean, lean: -1),
                 LeadEvent(step: barSteps + 4, tone: 14, length: 4, role: .release, lean: 0),
-                LeadEvent(step: peakStep, tone: 19, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: peakStep + 7, tone: 17, length: 3, role: .release, lean: 0),
+                LeadEvent(step: peakStep, tone: 17, length: 6, role: .peak, lean: 0),
+                LeadEvent(step: peakStep + 7, tone: 15, length: 4, role: .release, lean: 0),
                 LeadEvent(step: peakStep + 12, tone: 15, length: 2, role: .lean, lean: -1),
                 LeadEvent(step: phraseEnd - 6, tone: 14, length: 2, role: .plain, lean: 0),
                 LeadEvent(step: phraseEnd - 3, tone: 12, length: 2, role: .plain, lean: 0),
@@ -511,7 +515,7 @@ struct PianoPhraseGenerator {
         default:
             variation = 0
         }
-        let peakLift = isPeak && noteIndex == 1 ? 12 : 0
+        let peakLift = isPeak && noteIndex == 1 ? 5 : 0
         let endingPull = isResolution && noteIndex >= source.count - 2 ? -2 : 0
         return source[noteIndex % source.count] + variation + peakLift + endingPull
     }
