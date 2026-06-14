@@ -32,10 +32,17 @@ final class ImageArtGenerator {
         let tunedPixels = rawPixels.map {
             enhance($0, contrast: settings.contrastBoost, saturation: settings.saturationBoost)
         }
-        let palette = buildPalette(from: tunedPixels, maxColors: settings.paletteSize)
-        let mapped = settings.dither
-            ? dither(tunedPixels, width: targetWidth, height: targetHeight, palette: palette)
-            : tunedPixels.map { nearestColor(for: $0, in: palette) }
+        let palette: [CellColor]
+        let mapped: [CellColor]
+        if settings.lineArtMode {
+            palette = lineArtPalette
+            mapped = tunedPixels.map(lineArtColor)
+        } else {
+            palette = buildPalette(from: tunedPixels, maxColors: settings.paletteSize)
+            mapped = settings.dither
+                ? dither(tunedPixels, width: targetWidth, height: targetHeight, palette: palette)
+                : tunedPixels.map { nearestColor(for: $0, in: palette) }
+        }
 
         var cells: [PixelCell] = []
         cells.reserveCapacity(targetWidth * targetHeight)
@@ -203,6 +210,23 @@ final class ImageArtGenerator {
             .filter { seen.insert($0).inserted }
             .sorted { luminance($0) < luminance($1) }
         return palette.isEmpty ? [CellColor(red: 255, green: 255, blue: 255)] : palette
+    }
+
+    private var lineArtPalette: [CellColor] {
+        [
+            CellColor(red: 0, green: 0, blue: 0),
+            CellColor(red: 70, green: 70, blue: 70),
+            CellColor(red: 185, green: 185, blue: 185),
+            CellColor(red: 255, green: 255, blue: 255)
+        ]
+    }
+
+    private func lineArtColor(_ color: CellColor) -> CellColor {
+        let grayValue = max(0.0, min(255.0, round(luminance(color))))
+        let gray = UInt8(grayValue)
+        return lineArtPalette.min { first, second in
+            abs(Int(first.red) - Int(gray)) < abs(Int(second.red) - Int(gray))
+        } ?? color
     }
 
     private func sampledPixels(from pixels: [CellColor], limit: Int) -> [CellColor] {

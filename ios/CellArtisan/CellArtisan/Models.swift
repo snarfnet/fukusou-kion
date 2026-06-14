@@ -9,6 +9,7 @@ struct CellArtSettings: Equatable {
     var showGrid: Bool = false
     var trimBackground: Bool = true
     var dither: Bool = true
+    var lineArtMode: Bool = false
     var contrastBoost: Double = 1.10
     var saturationBoost: Double = 1.04
 }

@@ -135,15 +135,18 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 14) {
             SectionTitle("職人設定", icon: "slider.horizontal.3")
 
-            HStack(spacing: 8) {
-                PresetButton(title: "軽め", icon: "bolt", isActive: settings.width == 96) {
-                    applyPreset(width: 96, palette: 40, cell: 14)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                PresetButton(title: "軽め", icon: "bolt", isActive: settings.width == 96 && !settings.lineArtMode) {
+                    applyPreset(width: 96, palette: 40, cell: 14, lineArt: false)
                 }
-                PresetButton(title: "写真", icon: "camera.macro", isActive: settings.width == 160) {
-                    applyPreset(width: 160, palette: 72, cell: 10)
+                PresetButton(title: "写真", icon: "camera.macro", isActive: settings.width == 160 && !settings.lineArtMode) {
+                    applyPreset(width: 160, palette: 72, cell: 10, lineArt: false)
                 }
-                PresetButton(title: "本気", icon: "sparkles", isActive: settings.width == 220) {
-                    applyPreset(width: 220, palette: 96, cell: 8)
+                PresetButton(title: "線画", icon: "scribble", isActive: settings.lineArtMode) {
+                    applyPreset(width: 96, palette: 4, cell: 12, lineArt: true)
+                }
+                PresetButton(title: "本気", icon: "sparkles", isActive: settings.width == 220 && !settings.lineArtMode) {
+                    applyPreset(width: 220, palette: 96, cell: 8, lineArt: false)
                 }
             }
 
@@ -273,12 +276,13 @@ struct ContentView: View {
         }
     }
 
-    private func applyPreset(width: Int, palette: Int, cell: Double) {
+    private func applyPreset(width: Int, palette: Int, cell: Double, lineArt: Bool) {
         settings.width = width
         settings.paletteSize = palette
         settings.cellSize = cell
         settings.trimBackground = true
         settings.dither = true
+        settings.lineArtMode = lineArt
     }
 
     private func generatePreview() {
