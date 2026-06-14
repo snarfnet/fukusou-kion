@@ -115,14 +115,12 @@ struct ContentView: View {
             }
             .frame(height: 230)
             .clipShape(RoundedRectangle(cornerRadius: 8))
-
-            Button {
+            .contentShape(RoundedRectangle(cornerRadius: 8))
+            .onTapGesture {
                 isShowingPicker = true
-            } label: {
-                Label(sourceImage == nil ? "画像を選ぶ" : "画像を変更", systemImage: "photo.on.rectangle")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(PrimaryButtonStyle(color: AppStyle.excelGreen))
+            .accessibilityAddTraits(.isButton)
+            .accessibilityLabel(sourceImage == nil ? "画像を選ぶ" : "画像を変更")
 
             Text(message)
                 .font(.footnote.weight(.semibold))
@@ -181,13 +179,6 @@ struct ContentView: View {
 
                 Toggle(isOn: $settings.dither) {
                     Label("ディザ", systemImage: "circle.grid.cross")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(AppStyle.ink)
-                }
-                .toggleStyle(SwitchToggleStyle(tint: AppStyle.excelGreen))
-
-                Toggle(isOn: $settings.showGrid) {
-                    Label("罫線", systemImage: "grid")
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(AppStyle.ink)
                 }
@@ -288,7 +279,6 @@ struct ContentView: View {
         settings.cellSize = cell
         settings.trimBackground = true
         settings.dither = true
-        settings.showGrid = false
     }
 
     private func generatePreview() {
