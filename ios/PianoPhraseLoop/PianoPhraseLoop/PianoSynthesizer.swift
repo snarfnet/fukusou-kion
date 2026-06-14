@@ -157,20 +157,33 @@ final class PianoSynthesizer {
     }
 
     private func configureSampler() -> Bool {
-        let soundBankURL = URL(fileURLWithPath: "/System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls")
+        let bundledBanks = [
+            Bundle.main.url(forResource: "Piano", withExtension: "sf2"),
+            Bundle.main.url(forResource: "Piano", withExtension: "dls"),
+            Bundle.main.url(forResource: "gs_instruments", withExtension: "dls")
+        ].compactMap { $0 }
 
-        do {
-            try sampler.loadSoundBankInstrument(
-                at: soundBankURL,
-                program: 0,
-                bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
-                bankLSB: UInt8(kAUSampler_DefaultBankLSB)
-            )
-            sampler.globalTuning = 0
-            sampler.masterGain = -3
-            return true
-        } catch {
-            return false
+        let systemBanks = [
+            URL(fileURLWithPath: "/System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls"),
+            URL(fileURLWithPath: "/System/Library/Frameworks/AudioToolbox.framework/gs_instruments.dls")
+        ].filter { FileManager.default.fileExists(atPath: $0.path) }
+
+        for soundBankURL in bundledBanks + systemBanks {
+            do {
+                try sampler.loadSoundBankInstrument(
+                    at: soundBankURL,
+                    program: 0,
+                    bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+                    bankLSB: UInt8(kAUSampler_DefaultBankLSB)
+                )
+                sampler.globalTuning = 0
+                sampler.masterGain = -2
+                return true
+            } catch {
+                continue
+            }
         }
+
+        return false
     }
 }

@@ -55,24 +55,26 @@ struct PianoPhraseGenerator {
                 notes: &notes
             )
 
-            addMelody(
-                chord: chord,
-                keyRoot: key.root,
-                cursor: cursor,
-                totalSteps: totalSteps,
-                step: step,
-                mood: mood,
-                barIndex: barIndex,
-                hook: hook,
-                energy: energy,
-                density: density,
-                isPeak: isPeak,
-                isResolution: isResolution,
-                notes: &notes
-            )
+            if Double.random(in: 0...1) < 0.34 {
+                addMelody(
+                    chord: chord,
+                    keyRoot: key.root,
+                    cursor: cursor,
+                    totalSteps: totalSteps,
+                    step: step,
+                    mood: mood,
+                    barIndex: barIndex,
+                    hook: hook,
+                    energy: energy * 0.62,
+                    density: density * 0.58,
+                    isPeak: isPeak,
+                    isResolution: isResolution,
+                    notes: &notes
+                )
+            }
         }
 
-        addCryingLeadLine(
+        addSingingLeadLine(
             keyRoot: key.root,
             progression: progression,
             barCount: barCount,
@@ -355,7 +357,7 @@ struct PianoPhraseGenerator {
         }
     }
 
-    private func addCryingLeadLine(
+    private func addSingingLeadLine(
         keyRoot: Int,
         progression: [EmotionalChord],
         barCount: Int,
@@ -366,7 +368,7 @@ struct PianoPhraseGenerator {
         energy: Double,
         notes: inout [PianoNote]
     ) {
-        let shape = cryingShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
+        let shape = singingShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
         let baseOctave: Int
         switch mood {
         case .bright:
@@ -405,6 +407,126 @@ struct PianoPhraseGenerator {
             if isPeak && event.step + 3 < totalSteps {
                 notes.append(PianoNote(pitch: pitch - 12, velocity: velocity(26, 0.52), start: Double(event.step + 3) * step, duration: duration * 0.42))
             }
+        }
+    }
+
+    private func singingShape(for mood: PhraseMood, totalSteps: Int, barSteps: Int) -> [LeadEvent] {
+        let bars = max(1, totalSteps / barSteps)
+        let lastStep = max(0, totalSteps - 3)
+        var events: [LeadEvent] = []
+        let sentenceCount = max(1, Int(ceil(Double(bars) / 2.0)))
+
+        for sentence in 0..<sentenceCount {
+            let base = sentence * barSteps * 2
+            guard base < totalSteps else { continue }
+            let isFinalSentence = sentence == sentenceCount - 1
+            let isPeakSentence = sentence == min(sentenceCount - 1, max(1, sentenceCount / 2))
+
+            let pattern = singingPattern(for: mood, variant: sentence, isPeak: isPeakSentence, isFinal: isFinalSentence)
+            for event in pattern {
+                let step = min(lastStep, base + event.step)
+                guard step < totalSteps else { continue }
+                events.append(LeadEvent(step: step, tone: event.tone, length: event.length, role: event.role, lean: event.lean))
+            }
+        }
+
+        return events.sorted {
+            if $0.step == $1.step {
+                return $0.tone < $1.tone
+            }
+            return $0.step < $1.step
+        }
+    }
+
+    private func singingPattern(for mood: PhraseMood, variant: Int, isPeak: Bool, isFinal: Bool) -> [LeadEvent] {
+        switch mood {
+        case .mellow:
+            if isFinal {
+                return [
+                    LeadEvent(step: 0, tone: 12, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: 6, tone: 15, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: 9, tone: 14, length: 3, role: .release, lean: 0),
+                    LeadEvent(step: 15, tone: 10, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: 24, tone: 7, length: 8, role: .release, lean: 0)
+                ]
+            }
+            if isPeak {
+                return [
+                    LeadEvent(step: 0, tone: 10, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: 6, tone: 14, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 9, tone: 17, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: 17, tone: 15, length: 4, role: .release, lean: 0),
+                    LeadEvent(step: 25, tone: 12, length: 6, role: .release, lean: 0)
+                ]
+            }
+            return variant.isMultiple(of: 2) ? [
+                LeadEvent(step: 0, tone: 7, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 7, tone: 10, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: 10, tone: 12, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 18, tone: 10, length: 3, role: .release, lean: 0),
+                LeadEvent(step: 25, tone: 8, length: 5, role: .release, lean: 0)
+            ] : [
+                LeadEvent(step: 1, tone: 10, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 8, tone: 12, length: 3, role: .lean, lean: -1),
+                LeadEvent(step: 13, tone: 7, length: 5, role: .release, lean: 0),
+                LeadEvent(step: 22, tone: 10, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 27, tone: 7, length: 5, role: .release, lean: 0)
+            ]
+        case .bright:
+            if isFinal {
+                return [
+                    LeadEvent(step: 0, tone: 11, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: 6, tone: 14, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: 12, tone: 12, length: 4, role: .release, lean: 0),
+                    LeadEvent(step: 21, tone: 7, length: 8, role: .release, lean: 0)
+                ]
+            }
+            if isPeak {
+                return [
+                    LeadEvent(step: 0, tone: 9, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: 5, tone: 12, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 8, tone: 16, length: 5, role: .peak, lean: 0),
+                    LeadEvent(step: 16, tone: 14, length: 4, role: .release, lean: 0),
+                    LeadEvent(step: 24, tone: 11, length: 6, role: .release, lean: 0)
+                ]
+            }
+            return variant.isMultiple(of: 2) ? [
+                LeadEvent(step: 0, tone: 7, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 6, tone: 11, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 12, tone: 12, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 21, tone: 9, length: 6, role: .release, lean: 0)
+            ] : [
+                LeadEvent(step: 1, tone: 12, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 8, tone: 16, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 13, tone: 14, length: 3, role: .release, lean: 0),
+                LeadEvent(step: 22, tone: 11, length: 6, role: .release, lean: 0)
+            ]
+        case .midnight:
+            if isFinal {
+                return [
+                    LeadEvent(step: 0, tone: 10, length: 6, role: .plain, lean: 0),
+                    LeadEvent(step: 10, tone: 12, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: 15, tone: 8, length: 6, role: .release, lean: 0),
+                    LeadEvent(step: 25, tone: 3, length: 8, role: .release, lean: 0)
+                ]
+            }
+            if isPeak {
+                return [
+                    LeadEvent(step: 0, tone: 7, length: 6, role: .plain, lean: 0),
+                    LeadEvent(step: 10, tone: 12, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 14, tone: 15, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: 24, tone: 11, length: 7, role: .release, lean: 0)
+                ]
+            }
+            return variant.isMultiple(of: 2) ? [
+                LeadEvent(step: 0, tone: 5, length: 6, role: .plain, lean: 0),
+                LeadEvent(step: 10, tone: 7, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 20, tone: 10, length: 6, role: .plain, lean: 0)
+            ] : [
+                LeadEvent(step: 2, tone: 10, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 11, tone: 8, length: 5, role: .release, lean: 0),
+                LeadEvent(step: 22, tone: 7, length: 7, role: .release, lean: 0)
+            ]
         }
     }
 
