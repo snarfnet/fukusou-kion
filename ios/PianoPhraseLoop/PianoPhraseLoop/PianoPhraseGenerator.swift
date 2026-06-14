@@ -13,12 +13,14 @@ struct PianoPhraseGenerator {
         ("C", 60), ("D", 62), ("E", 64), ("F", 65), ("G", 67), ("A", 69)
     ]
 
-    func makePhrase(seconds: Double, mood: PhraseMood) -> PianoPhrase {
+    func makePhrase(bars: Int, mood: PhraseMood) -> PianoPhrase {
         let bpm = tempo(for: mood)
         let key = keys.randomElement() ?? ("C", 60)
         let step = 60.0 / Double(bpm) / 4.0
-        let totalSteps = max(16, Int((seconds / step).rounded(.down)))
+        let barCount = max(1, min(16, bars))
         let barSteps = 16
+        let totalSteps = barCount * barSteps
+        let seconds = Double(totalSteps) * step
         let progression = emotionalProgression(for: mood)
         var notes: [PianoNote] = []
 
@@ -69,10 +71,10 @@ struct PianoPhraseGenerator {
                     return $0.pitch < $1.pitch
                 }
                 return $0.start < $1.start
-            }
+        }
 
         let title = "\(key.name) \(mood.rawValue) \(bpm)bpm"
-        return PianoPhrase(name: title, bpm: bpm, keyName: key.name, duration: seconds, notes: trimmed)
+        return PianoPhrase(name: title, bpm: bpm, keyName: key.name, bars: barCount, duration: seconds, notes: trimmed)
     }
 
     private func tempo(for mood: PhraseMood) -> Int {

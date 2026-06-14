@@ -66,7 +66,7 @@ struct ContentView: View {
                     .font(.system(size: 34, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer()
-                Text("\(Int(manager.seconds))秒")
+                Text("\(Int(manager.bars))小節")
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .monospacedDigit()
@@ -99,11 +99,11 @@ struct ContentView: View {
                 HStack {
                     Text("長さ")
                     Spacer()
-                    Text("\(Int(manager.seconds))秒")
+                    Text("\(Int(manager.bars))小節")
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                 }
-                Slider(value: $manager.seconds, in: 1...60, step: 1) {
+                Slider(value: $manager.bars, in: 1...16, step: 1) {
                     Text("長さ")
                 }
             }

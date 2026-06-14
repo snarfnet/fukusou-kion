@@ -13,6 +13,7 @@ struct PianoPhrase: Identifiable {
     let name: String
     let bpm: Int
     let keyName: String
+    let bars: Int
     let duration: Double
     let notes: [PianoNote]
 
