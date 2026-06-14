@@ -1,4 +1,5 @@
 import AVFoundation
+import AudioToolbox
 import Foundation
 import QuartzCore
 
@@ -20,10 +21,13 @@ final class PianoSynthesizer {
     }
 
     private let engine = AVAudioEngine()
+    private let sampler = AVAudioUnitSampler()
+    private let reverb = AVAudioUnitReverb()
     private let lock = NSLock()
     private var voices: [Voice] = []
     private let sampleRate = 44_100.0
     private var isConfigured = false
+    private var usesSampler = false
 
     private lazy var sourceNode = AVAudioSourceNode { [weak self] _, _, frameCount, audioBufferList in
         guard let self else { return noErr }
@@ -85,20 +89,43 @@ final class PianoSynthesizer {
 
         if !isConfigured {
             let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 2)!
-            engine.attach(sourceNode)
-            engine.connect(sourceNode, to: engine.mainMixerNode, format: format)
+            engine.attach(reverb)
+            reverb.loadFactoryPreset(.mediumHall)
+            reverb.wetDryMix = 18
+
+            if configureSampler() {
+                engine.attach(sampler)
+                engine.connect(sampler, to: reverb, format: nil)
+                usesSampler = true
+            } else {
+                engine.attach(sourceNode)
+                engine.connect(sourceNode, to: reverb, format: format)
+                usesSampler = false
+            }
+
+            engine.connect(reverb, to: engine.mainMixerNode, format: nil)
             isConfigured = true
         }
         try engine.start()
     }
 
     func noteOn(_ note: Int, velocity: Int) {
+        if usesSampler {
+            sampler.startNote(UInt8(max(0, min(127, note))), withVelocity: UInt8(max(1, min(127, velocity))), onChannel: 0)
+            return
+        }
+
         lock.lock()
         voices.append(Voice(note: note, velocity: velocity, startedAt: CACurrentMediaTime()))
         lock.unlock()
     }
 
     func noteOff(_ note: Int) {
+        if usesSampler {
+            sampler.stopNote(UInt8(max(0, min(127, note))), onChannel: 0)
+            return
+        }
+
         lock.lock()
         for voice in voices where voice.note == note && voice.releasedAt == nil {
             voice.releasedAt = CACurrentMediaTime()
@@ -107,8 +134,32 @@ final class PianoSynthesizer {
     }
 
     func stopAll() {
+        if usesSampler {
+            for note in 0...127 {
+                sampler.stopNote(UInt8(note), onChannel: 0)
+            }
+        }
+
         lock.lock()
         voices.removeAll()
         lock.unlock()
+    }
+
+    private func configureSampler() -> Bool {
+        let soundBankURL = URL(fileURLWithPath: "/System/Library/Components/CoreAudio.component/Contents/Resources/gs_instruments.dls")
+
+        do {
+            try sampler.loadSoundBankInstrument(
+                at: soundBankURL,
+                program: 0,
+                bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+                bankLSB: UInt8(kAUSampler_DefaultBankLSB)
+            )
+            sampler.globalTuning = 0
+            sampler.masterGain = -3
+            return true
+        } catch {
+            return false
+        }
     }
 }
