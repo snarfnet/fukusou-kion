@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var isShowingPicker = false
     @State private var isShowingShare = false
     @State private var isProcessing = false
+    @State private var generationSerial = 0
     @State private var message = "画像を選ぶと、Excelセルで描いたアートに変換します。"
 
     private let generator = ImageArtGenerator()
@@ -35,6 +36,7 @@ struct ContentView: View {
         .sheet(isPresented: $isShowingPicker) {
             PhotoPicker { image in
                 sourceImage = image
+                document = nil
                 exportedWorkbook = nil
                 generatePreview()
             }
@@ -287,7 +289,10 @@ struct ContentView: View {
 
     private func generatePreview() {
         guard let sourceImage else { return }
+        generationSerial += 1
+        let serial = generationSerial
         isProcessing = true
+        document = nil
         exportedWorkbook = nil
         let activeSettings = settings
 
@@ -295,12 +300,14 @@ struct ContentView: View {
             do {
                 let generated = try generator.generate(from: sourceImage, settings: activeSettings)
                 DispatchQueue.main.async {
+                    guard serial == generationSerial else { return }
                     document = generated
                     isProcessing = false
                     message = "\(generated.estimatedCellCount)セルのアートを生成しました。"
                 }
             } catch {
                 DispatchQueue.main.async {
+                    guard serial == generationSerial else { return }
                     isProcessing = false
                     message = error.localizedDescription
                 }
@@ -311,6 +318,7 @@ struct ContentView: View {
     private func exportWorkbook() {
         guard let document else { return }
         isProcessing = true
+        exportedWorkbook = nil
         let activeSettings = settings
 
         DispatchQueue.global(qos: .userInitiated).async {
