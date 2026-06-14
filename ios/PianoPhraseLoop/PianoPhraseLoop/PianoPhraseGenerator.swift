@@ -72,7 +72,17 @@ struct PianoPhraseGenerator {
             )
         }
 
-        let expressiveNotes = applyExpressiveFluctuation(to: notes, step: step, seconds: seconds)
+        addCryingLeadLine(
+            keyRoot: key.root,
+            totalSteps: totalSteps,
+            barSteps: barSteps,
+            step: step,
+            mood: mood,
+            energy: 0.92,
+            notes: &notes
+        )
+
+        let expressiveNotes = applyExpressiveFluctuation(to: notes, step: step, seconds: seconds, leadThreshold: key.root + 24)
         let trimmed = expressiveNotes
             .filter { $0.start < seconds - 0.05 }
             .map {
@@ -273,10 +283,10 @@ struct PianoPhraseGenerator {
 
             if accent && startStep + 1 < totalSteps && Double.random(in: 0...1) < hook.leanChance {
                 let lean = tearfulLean(for: mood, index: index)
-                notes.append(PianoNote(pitch: target + lean, velocity: velocity(54, energy), start: Double(startStep) * step, duration: step * 0.85))
-                notes.append(PianoNote(pitch: target, velocity: velocity(72, energy), start: Double(startStep + 1) * step, duration: max(step * 1.4, duration - step)))
+                notes.append(PianoNote(pitch: target + lean, velocity: velocity(38, energy), start: Double(startStep) * step, duration: step * 0.85))
+                notes.append(PianoNote(pitch: target, velocity: velocity(50, energy), start: Double(startStep + 1) * step, duration: max(step * 1.4, duration - step)))
             } else {
-                notes.append(PianoNote(pitch: target, velocity: velocity(accent ? 78 : 60, energy), start: Double(startStep) * step, duration: duration))
+                notes.append(PianoNote(pitch: target, velocity: velocity(accent ? 54 : 42, energy), start: Double(startStep) * step, duration: duration))
             }
 
             let echoStep = startStep + 4
@@ -335,6 +345,151 @@ struct PianoPhraseGenerator {
         }
     }
 
+    private func addCryingLeadLine(
+        keyRoot: Int,
+        totalSteps: Int,
+        barSteps: Int,
+        step: Double,
+        mood: PhraseMood,
+        energy: Double,
+        notes: inout [PianoNote]
+    ) {
+        let shape = cryingShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
+        let baseOctave = mood == .midnight ? 12 : 24
+
+        for index in shape.indices {
+            let event = shape[index]
+            guard event.step < totalSteps else { continue }
+
+            let pitch = keyRoot + event.tone + baseOctave
+            let start = Double(event.step) * step
+            let duration = Double(event.length) * step
+            let isPeak = event.role == .peak
+            let isRelease = event.role == .release
+            let isFinal = index == shape.indices.last
+
+            if event.role == .lean && event.step + 1 < totalSteps {
+                notes.append(PianoNote(pitch: pitch + event.lean, velocity: velocity(62, energy), start: start, duration: step * 0.9))
+                notes.append(PianoNote(pitch: pitch, velocity: velocity(88, energy), start: Double(event.step + 1) * step, duration: max(step * 1.4, duration - step)))
+            } else {
+                let baseVelocity = isPeak ? 96 : (isRelease || isFinal ? 82 : 74)
+                notes.append(PianoNote(pitch: pitch, velocity: velocity(baseVelocity, energy), start: start, duration: duration))
+            }
+
+            if isPeak && event.step + 3 < totalSteps {
+                notes.append(PianoNote(pitch: pitch - 12, velocity: velocity(26, 0.52), start: Double(event.step + 3) * step, duration: duration * 0.42))
+            }
+        }
+    }
+
+    private enum LeadRole {
+        case plain
+        case lean
+        case peak
+        case release
+    }
+
+    private struct LeadEvent {
+        let step: Int
+        let tone: Int
+        let length: Int
+        let role: LeadRole
+        let lean: Int
+    }
+
+    private func cryingShape(for mood: PhraseMood, totalSteps: Int, barSteps: Int) -> [LeadEvent] {
+        let bars = max(1, totalSteps / barSteps)
+        let phraseEnd = max(0, totalSteps - 3)
+
+        if bars <= 2 {
+            switch mood {
+            case .bright:
+                return [
+                    LeadEvent(step: 0, tone: 9, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 2, tone: 11, length: 2, role: .plain, lean: 0),
+                    LeadEvent(step: 5, tone: 16, length: 5, role: .peak, lean: 0),
+                    LeadEvent(step: 10, tone: 14, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: 13, tone: 11, length: 4, role: .release, lean: 0),
+                    LeadEvent(step: 18, tone: 12, length: 2, role: .plain, lean: 0),
+                    LeadEvent(step: 21, tone: 9, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 5, role: .release, lean: 0)
+                ]
+            case .mellow:
+                return [
+                    LeadEvent(step: 0, tone: 10, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 2, tone: 12, length: 2, role: .plain, lean: 0),
+                    LeadEvent(step: 5, tone: 15, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: 11, tone: 14, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: 14, tone: 12, length: 4, role: .release, lean: 0),
+                    LeadEvent(step: 19, tone: 10, length: 2, role: .plain, lean: 0),
+                    LeadEvent(step: 22, tone: 8, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 5, role: .release, lean: 0)
+                ]
+            case .midnight:
+                return [
+                    LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: 4, tone: 12, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 7, tone: 17, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: 13, tone: 15, length: 3, role: .release, lean: 0),
+                    LeadEvent(step: 18, tone: 14, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: 21, tone: 12, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: min(phraseEnd, 27), tone: 10, length: 5, role: .release, lean: 0)
+                ]
+            }
+        }
+
+        let peakStep = min(totalSteps - 12, barSteps * max(1, bars - 2) + 5)
+        switch mood {
+        case .bright:
+            return [
+                LeadEvent(step: 0, tone: 9, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: 2, tone: 11, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 6, tone: 16, length: 5, role: .peak, lean: 0),
+                LeadEvent(step: 13, tone: 14, length: 3, role: .release, lean: 0),
+                LeadEvent(step: barSteps, tone: 11, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: barSteps + 2, tone: 12, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: barSteps + 6, tone: 17, length: 6, role: .peak, lean: 0),
+                LeadEvent(step: peakStep, tone: 19, length: 7, role: .peak, lean: 0),
+                LeadEvent(step: peakStep + 8, tone: 18, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: peakStep + 11, tone: 16, length: 3, role: .release, lean: 0),
+                LeadEvent(step: phraseEnd - 6, tone: 12, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: phraseEnd - 3, tone: 11, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: phraseEnd, tone: 7, length: 6, role: .release, lean: 0)
+            ]
+        case .mellow:
+            return [
+                LeadEvent(step: 0, tone: 10, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: 2, tone: 12, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 6, tone: 15, length: 6, role: .peak, lean: 0),
+                LeadEvent(step: 13, tone: 14, length: 3, role: .release, lean: 0),
+                LeadEvent(step: barSteps, tone: 10, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: barSteps + 2, tone: 12, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: barSteps + 6, tone: 17, length: 6, role: .peak, lean: 0),
+                LeadEvent(step: peakStep, tone: 19, length: 7, role: .peak, lean: 0),
+                LeadEvent(step: peakStep + 8, tone: 18, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: peakStep + 11, tone: 15, length: 3, role: .release, lean: 0),
+                LeadEvent(step: phraseEnd - 8, tone: 14, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: phraseEnd - 5, tone: 12, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: phraseEnd - 2, tone: 10, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: phraseEnd, tone: 7, length: 7, role: .release, lean: 0)
+            ]
+        case .midnight:
+            return [
+                LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 4, tone: 12, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: 7, tone: 17, length: 7, role: .peak, lean: 0),
+                LeadEvent(step: barSteps + 1, tone: 15, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: barSteps + 4, tone: 14, length: 4, role: .release, lean: 0),
+                LeadEvent(step: peakStep, tone: 19, length: 6, role: .peak, lean: 0),
+                LeadEvent(step: peakStep + 7, tone: 17, length: 3, role: .release, lean: 0),
+                LeadEvent(step: peakStep + 12, tone: 15, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: phraseEnd - 6, tone: 14, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: phraseEnd - 3, tone: 12, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: phraseEnd, tone: 10, length: 7, role: .release, lean: 0)
+            ]
+        }
+    }
+
     private func hookTone(
         hook: HookMotif,
         barIndex: Int,
@@ -368,7 +523,7 @@ struct PianoPhraseGenerator {
         return [1, -1, 2, 1, -2][index % 5]
     }
 
-    private func applyExpressiveFluctuation(to notes: [PianoNote], step: Double, seconds: Double) -> [PianoNote] {
+    private func applyExpressiveFluctuation(to notes: [PianoNote], step: Double, seconds: Double, leadThreshold: Int) -> [PianoNote] {
         let ordered = notes.sorted {
             if $0.start == $1.start {
                 return $0.pitch < $1.pitch
@@ -379,12 +534,13 @@ struct PianoPhraseGenerator {
         var velocityDrift = 0.0
 
         return ordered.enumerated().map { index, note in
-            timingDrift = timingDrift * 0.86 + Double.random(in: -0.018...0.018)
+            let isLead = note.pitch >= leadThreshold
+            timingDrift = timingDrift * 0.86 + Double.random(in: isLead ? -0.026...0.026 : -0.014...0.014)
             velocityDrift = velocityDrift * 0.82 + Double.random(in: -2.8...2.8)
 
-            let longWave = sin(Double(index) * 0.47) * 0.055
+            let longWave = sin(Double(index) * 0.47) * (isLead ? 0.085 : 0.045)
             let start = max(0, min(seconds - 0.05, note.start + timingDrift))
-            let durationScale = max(0.76, min(1.22, 0.98 + longWave + Double.random(in: -0.035...0.045)))
+            let durationScale = max(0.72, min(1.34, 0.98 + longWave + Double.random(in: -0.035...0.055)))
             let velocity = max(1, min(127, note.velocity + Int(velocityDrift.rounded())))
 
             return PianoNote(
