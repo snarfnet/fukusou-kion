@@ -177,20 +177,24 @@ struct ContentView: View {
             GeometryReader { proxy in
                 let width = proxy.size.width
                 let height = proxy.size.height
+                let phraseDuration = max(0.1, manager.phrase.duration)
                 ZStack(alignment: .bottomLeading) {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(Color.white.opacity(0.08))
 
-                    ForEach(manager.phrase.notes.prefix(48)) { note in
-                        let x = max(0, min(width - 6, CGFloat(note.start / manager.phrase.duration) * width))
+                    ForEach(previewNotes(for: manager.phrase)) { note in
+                        let x = max(0, min(width - 4, CGFloat(note.start / phraseDuration) * width))
+                        let noteEnd = min(phraseDuration, note.start + note.duration)
+                        let rawNoteWidth = CGFloat(max(0.04, noteEnd - note.start) / phraseDuration) * width
+                        let noteWidth = max(4, min(rawNoteWidth, width - x))
+                        let centerX = min(width - noteWidth / 2, x + noteWidth / 2)
                         let normalizedPitch = CGFloat(note.pitch - 36) / 48.0
                         let y = max(6, min(height - 10, height - normalizedPitch * height))
-                        let noteWidth = max(6, CGFloat(note.duration / manager.phrase.duration) * width)
 
                         Capsule()
                             .fill(note.pitch > 72 ? Color.orange : Color.cyan)
                             .frame(width: noteWidth, height: 6)
-                            .position(x: x + noteWidth / 2, y: y)
+                            .position(x: centerX, y: y)
                             .opacity(0.88)
                     }
 
@@ -206,6 +210,28 @@ struct ContentView: View {
             }
             .frame(height: 190)
         }
+    }
+
+    private func previewNotes(for phrase: PianoPhrase) -> [PianoNote] {
+        let sortedNotes = phrase.notes.sorted {
+            if $0.start == $1.start {
+                return $0.pitch < $1.pitch
+            }
+            return $0.start < $1.start
+        }
+        let maxPreviewNotes = 96
+        guard sortedNotes.count > maxPreviewNotes else {
+            return sortedNotes
+        }
+
+        let step = max(1, Int(ceil(Double(sortedNotes.count) / Double(maxPreviewNotes))))
+        var sampled = sortedNotes.enumerated().compactMap { index, note in
+            index % step == 0 ? note : nil
+        }
+        if let last = sortedNotes.last, sampled.last?.id != last.id {
+            sampled.append(last)
+        }
+        return sampled
     }
 }
 

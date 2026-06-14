@@ -32,7 +32,7 @@ struct PianoPhraseGenerator {
         let totalSteps = barCount * barSteps
         let seconds = Double(totalSteps) * step
         let progression = emotionalProgression(for: mood)
-        let density = Double.random(in: 0.32...0.54)
+        let density = Double.random(in: 0.24...0.42)
         let hook = hookMotif(for: mood)
         var notes: [PianoNote] = []
 
@@ -74,6 +74,8 @@ struct PianoPhraseGenerator {
 
         addCryingLeadLine(
             keyRoot: key.root,
+            progression: progression,
+            barCount: barCount,
             totalSteps: totalSteps,
             barSteps: barSteps,
             step: step,
@@ -279,7 +281,7 @@ struct PianoPhraseGenerator {
             let startStep = cursor + motifOffsets[index]
             guard startStep < totalSteps else { continue }
 
-            let keepChance = hook.offsets.count == 3 || hook.offsets.count >= 6 ? 1.0 : min(0.92, density + 0.38)
+            let keepChance = hook.offsets.count == 3 ? 0.86 : min(0.74, density + 0.24)
             if index > 2 && Double.random(in: 0...1) > keepChance {
                 continue
             }
@@ -291,10 +293,10 @@ struct PianoPhraseGenerator {
 
             if accent && startStep + 1 < totalSteps && Double.random(in: 0...1) < hook.leanChance {
                 let lean = tearfulLean(for: mood, index: index)
-                notes.append(PianoNote(pitch: target + lean, velocity: velocity(38, energy), start: Double(startStep) * step, duration: step * 0.85))
-                notes.append(PianoNote(pitch: target, velocity: velocity(50, energy), start: Double(startStep + 1) * step, duration: max(step * 1.4, duration - step)))
+                notes.append(PianoNote(pitch: target + lean, velocity: velocity(32, energy), start: Double(startStep) * step, duration: step * 0.85))
+                notes.append(PianoNote(pitch: target, velocity: velocity(42, energy), start: Double(startStep + 1) * step, duration: max(step * 1.4, duration - step)))
             } else {
-                notes.append(PianoNote(pitch: target, velocity: velocity(accent ? 54 : 42, energy), start: Double(startStep) * step, duration: duration))
+                notes.append(PianoNote(pitch: target, velocity: velocity(accent ? 44 : 34, energy), start: Double(startStep) * step, duration: duration))
             }
 
             let echoStep = startStep + 4
@@ -355,6 +357,8 @@ struct PianoPhraseGenerator {
 
     private func addCryingLeadLine(
         keyRoot: Int,
+        progression: [EmotionalChord],
+        barCount: Int,
         totalSteps: Int,
         barSteps: Int,
         step: Double,
@@ -377,7 +381,9 @@ struct PianoPhraseGenerator {
             let event = shape[index]
             guard event.step < totalSteps else { continue }
 
-            let pitch = keyRoot + event.tone + baseOctave
+            let chord = chordForLeadEvent(event, progression: progression, barCount: barCount, barSteps: barSteps, mood: mood)
+            let tone = chordAwareLeadTone(for: event, chord: chord, mood: mood)
+            let pitch = keyRoot + tone + baseOctave
             let start = Double(event.step) * step
             let duration = Double(event.length) * step
             let isPeak = event.role == .peak
@@ -602,6 +608,45 @@ struct PianoPhraseGenerator {
             return [1, 2, -1, 1, -2][index % 5]
         }
         return [1, -1, 2, 1, -2][index % 5]
+    }
+
+    private func chordForLeadEvent(
+        _ event: LeadEvent,
+        progression: [EmotionalChord],
+        barCount: Int,
+        barSteps: Int,
+        mood: PhraseMood
+    ) -> EmotionalChord {
+        let barIndex = max(0, min(barCount - 1, event.step / barSteps))
+        if barIndex >= barCount - 1 {
+            return resolutionChord(for: mood)
+        }
+        return progression[barIndex % progression.count]
+    }
+
+    private func chordAwareLeadTone(for event: LeadEvent, chord: EmotionalChord, mood: PhraseMood) -> Int {
+        let chordTones = chord.tones.map { chord.root + $0 }
+        let colorTones = chord.colorTones.map { chord.root + $0 }
+        let roleTones: [Int]
+
+        switch event.role {
+        case .release:
+            roleTones = chordTones
+        case .peak:
+            roleTones = chordTones + colorTones + mood.scale.map { $0 + 12 }
+        case .lean, .plain:
+            roleTones = chordTones + colorTones
+        }
+
+        let candidates = roleTones.flatMap { tone in
+            [tone - 12, tone, tone + 12, tone + 24]
+        }.filter { tone in
+            tone >= 0 && tone <= 24
+        }
+
+        return candidates.min { first, second in
+            abs(first - event.tone) < abs(second - event.tone)
+        } ?? event.tone
     }
 
     private func applyExpressiveFluctuation(to notes: [PianoNote], step: Double, seconds: Double, leadThreshold: Int) -> [PianoNote] {
