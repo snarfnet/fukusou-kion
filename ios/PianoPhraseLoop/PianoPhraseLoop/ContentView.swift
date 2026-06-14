@@ -8,12 +8,22 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [Color(red: 0.08, green: 0.09, blue: 0.12), Color(red: 0.18, green: 0.13, blue: 0.20)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+                Image("PianoForestBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .overlay(
+                        LinearGradient(
+                            colors: [
+                                Color.black.opacity(0.56),
+                                Color.black.opacity(0.38),
+                                Color.black.opacity(0.68)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                    )
 
                 ScrollView {
                     VStack(spacing: 18) {
