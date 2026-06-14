@@ -265,7 +265,15 @@ struct PianoPhraseGenerator {
         let root = keyRoot + chord.root
         let motifOffsets = hook.offsets
         let motifLengths = hook.lengths
-        let baseOctave = 12
+        let baseOctave: Int
+        switch mood {
+        case .bright:
+            baseOctave = isPeak ? 12 : 7
+        case .mellow:
+            baseOctave = 12
+        case .midnight:
+            baseOctave = isPeak ? 7 : 0
+        }
 
         for index in motifOffsets.indices {
             let startStep = cursor + motifOffsets[index]
@@ -355,7 +363,15 @@ struct PianoPhraseGenerator {
         notes: inout [PianoNote]
     ) {
         let shape = cryingShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
-        let baseOctave = 12
+        let baseOctave: Int
+        switch mood {
+        case .bright:
+            baseOctave = 12
+        case .mellow:
+            baseOctave = Bool.random() ? 12 : 7
+        case .midnight:
+            baseOctave = 0
+        }
 
         for index in shape.indices {
             let event = shape[index]
@@ -408,89 +424,150 @@ struct PianoPhraseGenerator {
         if bars <= 2 {
             switch mood {
             case .bright:
-                return [
-                    LeadEvent(step: 0, tone: 9, length: 2, role: .lean, lean: 1),
-                    LeadEvent(step: 2, tone: 11, length: 2, role: .plain, lean: 0),
-                    LeadEvent(step: 5, tone: 16, length: 5, role: .peak, lean: 0),
-                    LeadEvent(step: 10, tone: 14, length: 2, role: .lean, lean: -1),
-                    LeadEvent(step: 13, tone: 11, length: 4, role: .release, lean: 0),
-                    LeadEvent(step: 18, tone: 12, length: 2, role: .plain, lean: 0),
-                    LeadEvent(step: 21, tone: 9, length: 3, role: .plain, lean: 0),
-                    LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 5, role: .release, lean: 0)
+                let variants: [[LeadEvent]] = [
+                    [
+                        LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
+                        LeadEvent(step: 4, tone: 11, length: 2, role: .lean, lean: 1),
+                        LeadEvent(step: 7, tone: 16, length: 5, role: .peak, lean: 0),
+                        LeadEvent(step: 13, tone: 14, length: 3, role: .release, lean: 0),
+                        LeadEvent(step: 18, tone: 12, length: 2, role: .lean, lean: -1),
+                        LeadEvent(step: min(phraseEnd, 25), tone: 9, length: 6, role: .release, lean: 0)
+                    ],
+                    [
+                        LeadEvent(step: 1, tone: 11, length: 3, role: .plain, lean: 0),
+                        LeadEvent(step: 5, tone: 14, length: 2, role: .lean, lean: 1),
+                        LeadEvent(step: 8, tone: 17, length: 4, role: .peak, lean: 0),
+                        LeadEvent(step: 14, tone: 16, length: 2, role: .lean, lean: -1),
+                        LeadEvent(step: 17, tone: 12, length: 5, role: .release, lean: 0),
+                        LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 5, role: .release, lean: 0)
+                    ]
                 ]
+                return variants.randomElement() ?? variants[0]
             case .mellow:
-                return [
-                    LeadEvent(step: 0, tone: 10, length: 2, role: .lean, lean: 1),
-                    LeadEvent(step: 2, tone: 12, length: 2, role: .plain, lean: 0),
-                    LeadEvent(step: 5, tone: 15, length: 6, role: .peak, lean: 0),
-                    LeadEvent(step: 11, tone: 14, length: 2, role: .lean, lean: -1),
-                    LeadEvent(step: 14, tone: 12, length: 4, role: .release, lean: 0),
-                    LeadEvent(step: 19, tone: 10, length: 2, role: .plain, lean: 0),
-                    LeadEvent(step: 22, tone: 8, length: 3, role: .plain, lean: 0),
-                    LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 5, role: .release, lean: 0)
+                let variants: [[LeadEvent]] = [
+                    [
+                        LeadEvent(step: 0, tone: 10, length: 2, role: .lean, lean: 1),
+                        LeadEvent(step: 3, tone: 12, length: 3, role: .plain, lean: 0),
+                        LeadEvent(step: 7, tone: 15, length: 6, role: .peak, lean: 0),
+                        LeadEvent(step: 14, tone: 14, length: 2, role: .lean, lean: -1),
+                        LeadEvent(step: 17, tone: 10, length: 5, role: .release, lean: 0),
+                        LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 6, role: .release, lean: 0)
+                    ],
+                    [
+                        LeadEvent(step: 1, tone: 7, length: 4, role: .plain, lean: 0),
+                        LeadEvent(step: 6, tone: 12, length: 2, role: .lean, lean: 1),
+                        LeadEvent(step: 9, tone: 14, length: 5, role: .peak, lean: 0),
+                        LeadEvent(step: 15, tone: 12, length: 4, role: .release, lean: 0),
+                        LeadEvent(step: 21, tone: 8, length: 2, role: .lean, lean: -1),
+                        LeadEvent(step: min(phraseEnd, 27), tone: 5, length: 6, role: .release, lean: 0)
+                    ]
                 ]
+                return variants.randomElement() ?? variants[0]
             case .midnight:
-                return [
-                    LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
-                    LeadEvent(step: 4, tone: 12, length: 2, role: .lean, lean: 1),
-                    LeadEvent(step: 7, tone: 17, length: 6, role: .peak, lean: 0),
-                    LeadEvent(step: 13, tone: 15, length: 3, role: .release, lean: 0),
-                    LeadEvent(step: 18, tone: 14, length: 2, role: .lean, lean: -1),
-                    LeadEvent(step: 21, tone: 12, length: 3, role: .plain, lean: 0),
-                    LeadEvent(step: min(phraseEnd, 27), tone: 10, length: 5, role: .release, lean: 0)
+                let variants: [[LeadEvent]] = [
+                    [
+                        LeadEvent(step: 0, tone: 5, length: 5, role: .plain, lean: 0),
+                        LeadEvent(step: 7, tone: 10, length: 2, role: .lean, lean: 1),
+                        LeadEvent(step: 10, tone: 14, length: 6, role: .peak, lean: 0),
+                        LeadEvent(step: 18, tone: 12, length: 5, role: .release, lean: 0),
+                        LeadEvent(step: min(phraseEnd, 27), tone: 7, length: 7, role: .release, lean: 0)
+                    ],
+                    [
+                        LeadEvent(step: 2, tone: 7, length: 4, role: .plain, lean: 0),
+                        LeadEvent(step: 9, tone: 12, length: 6, role: .peak, lean: 0),
+                        LeadEvent(step: 16, tone: 11, length: 2, role: .lean, lean: -1),
+                        LeadEvent(step: 20, tone: 8, length: 5, role: .release, lean: 0),
+                        LeadEvent(step: min(phraseEnd, 28), tone: 3, length: 7, role: .release, lean: 0)
+                    ]
                 ]
+                return variants.randomElement() ?? variants[0]
             }
         }
 
         let peakStep = min(totalSteps - 12, barSteps * max(1, bars - 2) + 5)
         switch mood {
         case .bright:
-            return [
-                LeadEvent(step: 0, tone: 9, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: 2, tone: 11, length: 3, role: .plain, lean: 0),
-                LeadEvent(step: 6, tone: 16, length: 5, role: .peak, lean: 0),
-                LeadEvent(step: 13, tone: 14, length: 3, role: .release, lean: 0),
-                LeadEvent(step: barSteps, tone: 11, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: barSteps + 2, tone: 12, length: 3, role: .plain, lean: 0),
-                LeadEvent(step: barSteps + 6, tone: 17, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: peakStep, tone: 17, length: 7, role: .peak, lean: 0),
-                LeadEvent(step: peakStep + 8, tone: 16, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: peakStep + 11, tone: 14, length: 4, role: .release, lean: 0),
-                LeadEvent(step: phraseEnd - 6, tone: 12, length: 2, role: .plain, lean: 0),
-                LeadEvent(step: phraseEnd - 3, tone: 11, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: phraseEnd, tone: 7, length: 6, role: .release, lean: 0)
+            let variants: [[LeadEvent]] = [
+                [
+                    LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: 4, tone: 11, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 7, tone: 16, length: 5, role: .peak, lean: 0),
+                    LeadEvent(step: 14, tone: 14, length: 4, role: .release, lean: 0),
+                    LeadEvent(step: barSteps + 3, tone: 12, length: 3, role: .plain, lean: 0),
+                    LeadEvent(step: peakStep, tone: 17, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 8, tone: 16, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: peakStep + 12, tone: 12, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd, tone: 9, length: 6, role: .release, lean: 0)
+                ],
+                [
+                    LeadEvent(step: 2, tone: 11, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: 8, tone: 14, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 11, tone: 17, length: 4, role: .peak, lean: 0),
+                    LeadEvent(step: barSteps + 2, tone: 16, length: 3, role: .release, lean: 0),
+                    LeadEvent(step: barSteps + 8, tone: 12, length: 5, role: .plain, lean: 0),
+                    LeadEvent(step: peakStep + 2, tone: 14, length: 5, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 9, tone: 11, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd, tone: 7, length: 6, role: .release, lean: 0)
+                ]
             ]
+            return variants.randomElement() ?? variants[0]
         case .mellow:
-            return [
-                LeadEvent(step: 0, tone: 10, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: 2, tone: 12, length: 3, role: .plain, lean: 0),
-                LeadEvent(step: 6, tone: 15, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: 13, tone: 14, length: 3, role: .release, lean: 0),
-                LeadEvent(step: barSteps, tone: 10, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: barSteps + 2, tone: 12, length: 3, role: .plain, lean: 0),
-                LeadEvent(step: barSteps + 6, tone: 17, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: peakStep, tone: 17, length: 7, role: .peak, lean: 0),
-                LeadEvent(step: peakStep + 8, tone: 16, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: peakStep + 11, tone: 15, length: 4, role: .release, lean: 0),
-                LeadEvent(step: phraseEnd - 8, tone: 14, length: 2, role: .plain, lean: 0),
-                LeadEvent(step: phraseEnd - 5, tone: 12, length: 2, role: .plain, lean: 0),
-                LeadEvent(step: phraseEnd - 2, tone: 10, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: phraseEnd, tone: 7, length: 7, role: .release, lean: 0)
+            let variants: [[LeadEvent]] = [
+                [
+                    LeadEvent(step: 0, tone: 10, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 3, tone: 12, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: 9, tone: 15, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: barSteps + 1, tone: 14, length: 3, role: .release, lean: 0),
+                    LeadEvent(step: barSteps + 7, tone: 10, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: peakStep, tone: 17, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 8, tone: 15, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd - 5, tone: 10, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: phraseEnd, tone: 7, length: 7, role: .release, lean: 0)
+                ],
+                [
+                    LeadEvent(step: 1, tone: 7, length: 5, role: .plain, lean: 0),
+                    LeadEvent(step: 8, tone: 12, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 11, tone: 14, length: 5, role: .peak, lean: 0),
+                    LeadEvent(step: barSteps + 5, tone: 12, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: peakStep - 2, tone: 15, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 6, tone: 14, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: peakStep + 10, tone: 10, length: 6, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd, tone: 5, length: 8, role: .release, lean: 0)
+                ],
+                [
+                    LeadEvent(step: 0, tone: 12, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: 6, tone: 15, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: 10, tone: 10, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: barSteps + 4, tone: 8, length: 4, role: .plain, lean: 0),
+                    LeadEvent(step: peakStep, tone: 15, length: 7, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 9, tone: 12, length: 5, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd - 3, tone: 10, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: phraseEnd, tone: 7, length: 7, role: .release, lean: 0)
+                ]
             ]
+            return variants.randomElement() ?? variants[0]
         case .midnight:
-            return [
-                LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
-                LeadEvent(step: 4, tone: 12, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: 7, tone: 17, length: 7, role: .peak, lean: 0),
-                LeadEvent(step: barSteps + 1, tone: 15, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: barSteps + 4, tone: 14, length: 4, role: .release, lean: 0),
-                LeadEvent(step: peakStep, tone: 17, length: 6, role: .peak, lean: 0),
-                LeadEvent(step: peakStep + 7, tone: 15, length: 4, role: .release, lean: 0),
-                LeadEvent(step: peakStep + 12, tone: 15, length: 2, role: .lean, lean: -1),
-                LeadEvent(step: phraseEnd - 6, tone: 14, length: 2, role: .plain, lean: 0),
-                LeadEvent(step: phraseEnd - 3, tone: 12, length: 2, role: .plain, lean: 0),
-                LeadEvent(step: phraseEnd, tone: 10, length: 7, role: .release, lean: 0)
+            let variants: [[LeadEvent]] = [
+                [
+                    LeadEvent(step: 0, tone: 5, length: 6, role: .plain, lean: 0),
+                    LeadEvent(step: 9, tone: 10, length: 2, role: .lean, lean: 1),
+                    LeadEvent(step: 12, tone: 14, length: 7, role: .peak, lean: 0),
+                    LeadEvent(step: barSteps + 8, tone: 12, length: 6, role: .release, lean: 0),
+                    LeadEvent(step: peakStep + 1, tone: 15, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 9, tone: 11, length: 6, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd, tone: 7, length: 8, role: .release, lean: 0)
+                ],
+                [
+                    LeadEvent(step: 2, tone: 7, length: 5, role: .plain, lean: 0),
+                    LeadEvent(step: barSteps - 2, tone: 12, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: barSteps + 7, tone: 11, length: 2, role: .lean, lean: -1),
+                    LeadEvent(step: barSteps + 11, tone: 8, length: 6, role: .release, lean: 0),
+                    LeadEvent(step: peakStep + 3, tone: 14, length: 6, role: .peak, lean: 0),
+                    LeadEvent(step: peakStep + 11, tone: 10, length: 7, role: .release, lean: 0),
+                    LeadEvent(step: phraseEnd, tone: 3, length: 8, role: .release, lean: 0)
+                ]
             ]
+            return variants.randomElement() ?? variants[0]
         }
     }
 
