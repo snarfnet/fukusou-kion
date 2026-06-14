@@ -76,9 +76,9 @@ final class XLSXWorkbookWriter {
         let columnWidth = mode == .overview ? 1.55 : max(0.8, min(3.2, settings.cellSize / 8.5))
         let rowHeight = mode == .overview ? 11.0 : max(5.0, min(22.0, settings.cellSize * 0.72))
         let zoom = mode == .overview ? 100 : initialZoomScale(for: document.width)
-        let columns = (1...document.width)
-            .map { "<col min=\"\($0)\" max=\"\($0)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>" }
-            .joined()
+        let columns = "<col min=\"1\" max=\"\(document.width)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>"
+        let dimension = "A1:\(columnName(document.width))\(document.height)"
+        let tabSelected = mode == .overview ? " tabSelected=\"1\"" : ""
 
         let grouped = Dictionary(grouping: document.cells, by: \.row)
         let rows = (1...document.height).map { rowIndex in
@@ -94,7 +94,9 @@ final class XLSXWorkbookWriter {
         return """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-          <sheetViews><sheetView showGridLines="\(grid)" zoomScale="\(zoom)" zoomScaleNormal="\(zoom)" workbookViewId="0"/></sheetViews>
+          <dimension ref="\(dimension)"/>
+          <sheetViews><sheetView showGridLines="\(grid)" zoomScale="\(zoom)" zoomScaleNormal="\(zoom)" workbookViewId="0"\(tabSelected)/></sheetViews>
+          <sheetFormatPr defaultColWidth="\(format(columnWidth))" defaultRowHeight="\(format(rowHeight))"/>
           <cols>\(columns)</cols>
           <sheetData>\(rows)</sheetData>
         </worksheet>
@@ -186,6 +188,7 @@ final class XLSXWorkbookWriter {
         """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+          <bookViews><workbookView activeTab="0" firstSheet="0"/></bookViews>
           <sheets><sheet name="全体表示" sheetId="1" r:id="rId1"/><sheet name="高精細" sheetId="2" r:id="rId2"/></sheets>
         </workbook>
         """
