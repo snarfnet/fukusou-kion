@@ -30,7 +30,7 @@ final class XLSXWorkbookWriter {
         try add("xl/workbook.xml", to: archive, content: workbookXML)
         try add("xl/_rels/workbook.xml.rels", to: archive, content: workbookRelationshipsXML)
         try add("xl/styles.xml", to: archive, content: stylesXML(for: document.palette))
-        let overview = overviewDocument(from: document, maxWidth: 44)
+        let overview = overviewDocument(from: document, maxWidth: 24)
         try add("xl/worksheets/sheet1.xml", to: archive, content: sheetXML(for: overview, settings: settings, mode: .overview))
         try add("xl/worksheets/sheet2.xml", to: archive, content: sheetXML(for: document, settings: settings, mode: .detail))
         try add("docProps/core.xml", to: archive, content: coreXML)
@@ -73,8 +73,8 @@ final class XLSXWorkbookWriter {
     }
 
     private func sheetXML(for document: CellArtDocument, settings: CellArtSettings, mode: SheetMode) -> String {
-        let columnWidth = mode == .overview ? 1.55 : max(0.8, min(3.2, settings.cellSize / 8.5))
-        let rowHeight = mode == .overview ? 11.0 : max(5.0, min(22.0, settings.cellSize * 0.72))
+        let columnWidth = mode == .overview ? 1.4 : max(0.8, min(3.2, settings.cellSize / 8.5))
+        let rowHeight = mode == .overview ? 10.0 : max(5.0, min(22.0, settings.cellSize * 0.72))
         let zoom = mode == .overview ? 100 : initialZoomScale(for: document.width)
         let columns = "<col min=\"1\" max=\"\(document.width)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>"
         let dimension = "A1:\(columnName(document.width))\(document.height)"
