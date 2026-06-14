@@ -170,6 +170,15 @@ struct ContentView: View {
                             .position(x: x + noteWidth / 2, y: y)
                             .opacity(0.88)
                     }
+
+                    if manager.isPlaying {
+                        let playheadX = max(4, min(width - 4, CGFloat(manager.playbackProgress) * width))
+                        Rectangle()
+                            .fill(Color.white.opacity(0.9))
+                            .frame(width: 3, height: height - 16)
+                            .position(x: playheadX, y: height / 2)
+                            .shadow(color: .orange.opacity(0.55), radius: 8)
+                    }
                 }
             }
             .frame(height: 190)

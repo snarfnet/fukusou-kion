@@ -8,6 +8,7 @@ final class PhrasePianoManager: ObservableObject {
     @Published var phrase: PianoPhrase
     @Published var isPlaying = false
     @Published var isLooping = false
+    @Published var playbackProgress: Double = 0
     @Published var savedMIDIURL: URL?
     @Published var lastError: String?
 
@@ -48,6 +49,7 @@ final class PhrasePianoManager: ObservableObject {
         playToken = UUID()
         isPlaying = false
         isLooping = false
+        playbackProgress = 0
         synth.stopAll()
     }
 
@@ -64,6 +66,7 @@ final class PhrasePianoManager: ObservableObject {
         let token = UUID()
         playToken = token
         isPlaying = true
+        playbackProgress = 0
         synth.stopAll()
 
         do {
@@ -73,6 +76,8 @@ final class PhrasePianoManager: ObservableObject {
             isPlaying = false
             return
         }
+
+        updateProgress(token: token, startedAt: Date())
 
         for note in phrase.notes {
             DispatchQueue.main.asyncAfter(deadline: .now() + note.start) { [weak self] in
@@ -94,9 +99,23 @@ final class PhrasePianoManager: ObservableObject {
                 guard let self, self.playToken == token else { return }
                 self.synth.stopAll()
                 self.isPlaying = false
+                self.playbackProgress = 1
 
                 if shouldLoop, self.isLooping {
                     self.playCurrent(shouldLoop: true)
+                }
+            }
+        }
+    }
+
+    private func updateProgress(token: UUID, startedAt: Date) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            Task { @MainActor in
+                guard let self, self.playToken == token, self.isPlaying else { return }
+                let elapsed = Date().timeIntervalSince(startedAt)
+                self.playbackProgress = min(1, max(0, elapsed / self.phrase.duration))
+                if self.playbackProgress < 1 {
+                    self.updateProgress(token: token, startedAt: startedAt)
                 }
             }
         }
