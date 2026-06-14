@@ -31,8 +31,8 @@ final class XLSXWorkbookWriter {
         try add("xl/_rels/workbook.xml.rels", to: archive, content: workbookRelationshipsXML)
         try add("xl/styles.xml", to: archive, content: stylesXML(for: document.palette))
         let overview = overviewDocument(from: document, maxWidth: 24)
-        try add("xl/worksheets/sheet1.xml", to: archive, content: sheetXML(for: overview, settings: settings, mode: .overview))
-        try add("xl/worksheets/sheet2.xml", to: archive, content: sheetXML(for: document, settings: settings, mode: .detail))
+        try add("xl/worksheets/sheet1.xml", to: archive, content: sheetXML(for: document, settings: settings, mode: .detail))
+        try add("xl/worksheets/sheet2.xml", to: archive, content: sheetXML(for: overview, settings: settings, mode: .overview))
         try add("docProps/core.xml", to: archive, content: coreXML)
         try add("docProps/app.xml", to: archive, content: appXML)
 
@@ -78,7 +78,7 @@ final class XLSXWorkbookWriter {
         let zoom = mode == .overview ? 100 : initialZoomScale(for: document.width)
         let columns = "<col min=\"1\" max=\"\(document.width)\" width=\"\(format(columnWidth))\" customWidth=\"1\"/>"
         let dimension = "A1:\(columnName(document.width))\(document.height)"
-        let tabSelected = mode == .overview ? " tabSelected=\"1\"" : ""
+        let tabSelected = mode == .detail ? " tabSelected=\"1\"" : ""
 
         let grouped = Dictionary(grouping: document.cells, by: \.row)
         let rows = (1...document.height).map { rowIndex in
@@ -189,7 +189,7 @@ final class XLSXWorkbookWriter {
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
           <bookViews><workbookView activeTab="0" firstSheet="0"/></bookViews>
-          <sheets><sheet name="全体表示" sheetId="1" r:id="rId1"/><sheet name="高精細" sheetId="2" r:id="rId2"/></sheets>
+          <sheets><sheet name="高精細" sheetId="1" r:id="rId1"/><sheet name="全体表示" sheetId="2" r:id="rId2"/></sheets>
         </workbook>
         """
     }
