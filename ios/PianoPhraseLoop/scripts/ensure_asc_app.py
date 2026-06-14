@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.pianophraseloop")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "PianoPhraseLoop")
-APP_NAME = os.environ.get("APP_NAME", "泣きピアノフレーズ")
+APP_NAME = os.environ.get("APP_NAME", "ピアノフレーズ")
 APP_SKU = os.environ.get("APP_SKU", "piano-phrase-loop-ios")
 
 

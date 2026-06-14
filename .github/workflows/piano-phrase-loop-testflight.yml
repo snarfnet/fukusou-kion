@@ -34,7 +34,7 @@ jobs:
         working-directory: ios/PianoPhraseLoop
     env:
       APP_BUNDLE_ID: com.tokyonasu.pianophraseloop
-      APP_NAME: "泣きピアノフレーズ"
+      APP_NAME: "ピアノフレーズ"
       APP_SKU: piano-phrase-loop-ios
       APP_ID: ${{ inputs.app_id || secrets.PIANO_PHRASE_LOOP_APP_ID || '' }}
       BUNDLE_NAME: PianoPhraseLoop
