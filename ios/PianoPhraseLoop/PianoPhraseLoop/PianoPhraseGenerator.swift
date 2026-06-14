@@ -55,7 +55,7 @@ struct PianoPhraseGenerator {
                 notes: &notes
             )
 
-            if Double.random(in: 0...1) < 0.34 {
+            if Double.random(in: 0...1) < 0.14 {
                 addMelody(
                     chord: chord,
                     keyRoot: key.root,
@@ -415,14 +415,14 @@ struct PianoPhraseGenerator {
         let lastStep = max(0, totalSteps - 3)
         var events: [LeadEvent] = []
         let sentenceCount = max(1, Int(ceil(Double(bars) / 2.0)))
+        let motif = coreSingingMotif(for: mood)
 
         for sentence in 0..<sentenceCount {
             let base = sentence * barSteps * 2
             guard base < totalSteps else { continue }
             let isFinalSentence = sentence == sentenceCount - 1
             let isPeakSentence = sentence == min(sentenceCount - 1, max(1, sentenceCount / 2))
-
-            let pattern = singingPattern(for: mood, variant: sentence, isPeak: isPeakSentence, isFinal: isFinalSentence)
+            let pattern = repeatedMotif(motif, mood: mood, repeatIndex: sentence, isPeak: isPeakSentence, isFinal: isFinalSentence)
             for event in pattern {
                 let step = min(lastStep, base + event.step)
                 guard step < totalSteps else { continue }
@@ -435,6 +435,82 @@ struct PianoPhraseGenerator {
                 return $0.tone < $1.tone
             }
             return $0.step < $1.step
+        }
+    }
+
+    private func coreSingingMotif(for mood: PhraseMood) -> [LeadEvent] {
+        switch mood {
+        case .mellow:
+            return [
+                LeadEvent(step: 0, tone: 7, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 7, tone: 10, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: 10, tone: 12, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 18, tone: 10, length: 3, role: .release, lean: 0),
+                LeadEvent(step: 25, tone: 8, length: 6, role: .release, lean: 0)
+            ]
+        case .bright:
+            return [
+                LeadEvent(step: 0, tone: 7, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 6, tone: 11, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 12, tone: 12, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 19, tone: 11, length: 3, role: .release, lean: 0),
+                LeadEvent(step: 25, tone: 9, length: 6, role: .release, lean: 0)
+            ]
+        case .midnight:
+            return [
+                LeadEvent(step: 0, tone: 5, length: 6, role: .plain, lean: 0),
+                LeadEvent(step: 10, tone: 7, length: 5, role: .plain, lean: 0),
+                LeadEvent(step: 18, tone: 10, length: 2, role: .lean, lean: 1),
+                LeadEvent(step: 22, tone: 8, length: 5, role: .release, lean: 0),
+                LeadEvent(step: 28, tone: 7, length: 4, role: .release, lean: 0)
+            ]
+        }
+    }
+
+    private func repeatedMotif(
+        _ motif: [LeadEvent],
+        mood: PhraseMood,
+        repeatIndex: Int,
+        isPeak: Bool,
+        isFinal: Bool
+    ) -> [LeadEvent] {
+        motif.enumerated().map { index, event in
+            var tone = event.tone
+            var length = event.length
+            var role = event.role
+            var lean = event.lean
+
+            if repeatIndex % 2 == 1 && !isPeak && !isFinal {
+                tone += index >= motif.count - 2 ? -1 : 0
+            }
+
+            if isPeak {
+                tone += mood == .midnight ? 2 : 3
+                if index == 2 {
+                    role = .peak
+                    length += 1
+                }
+            }
+
+            if isFinal {
+                if index >= motif.count - 2 {
+                    tone -= mood == .bright ? 2 : 3
+                    role = .release
+                    length += 2
+                    lean = index == motif.count - 2 ? -1 : 0
+                } else if index == 1 {
+                    role = .lean
+                    lean = -1
+                }
+            }
+
+            return LeadEvent(
+                step: event.step,
+                tone: max(0, min(19, tone)),
+                length: length,
+                role: role,
+                lean: lean
+            )
         }
     }
 
@@ -757,7 +833,7 @@ struct PianoPhraseGenerator {
         case .peak:
             roleTones = chordTones + colorTones + mood.scale.map { $0 + 12 }
         case .lean, .plain:
-            roleTones = chordTones + colorTones
+            return scaleTone(near: event.tone, mood: mood)
         }
 
         let candidates = roleTones.flatMap { tone in
@@ -769,6 +845,18 @@ struct PianoPhraseGenerator {
         return candidates.min { first, second in
             abs(first - event.tone) < abs(second - event.tone)
         } ?? event.tone
+    }
+
+    private func scaleTone(near target: Int, mood: PhraseMood) -> Int {
+        let candidates = mood.scale.flatMap { tone in
+            [tone, tone + 12, tone + 24]
+        }.filter { tone in
+            tone >= 0 && tone <= 24
+        }
+
+        return candidates.min { first, second in
+            abs(first - target) < abs(second - target)
+        } ?? target
     }
 
     private func applyExpressiveFluctuation(to notes: [PianoNote], step: Double, seconds: Double, leadThreshold: Int) -> [PianoNote] {
