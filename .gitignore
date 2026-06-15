@@ -8,3 +8,4 @@ Thumbs.db
 *.log
 ios/*/build/
 **/__pycache__/
+ios/PianoPhraseLoop/PianoPhraseLoop/Resources/SoundFonts/Piano.sf2

@@ -158,6 +158,7 @@ final class PianoSynthesizer {
 
     private func configureSampler() -> Bool {
         let bundledBanks = [
+            Bundle.main.url(forResource: "Piano", withExtension: "sf2", subdirectory: "SoundFonts"),
             Bundle.main.url(forResource: "Piano", withExtension: "sf2"),
             Bundle.main.url(forResource: "Piano", withExtension: "dls"),
             Bundle.main.url(forResource: "gs_instruments", withExtension: "dls")

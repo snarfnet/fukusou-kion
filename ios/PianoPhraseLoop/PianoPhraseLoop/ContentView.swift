@@ -34,6 +34,10 @@ struct ContentView: View {
                         phrasePanel
                         controls
                         keyboardPreview
+                        Text("Acoustic Grand Piano from FreePats, CC BY 3.0")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.72))
+                            .multilineTextAlignment(.center)
                     }
                     .padding(20)
                     .frame(maxWidth: 560)
