@@ -615,7 +615,10 @@ def main():
 
     update_release_prerequisites(version_id)
     update_metadata(version_id)
-    ensure_screenshots(version_id)
+    if os.environ.get("SKIP_SCREENSHOTS") == "1":
+        print("Skipping screenshot replacement.")
+    else:
+        ensure_screenshots(version_id)
     if os.environ.get("PREPARE_ONLY") == "1":
         print("Prepared App Store Connect metadata only.")
         return

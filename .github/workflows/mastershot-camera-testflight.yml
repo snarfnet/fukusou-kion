@@ -30,6 +30,10 @@ on:
         description: "Prepare metadata and price without final review submit"
         required: false
         default: "false"
+      skip_screenshots:
+        description: "Skip screenshot replacement during submit"
+        required: false
+        default: "false"
       list_builds_only:
         description: "Only list recent App Store Connect builds"
         required: false
@@ -239,6 +243,7 @@ jobs:
           PREPARE_ONLY: ${{ github.event.inputs.prepare_only == 'true' && '1' || '0' }}
           PYTHONUNBUFFERED: "1"
           SUBMIT_BUILD_NUMBER: ${{ github.event.inputs.submit_build_number }}
+          SKIP_SCREENSHOTS: ${{ github.event.inputs.skip_screenshots == 'true' && '1' || '0' }}
         run: |
           . .venv/bin/activate
           if [ -n "$SUBMIT_BUILD_NUMBER" ]; then
