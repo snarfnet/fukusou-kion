@@ -26,7 +26,8 @@ struct PianoPhraseGenerator {
     func makePhrase(bars: Int, mood: PhraseMood) -> PianoPhrase {
         let usesLifeRushProfile = mood != .bright && Double.random(in: 0...1) < 0.90
         let bpm = tempo(for: mood, usesLifeRushProfile: usesLifeRushProfile)
-        let key = usesLifeRushProfile ? ("A", 57) : (keys.randomElement() ?? ("C", 60))
+        let fallbackKey: (name: String, root: Int) = ("C", 60)
+        let key: (name: String, root: Int) = usesLifeRushProfile ? ("A", 57) : (keys.randomElement() ?? fallbackKey)
         let step = 60.0 / Double(bpm) / 4.0
         let barCount = max(1, min(8, bars))
         let barSteps = 16
