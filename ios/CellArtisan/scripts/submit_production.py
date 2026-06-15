@@ -182,11 +182,24 @@ def update_age_rating(app_info_id):
 
 
 def find_or_create_version():
-    for version in list_all(f"/apps/{APP_ID}/appStoreVersions?filter[platform]=IOS&limit=200"):
+    versions = list_all(f"/apps/{APP_ID}/appStoreVersions?limit=200")
+    editable_states = {
+        "DEVELOPER_REJECTED",
+        "PREPARE_FOR_SUBMISSION",
+        "REJECTED",
+        "WAITING_FOR_REVIEW",
+        "INVALID_BINARY",
+        "METADATA_REJECTED",
+    }
+    fallback = None
+    for version in versions:
         attrs = version.get("attributes", {})
+        print(f"Version candidate: {attrs.get('versionString')} state={attrs.get('appStoreState')} id={version['id']}")
         if attrs.get("versionString") == APP_VERSION:
             print(f"Found version {APP_VERSION}: {version['id']} state={attrs.get('appStoreState')}")
             return version["id"], attrs.get("appStoreState")
+        if not fallback and attrs.get("appStoreState") in editable_states:
+            fallback = version
     response, body = api_json("POST", "/appStoreVersions", json={
         "data": {
             "type": "appStoreVersions",
@@ -195,6 +208,14 @@ def find_or_create_version():
         }
     })
     if response.status_code not in (200, 201):
+        if fallback:
+            attrs = fallback["attributes"]
+            print(
+                f"Version create failed {response.status_code}; "
+                f"using existing editable version {attrs.get('versionString')} "
+                f"state={attrs.get('appStoreState')} id={fallback['id']}"
+            )
+            return fallback["id"], attrs.get("appStoreState")
         raise RuntimeError(f"Version create failed {response.status_code}: {response.text[:1200]}")
     print(f"Created version {APP_VERSION}: {body['data']['id']}")
     return body["data"]["id"], "PREPARE_FOR_SUBMISSION"
