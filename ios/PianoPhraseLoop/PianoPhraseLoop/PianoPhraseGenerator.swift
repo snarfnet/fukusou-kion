@@ -25,15 +25,16 @@ struct PianoPhraseGenerator {
 
     func makePhrase(bars: Int, mood: PhraseMood) -> PianoPhrase {
         let usesLifeRushProfile = mood != .bright && Double.random(in: 0...1) < 0.90
+        let lifeRushVariant = usesLifeRushProfile ? Int.random(in: 0..<6) : 0
         let bpm = tempo(for: mood, usesLifeRushProfile: usesLifeRushProfile)
         let fallbackKey: (name: String, root: Int) = ("C", 60)
-        let key: (name: String, root: Int) = usesLifeRushProfile ? ("A", 57) : (keys.randomElement() ?? fallbackKey)
+        let key: (name: String, root: Int) = usesLifeRushProfile ? lifeRushKey() : (keys.randomElement() ?? fallbackKey)
         let step = 60.0 / Double(bpm) / 4.0
         let barCount = max(1, min(8, bars))
         let barSteps = 16
         let totalSteps = barCount * barSteps
         let seconds = Double(totalSteps) * step
-        let progression = usesLifeRushProfile ? lifeRushProgression(for: mood) : emotionalProgression(for: mood)
+        let progression = usesLifeRushProfile ? lifeRushProgression(for: mood, variant: lifeRushVariant) : emotionalProgression(for: mood)
         let density = usesLifeRushProfile ? Double.random(in: 0.52...0.68) : Double.random(in: 0.24...0.42)
         let hook = hookMotif(for: mood)
         var notes: [PianoNote] = []
@@ -55,6 +56,7 @@ struct PianoPhraseGenerator {
                 density: density,
                 isResolution: isResolution,
                 usesLifeRushProfile: usesLifeRushProfile,
+                lifeRushVariant: lifeRushVariant,
                 notes: &notes
             )
 
@@ -86,6 +88,7 @@ struct PianoPhraseGenerator {
             step: step,
             mood: mood,
             usesLifeRushProfile: usesLifeRushProfile,
+            lifeRushVariant: lifeRushVariant,
             energy: 0.92,
             notes: &notes
         )
@@ -115,7 +118,8 @@ struct PianoPhraseGenerator {
 
     private func tempo(for mood: PhraseMood, usesLifeRushProfile: Bool) -> Int {
         if usesLifeRushProfile {
-            return Int.random(in: 116...124)
+            let ranges: [ClosedRange<Int>] = [108...114, 116...124, 124...132]
+            return ranges.randomElement().map { Int.random(in: $0) } ?? Int.random(in: 116...124)
         }
 
         switch mood {
@@ -217,13 +221,26 @@ struct PianoPhraseGenerator {
         }
     }
 
-    private func lifeRushProgression(for mood: PhraseMood) -> [EmotionalChord] {
+    private func lifeRushKey() -> (name: String, root: Int) {
+        let candidates: [(name: String, root: Int)] = [
+            ("A", 57),
+            ("D", 62),
+            ("E", 52),
+            ("G", 55),
+            ("C", 60)
+        ]
+        return candidates.randomElement() ?? (name: "A", root: 57)
+    }
+
+    private func lifeRushProgression(for mood: PhraseMood, variant: Int) -> [EmotionalChord] {
         let minorI = EmotionalChord(name: "i", root: 0, tones: [0, 3, 7], colorTones: [10, 14], surprise: 0.12, bassMotion: 0)
         let flatVI = EmotionalChord(name: "bVI", root: 8, tones: [0, 4, 7], colorTones: [11, 14], surprise: 0.36, bassMotion: 8)
         let flatIII = EmotionalChord(name: "bIII", root: 3, tones: [0, 4, 7], colorTones: [11], surprise: 0.28, bassMotion: 3)
         let flatVII = EmotionalChord(name: "bVII", root: 10, tones: [0, 4, 7], colorTones: [9], surprise: 0.34, bassMotion: 10)
         let majorV = EmotionalChord(name: "V", root: 7, tones: [0, 4, 7], colorTones: [10], surprise: 0.62, bassMotion: 7)
         let minorIV = EmotionalChord(name: "iv", root: 5, tones: [0, 3, 7], colorTones: [10], surprise: 0.42, bassMotion: 5)
+        let minorV = EmotionalChord(name: "v", root: 7, tones: [0, 3, 7], colorTones: [10], surprise: 0.22, bassMotion: 7)
+        let flatII = EmotionalChord(name: "bII", root: 1, tones: [0, 4, 7], colorTones: [11], surprise: 0.72, bassMotion: 1)
         let majorI = EmotionalChord(name: "I", root: 0, tones: [0, 4, 7], colorTones: [11, 14], surprise: 0.10, bassMotion: 0)
         let majorVOverVII = EmotionalChord(name: "V/B", root: 7, tones: [0, 4, 7], colorTones: [10], surprise: 0.28, bassMotion: 11)
         let majorVI = EmotionalChord(name: "vi", root: 9, tones: [0, 3, 7], colorTones: [10, 14], surprise: 0.26, bassMotion: 9)
@@ -233,16 +250,24 @@ struct PianoPhraseGenerator {
         case .bright:
             return [majorI, majorVOverVII, majorVI, minorIVInMajor]
         case .mellow:
-            return [
+            let progressions = [
                 [minorI, flatVI, flatIII, flatVII],
                 [minorI, flatVII, flatVI, majorV],
-                [minorI, flatVI, minorIV, majorV]
-            ].randomElement() ?? [minorI, flatVI, flatIII, flatVII]
+                [minorI, flatVI, minorIV, majorV],
+                [minorI, flatIII, flatVII, flatVI],
+                [minorI, minorV, flatVI, flatVII],
+                [minorI, flatII, flatVII, majorV]
+            ]
+            return progressions[abs(variant) % progressions.count]
         case .midnight:
-            return [
+            let progressions = [
                 [minorI, flatVII, flatVI, majorV],
-                [minorI, flatVI, minorIV, flatVII]
-            ].randomElement() ?? [minorI, flatVII, flatVI, majorV]
+                [minorI, flatVI, minorIV, flatVII],
+                [minorI, minorV, flatVI, majorV],
+                [minorI, flatIII, flatVI, minorIV],
+                [minorI, flatII, minorIV, majorV]
+            ]
+            return progressions[abs(variant) % progressions.count]
         }
     }
 
@@ -264,6 +289,7 @@ struct PianoPhraseGenerator {
         density: Double,
         isResolution: Bool,
         usesLifeRushProfile: Bool,
+        lifeRushVariant: Int,
         notes: inout [PianoNote]
     ) {
         let root = keyRoot + chord.root
@@ -277,6 +303,7 @@ struct PianoPhraseGenerator {
                 step: step,
                 energy: energy,
                 isResolution: isResolution,
+                variant: lifeRushVariant,
                 notes: &notes
             )
             return
@@ -312,29 +339,58 @@ struct PianoPhraseGenerator {
         step: Double,
         energy: Double,
         isResolution: Bool,
+        variant: Int,
         notes: inout [PianoNote]
     ) {
-        let bassPattern = [0, 8]
+        let bassPatterns: [[Int]] = [
+            [0, 8],
+            [0, 6, 12],
+            [0, 10],
+            [0, 4, 8, 12],
+            [0, 5, 9, 13],
+            [0, 3, 7, 11, 15]
+        ]
+        let upperPatterns: [[Int]] = [
+            [2, 4, 6, 10, 12, 14],
+            [1, 3, 5, 8, 11, 13],
+            [2, 5, 7, 9, 12, 15],
+            [3, 5, 8, 10, 13, 15],
+            [1, 4, 6, 9, 12, 14],
+            [2, 4, 7, 10, 12, 15]
+        ]
+        let toneOrders: [[Int]] = [
+            [chord.tones[1], chord.tones[2], chord.colorTones.first ?? chord.tones[1], chord.tones[2], chord.tones[1], chord.tones[2]],
+            [chord.tones[2], chord.tones[1], chord.colorTones.first ?? chord.tones[2], chord.tones[1], chord.tones[2], chord.colorTones.first ?? chord.tones[1]],
+            [chord.tones[1], chord.colorTones.first ?? chord.tones[2], chord.tones[2], chord.tones[1], chord.tones[2], chord.colorTones.last ?? chord.tones[1]],
+            [chord.tones[2], chord.colorTones.first ?? chord.tones[1], chord.tones[1], chord.tones[2], chord.colorTones.last ?? chord.tones[2], chord.tones[1]],
+            [chord.colorTones.first ?? chord.tones[2], chord.tones[1], chord.tones[2], chord.colorTones.last ?? chord.tones[1], chord.tones[1], chord.tones[2]],
+            [chord.tones[1], chord.tones[2], chord.tones[1], chord.colorTones.first ?? chord.tones[2], chord.tones[2], chord.colorTones.last ?? chord.tones[1]]
+        ]
+        let selectedVariant = abs(variant) % bassPatterns.count
+        let bassPattern = bassPatterns[selectedVariant]
         for offset in bassPattern {
             let start = Double(cursor + offset) * step
-            notes.append(PianoNote(pitch: bassRoot - 24, velocity: velocity(37, energy), start: start, duration: step * 3.4))
+            let duration = selectedVariant >= 3 ? step * 2.0 : step * 3.4
+            notes.append(PianoNote(pitch: bassRoot - 24, velocity: velocity(35 + selectedVariant, energy), start: start, duration: duration))
         }
 
-        let brokenTones = [
-            chord.tones[1],
-            chord.tones[2],
-            chord.colorTones.first ?? chord.tones[1],
-            chord.tones[2],
-            chord.tones[1],
-            chord.tones[2]
-        ]
-        let patternSteps = [2, 4, 6, 10, 12, 14]
+        let brokenTones = toneOrders[selectedVariant]
+        let patternSteps = upperPatterns[selectedVariant]
         for (index, offset) in patternSteps.enumerated() {
             let tone = brokenTones[index % brokenTones.count]
             let start = Double(cursor + offset) * step
-            let lift = index >= 3 ? 0 : -12
-            let velocityBase = index == 2 || index == 5 ? 30 : 23
-            notes.append(PianoNote(pitch: root + tone + lift, velocity: velocity(velocityBase, energy), start: start, duration: step * 1.7))
+            let lift = (selectedVariant == 1 || selectedVariant >= 4 || index >= 3) ? 0 : -12
+            let velocityBase = index == 2 || index == 5 ? 29 + selectedVariant : 22 + selectedVariant
+            let duration = selectedVariant >= 4 ? step * 1.25 : (selectedVariant == 2 ? step * 2.1 : step * 1.7)
+            notes.append(PianoNote(pitch: root + tone + lift, velocity: velocity(velocityBase, energy), start: start, duration: duration))
+        }
+
+        if selectedVariant >= 4 {
+            let sparkleTone = chord.colorTones.first ?? chord.tones[2]
+            let sparkleSteps = selectedVariant == 4 ? [6, 11] : [5, 13]
+            for offset in sparkleSteps {
+                notes.append(PianoNote(pitch: root + sparkleTone + 12, velocity: velocity(21, energy), start: Double(cursor + offset) * step, duration: step * 0.9))
+            }
         }
 
         if !isResolution && chord.surprise > 0.50 {
@@ -458,11 +514,12 @@ struct PianoPhraseGenerator {
         step: Double,
         mood: PhraseMood,
         usesLifeRushProfile: Bool,
+        lifeRushVariant: Int,
         energy: Double,
         notes: inout [PianoNote]
     ) {
         let shape = usesLifeRushProfile
-            ? lifeRushShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
+            ? lifeRushShape(for: mood, totalSteps: totalSteps, barSteps: barSteps, variant: lifeRushVariant)
             : singingShape(for: mood, totalSteps: totalSteps, barSteps: barSteps)
         let baseOctave: Int
         if usesLifeRushProfile {
@@ -544,12 +601,12 @@ struct PianoPhraseGenerator {
         }
     }
 
-    private func lifeRushShape(for mood: PhraseMood, totalSteps: Int, barSteps: Int) -> [LeadEvent] {
+    private func lifeRushShape(for mood: PhraseMood, totalSteps: Int, barSteps: Int, variant: Int) -> [LeadEvent] {
         let bars = max(1, totalSteps / barSteps)
         let lastStep = max(0, totalSteps - 3)
         let twoBarWidth = barSteps * 2
         let sentenceCount = max(1, Int(ceil(Double(bars) / 2.0)))
-        let motif = lifeRushMotif(for: mood)
+        let motif = lifeRushMotif(for: mood, variant: variant)
         var events: [LeadEvent] = []
 
         for sentence in 0..<sentenceCount {
@@ -598,7 +655,33 @@ struct PianoPhraseGenerator {
         }
     }
 
-    private func lifeRushMotif(for mood: PhraseMood) -> [LeadEvent] {
+    private func lifeRushMotif(for mood: PhraseMood, variant: Int) -> [LeadEvent] {
+        let motifVariant = abs(variant) % 6
+        if motifVariant == 4 {
+            return [
+                LeadEvent(step: 0, tone: mood == .midnight ? 7 : 10, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 3, tone: mood == .midnight ? 10 : 12, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 6, tone: mood == .midnight ? 12 : 15, length: 2, role: .peak, lean: 0),
+                LeadEvent(step: 9, tone: mood == .midnight ? 10 : 12, length: 2, role: .release, lean: 0),
+                LeadEvent(step: 13, tone: mood == .midnight ? 8 : 10, length: 3, role: .lean, lean: -1),
+                LeadEvent(step: 18, tone: mood == .midnight ? 12 : 15, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 22, tone: mood == .midnight ? 15 : 17, length: 3, role: .peak, lean: 0),
+                LeadEvent(step: 27, tone: mood == .midnight ? 10 : 12, length: 4, role: .release, lean: 0)
+            ]
+        }
+        if motifVariant == 5 {
+            return [
+                LeadEvent(step: 1, tone: mood == .midnight ? 5 : 7, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 4, tone: mood == .midnight ? 10 : 12, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 8, tone: mood == .midnight ? 8 : 10, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: 11, tone: mood == .midnight ? 12 : 14, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 16, tone: mood == .midnight ? 7 : 10, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 19, tone: mood == .midnight ? 14 : 17, length: 4, role: .peak, lean: 0),
+                LeadEvent(step: 25, tone: mood == .midnight ? 12 : 15, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: 28, tone: mood == .midnight ? 8 : 10, length: 4, role: .release, lean: 0)
+            ]
+        }
+
         switch mood {
         case .bright:
             return [
