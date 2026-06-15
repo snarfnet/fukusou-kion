@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import hashlib
 import os
+import re
 import tempfile
 import time
 from pathlib import Path
@@ -517,9 +518,27 @@ def find_reusable_submission():
     if response.status_code != 200:
         return None
     for submission in response.json().get("data", []):
-        if submission.get("attributes", {}).get("state") in {"READY_FOR_REVIEW", "UNRESOLVED_ISSUES"}:
+        if submission.get("attributes", {}).get("state") in {"READY_FOR_REVIEW", "UNRESOLVED_ISSUES", "REJECTED"}:
             return submission["id"]
     return None
+
+
+def existing_submission_id_from_item_error(response):
+    try:
+        body = response.json()
+    except Exception:
+        body = {}
+
+    text = response.text
+    for error in body.get("errors", []):
+        detail = error.get("detail", "")
+        match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", detail)
+        if match:
+            return match.group(1)
+        text += "\n" + detail
+
+    match = re.search(r"reviewSubmission with id ([0-9a-f-]+)", text)
+    return match.group(1) if match else None
 
 
 def submit_for_review(version_id):
@@ -559,6 +578,11 @@ def submit_for_review(version_id):
             break
         if response.status_code == 409:
             print(response.text[:1000])
+            existing_submission_id = existing_submission_id_from_item_error(response)
+            if existing_submission_id:
+                submission_id = existing_submission_id
+                print(f"Using existing review submission: {submission_id}")
+                break
             raise RuntimeError(f"Review item create failed {response.status_code}: {response.text[:1000]}")
         time.sleep(30)
     else:
