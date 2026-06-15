@@ -308,6 +308,11 @@ def load_font(size, bold=False):
     from PIL import ImageFont
 
     candidates = [
+        "C:/Windows/Fonts/YuGothB.ttc" if bold else "C:/Windows/Fonts/YuGothM.ttc",
+        "C:/Windows/Fonts/meiryob.ttc" if bold else "C:/Windows/Fonts/meiryo.ttc",
+        "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc" if bold else "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc",
+        "C:/Windows/Fonts/segoeuib.ttf" if bold else "C:/Windows/Fonts/segoeui.ttf",
+        "C:/Windows/Fonts/arialbd.ttf" if bold else "C:/Windows/Fonts/arial.ttf",
         "/System/Library/Fonts/Supplemental/Arial Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Arial.ttf",
         "/System/Library/Fonts/Supplemental/Helvetica Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Helvetica.ttf",
         "/System/Library/Fonts/Helvetica.ttc",
@@ -334,69 +339,29 @@ def cover(image, size):
     return image.crop((left, top, left + size[0], top + size[1]))
 
 
-def generate_screenshot(path, size, locale, display_type):
-    from PIL import Image, ImageDraw, ImageFilter
+def generate_screenshot(path, size, locale, display_type, scenario):
+    from PIL import Image, ImageFilter
 
-    width, height = size
-    icon_path = ROOT / "NoAdsCamera" / "Assets.xcassets" / "AppIcon.appiconset" / "icon-1024.png"
-    icon = Image.open(icon_path).convert("RGB")
-    bg = cover(icon.filter(ImageFilter.GaussianBlur(22)), size)
-    image = Image.alpha_composite(bg.convert("RGBA"), Image.new("RGBA", size, (3, 9, 14, 132)))
-    draw = ImageDraw.Draw(image)
+    sources = {
+        "purpose": ROOT / "AppStoreScreenshots" / "01-pro-material.jpg",
+        "stability": ROOT / "AppStoreScreenshots" / "02-night-stack.jpg",
+        "privacy": ROOT / "AppStoreScreenshots" / "03-auto-isp.jpg",
+    }
+    source = sources[scenario]
+    if not source.exists():
+        raise RuntimeError(f"Screenshot source missing: {source}")
 
-    margin = int(width * 0.07)
-    top = int(height * 0.075)
-    title_font = load_font(int(width * 0.071), True)
-    body_font = load_font(int(width * 0.032), False)
-    small_font = load_font(int(width * 0.026), False)
-    badge_font = load_font(int(width * 0.024), True)
+    source_image = Image.open(source).convert("RGB")
+    background = cover(source_image, size).filter(ImageFilter.GaussianBlur(radius=18))
+    background = background.point(lambda value: int(value * 0.74))
 
-    draw.text((margin, top), "OAHSPE:alpha78", fill=(248, 250, 252, 255), font=title_font)
-    subtitle = "RAW / HDR / Stability / Purpose Pro" if locale == "ja" else "RAW, HDR, stability, and purpose modes"
-    draw.text((margin, top + int(width * 0.085)), subtitle, fill=(207, 226, 238, 255), font=body_font)
-
-    preview_top = top + int(width * 0.18)
-    preview_h = int(height * 0.56)
-    preview_box = (margin, preview_top, width - margin, preview_top + preview_h)
-    draw.rounded_rectangle(preview_box, radius=int(width * 0.045), fill=(10, 16, 21, 232), outline=(112, 214, 255, 150), width=max(2, int(width * 0.004)))
-
-    cx = width // 2
-    cy = preview_top + preview_h // 2
-    for step in range(5):
-        radius = int(width * (0.11 + step * 0.075))
-        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=(120, 225, 255, max(40, 150 - step * 23)), width=max(2, int(width * 0.004)))
-    draw.ellipse((cx - int(width * 0.11), cy - int(width * 0.11), cx + int(width * 0.11), cy + int(width * 0.11)), fill=(5, 12, 20, 255), outline=(234, 244, 255, 210), width=max(3, int(width * 0.005)))
-    draw.ellipse((cx - int(width * 0.052), cy - int(width * 0.052), cx + int(width * 0.052), cy + int(width * 0.052)), fill=(22, 73, 110, 255), outline=(151, 227, 255, 180), width=max(2, int(width * 0.004)))
-    draw.ellipse((cx - int(width * 0.018), cy - int(width * 0.018), cx + int(width * 0.018), cy + int(width * 0.018)), fill=(220, 245, 255, 255))
-
-    pill_y = preview_top + int(width * 0.045)
-    pill_x = margin + int(width * 0.04)
-    for label in ["RAW", "HDR", "LOW LIGHT", "STABLE"]:
-        text_w = draw.textlength(label, font=badge_font)
-        box = (pill_x, pill_y, pill_x + int(text_w) + int(width * 0.06), pill_y + int(width * 0.052))
-        draw.rounded_rectangle(box, radius=int(width * 0.026), fill=(21, 31, 38, 225), outline=(126, 224, 255, 130), width=max(1, int(width * 0.002)))
-        draw.text((pill_x + int(width * 0.03), pill_y + int(width * 0.012)), label, fill=(235, 249, 255, 255), font=badge_font)
-        pill_x = box[2] + int(width * 0.015)
-
-    bottom_y = preview_box[3] + int(height * 0.035)
-    cards = [
-        ("Custom ISP", "Balanced color after capture"),
-        ("Privacy Check", "Notice private details"),
-        ("Purpose Pro", "Product, food, nail, profile"),
-    ]
-    card_gap = int(width * 0.022)
-    card_w = (width - margin * 2 - card_gap * 2) // 3
-    for index, (head, desc) in enumerate(cards):
-        x = margin + index * (card_w + card_gap)
-        box = (x, bottom_y, x + card_w, bottom_y + int(height * 0.14))
-        draw.rounded_rectangle(box, radius=int(width * 0.025), fill=(248, 250, 252, 235))
-        draw.text((x + int(width * 0.025), bottom_y + int(width * 0.025)), head, fill=(12, 20, 28, 255), font=badge_font)
-        draw.text((x + int(width * 0.025), bottom_y + int(width * 0.068)), desc, fill=(54, 72, 88, 255), font=small_font)
-
-    footer = "No ads. One-time purchase." if locale != "ja" else "No ads. Buy once."
-    draw.text((margin, height - int(height * 0.07)), footer, fill=(232, 244, 250, 255), font=body_font)
-    image.convert("RGB").save(path, "PNG", optimize=True)
-    print(f"Generated screenshot {display_type} {locale}: {path} {width}x{height}")
+    image = source_image.copy()
+    image.thumbnail(size, Image.Resampling.LANCZOS)
+    left = (size[0] - image.width) // 2
+    top = (size[1] - image.height) // 2
+    background.paste(image, (left, top))
+    background.save(path, "PNG", optimize=True)
+    print(f"Prepared screenshot {display_type} {locale} {scenario}: {path} {size[0]}x{size[1]}")
 
 
 def list_screenshot_sets(localization_id):
@@ -423,6 +388,13 @@ def create_screenshot_set(localization_id, display_type):
     if response.status_code not in (200, 201):
         raise RuntimeError(f"Screenshot set create failed {response.status_code}: {response.text[:1000]}")
     return response.json()["data"]["id"]
+
+
+def delete_screenshot_set(set_id):
+    response = api("DELETE", f"/appScreenshotSets/{set_id}")
+    print(f"Delete screenshot set {set_id}: {response.status_code}")
+    if response.status_code not in (200, 204, 404):
+        raise RuntimeError(f"Screenshot set delete failed {response.status_code}: {response.text[:1000]}")
 
 
 def screenshot_count(set_id):
@@ -482,17 +454,14 @@ def ensure_screenshots(version_id):
                     item for item in list_screenshot_sets(loc["id"])
                     if item.get("attributes", {}).get("screenshotDisplayType") == display_type
                 ]
-                if sets:
-                    print(f"Screenshot set exists {locale} {display_type}: {sets[0]['id']}")
-                    set_id = sets[0]["id"]
-                else:
-                    set_id = create_screenshot_set(loc["id"], display_type)
-                if screenshot_count(set_id) > 0:
-                    print(f"Screenshot already uploaded {locale} {display_type}")
-                    continue
-                path = tmp_dir / f"oahspe-{locale}-{display_type}.png"
-                generate_screenshot(path, size, locale, display_type)
-                upload_screenshot(set_id, path)
+                for screenshot_set in sets:
+                    delete_screenshot_set(screenshot_set["id"])
+                    time.sleep(2)
+                set_id = create_screenshot_set(loc["id"], display_type)
+                for index, scenario in enumerate(["purpose", "stability", "privacy"], start=1):
+                    path = tmp_dir / f"oahspe-{locale}-{display_type}-{index}-{scenario}.png"
+                    generate_screenshot(path, size, locale, display_type, scenario)
+                    upload_screenshot(set_id, path)
 
 
 def wait_for_build():

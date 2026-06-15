@@ -30,13 +30,16 @@ final class CameraController: NSObject, ObservableObject {
     @Published var horizonTilt: Double = 0
     @Published var realtimeWarnings: [String] = []
     @Published var bestShotScore: Double = 0
+    @Published var histogramBuckets = Array(repeating: 0.0, count: 16)
     @Published var semanticExposureMessage = "露出を見ています"
     @Published var activePurposeGuide: PurposeProGuide?
+    @Published var privacyFindings: [PrivacyFinding] = []
 
     private let output = AVCapturePhotoOutput()
     private let videoOutput = AVCaptureVideoDataOutput()
     private let customISPEngine = CustomISPEngine()
     private let semanticExposureEngine = SemanticExposureEngine()
+    private let privacyDetectionEngine = PrivacyDetectionEngine()
     private let hdrFusionEngine = HDRFusionEngine()
     private let rawDevelopmentEngine = RAWDevelopmentEngine()
     private let processedImageContext = CIContext()
@@ -47,6 +50,7 @@ final class CameraController: NSObject, ObservableObject {
     private var currentDevice: AVCaptureDevice?
     private var lastAnalysisTime = CACurrentMediaTime()
     private var lastExposureAdjustmentTime = CACurrentMediaTime()
+    private var lastPrivacyScanTime = CACurrentMediaTime()
     private var activeExposurePriority: ExposurePriority = .product
     private var activeISPPreset: ISPPreset = .neutral
     private let bestShotBuffer = BestShotBuffer(capacity: 60)
@@ -192,6 +196,48 @@ final class CameraController: NSObject, ObservableObject {
             statusText = "設定を固定しました"
         } catch {
             statusText = "固定設定に失敗しました"
+        }
+    }
+
+    func lockCurrentManualSettings() {
+        guard let device = currentDevice else { return }
+
+        do {
+            try device.lockForConfiguration()
+            if device.isExposureModeSupported(.locked) {
+                device.exposureMode = .locked
+            }
+            if device.isFocusModeSupported(.locked) {
+                device.focusMode = .locked
+            }
+            if device.isWhiteBalanceModeSupported(.locked) {
+                device.whiteBalanceMode = .locked
+            }
+            device.unlockForConfiguration()
+            statusText = "ISO/SS/WB/Focusを固定しました"
+        } catch {
+            statusText = "手動固定に失敗しました"
+        }
+    }
+
+    func unlockAutomaticSettings() {
+        guard let device = currentDevice else { return }
+
+        do {
+            try device.lockForConfiguration()
+            if device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposureMode = .continuousAutoExposure
+            }
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            }
+            if device.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
+                device.whiteBalanceMode = .continuousAutoWhiteBalance
+            }
+            device.unlockForConfiguration()
+            statusText = "自動設定に戻しました"
+        } catch {
+            statusText = "自動設定に戻せませんでした"
         }
     }
 
@@ -460,8 +506,8 @@ final class CameraController: NSObject, ObservableObject {
             }
 
             PHPhotoLibrary.shared().performChanges {
+                let request = PHAssetCreationRequest.forAsset()
                 for item in captureResult.items {
-                    let request = PHAssetCreationRequest.forAsset()
                     let options = PHAssetResourceCreationOptions()
                     options.uniformTypeIdentifier = item.uniformTypeIdentifier
                     request.addResource(with: item.resourceType, data: item.data, options: options)
@@ -508,8 +554,37 @@ final class CameraController: NSObject, ObservableObject {
             let rate = motion.rotationRate
             let strength = sqrt(rate.x * rate.x + rate.y * rate.y + rate.z * rate.z)
             self.shakeLevel = min(strength / 4.0, 1.0)
-            self.horizonTilt = motion.attitude.roll
+            self.horizonTilt = Self.levelTilt(from: motion)
         }
+    }
+
+    private static func levelTilt(from motion: CMDeviceMotion) -> Double {
+        let rawAngle = atan2(motion.gravity.x, -motion.gravity.y)
+        let baseline: Double
+
+        switch UIApplication.shared.activeInterfaceOrientation {
+        case .landscapeLeft:
+            baseline = .pi / 2
+        case .landscapeRight:
+            baseline = -.pi / 2
+        case .portraitUpsideDown:
+            baseline = .pi
+        default:
+            baseline = 0
+        }
+
+        return normalizedAngle(rawAngle - baseline)
+    }
+
+    private static func normalizedAngle(_ angle: Double) -> Double {
+        var value = angle
+        while value > .pi {
+            value -= 2 * .pi
+        }
+        while value < -.pi {
+            value += 2 * .pi
+        }
+        return value
     }
 
     private func configureRealtimeAnalysis() {
@@ -522,9 +597,10 @@ final class CameraController: NSObject, ObservableObject {
 
     private func analyze(pixelBuffer: CVPixelBuffer, timestamp: CMTime) {
         CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
-
-        guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else { return }
+        guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else {
+            CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
+            return
+        }
 
         let width = CVPixelBufferGetWidth(pixelBuffer)
         let height = CVPixelBufferGetHeight(pixelBuffer)
@@ -535,6 +611,7 @@ final class CameraController: NSObject, ObservableObject {
         var highlights = 0
         var shadows = 0
         var samples = 0
+        var histogram = Array(repeating: 0, count: 16)
 
         for y in stride(from: 0, to: height, by: step) {
             for x in stride(from: 0, to: width, by: step) {
@@ -549,9 +626,12 @@ final class CameraController: NSObject, ObservableObject {
                 } else if luma < 12 {
                     shadows += 1
                 }
+                let bucket = min(histogram.count - 1, max(0, Int(luma / 16.0)))
+                histogram[bucket] += 1
                 samples += 1
             }
         }
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
 
         guard samples > 0 else { return }
 
@@ -559,18 +639,25 @@ final class CameraController: NSObject, ObservableObject {
         let shadowRatio = Double(shadows) / Double(samples)
         let tilt = abs(horizonTilt)
         let shake = shakeLevel
-        bestShotBuffer.append(pixelBuffer: pixelBuffer, timestamp: timestamp, highlightRatio: highlightRatio, shadowRatio: shadowRatio, shakeLevel: shake)
-        let bestScore = bestShotBuffer.bestCandidate()?.score ?? 0
+        let currentScore = BestShotBuffer.score(highlightRatio: highlightRatio, shadowRatio: shadowRatio, shakeLevel: shake, horizonTilt: tilt)
+        bestShotBuffer.append(pixelBuffer: pixelBuffer, timestamp: timestamp, highlightRatio: highlightRatio, shadowRatio: shadowRatio, shakeLevel: shake, horizonTilt: tilt)
         let exposureDecision = semanticExposureDecisionIfNeeded(pixelBuffer: pixelBuffer)
+        let privacyFindings = privacyFindingsIfNeeded(pixelBuffer: pixelBuffer)
+        let histogramScale = Double(histogram.max() ?? 1)
+        let normalizedHistogram = histogram.map { histogramScale > 0 ? Double($0) / histogramScale : 0 }
 
         DispatchQueue.main.async {
             self.highlightClippingRatio = highlightRatio
             self.shadowCrushRatio = shadowRatio
-            self.bestShotScore = bestScore
+            self.bestShotScore = currentScore
+            self.histogramBuckets = normalizedHistogram
             if let exposureDecision {
                 self.semanticExposureMessage = exposureDecision.message
             }
-            self.realtimeWarnings = self.makeRealtimeWarnings(highlights: highlightRatio, shadows: shadowRatio, tilt: tilt, shake: shake)
+            if let privacyFindings {
+                self.privacyFindings = privacyFindings
+            }
+            self.realtimeWarnings = self.makeRealtimeWarnings(highlights: highlightRatio, shadows: shadowRatio, tilt: tilt, shake: shake, privacyFindings: privacyFindings ?? self.privacyFindings)
         }
     }
 
@@ -584,6 +671,22 @@ final class CameraController: NSObject, ObservableObject {
             applyExposureBias(decision.exposureBias)
         }
         return decision
+    }
+
+    private func privacyFindingsIfNeeded(pixelBuffer: CVPixelBuffer) -> [PrivacyFinding]? {
+        guard selectedMode == .privacyCheck else {
+            if !privacyFindings.isEmpty {
+                DispatchQueue.main.async {
+                    self.privacyFindings = []
+                }
+            }
+            return nil
+        }
+
+        let now = CACurrentMediaTime()
+        guard now - lastPrivacyScanTime > 0.75 else { return nil }
+        lastPrivacyScanTime = now
+        return Array(privacyDetectionEngine.detect(pixelBuffer: pixelBuffer).prefix(6))
     }
 
     private func applyExposureBias(_ bias: Float) {
@@ -601,7 +704,7 @@ final class CameraController: NSObject, ObservableObject {
         }
     }
 
-    private func makeRealtimeWarnings(highlights: Double, shadows: Double, tilt: Double, shake: Double) -> [String] {
+    private func makeRealtimeWarnings(highlights: Double, shadows: Double, tilt: Double, shake: Double, privacyFindings: [PrivacyFinding]) -> [String] {
         var warnings: [String] = []
         if highlights > 0.08 {
             warnings.append("白飛び")
@@ -614,6 +717,9 @@ final class CameraController: NSObject, ObservableObject {
         }
         if tilt > 0.08 {
             warnings.append("水平注意")
+        }
+        if !privacyFindings.isEmpty {
+            warnings.append("写り込み")
         }
         return warnings
     }

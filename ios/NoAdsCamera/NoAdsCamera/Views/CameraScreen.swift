@@ -135,6 +135,15 @@ struct CameraScreen: View {
             if camera.selectedMode == .purposePro {
                 PurposeProPanel(engine: purposePro, exposureMessage: camera.semanticExposureMessage)
             }
+            if camera.selectedMode == .manual {
+                ManualControlPanel(
+                    onLock: camera.lockCurrentManualSettings,
+                    onUnlock: camera.unlockAutomaticSettings
+                )
+            }
+            if showsHistogram {
+                MiniHistogram(buckets: camera.histogramBuckets)
+            }
 
             modePicker
 
@@ -240,6 +249,15 @@ struct CameraScreen: View {
         .accessibilityLabel(AppText.pick(ja: "前回の写真を表示", en: "Show last photo"))
     }
 
+    private var showsHistogram: Bool {
+        switch camera.selectedMode {
+        case .rawMaterial, .manual, .hdrBracket, .nightStack, .customISP, .purposePro, .semanticExposure:
+            return true
+        default:
+            return false
+        }
+    }
+
     @ViewBuilder
     private var modeOverlay: some View {
         switch camera.selectedMode {
@@ -254,7 +272,7 @@ struct CameraScreen: View {
         case .motionSubject:
             MotionSubjectOverlay()
         case .privacyCheck:
-            PrivacyCheckOverlay()
+            PrivacyCheckOverlay(findings: camera.privacyFindings)
         case .rawMaterial:
             ProMaterialOverlay()
         case .manual:
@@ -529,7 +547,7 @@ private struct RealtimeWarningStrip: View {
                 Text(warning)
             }
             Spacer()
-            Text("\(Int(score * 100))")
+            Text("状態 \(Int(score * 100))")
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .foregroundStyle(.yellow)
         }
@@ -538,6 +556,49 @@ private struct RealtimeWarningStrip: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(.black.opacity(0.62), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+private struct ManualControlPanel: View {
+    let onLock: () -> Void
+    let onUnlock: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button(action: onLock) {
+                Label(AppText.pick(ja: "現在値を固定", en: "Lock current"), systemImage: "lock.fill")
+                    .frame(maxWidth: .infinity)
+            }
+
+            Button(action: onUnlock) {
+                Label(AppText.pick(ja: "自動に戻す", en: "Auto"), systemImage: "arrow.triangle.2.circlepath")
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .font(.system(size: 12, weight: .bold, design: .rounded))
+        .buttonStyle(.plain)
+        .foregroundStyle(.white)
+        .padding(12)
+        .background(.black.opacity(0.58), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+private struct MiniHistogram: View {
+    let buckets: [Double]
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 3) {
+            ForEach(Array(buckets.enumerated()), id: \.offset) { _, value in
+                Capsule()
+                    .fill(.white.opacity(0.82))
+                    .frame(width: 5, height: max(4, CGFloat(value) * 34))
+            }
+        }
+        .frame(height: 38)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .accessibilityLabel(AppText.pick(ja: "明るさヒストグラム", en: "Brightness histogram"))
     }
 }
 
@@ -771,19 +832,62 @@ private struct MotionSubjectOverlay: View {
 }
 
 private struct PrivacyCheckOverlay: View {
+    let findings: [PrivacyFinding]
+
     var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "shield.lefthalf.filled")
-                .font(.system(size: 34, weight: .bold))
-            Text("投稿前チェック")
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-            Text("住所・QR・顔・カードを警告")
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
+        GeometryReader { proxy in
+            ZStack {
+                ForEach(findings) { finding in
+                    PrivacyFindingBox(finding: finding, size: proxy.size)
+                }
+
+                VStack(spacing: 8) {
+                    Image(systemName: findings.isEmpty ? "shield.lefthalf.filled" : "exclamationmark.shield.fill")
+                        .font(.system(size: 34, weight: .bold))
+                    Text(findings.isEmpty ? "投稿前チェック" : "写り込み候補あり")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                    Text(findings.isEmpty ? "住所・QR・顔・カードを警告" : findings.prefix(3).map(\.label).joined(separator: " / "))
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 14)
+                .background(.black.opacity(0.52), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
         }
-        .foregroundStyle(.white)
-        .padding(.horizontal, 18)
-        .padding(.vertical, 14)
-        .background(.black.opacity(0.48), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+private struct PrivacyFindingBox: View {
+    let finding: PrivacyFinding
+    let size: CGSize
+
+    private var rect: CGRect {
+        CGRect(
+            x: finding.boundingBox.minX * size.width,
+            y: (1 - finding.boundingBox.maxY) * size.height,
+            width: finding.boundingBox.width * size.width,
+            height: finding.boundingBox.height * size.height
+        )
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(.yellow, lineWidth: 2)
+                .frame(width: max(rect.width, 52), height: max(rect.height, 34))
+                .position(x: rect.midX, y: rect.midY)
+
+            Text(finding.label)
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .foregroundStyle(.black)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 4)
+                .background(.yellow, in: Capsule())
+                .position(x: min(max(rect.minX + 42, 42), size.width - 42), y: max(rect.minY - 14, 14))
+        }
     }
 }
 
