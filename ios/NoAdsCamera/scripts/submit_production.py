@@ -541,6 +541,22 @@ def existing_submission_id_from_item_error(response):
     return match.group(1) if match else None
 
 
+def submit_app_store_version_directly(version_id):
+    response = api("POST", "/appStoreVersionSubmissions", data=json_body({
+        "data": {
+            "type": "appStoreVersionSubmissions",
+            "relationships": {
+                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+            },
+        }
+    }))
+    print(f"Direct appStoreVersion submission: {response.status_code}")
+    if response.status_code in (200, 201):
+        return True
+    print(response.text[:1000])
+    return False
+
+
 def submit_for_review(version_id):
     cancel_open_review_submissions()
     response = api("POST", "/reviewSubmissions", data=json_body({
@@ -600,6 +616,9 @@ def submit_for_review(version_id):
         last_response = response
         print(f"Review submit {attempt}/30: {response.status_code} {response.text[:500]}")
         time.sleep(60)
+    if submit_app_store_version_directly(version_id):
+        print("Submitted for App Review with appStoreVersionSubmissions.")
+        return
     raise RuntimeError(f"Review submit failed {last_response.status_code}: {last_response.text[:1000]}")
 
 
