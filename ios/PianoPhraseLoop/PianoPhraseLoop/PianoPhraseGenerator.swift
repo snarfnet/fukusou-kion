@@ -24,16 +24,16 @@ struct PianoPhraseGenerator {
     ]
 
     func makePhrase(bars: Int, mood: PhraseMood) -> PianoPhrase {
-        let bpm = tempo(for: mood)
-        let key = keys.randomElement() ?? ("C", 60)
+        let usesLifeRushProfile = mood != .bright && Double.random(in: 0...1) < 0.90
+        let bpm = tempo(for: mood, usesLifeRushProfile: usesLifeRushProfile)
+        let key = usesLifeRushProfile ? ("A", 57) : (keys.randomElement() ?? ("C", 60))
         let step = 60.0 / Double(bpm) / 4.0
         let barCount = max(1, min(8, bars))
         let barSteps = 16
         let totalSteps = barCount * barSteps
         let seconds = Double(totalSteps) * step
-        let usesLifeRushProfile = mood != .bright && Double.random(in: 0...1) < 0.70
         let progression = usesLifeRushProfile ? lifeRushProgression(for: mood) : emotionalProgression(for: mood)
-        let density = usesLifeRushProfile ? Double.random(in: 0.18...0.30) : Double.random(in: 0.24...0.42)
+        let density = usesLifeRushProfile ? Double.random(in: 0.52...0.68) : Double.random(in: 0.24...0.42)
         let hook = hookMotif(for: mood)
         var notes: [PianoNote] = []
 
@@ -42,7 +42,7 @@ struct PianoPhraseGenerator {
             let progress = Double(cursor) / Double(max(1, totalSteps))
             let isPeak = progress > 0.58 && progress < 0.82
             let isResolution = cursor + barSteps >= totalSteps
-            let chord = isResolution ? resolutionChord(for: mood) : progression[barIndex % progression.count]
+            let chord = isResolution && !usesLifeRushProfile ? resolutionChord(for: mood) : progression[barIndex % progression.count]
             let energy = isPeak ? 1.0 : min(0.9, 0.45 + progress * 0.7)
 
             addBassAndHarmony(
@@ -112,7 +112,11 @@ struct PianoPhraseGenerator {
         return PianoPhrase(name: title, bpm: bpm, keyName: key.name, bars: barCount, duration: seconds, notes: trimmed)
     }
 
-    private func tempo(for mood: PhraseMood) -> Int {
+    private func tempo(for mood: PhraseMood, usesLifeRushProfile: Bool) -> Int {
+        if usesLifeRushProfile {
+            return Int.random(in: 116...124)
+        }
+
         switch mood {
         case .mellow:
             return Int.random(in: 58...76)
@@ -309,27 +313,32 @@ struct PianoPhraseGenerator {
         isResolution: Bool,
         notes: inout [PianoNote]
     ) {
-        let sustain = step * (isResolution ? 12.0 : 8.6)
-        notes.append(PianoNote(pitch: bassRoot - 24, velocity: velocity(34, energy), start: Double(cursor) * step, duration: sustain))
+        let bassPattern = [0, 8]
+        for offset in bassPattern {
+            let start = Double(cursor + offset) * step
+            notes.append(PianoNote(pitch: bassRoot - 24, velocity: velocity(37, energy), start: start, duration: step * 3.4))
+        }
 
-        let upperTones = [
+        let brokenTones = [
             chord.tones[1],
             chord.tones[2],
             chord.colorTones.first ?? chord.tones[1],
+            chord.tones[2],
+            chord.tones[1],
             chord.tones[2]
         ]
-        let pulseSteps = isResolution ? [4, 8, 12] : [3, 6, 10, 13]
-
-        for (index, offset) in pulseSteps.enumerated() {
-            let tone = upperTones[index % upperTones.count]
+        let patternSteps = [2, 4, 6, 10, 12, 14]
+        for (index, offset) in patternSteps.enumerated() {
+            let tone = brokenTones[index % brokenTones.count]
             let start = Double(cursor + offset) * step
-            let duration = step * Double.random(in: 1.8...3.1)
-            notes.append(PianoNote(pitch: root + tone - 12, velocity: velocity(19 + index * 2, energy), start: start, duration: duration))
+            let lift = index >= 3 ? 0 : -12
+            let velocityBase = index == 2 || index == 5 ? 30 : 23
+            notes.append(PianoNote(pitch: root + tone + lift, velocity: velocity(velocityBase, energy), start: start, duration: step * 1.7))
         }
 
         if !isResolution && chord.surprise > 0.50 {
             let color = chord.colorTones.last ?? chord.tones[1]
-            notes.append(PianoNote(pitch: root + color - 12, velocity: velocity(24, energy), start: Double(cursor + 14) * step, duration: step * 2.4))
+            notes.append(PianoNote(pitch: root + color, velocity: velocity(27, energy), start: Double(cursor + 15) * step, duration: step * 1.4))
         }
     }
 
@@ -600,19 +609,25 @@ struct PianoPhraseGenerator {
             ]
         case .mellow:
             return [
-                LeadEvent(step: 0, tone: 7, length: 6, role: .plain, lean: 0),
-                LeadEvent(step: 8, tone: 10, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: 11, tone: 12, length: 5, role: .plain, lean: 0),
-                LeadEvent(step: 18, tone: 10, length: 4, role: .release, lean: 0),
-                LeadEvent(step: 24, tone: 8, length: 7, role: .release, lean: 0)
+                LeadEvent(step: 0, tone: 7, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 4, tone: 10, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 7, tone: 12, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 12, tone: 10, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: 16, tone: 7, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 20, tone: 12, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 23, tone: 15, length: 4, role: .peak, lean: 0),
+                LeadEvent(step: 28, tone: 14, length: 3, role: .release, lean: 0)
             ]
         case .midnight:
             return [
-                LeadEvent(step: 0, tone: 5, length: 7, role: .plain, lean: 0),
-                LeadEvent(step: 10, tone: 7, length: 4, role: .plain, lean: 0),
-                LeadEvent(step: 17, tone: 10, length: 2, role: .lean, lean: 1),
-                LeadEvent(step: 20, tone: 8, length: 5, role: .release, lean: 0),
-                LeadEvent(step: 27, tone: 7, length: 5, role: .release, lean: 0)
+                LeadEvent(step: 0, tone: 5, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 4, tone: 7, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 7, tone: 10, length: 4, role: .plain, lean: 0),
+                LeadEvent(step: 12, tone: 8, length: 2, role: .lean, lean: -1),
+                LeadEvent(step: 16, tone: 5, length: 3, role: .plain, lean: 0),
+                LeadEvent(step: 20, tone: 10, length: 2, role: .plain, lean: 0),
+                LeadEvent(step: 23, tone: 14, length: 4, role: .peak, lean: 0),
+                LeadEvent(step: 28, tone: 12, length: 3, role: .release, lean: 0)
             ]
         }
     }
