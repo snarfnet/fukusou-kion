@@ -387,9 +387,20 @@ def wait_for_build():
 
 
 def upload_screenshots(version_id):
+    allowed_display_types = {display_type for display_type, _ in SCREENSHOT_GROUPS}
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
         print(f"Screenshots for {locale}")
+        sets = list_all(f"/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets?limit=200")
+        for screenshot_set in sets:
+            display_type = screenshot_set["attributes"]["screenshotDisplayType"]
+            if display_type in allowed_display_types:
+                continue
+            for screenshot in list_all(f"/appScreenshotSets/{screenshot_set['id']}/appScreenshots?limit=200"):
+                response = api("DELETE", f"/appScreenshots/{screenshot['id']}")
+                print(f"  removed {display_type} screenshot {screenshot['id']}: {response.status_code}")
+            response = api("DELETE", f"/appScreenshotSets/{screenshot_set['id']}")
+            print(f"  removed screenshot set {display_type}: {response.status_code}")
         sets = list_all(f"/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets?limit=200")
         existing = {item["attributes"]["screenshotDisplayType"]: item["id"] for item in sets}
         for display_type, filenames in SCREENSHOT_GROUPS:
