@@ -28,20 +28,26 @@ struct ContentView: View {
                 }
                 .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 18) {
-                        header
-                        phrasePanel
-                        controls
-                        keyboardPreview
-                        Text("Acoustic Grand Piano from FreePats, CC BY 3.0")
-                            .font(.caption2)
-                            .foregroundStyle(.white.opacity(0.72))
-                            .multilineTextAlignment(.center)
+                VStack(spacing: 0) {
+                    AdBannerView()
+                        .padding(.top, 8)
+                        .background(.black.opacity(0.18))
+
+                    ScrollView {
+                        VStack(spacing: 18) {
+                            header
+                            phrasePanel
+                            controls
+                            keyboardPreview
+                            Text("Acoustic Grand Piano from FreePats, CC BY 3.0")
+                                .font(.caption2)
+                                .foregroundStyle(.white.opacity(0.72))
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(20)
+                        .frame(maxWidth: 560)
+                        .frame(maxWidth: .infinity)
                     }
-                    .padding(20)
-                    .frame(maxWidth: 560)
-                    .frame(maxWidth: .infinity)
                 }
             }
             .navigationTitle("Phrase Piano")
