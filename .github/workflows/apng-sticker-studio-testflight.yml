@@ -169,7 +169,7 @@ jobs:
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             CURRENT_PROJECT_VERSION="$BUILD_NUM"
 
-      - name: Export and upload IPA
+      - name: Export IPA
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
@@ -184,6 +184,30 @@ jobs:
             -authenticationKeyPath "$ASC_P8_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Inspect IPA signature
+        run: |
+          IPA=$(ls build/export/*.ipa | head -1)
+          echo "IPA: $IPA"
+          rm -rf /tmp/ipacheck && mkdir -p /tmp/ipacheck
+          unzip -q "$IPA" -d /tmp/ipacheck
+          APP=$(ls -d /tmp/ipacheck/Payload/*.app | head -1)
+          echo "=== codesign authority ==="
+          codesign -dvvv "$APP" 2>&1 | grep -iE "Authority|TeamIdentifier|Identifier=" || true
+          echo "=== embedded profile ==="
+          security cms -D -i "$APP/embedded.mobileprovision" 2>/dev/null > /tmp/prof.plist || true
+          /usr/libexec/PlistBuddy -c "Print :Name" /tmp/prof.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Print :ProvisionsAllDevices" /tmp/prof.plist 2>/dev/null || echo "(no ProvisionsAllDevices key)"
+          echo "--- profile cert SHA1 ---"
+          /usr/libexec/PlistBuddy -c "Print :DeveloperCertificates:0" /tmp/prof.plist 2>/dev/null | tr -d ' \n' | sed 's/.*<data>//;s/<\/data>.*//' | base64 --decode 2>/dev/null | openssl x509 -inform DER -noout -fingerprint -sha1 -subject 2>&1 || true
+
+      - name: Upload IPA via altool
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          IPA=$(ls build/export/*.ipa | head -1)
+          xcrun altool --upload-app -f "$IPA" -t ios \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
 
       - name: Wait for TestFlight build processing
         env:
