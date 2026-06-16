@@ -12,6 +12,7 @@ PROFILE_NAME = os.environ.get("PROFILE_NAME", "APNGStickerStudio App Store")
 PROFILE_FILENAME = PROFILE_NAME.replace(" ", "_") + ".mobileprovision"
 PROFILE_PATH = Path.home() / "Library/MobileDevice/Provisioning Profiles" / PROFILE_FILENAME
 CERT_SHA1 = os.environ.get("IOS_DISTRIBUTION_CERT_SHA1", "").replace(":", "").upper()
+CERTIFICATE_ID = os.environ.get("ASC_CERTIFICATE_ID", "")
 
 
 def cert_sha1(certificate):
@@ -25,6 +26,9 @@ def cert_sha1(certificate):
 
 
 def find_distribution_certificate():
+    if CERTIFICATE_ID:
+        return api_json("GET", f"/certificates/{CERTIFICATE_ID}")["data"]
+
     certificates = []
     for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
         certificates.extend(api_json("GET", f"/certificates?filter[certificateType]={cert_type}&limit=20").get("data", []))
@@ -36,7 +40,7 @@ def find_distribution_certificate():
         for certificate in certificates:
             if cert_sha1(certificate) == CERT_SHA1:
                 return certificate
-        print(f"Warning: no App Store Connect certificate matched installed certificate {CERT_SHA1}.")
+        raise RuntimeError(f"No App Store Connect certificate matched installed certificate {CERT_SHA1}.")
     return certificates[0]
 
 
@@ -58,7 +62,7 @@ def find_or_create_profile(bundle_id, certificate_id):
 
     for profile in existing:
         response = api("DELETE", f"/profiles/{profile['id']}")
-        print(f"Deleted duplicate profile {profile['id']}: {response.status_code}")
+        print(f"Deleted stale profile {profile['id']}: {response.status_code}")
 
     payload = {
         "data": {
