@@ -13,6 +13,7 @@ from asc_helpers import api, api_json, headers, query
 APP_ID = os.environ.get("APP_ID", "6780083334")
 APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 BUILD_NUMBER = os.environ.get("BUILD_NUMBER", "33")
+APP_PRICE_JPY = os.environ.get("APP_PRICE_JPY", "0")
 SCREENSHOT_DIR = "MarketingAssets/Screenshots"
 
 SCREENSHOT_GROUPS = [
@@ -233,6 +234,59 @@ def publish_existing_privacy_answers():
         print(response.text[:1000])
 
 
+def ensure_jpy_price():
+    body = api_json(
+        "GET",
+        f"/apps/{APP_ID}/appPricePoints?filter[territory]=JPN&fields[appPricePoints]=customerPrice&limit=200",
+    )
+    points = body.get("data", [])
+    while body.get("links", {}).get("next"):
+        next_path = body["links"]["next"].split("/v1", 1)[1]
+        body = api_json("GET", next_path)
+        points.extend(body.get("data", []))
+
+    if not points:
+        print("JPY price: skipped")
+        return
+
+    def price_value(point):
+        try:
+            return float(point.get("attributes", {}).get("customerPrice") or 0)
+        except Exception:
+            return 0
+
+    target = float(APP_PRICE_JPY)
+    price_point = min(points, key=lambda item: abs(price_value(item) - target))
+    price_id = price_point["id"]
+    print(f"Selected JPN price point: {price_id} customerPrice={price_value(price_point)}")
+    response = api(
+        "POST",
+        "/appPriceSchedules",
+        json={
+            "data": {
+                "type": "appPriceSchedules",
+                "attributes": {},
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": APP_ID}},
+                    "baseTerritory": {"data": {"type": "territories", "id": "JPN"}},
+                    "manualPrices": {"data": [{"type": "appPrices", "id": "${manualPrice0}"}]},
+                },
+            },
+            "included": [
+                {
+                    "type": "appPrices",
+                    "id": "${manualPrice0}",
+                    "attributes": {"startDate": None},
+                    "relationships": {"appPricePoint": {"data": {"type": "appPricePoints", "id": price_id}}},
+                }
+            ],
+        },
+    )
+    print(f"JPY price: {response.status_code}")
+    if response.status_code not in (200, 201, 409):
+        print(response.text[:1000])
+
+
 def ensure_review_detail(version_id):
     attrs = {
         "contactFirstName": "Tokyo",
@@ -305,6 +359,7 @@ def ensure_release_prerequisites(version_id):
         },
     )
     print(f"Version attributes: {response.status_code}")
+    ensure_jpy_price()
     publish_existing_privacy_answers()
     ensure_review_detail(version_id)
 
