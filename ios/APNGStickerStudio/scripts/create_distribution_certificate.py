@@ -193,6 +193,13 @@ def create_certificate():
             if deleted:
                 print(f"Retrying certificate creation after deleting {deleted} stale certificate(s).")
                 continue
+            print(
+                "Apple blocked creating a new distribution certificate, and no stale CI certificate "
+                "was safe to delete. Add GitHub Secrets APNG_IOS_DISTRIBUTION_P12_BASE64 and "
+                "APNG_IOS_DISTRIBUTION_P12_PASSWORD for a current Apple Distribution certificate, "
+                "or run this workflow manually with replace_distribution_certificate=true to delete "
+                "the oldest active distribution certificate."
+            )
         break
     raise RuntimeError(last_error)
 
