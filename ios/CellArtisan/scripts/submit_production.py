@@ -18,7 +18,7 @@ SCREENSHOT_DIR = "MarketingAssets/Screenshots"
 
 SCREENSHOT_GROUPS = [
     ("APP_IPHONE_67", ["iphone67_01.png", "iphone67_02.png", "iphone67_03.png"]),
-    ("APP_IPAD_PRO_3GEN_129", ["ipad129_01.png", "ipad129_02.png", "ipad129_03.png"]),
+    ("APP_IPHONE_55", ["iphone55_01.png", "iphone55_02.png", "iphone55_03.png"]),
 ]
 
 META = {

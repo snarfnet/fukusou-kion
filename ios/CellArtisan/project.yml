@@ -29,7 +29,7 @@ targets:
       base:
         PRODUCT_NAME: CellArtisan
         PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.cellartisan
-        TARGETED_DEVICE_FAMILY: "1,2"
+        TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_FILE: CellArtisan/Resources/Info.plist
         CODE_SIGN_STYLE: Manual
