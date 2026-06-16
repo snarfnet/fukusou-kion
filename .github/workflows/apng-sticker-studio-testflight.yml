@@ -85,6 +85,8 @@ jobs:
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
+          curl -fsSL https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o /tmp/AppleWWDRCAG3.cer
+          security import /tmp/AppleWWDRCAG3.cer -k build.keychain -T /usr/bin/codesign || true
           if [ -n "$APNG_IOS_DISTRIBUTION_P12_BASE64" ]; then
             test -n "$APNG_IOS_DISTRIBUTION_P12_PASSWORD"
             printf '%s' "$APNG_IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/apng-distribution.p12
@@ -160,8 +162,10 @@ jobs:
             -authenticationKeyPath "$ASC_P8_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
             CURRENT_PROJECT_VERSION="$BUILD_NUM"
 
@@ -169,6 +173,9 @@ jobs:
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" export_options.plist
           xcodebuild -exportArchive \
             -archivePath build/APNGStickerStudio.xcarchive \
             -exportPath build/export \
