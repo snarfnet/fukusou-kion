@@ -1,4 +1,4 @@
-# APNG Sticker Studio
+# アニメスタンプ作成 APNG Sticker Studio
 
 1枚の画像から、LINE Creators Market向けのAPNGスタンプ素材を作るiOSアプリです。
 

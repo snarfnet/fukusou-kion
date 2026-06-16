@@ -1,4 +1,4 @@
-name: APNG Sticker Studio TestFlight Upload
+name: Anime Stamp APNG Sticker Studio TestFlight Upload
 
 on:
   workflow_dispatch:
@@ -21,11 +21,12 @@ jobs:
         working-directory: ios/APNGStickerStudio
     env:
       APP_BUNDLE_ID: com.tokyonasu.apngstickerstudio
-      APP_NAME: "APNG Sticker Studio"
+      APP_NAME: "アニメスタンプ作成 APNG Sticker Studio"
       APP_SKU: apng-sticker-studio-ios
       BUNDLE_NAME: APNGStickerStudio
       PROFILE_NAME: "APNGStickerStudio App Store"
       APNG_STICKER_STUDIO_APP_ID: ${{ secrets.APNG_STICKER_STUDIO_APP_ID }}
+      APNG_STICKER_STUDIO_FALLBACK_APP_ID: "6780890072"
 
     steps:
       - name: Checkout
@@ -73,6 +74,9 @@ jobs:
           . .venv/bin/activate
           if [ -n "$APNG_STICKER_STUDIO_APP_ID" ]; then
             echo "APP_ID=$APNG_STICKER_STUDIO_APP_ID" >> "$GITHUB_ENV"
+            python scripts/ensure_asc_app.py
+          elif [ -n "$APNG_STICKER_STUDIO_FALLBACK_APP_ID" ]; then
+            echo "APP_ID=$APNG_STICKER_STUDIO_FALLBACK_APP_ID" >> "$GITHUB_ENV"
             python scripts/ensure_asc_app.py
           else
             python scripts/ensure_asc_app.py | tee /tmp/apng-sticker-studio-app.log

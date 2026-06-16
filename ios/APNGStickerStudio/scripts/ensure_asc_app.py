@@ -6,7 +6,7 @@ from asc_helpers import api_json, fail, json_body, query
 
 BUNDLE_ID = os.environ.get("APP_BUNDLE_ID", "com.tokyonasu.apngstickerstudio")
 BUNDLE_NAME = os.environ.get("BUNDLE_NAME", "APNGStickerStudio")
-APP_NAME = os.environ.get("APP_NAME", "APNG Sticker Studio")
+APP_NAME = os.environ.get("APP_NAME", "アニメスタンプ作成 APNG Sticker Studio")
 APP_SKU = os.environ.get("APP_SKU", "apng-sticker-studio-ios")
 
 

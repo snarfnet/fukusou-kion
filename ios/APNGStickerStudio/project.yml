@@ -21,13 +21,13 @@ targets:
     sources: [APNGStickerStudio]
     settings:
       base:
-        PRODUCT_NAME: "APNG Sticker Studio"
+        PRODUCT_NAME: "アニメスタンプ作成 APNG Sticker Studio"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: APNGStickerStudio/Info.plist
       properties:
-        CFBundleName: "APNG Sticker Studio"
-        CFBundleDisplayName: "APNG Sticker Studio"
+        CFBundleName: "アニメスタンプ作成 APNG Sticker Studio"
+        CFBundleDisplayName: "アニメスタンプ作成 APNG Sticker Studio"
         CFBundleIconName: AppIcon
         CFBundleShortVersionString: "0.1"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"

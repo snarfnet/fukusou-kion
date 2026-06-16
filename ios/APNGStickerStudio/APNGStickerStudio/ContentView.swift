@@ -29,7 +29,7 @@ struct ContentView: View {
                 .padding(16)
             }
             .background(StudioTheme.canvas.ignoresSafeArea())
-            .navigationTitle("APNG Sticker Studio")
+            .navigationTitle("アニメスタンプ作成")
             .navigationBarTitleDisplayMode(.inline)
             .onReceive(previewTimer) { _ in
                 previewTick += 1

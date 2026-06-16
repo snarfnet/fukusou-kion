@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>APNG Sticker Studio</string>
+	<string>アニメスタンプ作成 APNG Sticker Studio</string>
 	<key>CFBundleDisplayName</key>
-	<string>APNG Sticker Studio</string>
+	<string>アニメスタンプ作成 APNG Sticker Studio</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>CFBundleShortVersionString</key>
