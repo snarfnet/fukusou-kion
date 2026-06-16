@@ -11,6 +11,10 @@ on:
         description: "App Store Connect app ID"
         required: false
         default: "6780083334"
+      source_ref:
+        description: "Branch or ref that contains the PianoPhraseLoop app source"
+        required: false
+        default: "codex/piano-phrase-loop-testflight"
 
 concurrency:
   group: piano-phrase-loop-production
@@ -30,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || 'codex/piano-phrase-loop-testflight' }}
 
       - name: Install tools
         run: |
