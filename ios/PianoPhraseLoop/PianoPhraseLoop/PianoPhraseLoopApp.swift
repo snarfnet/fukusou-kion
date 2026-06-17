@@ -1,15 +1,13 @@
 import SwiftUI
-import GoogleMobileAds
 
 @main
 struct PianoPhraseLoopApp: App {
-    init() {
-        MobileAds.shared.start()
-    }
+    @StateObject private var adMobStartup = AdMobStartup()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(adMobStartup)
         }
     }
 }

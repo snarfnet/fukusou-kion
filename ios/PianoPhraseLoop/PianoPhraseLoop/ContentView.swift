@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject private var adMobStartup: AdMobStartup
     @StateObject private var manager = PhrasePianoManager()
     @State private var isSharing = false
 
@@ -29,9 +31,14 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    AdBannerView()
-                        .padding(.top, 8)
-                        .background(.black.opacity(0.18))
+                    if adMobStartup.isReady {
+                        AdBannerView()
+                            .padding(.top, 8)
+                            .background(.black.opacity(0.18))
+                    } else {
+                        Color.black.opacity(0.18)
+                            .frame(height: 66)
+                    }
 
                     ScrollView {
                         VStack(spacing: 18) {
@@ -53,6 +60,14 @@ struct ContentView: View {
             .navigationTitle("Phrase Piano")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .onAppear {
+                adMobStartup.requestTrackingAuthorizationThenStartAds()
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    adMobStartup.requestTrackingAuthorizationThenStartAds()
+                }
+            }
             .sheet(isPresented: $isSharing) {
                 if let url = manager.savedMIDIURL {
                     ActivityView(activityItems: [url])

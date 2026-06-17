@@ -296,6 +296,7 @@ def ensure_review_detail(version_id):
         "demoAccountRequired": False,
         "notes": (
             "ログイン不要です。短いピアノフレーズを生成、再生、ループ再生、MIDI保存できます。"
+            "初回起動時にApp Tracking Transparencyの許可リクエストを表示し、その完了後にAdMobを開始します。"
             "上部にAdMobバナー広告を表示します。"
             "内蔵音源として FreePats の Acoustic Grand Piano を使用し、アプリ内にクレジットを表示しています。"
         ),
