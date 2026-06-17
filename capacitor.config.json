@@ -1,0 +1,10 @@
+{
+  "appId": "com.heatguard.app",
+  "appName": "熱中症予防サポート",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "ios": {
+    "contentInset": "automatic",
+    "scheme": "HeatGuard"
+  }
+}

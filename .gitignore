@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.npm-cache/
+*.log
+
+# Apple signing material
+*.p12
+*.cer
+*.mobileprovision
+*.p8
+private_keys/
+secrets/
+
+# Xcode
+DerivedData/
+*.xcarchive
+*.ipa
+ios/App/build/
+ios/App/DerivedData/
+ios/App/*.xcworkspace/xcuserdata/
+ios/App/*.xcodeproj/xcuserdata/
