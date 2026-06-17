@@ -174,9 +174,16 @@ jobs:
                       "relationships": {"bundleId": {"data": {"type": "bundleIds", "id": bundle["id"]}}},
                   }
               }
-              app = request("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
-              print(f"App Store app created: {APP_NAME} ({app['id']})")
-              return app
+              try:
+                  app = request("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
+                  print(f"App Store app created: {APP_NAME} ({app['id']})")
+                  return app
+              except RuntimeError as error:
+                  if "does not allow 'CREATE'" in str(error) or "FORBIDDEN_ERROR" in str(error):
+                      print(f"App Store app record was not created by this API key: {error}")
+                      print("Continuing so signing/profile creation and archive can run.")
+                      return None
+                  raise
 
           def first_distribution_certificate():
               for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
