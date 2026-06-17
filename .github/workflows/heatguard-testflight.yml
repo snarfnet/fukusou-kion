@@ -46,8 +46,10 @@ jobs:
 
       - name: Install App Store Connect tools
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install pyjwt cryptography requests
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
 
       - name: Install dependencies
         working-directory: heatguard
@@ -100,7 +102,8 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
-          python3 <<'PY'
+          . .venv/bin/activate
+          python <<'PY'
           import base64
           import json
           import os
