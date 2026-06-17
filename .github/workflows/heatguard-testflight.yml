@@ -73,8 +73,8 @@ jobs:
 
       - name: Install signing certificate
         env:
-          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
-          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_BASE64 || secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_PASSWORD || secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
           IOS_APPSTORE_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: temporary-keychain-password
         run: |
@@ -186,18 +186,19 @@ jobs:
                   raise
 
           def first_distribution_certificate():
+              certificates = []
               for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
                   body = request("GET", f"/certificates?{query({'filter[certificateType]': cert_type, 'limit': '20'})}")
-                  if body.get("data"):
-                      cert = body["data"][0]
-                      print(f"Using certificate: {cert['id']}")
-                      return cert
-              body = request("GET", "/certificates?limit=20")
-              if body.get("data"):
-                  cert = body["data"][0]
-                  print(f"Using fallback certificate: {cert['id']}")
-                  return cert
-              raise RuntimeError("No distribution certificate found in App Store Connect.")
+                  certificates.extend(body.get("data", []))
+              if not certificates:
+                  certificates.extend(request("GET", "/certificates?limit=20").get("data", []))
+              if not certificates:
+                  raise RuntimeError("No distribution certificate found in App Store Connect.")
+              certificates.sort(key=lambda cert: cert.get("attributes", {}).get("expirationDate", ""), reverse=True)
+              cert = certificates[0]
+              attrs = cert.get("attributes", {})
+              print(f"Using certificate: {cert['id']} expires {attrs.get('expirationDate')}")
+              return cert
 
           def profile_certificate_ids(profile_id):
               body = request("GET", f"/profiles/{profile_id}/relationships/certificates?limit=10")
@@ -212,6 +213,8 @@ jobs:
                       if detail.get("attributes", {}).get("profileContent"):
                           print(f"Profile exists: {PROFILE_NAME} ({profile['id']})")
                           return detail
+                  print(f"Deleting stale profile: {PROFILE_NAME} ({profile['id']})")
+                  request("DELETE", f"/profiles/{profile['id']}")
               payload = {
                   "data": {
                       "type": "profiles",
