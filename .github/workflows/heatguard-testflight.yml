@@ -19,6 +19,9 @@ jobs:
 
     env:
       APP_BUNDLE_ID: com.heatguard.app
+      APP_NAME: 熱中症予防サポート
+      APP_SKU: heatguard-app
+      PROFILE_NAME: HeatGuard App Store
       APP_SCHEME: App
       APP_PROJECT: heatguard/ios/App/App.xcodeproj
 
@@ -40,6 +43,11 @@ jobs:
           node-version: "22"
           cache: npm
           cache-dependency-path: heatguard/package-lock.json
+
+      - name: Install App Store Connect tools
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pyjwt cryptography requests
 
       - name: Install dependencies
         working-directory: heatguard
@@ -87,6 +95,143 @@ jobs:
           test -n "$TEAM_ID"
           echo "APPLE_TEAM_ID=$TEAM_ID" >> "$GITHUB_ENV"
 
+      - name: Prepare Bundle ID, App Store app, and profile
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          python3 <<'PY'
+          import base64
+          import json
+          import os
+          import time
+          import urllib.parse
+          from pathlib import Path
+
+          import jwt
+          import requests
+
+          API = "https://api.appstoreconnect.apple.com/v1"
+          BUNDLE_ID = os.environ["APP_BUNDLE_ID"]
+          APP_NAME = os.environ["APP_NAME"]
+          APP_SKU = os.environ["APP_SKU"]
+          PROFILE_NAME = os.environ["PROFILE_NAME"]
+          KEY_ID = os.environ["ASC_KEY_ID"]
+          ISSUER_ID = os.environ["ASC_ISSUER_ID"]
+          KEY_PATH = Path(f"/tmp/asc/AuthKey_{KEY_ID}.p8")
+
+          def token():
+              now = int(time.time())
+              payload = {"iss": ISSUER_ID, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"}
+              return jwt.encode(payload, KEY_PATH.read_text(), algorithm="ES256", headers={"kid": KEY_ID, "typ": "JWT"})
+
+          def request(method, path, **kwargs):
+              headers = kwargs.pop("headers", {})
+              headers["Authorization"] = f"Bearer {token()}"
+              headers["Content-Type"] = "application/json"
+              response = requests.request(method, f"{API}{path}", headers=headers, timeout=60, **kwargs)
+              if response.status_code >= 400:
+                  raise RuntimeError(f"{method} {path} failed: {response.status_code} {response.text}")
+              return response.json() if response.text else {}
+
+          def query(params):
+              return urllib.parse.urlencode(params)
+
+          def ensure_bundle_id():
+              body = request("GET", f"/bundleIds?{query({'filter[identifier]': BUNDLE_ID, 'limit': '1'})}")
+              if body.get("data"):
+                  bundle = body["data"][0]
+                  print(f"Bundle ID exists: {BUNDLE_ID} ({bundle['id']})")
+                  return bundle
+              payload = {
+                  "data": {
+                      "type": "bundleIds",
+                      "attributes": {"identifier": BUNDLE_ID, "name": "HeatGuard", "platform": "IOS"},
+                  }
+              }
+              bundle = request("POST", "/bundleIds", data=json.dumps(payload, ensure_ascii=False))["data"]
+              print(f"Bundle ID created: {BUNDLE_ID} ({bundle['id']})")
+              return bundle
+
+          def ensure_app(bundle):
+              body = request("GET", f"/apps?{query({'filter[bundleId]': BUNDLE_ID, 'limit': '1'})}")
+              if body.get("data"):
+                  app = body["data"][0]
+                  print(f"App Store app exists: {APP_NAME} ({app['id']})")
+                  return app
+              payload = {
+                  "data": {
+                      "type": "apps",
+                      "attributes": {
+                          "name": APP_NAME,
+                          "bundleId": BUNDLE_ID,
+                          "sku": APP_SKU,
+                          "primaryLocale": "ja-JP",
+                      },
+                      "relationships": {"bundleId": {"data": {"type": "bundleIds", "id": bundle["id"]}}},
+                  }
+              }
+              app = request("POST", "/apps", data=json.dumps(payload, ensure_ascii=False))["data"]
+              print(f"App Store app created: {APP_NAME} ({app['id']})")
+              return app
+
+          def first_distribution_certificate():
+              for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
+                  body = request("GET", f"/certificates?{query({'filter[certificateType]': cert_type, 'limit': '20'})}")
+                  if body.get("data"):
+                      cert = body["data"][0]
+                      print(f"Using certificate: {cert['id']}")
+                      return cert
+              body = request("GET", "/certificates?limit=20")
+              if body.get("data"):
+                  cert = body["data"][0]
+                  print(f"Using fallback certificate: {cert['id']}")
+                  return cert
+              raise RuntimeError("No distribution certificate found in App Store Connect.")
+
+          def profile_certificate_ids(profile_id):
+              body = request("GET", f"/profiles/{profile_id}/relationships/certificates?limit=10")
+              return {item["id"] for item in body.get("data", [])}
+
+          def ensure_profile(bundle, certificate):
+              body = request("GET", f"/profiles?{query({'filter[name]': PROFILE_NAME, 'limit': '20'})}")
+              for profile in body.get("data", []):
+                  attrs = profile.get("attributes", {})
+                  if attrs.get("profileState") == "ACTIVE" and certificate["id"] in profile_certificate_ids(profile["id"]):
+                      detail = request("GET", f"/profiles/{profile['id']}")["data"]
+                      if detail.get("attributes", {}).get("profileContent"):
+                          print(f"Profile exists: {PROFILE_NAME} ({profile['id']})")
+                          return detail
+              payload = {
+                  "data": {
+                      "type": "profiles",
+                      "attributes": {"name": PROFILE_NAME, "profileType": "IOS_APP_STORE"},
+                      "relationships": {
+                          "bundleId": {"data": {"type": "bundleIds", "id": bundle["id"]}},
+                          "certificates": {"data": [{"type": "certificates", "id": certificate["id"]}]},
+                      },
+                  }
+              }
+              profile = request("POST", "/profiles", data=json.dumps(payload, ensure_ascii=False))["data"]
+              detail = request("GET", f"/profiles/{profile['id']}")["data"]
+              print(f"Profile created: {PROFILE_NAME} ({profile['id']})")
+              return detail
+
+          bundle = ensure_bundle_id()
+          ensure_app(bundle)
+          certificate = first_distribution_certificate()
+          profile = ensure_profile(bundle, certificate)
+          content = profile.get("attributes", {}).get("profileContent")
+          if not content:
+              raise RuntimeError("Profile exists, but profileContent is empty.")
+
+          profile_dir = Path.home() / "Library/MobileDevice/Provisioning Profiles"
+          profile_dir.mkdir(parents=True, exist_ok=True)
+          profile_path = profile_dir / "HeatGuard_App_Store.mobileprovision"
+          profile_path.write_bytes(base64.b64decode(content))
+          print(f"Installed profile: {profile_path}")
+          PY
+
       - name: Set build number
         run: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.event.inputs.build_number }}" heatguard/ios/App/App/Info.plist
@@ -110,7 +255,9 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
-            CODE_SIGN_STYLE=Automatic
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME"
 
       - name: Create export options
         run: |
@@ -122,9 +269,14 @@ jobs:
             <key>method</key>
             <string>app-store-connect</string>
             <key>signingStyle</key>
-            <string>automatic</string>
+            <string>manual</string>
             <key>teamID</key>
             <string>$APPLE_TEAM_ID</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>$APP_BUNDLE_ID</key>
+              <string>$PROFILE_NAME</string>
+            </dict>
           </dict>
           </plist>
           EOF
