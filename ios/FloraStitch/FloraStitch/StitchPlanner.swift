@@ -317,92 +317,62 @@ enum StitchPlanner {
 
     static func birdBodyOutlines(_ bird: BirdElement) -> [[CGPoint]] {
         let s = bird.size
-        switch bird.kind {
-        case .swallow:
-            return [
-                birdShape(bird, [CGPoint(x: -0.95, y: 0), CGPoint(x: -0.28, y: -0.26), CGPoint(x: 0.48, y: -0.14), CGPoint(x: 0.95, y: 0.02), CGPoint(x: 0.38, y: 0.18), CGPoint(x: -0.3, y: 0.2)]),
-                birdShape(bird, [CGPoint(x: -0.35, y: 0.04), CGPoint(x: -0.88, y: 0.42), CGPoint(x: -0.68, y: 0.02), CGPoint(x: -0.94, y: -0.42)])
-            ]
-        case .sparrow, .finch, .robin, .wren, .lark:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.12, y: 0), width: s * 1.05, height: s * 0.7, angle: bird.angle, steps: 22),
-                rotatedOval(center: birdPoint(bird, x: 0.48, y: -0.18), width: s * 0.45, height: s * 0.4, angle: bird.angle, steps: 16)
-            ]
-        case .dove:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.05, y: 0), width: s * 1.2, height: s * 0.78, angle: bird.angle, steps: 24),
-                rotatedOval(center: birdPoint(bird, x: 0.58, y: -0.18), width: s * 0.46, height: s * 0.42, angle: bird.angle, steps: 16)
-            ]
-        case .hummingbird:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.08, y: 0.03), width: s * 0.88, height: s * 0.44, angle: bird.angle, steps: 20),
-                rotatedOval(center: birdPoint(bird, x: 0.42, y: -0.08), width: s * 0.34, height: s * 0.28, angle: bird.angle, steps: 14)
-            ]
-        case .crane:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.12, y: 0.08), width: s * 1.15, height: s * 0.55, angle: bird.angle, steps: 22),
-                rotatedOval(center: birdPoint(bird, x: 0.52, y: -0.22), width: s * 0.34, height: s * 0.3, angle: bird.angle, steps: 14)
-            ]
-        case .kingfisher:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.08, y: 0.02), width: s * 1.02, height: s * 0.62, angle: bird.angle, steps: 20),
-                rotatedOval(center: birdPoint(bird, x: 0.5, y: -0.14), width: s * 0.5, height: s * 0.42, angle: bird.angle, steps: 16)
-            ]
-        case .gull:
-            return [
-                birdShape(bird, [CGPoint(x: -0.9, y: 0.06), CGPoint(x: -0.22, y: -0.16), CGPoint(x: 0.28, y: -0.08), CGPoint(x: 0.92, y: 0.04), CGPoint(x: 0.24, y: 0.18), CGPoint(x: -0.24, y: 0.16)])
-            ]
-        case .owl:
-            return [
-                rotatedOval(center: bird.center, width: s * 0.82, height: s * 0.95, angle: bird.angle, steps: 24),
-                rotatedOval(center: birdPoint(bird, x: 0, y: -0.44), width: s * 0.72, height: s * 0.42, angle: bird.angle, steps: 18)
-            ]
-        }
+        return [
+            rotatedOval(center: birdPoint(bird, x: -0.08, y: 0.04), width: s * bodyWidth(for: bird.kind), height: s * bodyHeight(for: bird.kind), angle: bird.angle, steps: 24),
+            rotatedOval(center: birdPoint(bird, x: headX(for: bird.kind), y: headY(for: bird.kind)), width: s * headSize(for: bird.kind), height: s * headSize(for: bird.kind) * 0.86, angle: bird.angle, steps: 18),
+            tailShape(for: bird),
+            beakShape(for: bird)
+        ]
     }
 
     static func birdWingOutlines(_ bird: BirdElement) -> [[CGPoint]] {
         let s = bird.size
         switch bird.kind {
-        case .swallow, .gull:
-            return [
-                birdShape(bird, [CGPoint(x: -0.24, y: -0.02), CGPoint(x: -0.55, y: -0.78), CGPoint(x: 0.15, y: -0.18)]),
-                birdShape(bird, [CGPoint(x: 0.02, y: 0.02), CGPoint(x: 0.62, y: 0.68), CGPoint(x: 0.2, y: 0.12)])
-            ]
+        case .swallow, .gull, .lark:
+            return [birdShape(bird, [CGPoint(x: -0.38, y: -0.04), CGPoint(x: -0.02, y: -0.36), CGPoint(x: 0.34, y: -0.06), CGPoint(x: 0.08, y: 0.18)])]
         case .hummingbird:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.2, y: -0.48), width: s * 0.42, height: s * 1.05, angle: bird.angle - 0.45, steps: 18),
-                rotatedOval(center: birdPoint(bird, x: -0.02, y: 0.42), width: s * 0.38, height: s * 0.9, angle: bird.angle + 0.65, steps: 18)
-            ]
+            return [birdShape(bird, [CGPoint(x: -0.34, y: -0.02), CGPoint(x: -0.06, y: -0.52), CGPoint(x: 0.22, y: -0.04), CGPoint(x: -0.02, y: 0.14)])]
         case .crane:
-            return [birdShape(bird, [CGPoint(x: -0.16, y: 0), CGPoint(x: -0.72, y: -0.52), CGPoint(x: 0.18, y: -0.12), CGPoint(x: 0.38, y: 0.06)])]
+            return [birdShape(bird, [CGPoint(x: -0.46, y: 0.02), CGPoint(x: -0.08, y: -0.36), CGPoint(x: 0.28, y: -0.06), CGPoint(x: 0.02, y: 0.18)])]
         case .owl:
             return [
-                rotatedOval(center: birdPoint(bird, x: -0.24, y: 0.06), width: s * 0.28, height: s * 0.58, angle: bird.angle - 0.12, steps: 14),
-                rotatedOval(center: birdPoint(bird, x: 0.24, y: 0.06), width: s * 0.28, height: s * 0.58, angle: bird.angle + 0.12, steps: 14)
+                rotatedOval(center: birdPoint(bird, x: -0.22, y: 0.08), width: s * 0.26, height: s * 0.5, angle: bird.angle - 0.12, steps: 14),
+                rotatedOval(center: birdPoint(bird, x: 0.12, y: 0.08), width: s * 0.26, height: s * 0.5, angle: bird.angle + 0.12, steps: 14)
             ]
         default:
-            return [birdShape(bird, [CGPoint(x: -0.18, y: -0.02), CGPoint(x: -0.5, y: -0.56), CGPoint(x: 0.22, y: -0.16), CGPoint(x: 0.34, y: 0.08)])]
+            return [rotatedOval(center: birdPoint(bird, x: -0.12, y: -0.02), width: s * 0.62, height: s * 0.38, angle: bird.angle - 0.18, steps: 16)]
         }
     }
 
     static func birdAccentLines(_ bird: BirdElement) -> [[CGPoint]] {
         switch bird.kind {
-        case .hummingbird, .kingfisher:
-            return [[birdPoint(bird, x: 0.62, y: -0.12), birdPoint(bird, x: 1.12, y: -0.22)]]
+        case .hummingbird:
+            return [
+                [birdPoint(bird, x: 0.58, y: -0.08), birdPoint(bird, x: 1.22, y: -0.18)],
+                [birdPoint(bird, x: 0.56, y: 0.02), birdPoint(bird, x: 0.56, y: 0.02)]
+            ]
+        case .kingfisher:
+            return [
+                [birdPoint(bird, x: 0.58, y: -0.08), birdPoint(bird, x: 1.08, y: -0.14)],
+                [birdPoint(bird, x: 0.5, y: -0.18), birdPoint(bird, x: 0.5, y: -0.18)]
+            ]
         case .crane:
             return [
-                [birdPoint(bird, x: 0.62, y: -0.2), birdPoint(bird, x: 0.98, y: -0.62), birdPoint(bird, x: 0.82, y: -0.9)],
-                [birdPoint(bird, x: -0.38, y: 0.18), birdPoint(bird, x: -0.9, y: 0.5)]
+                [birdPoint(bird, x: 0.44, y: -0.22), birdPoint(bird, x: 0.72, y: -0.52), birdPoint(bird, x: 0.62, y: -0.76)],
+                [birdPoint(bird, x: 0.58, y: -0.44), birdPoint(bird, x: 0.58, y: -0.44)]
             ]
         case .owl:
             return [
                 [birdPoint(bird, x: -0.14, y: -0.48), birdPoint(bird, x: -0.14, y: -0.48)],
-                [birdPoint(bird, x: 0.14, y: -0.48), birdPoint(bird, x: 0.14, y: -0.48)]
+                [birdPoint(bird, x: 0.14, y: -0.48), birdPoint(bird, x: 0.14, y: -0.48)],
+                [birdPoint(bird, x: -0.16, y: 0.48), birdPoint(bird, x: -0.28, y: 0.66)],
+                [birdPoint(bird, x: 0.16, y: 0.48), birdPoint(bird, x: 0.28, y: 0.66)]
             ]
         default:
             return [
-                [birdPoint(bird, x: 0.7, y: -0.14), birdPoint(bird, x: 1.0, y: -0.12)],
-                [birdPoint(bird, x: -0.58, y: 0.02), birdPoint(bird, x: -0.98, y: -0.22)]
+                [birdPoint(bird, x: 0.52, y: -0.14), birdPoint(bird, x: 0.52, y: -0.14)],
+                [birdPoint(bird, x: -0.2, y: 0.34), birdPoint(bird, x: -0.26, y: 0.58)],
+                [birdPoint(bird, x: 0.04, y: 0.34), birdPoint(bird, x: 0.08, y: 0.58)]
             ]
         }
     }
@@ -460,6 +430,147 @@ enum StitchPlanner {
                 y: sin(t) * height * 0.5
             )
             return rotate(point, by: angle, around: center)
+        }
+    }
+
+    private static func bodyWidth(for kind: BirdKind) -> CGFloat {
+        switch kind {
+        case .dove, .gull:
+            return 1.18
+        case .crane:
+            return 1.08
+        case .hummingbird:
+            return 0.82
+        case .owl:
+            return 0.82
+        case .kingfisher:
+            return 1.0
+        default:
+            return 0.98
+        }
+    }
+
+    private static func bodyHeight(for kind: BirdKind) -> CGFloat {
+        switch kind {
+        case .owl:
+            return 0.96
+        case .crane, .hummingbird:
+            return 0.5
+        case .dove:
+            return 0.72
+        default:
+            return 0.64
+        }
+    }
+
+    private static func headX(for kind: BirdKind) -> CGFloat {
+        switch kind {
+        case .crane:
+            return 0.62
+        case .hummingbird:
+            return 0.44
+        case .owl:
+            return 0.0
+        default:
+            return 0.48
+        }
+    }
+
+    private static func headY(for kind: BirdKind) -> CGFloat {
+        switch kind {
+        case .owl:
+            return -0.36
+        case .crane:
+            return -0.28
+        case .hummingbird:
+            return -0.1
+        default:
+            return -0.18
+        }
+    }
+
+    private static func headSize(for kind: BirdKind) -> CGFloat {
+        switch kind {
+        case .owl:
+            return 0.58
+        case .dove, .kingfisher:
+            return 0.42
+        case .hummingbird, .crane:
+            return 0.32
+        default:
+            return 0.36
+        }
+    }
+
+    private static func tailShape(for bird: BirdElement) -> [CGPoint] {
+        switch bird.kind {
+        case .swallow:
+            return birdShape(bird, [
+                CGPoint(x: -0.52, y: 0.04),
+                CGPoint(x: -1.05, y: -0.32),
+                CGPoint(x: -0.82, y: 0.02),
+                CGPoint(x: -1.08, y: 0.34)
+            ])
+        case .dove, .gull:
+            return birdShape(bird, [
+                CGPoint(x: -0.56, y: -0.08),
+                CGPoint(x: -1.02, y: -0.18),
+                CGPoint(x: -0.94, y: 0.18),
+                CGPoint(x: -0.52, y: 0.14)
+            ])
+        case .hummingbird:
+            return birdShape(bird, [
+                CGPoint(x: -0.46, y: 0.0),
+                CGPoint(x: -0.92, y: -0.22),
+                CGPoint(x: -0.82, y: 0.18)
+            ])
+        case .owl:
+            return birdShape(bird, [
+                CGPoint(x: -0.28, y: 0.38),
+                CGPoint(x: 0, y: 0.68),
+                CGPoint(x: 0.28, y: 0.38)
+            ])
+        default:
+            return birdShape(bird, [
+                CGPoint(x: -0.48, y: -0.04),
+                CGPoint(x: -0.96, y: -0.22),
+                CGPoint(x: -0.82, y: 0.18)
+            ])
+        }
+    }
+
+    private static func beakShape(for bird: BirdElement) -> [CGPoint] {
+        switch bird.kind {
+        case .hummingbird:
+            return birdShape(bird, [
+                CGPoint(x: 0.58, y: -0.1),
+                CGPoint(x: 1.28, y: -0.18),
+                CGPoint(x: 0.58, y: 0.0)
+            ])
+        case .crane:
+            return birdShape(bird, [
+                CGPoint(x: 0.72, y: -0.3),
+                CGPoint(x: 1.06, y: -0.38),
+                CGPoint(x: 0.72, y: -0.22)
+            ])
+        case .kingfisher:
+            return birdShape(bird, [
+                CGPoint(x: 0.66, y: -0.16),
+                CGPoint(x: 1.18, y: -0.22),
+                CGPoint(x: 0.66, y: -0.06)
+            ])
+        case .owl:
+            return birdShape(bird, [
+                CGPoint(x: 0.0, y: -0.34),
+                CGPoint(x: 0.1, y: -0.2),
+                CGPoint(x: -0.1, y: -0.2)
+            ])
+        default:
+            return birdShape(bird, [
+                CGPoint(x: 0.62, y: -0.18),
+                CGPoint(x: 0.96, y: -0.16),
+                CGPoint(x: 0.62, y: -0.04)
+            ])
         }
     }
 

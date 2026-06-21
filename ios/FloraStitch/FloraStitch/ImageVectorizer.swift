@@ -118,7 +118,8 @@ enum ImageVectorizer {
 
         let outline = resample(reduced, maxPoints: 180)
         guard outline.count >= 8 else { return fallbackTemplate(bounds: rawBounds) }
-        return VectorTemplate(outlines: [outline])
+        let stipples = stippleOutlines(mask: rawMask, width: width, height: height, bounds: rawBounds, maxShapes: 120)
+        return VectorTemplate(outlines: [outline] + stipples)
     }
 
     private static func fallbackTemplate(bounds: (minX: Int, minY: Int, maxX: Int, maxY: Int)? = nil) -> VectorTemplate {
@@ -279,5 +280,51 @@ enum ImageVectorizer {
         guard points.count > maxPoints else { return points }
         let stride = Double(points.count) / Double(maxPoints)
         return (0..<maxPoints).map { points[min(points.count - 1, Int((Double($0) * stride).rounded(.down)))] }
+    }
+
+    private static func stippleOutlines(
+        mask: [Bool],
+        width: Int,
+        height: Int,
+        bounds: (minX: Int, minY: Int, maxX: Int, maxY: Int),
+        maxShapes: Int
+    ) -> [[CGPoint]] {
+        let boxWidth = max(1, bounds.maxX - bounds.minX)
+        let boxHeight = max(1, bounds.maxY - bounds.minY)
+        let centerX = Double(bounds.minX + bounds.maxX) / 2.0
+        let centerY = Double(bounds.minY + bounds.maxY) / 2.0
+        let scale = Double(max(boxWidth, boxHeight))
+        let cell = max(4, Int((Double(max(boxWidth, boxHeight)) / 22.0).rounded()))
+        var outlines: [[CGPoint]] = []
+
+        for y in stride(from: bounds.minY, through: bounds.maxY, by: cell) {
+            for x in stride(from: bounds.minX, through: bounds.maxX, by: cell) {
+                var filled = 0
+                var total = 0
+                for py in y..<min(height, y + cell) {
+                    for px in x..<min(width, x + cell) {
+                        total += 1
+                        if mask[py * width + px] {
+                            filled += 1
+                        }
+                    }
+                }
+                guard total > 0, Double(filled) / Double(total) > 0.28 else { continue }
+                let cx = Double(x + cell / 2)
+                let cy = Double(y + cell / 2)
+                let dot = min(0.038, max(0.015, Double(cell) / scale * 0.42))
+                outlines.append([
+                    CGPoint(x: (cx - centerX) / scale, y: (cy - centerY) / scale - dot),
+                    CGPoint(x: (cx - centerX) / scale + dot, y: (cy - centerY) / scale),
+                    CGPoint(x: (cx - centerX) / scale, y: (cy - centerY) / scale + dot),
+                    CGPoint(x: (cx - centerX) / scale - dot, y: (cy - centerY) / scale)
+                ])
+                if outlines.count >= maxShapes {
+                    return outlines
+                }
+            }
+        }
+
+        return outlines
     }
 }
