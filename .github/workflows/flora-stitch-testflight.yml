@@ -90,8 +90,8 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
-          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
-          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_BASE64 || secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_PASSWORD || secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
           REPLACE_DISTRIBUTION_CERTIFICATE: ${{ github.event.inputs.replace_distribution_certificate }}
           REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "1"
         run: |
