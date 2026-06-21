@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 import UIKit
 
@@ -8,6 +9,8 @@ struct ContentView: View {
     @State private var exportFormat: ExportFormat = .svg
     @State private var exportFile: ExportFile?
     @State private var exportMessage = "Ready"
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var importedVector: VectorTemplate?
 
     init() {
         let initialSeed = Int.random(in: 10000...99999)
@@ -37,9 +40,12 @@ struct ContentView: View {
                     Button {
                         randomize()
                     } label: {
-                        Label("Generate", systemImage: "sparkles")
+                        Label("Random seed", systemImage: "dice")
                     }
                 }
+            }
+            .onChange(of: selectedPhotoItem) { _, item in
+                importPhoto(item)
             }
             .sheet(item: $exportFile) { item in
                 ShareSheet(items: [item.url])
@@ -52,7 +58,7 @@ struct ContentView: View {
             Text("Random floral borders for embroidery")
                 .font(.system(size: 31, weight: .semibold, design: .serif))
                 .foregroundStyle(AppTheme.ink)
-            Text("Create original vine, leaf, flower, berry, and curl patterns from a seed. Export SVG, DST, or experimental PES.")
+            Text("Create original vine, leaf, flower, berry, fruit, and curl patterns from a seed. Import an image, turn it into a simple SVG motif, and mix it into the garden.")
                 .font(.system(size: 15, weight: .regular))
                 .foregroundStyle(AppTheme.muted)
                 .fixedSize(horizontal: false, vertical: true)
@@ -82,13 +88,30 @@ struct ContentView: View {
                         .frame(width: 120)
                 }
                 Button {
-                    regenerate()
+                    randomize()
                 } label: {
-                    Label("Regenerate seed", systemImage: "arrow.clockwise")
+                    Label("New random seed", systemImage: "dice")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(AppTheme.leaf)
+
+                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                    Label(importedVector == nil ? "Import image motif" : "Replace image motif", systemImage: "photo.badge.plus")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                if importedVector != nil {
+                    Button {
+                        importedVector = nil
+                        regenerate()
+                    } label: {
+                        Label("Remove image motif", systemImage: "xmark.circle")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
 
             SettingsPanel(settings: $settings) {
@@ -132,8 +155,32 @@ struct ContentView: View {
     }
 
     private func regenerate() {
-        design = FloraGenerator.make(seed: seed, settings: settings)
+        design = FloraGenerator.make(seed: seed, settings: settings, importedVector: importedVector)
         exportMessage = "Generated seed \(seed)"
+    }
+
+    private func importPhoto(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        Task {
+            do {
+                if let data = try await item.loadTransferable(type: Data.self),
+                   let template = ImageVectorizer.template(from: data) {
+                    await MainActor.run {
+                        importedVector = template
+                        regenerate()
+                        exportMessage = "Image motif mixed into seed \(seed)"
+                    }
+                } else {
+                    await MainActor.run {
+                        exportMessage = "Image import could not find a clear shape"
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    exportMessage = "Image import failed: \(error.localizedDescription)"
+                }
+            }
+        }
     }
 
     private func export() {
@@ -195,20 +242,36 @@ private struct DesignPreview: View {
             context.stroke(path, with: .color(AppTheme.thread.opacity(0.55)), lineWidth: 0.8)
             context.stroke(polyline([StitchPlanner.leafTip(leaf, direction: -1), StitchPlanner.leafTip(leaf, direction: 1)]), with: .color(leaf.veinColor.color.opacity(0.85)), lineWidth: 0.8)
         case .flower(let flower):
-            for petal in 0..<flower.petals {
-                let angle = flower.angle + (CGFloat(petal) / CGFloat(flower.petals)) * CGFloat.pi * 2
-                let center = CGPoint(x: flower.center.x + cos(angle) * flower.radius * 0.55, y: flower.center.y + sin(angle) * flower.radius * 0.55)
-                let oval = StitchPlanner.rotatedOval(center: center, width: flower.radius * 0.7, height: flower.radius * 1.12, angle: angle, steps: 24)
-                var path = polyline(oval)
+            for outline in StitchPlanner.flowerPetalOutlines(flower) {
+                var path = polyline(outline)
                 path.closeSubpath()
                 context.fill(path, with: .color(flower.fill.color.opacity(0.94)))
                 context.stroke(path, with: .color(AppTheme.thread.opacity(0.35)), lineWidth: 0.7)
             }
-            context.fill(Path(ellipseIn: CGRect(x: flower.center.x - flower.radius * 0.24, y: flower.center.y - flower.radius * 0.24, width: flower.radius * 0.48, height: flower.radius * 0.48)), with: .color(flower.centerColor.color))
+            for line in StitchPlanner.flowerAccentLines(flower) {
+                context.stroke(polyline(line), with: .color(flower.centerColor.color.opacity(0.8)), lineWidth: 0.8)
+            }
+            let centerRadius = StitchPlanner.flowerCenterRadius(flower)
+            if centerRadius > 0 {
+                context.fill(Path(ellipseIn: CGRect(x: flower.center.x - centerRadius, y: flower.center.y - centerRadius, width: centerRadius * 2, height: centerRadius * 2)), with: .color(flower.centerColor.color))
+            }
         case .berry(let berry):
-            let rect = CGRect(x: berry.center.x - berry.radius, y: berry.center.y - berry.radius, width: berry.radius * 2, height: berry.radius * 2)
-            context.fill(Path(ellipseIn: rect), with: .color(berry.color.color))
-            context.stroke(Path(ellipseIn: rect), with: .color(AppTheme.thread.opacity(0.45)), lineWidth: 0.8)
+            for outline in StitchPlanner.berryOutlines(berry) {
+                var path = polyline(outline)
+                path.closeSubpath()
+                context.fill(path, with: .color(berry.color.color.opacity(0.94)))
+                context.stroke(path, with: .color(AppTheme.thread.opacity(0.45)), lineWidth: 0.8)
+            }
+            for line in StitchPlanner.berryAccentLines(berry) {
+                context.stroke(polyline(line), with: .color(AppTheme.thread.opacity(0.55)), lineWidth: 0.8)
+            }
+        case .importedVector(let vector):
+            for outline in StitchPlanner.importedVectorOutlines(vector) {
+                var path = polyline(outline)
+                path.closeSubpath()
+                context.fill(path, with: .color(vector.color.color.opacity(0.82)))
+                context.stroke(path, with: .color(AppTheme.thread.opacity(0.5)), lineWidth: 0.85)
+            }
         case .curl(let curl):
             context.stroke(polyline(StitchPlanner.curlPoints(curl)), with: .color(curl.color.color), style: StrokeStyle(lineWidth: 1.25, lineCap: .round, lineJoin: .round, dash: [1.8, 2.8]))
         }

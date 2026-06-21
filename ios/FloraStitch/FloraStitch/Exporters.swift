@@ -57,16 +57,30 @@ enum SVGExporter {
             """
         case .flower(let flower):
             var parts: [String] = []
-            for petal in 0..<flower.petals {
-                let angle = flower.angle + (CGFloat(petal) / CGFloat(flower.petals)) * CGFloat.pi * 2
-                let center = CGPoint(x: flower.center.x + cos(angle) * flower.radius * 0.55, y: flower.center.y + sin(angle) * flower.radius * 0.55)
-                let oval = StitchPlanner.rotatedOval(center: center, width: flower.radius * 0.7, height: flower.radius * 1.12, angle: angle, steps: 24)
-                parts.append("<polygon points=\"\(points(oval))\" fill=\"\(flower.fill.hex)\" stroke=\"#65435a\" stroke-width=\"0.6\"/>")
+            for outline in StitchPlanner.flowerPetalOutlines(flower) {
+                parts.append("<polygon points=\"\(points(outline))\" fill=\"\(flower.fill.hex)\" stroke=\"#65435a\" stroke-width=\"0.6\"/>")
             }
-            parts.append("<circle cx=\"\(fmt(flower.center.x))\" cy=\"\(fmt(flower.center.y))\" r=\"\(fmt(flower.radius * 0.24))\" fill=\"\(flower.centerColor.hex)\"/>")
+            for line in StitchPlanner.flowerAccentLines(flower) {
+                parts.append("<polyline points=\"\(points(line))\" fill=\"none\" stroke=\"\(flower.centerColor.hex)\" stroke-width=\"0.65\" stroke-linecap=\"round\"/>")
+            }
+            let centerRadius = StitchPlanner.flowerCenterRadius(flower)
+            if centerRadius > 0 {
+                parts.append("<circle cx=\"\(fmt(flower.center.x))\" cy=\"\(fmt(flower.center.y))\" r=\"\(fmt(centerRadius))\" fill=\"\(flower.centerColor.hex)\"/>")
+            }
             return parts.joined(separator: "\n")
         case .berry(let berry):
-            return "<circle cx=\"\(fmt(berry.center.x))\" cy=\"\(fmt(berry.center.y))\" r=\"\(fmt(berry.radius))\" fill=\"\(berry.color.hex)\" stroke=\"#4a2d2e\" stroke-width=\"0.7\"/>"
+            var parts: [String] = []
+            for outline in StitchPlanner.berryOutlines(berry) {
+                parts.append("<polygon points=\"\(points(outline))\" fill=\"\(berry.color.hex)\" stroke=\"#4a2d2e\" stroke-width=\"0.7\"/>")
+            }
+            for line in StitchPlanner.berryAccentLines(berry) {
+                parts.append("<polyline points=\"\(points(line))\" fill=\"none\" stroke=\"#4a2d2e\" stroke-width=\"0.65\" stroke-linecap=\"round\"/>")
+            }
+            return parts.joined(separator: "\n")
+        case .importedVector(let vector):
+            return StitchPlanner.importedVectorOutlines(vector)
+                .map { "<polygon points=\"\(points($0))\" fill=\"\(vector.color.hex)\" stroke=\"#302b1d\" stroke-width=\"0.7\"/>" }
+                .joined(separator: "\n")
         case .curl(let curl):
             return "<polyline points=\"\(points(StitchPlanner.curlPoints(curl)))\" fill=\"none\" stroke=\"\(curl.color.hex)\" stroke-width=\"1.3\" stroke-linecap=\"round\"/>"
         }

@@ -35,6 +35,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true
         ITSAppUsesNonExemptEncryption: false
+        NSPhotoLibraryUsageDescription: "Import an image and convert it into a simple embroidery vector motif."
         UILaunchScreen:
           UIColorName: ""
         UISupportedInterfaceOrientations:

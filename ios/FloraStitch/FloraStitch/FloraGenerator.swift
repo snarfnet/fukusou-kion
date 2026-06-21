@@ -29,7 +29,7 @@ enum FloraGenerator {
         ]
     ]
 
-    static func make(seed: Int, settings: GeneratorSettings) -> StitchDesign {
+    static func make(seed: Int, settings: GeneratorSettings, importedVector: VectorTemplate? = nil) -> StitchDesign {
         var rng = SeededRandomGenerator(seed: seed)
         let size = settings.canvasSize
         let palette = palettes[settings.paletteIndex % palettes.count]
@@ -66,10 +66,12 @@ enum FloraGenerator {
             let point = sample(stem, t: t)
             let side = rng.bool() ? -1.0 : 1.0
             let radius = CGFloat(Double(size.height) * rng.double(0.09...0.16))
+            let kind = FlowerKind.allCases[rng.int(0...(FlowerKind.allCases.count - 1))]
             let flower = FlowerElement(
                 center: CGPoint(x: point.x + CGFloat(side * rng.double(4...16)), y: point.y - CGFloat(side * rng.double(24...42))),
                 radius: radius,
-                petals: rng.int(5...8),
+                kind: kind,
+                petals: petalCount(for: kind, rng: &rng),
                 angle: CGFloat(rng.double(0...Double.pi)),
                 fill: flowerColors[rng.int(0...(flowerColors.count - 1))],
                 centerColor: accent
@@ -77,15 +79,36 @@ enum FloraGenerator {
             elements.append(.flower(flower))
         }
 
-        let berryCount = Int((settings.widthInches * 2.4 * settings.density).rounded())
+        let berryCount = Int((settings.widthInches * 3.1 * settings.density).rounded())
         for _ in 0..<berryCount {
             let point = sample(stem, t: rng.double(0.02...0.98))
             let side = rng.bool() ? -1.0 : 1.0
             elements.append(.berry(BerryElement(
                 center: CGPoint(x: point.x + CGFloat(side * rng.double(8...28)), y: point.y + CGFloat(side * rng.double(16...34))),
-                radius: CGFloat(Double(size.height) * rng.double(0.035...0.055)),
+                radius: CGFloat(Double(size.height) * rng.double(0.035...0.07)),
+                kind: BerryKind.allCases[rng.int(0...(BerryKind.allCases.count - 1))],
+                angle: CGFloat(rng.double(0...(Double.pi * 2))),
                 color: flowerColors[rng.int(0...(flowerColors.count - 1))]
             )))
+        }
+
+        if let importedVector {
+            let motifCount = rng.int(2...5)
+            for _ in 0..<motifCount {
+                let point = sample(stem, t: rng.double(0.06...0.94))
+                let side = rng.bool() ? -1.0 : 1.0
+                let motifSize = CGFloat(Double(size.height) * rng.double(0.15...0.28))
+                elements.append(.importedVector(ImportedVectorElement(
+                    center: CGPoint(
+                        x: point.x + CGFloat(side * rng.double(12...34)),
+                        y: point.y + CGFloat(rng.double(-38...36))
+                    ),
+                    size: CGSize(width: motifSize * CGFloat(rng.double(0.8...1.25)), height: motifSize),
+                    angle: CGFloat(rng.double(-0.75...0.75) + side * 0.28),
+                    color: rng.bool(0.45) ? leafDark : flowerColors[rng.int(0...(flowerColors.count - 1))],
+                    outlines: importedVector.outlines
+                )))
+            }
         }
 
         if settings.curls {
@@ -130,5 +153,30 @@ enum FloraGenerator {
         let b = points[index + 1]
         let amount = CGFloat(local)
         return CGPoint(x: a.x + (b.x - a.x) * amount, y: a.y + (b.y - a.y) * amount)
+    }
+
+    private static func petalCount(for kind: FlowerKind, rng: inout SeededRandomGenerator) -> Int {
+        switch kind {
+        case .daisy, .cosmos:
+            return rng.int(7...10)
+        case .forgetMeNot, .starflower:
+            return 5
+        case .poppy:
+            return rng.int(4...6)
+        case .tulip:
+            return 3
+        case .rose:
+            return rng.int(9...13)
+        case .bell:
+            return rng.int(3...5)
+        case .clover:
+            return 4
+        case .lavender:
+            return rng.int(7...11)
+        case .bud:
+            return rng.int(2...4)
+        case .anemone:
+            return rng.int(6...8)
+        }
     }
 }

@@ -14,7 +14,9 @@ enum StitchPlanner {
             case .flower(let flower):
                 appendFlower(flower, to: &blocksByColor)
             case .berry(let berry):
-                appendCircle(center: berry.center, radius: berry.radius, color: berry.color, to: &blocksByColor)
+                appendBerry(berry, to: &blocksByColor)
+            case .importedVector(let vector):
+                appendImportedVector(vector, to: &blocksByColor)
             case .curl(let curl):
                 appendPolyline(curlPoints(curl), color: curl.color, to: &blocksByColor)
             }
@@ -33,16 +35,31 @@ enum StitchPlanner {
     }
 
     private static func appendFlower(_ flower: FlowerElement, to builders: inout [String: StitchBlockBuilder]) {
-        for petal in 0..<flower.petals {
-            let angle = flower.angle + (CGFloat(petal) / CGFloat(flower.petals)) * CGFloat.pi * 2
-            let center = CGPoint(
-                x: flower.center.x + cos(angle) * flower.radius * 0.55,
-                y: flower.center.y + sin(angle) * flower.radius * 0.55
-            )
-            let oval = rotatedOval(center: center, width: flower.radius * 0.7, height: flower.radius * 1.12, angle: angle, steps: 20)
-            appendPolyline(oval + [oval[0]], color: flower.fill, to: &builders)
+        for outline in flowerPetalOutlines(flower, steps: 22) {
+            appendClosed(outline, color: flower.fill, to: &builders)
         }
-        appendCircle(center: flower.center, radius: flower.radius * 0.24, color: flower.centerColor, to: &builders)
+        for accent in flowerAccentLines(flower) {
+            appendPolyline(accent, color: flower.centerColor, to: &builders)
+        }
+        let centerRadius = flowerCenterRadius(flower)
+        if centerRadius > 0 {
+            appendCircle(center: flower.center, radius: centerRadius, color: flower.centerColor, to: &builders)
+        }
+    }
+
+    private static func appendBerry(_ berry: BerryElement, to builders: inout [String: StitchBlockBuilder]) {
+        for outline in berryOutlines(berry, steps: 20) {
+            appendClosed(outline, color: berry.color, to: &builders)
+        }
+        for accent in berryAccentLines(berry) {
+            appendPolyline(accent, color: berry.color, to: &builders)
+        }
+    }
+
+    private static func appendImportedVector(_ vector: ImportedVectorElement, to builders: inout [String: StitchBlockBuilder]) {
+        for outline in importedVectorOutlines(vector) {
+            appendClosed(outline, color: vector.color, to: &builders)
+        }
     }
 
     private static func appendCircle(center: CGPoint, radius: CGFloat, color: EmbroideryColor, to builders: inout [String: StitchBlockBuilder]) {
@@ -51,6 +68,11 @@ enum StitchPlanner {
             return CGPoint(x: center.x + cos(angle) * radius, y: center.y + sin(angle) * radius)
         }
         appendPolyline(points, color: color, to: &builders)
+    }
+
+    private static func appendClosed(_ points: [CGPoint], color: EmbroideryColor, to builders: inout [String: StitchBlockBuilder]) {
+        guard let first = points.first else { return }
+        appendPolyline(points + [first], color: color, to: &builders)
     }
 
     private static func appendPolyline(_ points: [CGPoint], color: EmbroideryColor, to builders: inout [String: StitchBlockBuilder]) {
@@ -94,6 +116,191 @@ enum StitchPlanner {
         }
     }
 
+    static func flowerPetalOutlines(_ flower: FlowerElement, steps: Int = 24) -> [[CGPoint]] {
+        switch flower.kind {
+        case .daisy:
+            return radialOvals(flower, width: 0.62, height: 1.18, reach: 0.58, steps: steps)
+        case .forgetMeNot:
+            return radialOvals(flower, width: 0.82, height: 0.9, reach: 0.46, steps: steps)
+        case .poppy:
+            return radialOvals(flower, width: 1.05, height: 1.18, reach: 0.45, steps: steps)
+        case .tulip:
+            return (-1...1).map { index in
+                let angle = flower.angle - CGFloat.pi / 2 + CGFloat(index) * 0.34
+                let center = CGPoint(
+                    x: flower.center.x + cos(angle) * flower.radius * 0.24,
+                    y: flower.center.y + sin(angle) * flower.radius * 0.24
+                )
+                return teardrop(center: center, width: flower.radius * 0.72, height: flower.radius * 1.35, angle: angle, steps: steps)
+            }
+        case .rose:
+            return (0..<flower.petals).map { index in
+                let progress = CGFloat(index) / CGFloat(max(1, flower.petals - 1))
+                let angle = flower.angle + progress * CGFloat.pi * 2.4
+                let scale = 0.28 + progress * 0.86
+                return rotatedOval(
+                    center: flower.center,
+                    width: flower.radius * scale,
+                    height: flower.radius * (0.32 + progress * 0.42),
+                    angle: angle,
+                    steps: max(14, steps - 4)
+                )
+            }
+        case .bell:
+            return (0..<flower.petals).map { index in
+                let spread = (CGFloat(index) - CGFloat(flower.petals - 1) / 2) * 0.32
+                let angle = flower.angle + CGFloat.pi / 2 + spread
+                let center = CGPoint(
+                    x: flower.center.x + cos(angle) * flower.radius * 0.45,
+                    y: flower.center.y + sin(angle) * flower.radius * 0.45
+                )
+                return teardrop(center: center, width: flower.radius * 0.58, height: flower.radius * 1.04, angle: angle, steps: steps)
+            }
+        case .clover:
+            return radialOvals(flower, width: 0.88, height: 0.96, reach: 0.42, steps: steps)
+        case .starflower:
+            return (0..<flower.petals).map { petal in
+                let angle = flower.angle + (CGFloat(petal) / CGFloat(flower.petals)) * CGFloat.pi * 2
+                return pointedPetal(center: flower.center, radius: flower.radius, angle: angle)
+            }
+        case .lavender:
+            return (0..<flower.petals).map { index in
+                let side: CGFloat = index.isMultiple(of: 2) ? -1 : 1
+                let progress = CGFloat(index) / CGFloat(max(1, flower.petals - 1))
+                let along = (progress - 0.5) * flower.radius * 1.65
+                let stemAngle = flower.angle - CGFloat.pi / 2
+                let local = CGPoint(x: side * flower.radius * 0.18, y: along)
+                let center = rotate(local, by: stemAngle, around: flower.center)
+                return rotatedOval(center: center, width: flower.radius * 0.34, height: flower.radius * 0.54, angle: stemAngle + side * 0.75, steps: 14)
+            }
+        case .bud:
+            return (0..<flower.petals).map { index in
+                let angle = flower.angle - CGFloat.pi / 2 + (CGFloat(index) - CGFloat(flower.petals - 1) / 2) * 0.3
+                return teardrop(center: flower.center, width: flower.radius * 0.48, height: flower.radius * 0.96, angle: angle, steps: steps)
+            }
+        case .cosmos:
+            return radialOvals(flower, width: 0.48, height: 1.28, reach: 0.6, steps: steps)
+        case .anemone:
+            return radialOvals(flower, width: 0.78, height: 1.08, reach: 0.52, steps: steps)
+        }
+    }
+
+    static func flowerAccentLines(_ flower: FlowerElement) -> [[CGPoint]] {
+        switch flower.kind {
+        case .rose:
+            let steps = 28
+            let spiral = (0...steps).map { index in
+                let t = CGFloat(index) / CGFloat(steps)
+                let angle = flower.angle + t * CGFloat.pi * 4.6
+                let radius = flower.radius * (0.12 + t * 0.58)
+                return CGPoint(x: flower.center.x + cos(angle) * radius, y: flower.center.y + sin(angle) * radius)
+            }
+            return [spiral]
+        case .lavender:
+            let stemAngle = flower.angle - CGFloat.pi / 2
+            let a = rotate(CGPoint(x: 0, y: -flower.radius * 0.95), by: stemAngle, around: flower.center)
+            let b = rotate(CGPoint(x: 0, y: flower.radius * 0.95), by: stemAngle, around: flower.center)
+            return [[a, b]]
+        case .tulip, .bud, .bell:
+            return (0..<max(2, min(4, flower.petals))).map { index in
+                let offset = CGFloat(index) - CGFloat(max(2, min(4, flower.petals)) - 1) / 2
+                let angle = flower.angle - CGFloat.pi / 2 + offset * 0.18
+                return [
+                    flower.center,
+                    CGPoint(x: flower.center.x + cos(angle) * flower.radius * 0.74, y: flower.center.y + sin(angle) * flower.radius * 0.74)
+                ]
+            }
+        default:
+            return []
+        }
+    }
+
+    static func flowerCenterRadius(_ flower: FlowerElement) -> CGFloat {
+        switch flower.kind {
+        case .lavender, .bud:
+            return 0
+        case .rose:
+            return flower.radius * 0.1
+        case .anemone:
+            return flower.radius * 0.32
+        case .poppy:
+            return flower.radius * 0.28
+        default:
+            return flower.radius * 0.22
+        }
+    }
+
+    static func berryOutlines(_ berry: BerryElement, steps: Int = 20) -> [[CGPoint]] {
+        switch berry.kind {
+        case .round:
+            return [rotatedOval(center: berry.center, width: berry.radius * 2, height: berry.radius * 2, angle: berry.angle, steps: steps)]
+        case .ovalBud:
+            return [rotatedOval(center: berry.center, width: berry.radius * 1.35, height: berry.radius * 2.35, angle: berry.angle, steps: steps)]
+        case .teardrop:
+            return [teardrop(center: berry.center, width: berry.radius * 1.5, height: berry.radius * 2.35, angle: berry.angle, steps: steps)]
+        case .twinCherry:
+            return [-0.48, 0.48].map { offset in
+                let center = rotate(CGPoint(x: CGFloat(offset) * berry.radius, y: berry.radius * 0.12), by: berry.angle, around: berry.center)
+                return rotatedOval(center: center, width: berry.radius * 1.28, height: berry.radius * 1.28, angle: berry.angle, steps: steps)
+            }
+        case .beadCluster:
+            return (0..<5).map { index in
+                let angle = berry.angle + CGFloat(index) / 5 * CGFloat.pi * 2
+                let distance = index == 0 ? CGFloat(0) : berry.radius * 0.72
+                let center = CGPoint(x: berry.center.x + cos(angle) * distance, y: berry.center.y + sin(angle) * distance)
+                return rotatedOval(center: center, width: berry.radius * 0.9, height: berry.radius * 0.9, angle: angle, steps: 14)
+            }
+        case .wheat:
+            return (0..<6).map { index in
+                let side: CGFloat = index.isMultiple(of: 2) ? -1 : 1
+                let progress = CGFloat(index) / 5
+                let local = CGPoint(x: side * berry.radius * 0.36, y: (progress - 0.5) * berry.radius * 2.4)
+                let center = rotate(local, by: berry.angle, around: berry.center)
+                return rotatedOval(center: center, width: berry.radius * 0.55, height: berry.radius * 1.05, angle: berry.angle + side * 0.58, steps: 12)
+            }
+        case .seedPod:
+            return [rotatedOval(center: berry.center, width: berry.radius * 1.15, height: berry.radius * 2.8, angle: berry.angle, steps: steps)]
+        case .roseHip:
+            return [rotatedOval(center: berry.center, width: berry.radius * 1.55, height: berry.radius * 2.05, angle: berry.angle, steps: steps)]
+        }
+    }
+
+    static func berryAccentLines(_ berry: BerryElement) -> [[CGPoint]] {
+        switch berry.kind {
+        case .twinCherry:
+            let top = rotate(CGPoint(x: 0, y: -berry.radius * 1.35), by: berry.angle, around: berry.center)
+            return [-0.48, 0.48].map { offset in
+                let bottom = rotate(CGPoint(x: CGFloat(offset) * berry.radius, y: berry.radius * -0.15), by: berry.angle, around: berry.center)
+                return [top, bottom]
+            }
+        case .wheat, .seedPod:
+            let a = rotate(CGPoint(x: 0, y: -berry.radius * 1.45), by: berry.angle, around: berry.center)
+            let b = rotate(CGPoint(x: 0, y: berry.radius * 1.45), by: berry.angle, around: berry.center)
+            return [[a, b]]
+        case .roseHip:
+            let cap = rotate(CGPoint(x: 0, y: -berry.radius * 1.12), by: berry.angle, around: berry.center)
+            return [[
+                rotate(CGPoint(x: -berry.radius * 0.42, y: -berry.radius * 0.82), by: berry.angle, around: berry.center),
+                cap,
+                rotate(CGPoint(x: berry.radius * 0.42, y: -berry.radius * 0.82), by: berry.angle, around: berry.center)
+            ]]
+        default:
+            return []
+        }
+    }
+
+    static func importedVectorOutlines(_ vector: ImportedVectorElement) -> [[CGPoint]] {
+        vector.outlines.map { outline in
+            outline.map { point in
+                rotate(
+                    CGPoint(x: point.x * vector.size.width, y: point.y * vector.size.height),
+                    by: vector.angle,
+                    around: vector.center
+                )
+            }
+        }
+    }
+
     static func curlPoints(_ curl: CurlElement) -> [CGPoint] {
         let steps = 42
         return (0...steps).map { index in
@@ -109,6 +316,45 @@ enum StitchPlanner {
             x: center.x + point.x * cos(angle) - point.y * sin(angle),
             y: center.y + point.x * sin(angle) + point.y * cos(angle)
         )
+    }
+
+    private static func radialOvals(_ flower: FlowerElement, width: CGFloat, height: CGFloat, reach: CGFloat, steps: Int) -> [[CGPoint]] {
+        (0..<flower.petals).map { petal in
+            let angle = flower.angle + (CGFloat(petal) / CGFloat(flower.petals)) * CGFloat.pi * 2
+            let center = CGPoint(
+                x: flower.center.x + cos(angle) * flower.radius * reach,
+                y: flower.center.y + sin(angle) * flower.radius * reach
+            )
+            return rotatedOval(
+                center: center,
+                width: flower.radius * width,
+                height: flower.radius * height,
+                angle: angle,
+                steps: steps
+            )
+        }
+    }
+
+    private static func pointedPetal(center: CGPoint, radius: CGFloat, angle: CGFloat) -> [CGPoint] {
+        [
+            CGPoint(x: radius * 0.18, y: 0),
+            CGPoint(x: radius * 0.86, y: -radius * 0.18),
+            CGPoint(x: radius * 1.18, y: 0),
+            CGPoint(x: radius * 0.86, y: radius * 0.18),
+            CGPoint(x: radius * 0.18, y: 0)
+        ].map { rotate($0, by: angle, around: center) }
+    }
+
+    private static func teardrop(center: CGPoint, width: CGFloat, height: CGFloat, angle: CGFloat, steps: Int) -> [CGPoint] {
+        (0..<steps).map { index in
+            let t = (CGFloat(index) / CGFloat(steps)) * CGFloat.pi * 2.0
+            let taper = 0.44 + 0.56 * max(CGFloat(0), sin(t))
+            let point = CGPoint(
+                x: cos(t) * width * 0.5 * taper,
+                y: sin(t) * height * 0.5
+            )
+            return rotate(point, by: angle, around: center)
+        }
     }
 }
 

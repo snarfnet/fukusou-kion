@@ -26,6 +26,7 @@ enum DesignElement: Identifiable {
     case leaf(LeafElement)
     case flower(FlowerElement)
     case berry(BerryElement)
+    case importedVector(ImportedVectorElement)
     case curl(CurlElement)
 
     var id: UUID {
@@ -34,6 +35,7 @@ enum DesignElement: Identifiable {
         case .leaf(let item): item.id
         case .flower(let item): item.id
         case .berry(let item): item.id
+        case .importedVector(let item): item.id
         case .curl(let item): item.id
         }
     }
@@ -59,6 +61,7 @@ struct FlowerElement {
     let id = UUID()
     let center: CGPoint
     let radius: CGFloat
+    let kind: FlowerKind
     let petals: Int
     let angle: CGFloat
     let fill: EmbroideryColor
@@ -69,7 +72,48 @@ struct BerryElement {
     let id = UUID()
     let center: CGPoint
     let radius: CGFloat
+    let kind: BerryKind
+    let angle: CGFloat
     let color: EmbroideryColor
+}
+
+struct VectorTemplate {
+    let outlines: [[CGPoint]]
+}
+
+struct ImportedVectorElement {
+    let id = UUID()
+    let center: CGPoint
+    let size: CGSize
+    let angle: CGFloat
+    let color: EmbroideryColor
+    let outlines: [[CGPoint]]
+}
+
+enum FlowerKind: String, CaseIterable {
+    case daisy
+    case forgetMeNot
+    case poppy
+    case tulip
+    case rose
+    case bell
+    case clover
+    case starflower
+    case lavender
+    case bud
+    case cosmos
+    case anemone
+}
+
+enum BerryKind: String, CaseIterable {
+    case round
+    case ovalBud
+    case teardrop
+    case twinCherry
+    case beadCluster
+    case wheat
+    case seedPod
+    case roseHip
 }
 
 struct CurlElement {
