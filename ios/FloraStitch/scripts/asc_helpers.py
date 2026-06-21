@@ -8,6 +8,7 @@ from pathlib import Path
 
 import jwt
 import requests
+from requests import RequestException
 
 
 BASE_URL = "https://api.appstoreconnect.apple.com/v1"
@@ -37,17 +38,26 @@ def api(method, path, **kwargs):
     else:
         url = f"{BASE_URL}{path}"
     last_response = None
-    for _ in range(6):
-        last_response = requests.request(
-            method,
-            url,
-            headers=headers(),
-            timeout=120,
-            **kwargs,
-        )
+    last_error = None
+    for attempt in range(1, 7):
+        try:
+            last_response = requests.request(
+                method,
+                url,
+                headers=headers(),
+                timeout=120,
+                **kwargs,
+            )
+        except RequestException as error:
+            last_error = error
+            print(f"ASC request retry {attempt}/6: {method} {path}: {error}")
+            time.sleep(20)
+            continue
         if last_response.status_code not in (401, 429, 500, 502, 503, 504):
             return last_response
         time.sleep(20)
+    if last_response is None and last_error is not None:
+        raise last_error
     return last_response
 
 
