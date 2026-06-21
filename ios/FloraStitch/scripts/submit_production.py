@@ -35,6 +35,7 @@ META = {
         "whatsNew": "初回リリースです。",
         "promotionalText": "花や葉、小鳥の刺しゅう風ボーダー柄をランダム生成。",
         "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
     "en-US": {
         "description": """Flora Stitch creates embroidery-inspired floral border patterns from random seeds.
@@ -46,6 +47,7 @@ Save your design as SVG, DST, or PES for design review, craft planning, and embr
         "whatsNew": "Initial release.",
         "promotionalText": "Generate floral embroidery-style borders from random seeds.",
         "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
     },
 }
 
