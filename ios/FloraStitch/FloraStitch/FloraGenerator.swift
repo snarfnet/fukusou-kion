@@ -93,6 +93,15 @@ enum FloraGenerator {
         }
 
         if let importedVector {
+            let heroSize = CGFloat(Double(size.height) * 0.46)
+            elements.append(.importedVector(ImportedVectorElement(
+                center: CGPoint(x: size.width * 0.5, y: size.height * 0.36),
+                size: CGSize(width: heroSize * 1.1, height: heroSize),
+                angle: CGFloat(rng.double(-0.15...0.15)),
+                color: accent,
+                outlines: importedVector.outlines
+            )))
+
             let motifCount = rng.int(4...8)
             for _ in 0..<motifCount {
                 let point = sample(stem, t: rng.double(0.06...0.94))
@@ -107,6 +116,28 @@ enum FloraGenerator {
                     angle: CGFloat(rng.double(-0.75...0.75) + side * 0.28),
                     color: rng.bool(0.45) ? leafDark : flowerColors[rng.int(0...(flowerColors.count - 1))],
                     outlines: importedVector.outlines
+                )))
+            }
+        }
+
+        if settings.birds {
+            let birdCount = rng.int(3...7)
+            for _ in 0..<birdCount {
+                let point = sample(stem, t: rng.double(0.08...0.92))
+                let kind = BirdKind.allCases[rng.int(0...(BirdKind.allCases.count - 1))]
+                let side = rng.bool() ? -1.0 : 1.0
+                let sizeValue = CGFloat(Double(size.height) * rng.double(0.09...0.16))
+                elements.append(.bird(BirdElement(
+                    center: CGPoint(
+                        x: point.x + CGFloat(side * rng.double(18...44)),
+                        y: point.y - CGFloat(rng.double(42...82))
+                    ),
+                    size: sizeValue,
+                    angle: CGFloat(rng.double(-0.35...0.35) + (side < 0 ? Double.pi : 0)),
+                    kind: kind,
+                    bodyColor: rng.bool(0.45) ? accent : flowerColors[rng.int(0...(flowerColors.count - 1))],
+                    wingColor: rng.bool(0.5) ? leafDark : leafLight,
+                    accentColor: flowerColors[rng.int(0...(flowerColors.count - 1))]
                 )))
             }
         }

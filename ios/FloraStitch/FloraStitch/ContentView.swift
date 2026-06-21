@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var exportMessage = "Ready"
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var importedVector: VectorTemplate?
+    @State private var previewZoom: CGFloat = 1.0
 
     init() {
         let initialSeed = Int.random(in: 10000...99999)
@@ -25,8 +26,9 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 18) {
                         header
-                        DesignPreview(design: design)
+                        DesignPreview(design: design, zoom: previewZoom)
                             .frame(height: 270)
+                        previewControls
                         stats
                         controls
                     }
@@ -78,6 +80,40 @@ struct ContentView: View {
         }
     }
 
+    private var previewControls: some View {
+        HStack(spacing: 10) {
+            Button {
+                previewZoom = max(0.75, previewZoom - 0.15)
+            } label: {
+                Image(systemName: "minus.magnifyingglass")
+                    .frame(width: 42, height: 34)
+            }
+            .buttonStyle(.bordered)
+
+            Text("\(Int(previewZoom * 100))%")
+                .font(.caption.monospacedDigit().weight(.semibold))
+                .foregroundStyle(AppTheme.muted)
+                .frame(width: 58)
+
+            Button {
+                previewZoom = min(2.4, previewZoom + 0.15)
+            } label: {
+                Image(systemName: "plus.magnifyingglass")
+                    .frame(width: 42, height: 34)
+            }
+            .buttonStyle(.bordered)
+
+            Button {
+                previewZoom = 1.0
+            } label: {
+                Image(systemName: "arrow.counterclockwise")
+                    .frame(width: 42, height: 34)
+            }
+            .buttonStyle(.bordered)
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+
     private var controls: some View {
         VStack(spacing: 16) {
             VStack(spacing: 12) {
@@ -105,6 +141,13 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+
+                if importedVector != nil {
+                    Label("Image motif is active", systemImage: "checkmark.circle")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(AppTheme.leaf)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 if importedVector != nil {
                     Button {
@@ -171,17 +214,25 @@ struct ContentView: View {
                 if let data = try await item.loadTransferable(type: Data.self),
                    let template = ImageVectorizer.template(from: data) {
                     await MainActor.run {
+                        let newDesign = FloraGenerator.make(seed: seed, settings: settings, importedVector: template)
                         importedVector = template
-                        design = FloraGenerator.make(seed: seed, settings: settings, importedVector: template)
-                        exportMessage = "Image motif placed into seed \(seed)"
+                        design = newDesign
+                        selectedPhotoItem = nil
+                        let count = newDesign.elements.filter { element in
+                            if case .importedVector = element { return true }
+                            return false
+                        }.count
+                        exportMessage = "Image motif active: \(count) placements in seed \(seed)"
                     }
                 } else {
                     await MainActor.run {
+                        selectedPhotoItem = nil
                         exportMessage = "Image import could not find a clear shape"
                     }
                 }
             } catch {
                 await MainActor.run {
+                    selectedPhotoItem = nil
                     exportMessage = "Image import failed: \(error.localizedDescription)"
                 }
             }
@@ -203,11 +254,12 @@ struct ContentView: View {
 
 private struct DesignPreview: View {
     let design: StitchDesign
+    let zoom: CGFloat
 
     var body: some View {
         GeometryReader { _ in
             Canvas { context, size in
-                let scale = min((size.width - 28) / design.size.width, (size.height - 28) / design.size.height)
+                let scale = min((size.width - 28) / design.size.width, (size.height - 28) / design.size.height) * zoom
                 let offset = CGSize(
                     width: (size.width - design.size.width * scale) / 2,
                     height: (size.height - design.size.height * scale) / 2
@@ -274,8 +326,24 @@ private struct DesignPreview: View {
             for outline in StitchPlanner.importedVectorOutlines(vector) {
                 var path = polyline(outline)
                 path.closeSubpath()
-                context.fill(path, with: .color(vector.color.color.opacity(0.82)))
+                context.fill(path, with: .color(vector.color.color.opacity(0.94)))
                 context.stroke(path, with: .color(AppTheme.thread.opacity(0.5)), lineWidth: 0.85)
+            }
+        case .bird(let bird):
+            for outline in StitchPlanner.birdBodyOutlines(bird) {
+                var path = polyline(outline)
+                path.closeSubpath()
+                context.fill(path, with: .color(bird.bodyColor.color.opacity(0.94)))
+                context.stroke(path, with: .color(AppTheme.thread.opacity(0.45)), lineWidth: 0.75)
+            }
+            for outline in StitchPlanner.birdWingOutlines(bird) {
+                var path = polyline(outline)
+                path.closeSubpath()
+                context.fill(path, with: .color(bird.wingColor.color.opacity(0.9)))
+                context.stroke(path, with: .color(AppTheme.thread.opacity(0.35)), lineWidth: 0.65)
+            }
+            for line in StitchPlanner.birdAccentLines(bird) {
+                context.stroke(polyline(line), with: .color(bird.accentColor.color.opacity(0.85)), style: StrokeStyle(lineWidth: 0.8, lineCap: .round, lineJoin: .round))
             }
         case .curl(let curl):
             context.stroke(polyline(StitchPlanner.curlPoints(curl)), with: .color(curl.color.color), style: StrokeStyle(lineWidth: 1.25, lineCap: .round, lineJoin: .round, dash: [1.8, 2.8]))
@@ -310,6 +378,9 @@ private struct SettingsPanel: View {
             }
             Toggle(isOn: Binding(get: { settings.curls }, set: { settings.curls = $0; onChange() })) {
                 Label("Curl stitches", systemImage: "scribble.variable")
+            }
+            Toggle(isOn: Binding(get: { settings.birds }, set: { settings.birds = $0; onChange() })) {
+                Label("Birds", systemImage: "bird")
             }
             Picker("Palette", selection: Binding(get: { settings.paletteIndex }, set: { settings.paletteIndex = $0; onChange() })) {
                 Text("Garden").tag(0)

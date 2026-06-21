@@ -85,6 +85,18 @@ enum SVGExporter {
             return StitchPlanner.importedVectorOutlines(vector)
                 .map { "<polygon points=\"\(points($0))\" fill=\"\(vector.color.hex)\" stroke=\"#302b1d\" stroke-width=\"0.7\"/>" }
                 .joined(separator: "\n")
+        case .bird(let bird):
+            var parts: [String] = []
+            for outline in StitchPlanner.birdBodyOutlines(bird) {
+                parts.append("<polygon points=\"\(points(outline))\" fill=\"\(bird.bodyColor.hex)\" stroke=\"#302b1d\" stroke-width=\"0.65\"/>")
+            }
+            for outline in StitchPlanner.birdWingOutlines(bird) {
+                parts.append("<polygon points=\"\(points(outline))\" fill=\"\(bird.wingColor.hex)\" stroke=\"#302b1d\" stroke-width=\"0.55\"/>")
+            }
+            for line in StitchPlanner.birdAccentLines(bird) {
+                parts.append("<polyline points=\"\(points(line))\" fill=\"none\" stroke=\"\(bird.accentColor.hex)\" stroke-width=\"0.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>")
+            }
+            return parts.joined(separator: "\n")
         case .curl(let curl):
             return "<polyline points=\"\(points(StitchPlanner.curlPoints(curl)))\" fill=\"none\" stroke=\"\(curl.color.hex)\" stroke-width=\"1.3\" stroke-linecap=\"round\"/>"
         }

@@ -27,6 +27,7 @@ enum DesignElement: Identifiable {
     case flower(FlowerElement)
     case berry(BerryElement)
     case importedVector(ImportedVectorElement)
+    case bird(BirdElement)
     case curl(CurlElement)
 
     var id: UUID {
@@ -36,6 +37,7 @@ enum DesignElement: Identifiable {
         case .flower(let item): item.id
         case .berry(let item): item.id
         case .importedVector(let item): item.id
+        case .bird(let item): item.id
         case .curl(let item): item.id
         }
     }
@@ -90,6 +92,17 @@ struct ImportedVectorElement {
     let outlines: [[CGPoint]]
 }
 
+struct BirdElement {
+    let id = UUID()
+    let center: CGPoint
+    let size: CGFloat
+    let angle: CGFloat
+    let kind: BirdKind
+    let bodyColor: EmbroideryColor
+    let wingColor: EmbroideryColor
+    let accentColor: EmbroideryColor
+}
+
 enum FlowerKind: String, CaseIterable {
     case daisy
     case forgetMeNot
@@ -114,6 +127,21 @@ enum BerryKind: String, CaseIterable {
     case wheat
     case seedPod
     case roseHip
+}
+
+enum BirdKind: String, CaseIterable {
+    case swallow
+    case sparrow
+    case dove
+    case finch
+    case hummingbird
+    case crane
+    case robin
+    case wren
+    case kingfisher
+    case lark
+    case gull
+    case owl
 }
 
 struct CurlElement {
@@ -151,6 +179,7 @@ struct GeneratorSettings: Equatable {
     var density: Double = 0.62
     var flowerMix: Double = 0.58
     var curls: Bool = true
+    var birds: Bool = false
     var paletteIndex: Int = 0
 
     var canvasSize: CGSize {

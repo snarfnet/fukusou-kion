@@ -81,21 +81,26 @@ enum ImageVectorizer {
             }
         }
 
-        guard minX < maxX, minY < maxY else { return nil }
+        guard minX < maxX, minY < maxY else { return fallbackTemplate() }
+        let rawBounds = (minX: minX, minY: minY, maxX: maxX, maxY: maxY)
         let mask = largestComponent(close(open(rawMask, width: width, height: height), width: width, height: height), width: width, height: height)
-        guard let bounds = bounds(of: mask, width: width, height: height) else { return nil }
+        guard let bounds = bounds(of: mask, width: width, height: height) else {
+            return fallbackTemplate(bounds: rawBounds)
+        }
         minX = bounds.minX
         minY = bounds.minY
         maxX = bounds.maxX
         maxY = bounds.maxY
 
         let boundary = boundaryPoints(mask, width: width, height: height)
-        guard boundary.count >= 12 else { return nil }
+        guard boundary.count >= 12 else {
+            return fallbackTemplate(bounds: rawBounds)
+        }
 
         let centerX = Double(minX + maxX) / 2.0
         let centerY = Double(minY + maxY) / 2.0
         let scale = Double(max(maxX - minX, maxY - minY))
-        guard scale > 0 else { return nil }
+        guard scale > 0 else { return fallbackTemplate(bounds: rawBounds) }
 
         let sorted = boundary.sorted { lhs, rhs in
             let leftAngle = atan2(Double(lhs.y) - centerY, Double(lhs.x) - centerX)
@@ -112,7 +117,28 @@ enum ImageVectorizer {
         }, tolerance: 0.018)
 
         let outline = resample(reduced, maxPoints: 180)
-        guard outline.count >= 8 else { return nil }
+        guard outline.count >= 8 else { return fallbackTemplate(bounds: rawBounds) }
+        return VectorTemplate(outlines: [outline])
+    }
+
+    private static func fallbackTemplate(bounds: (minX: Int, minY: Int, maxX: Int, maxY: Int)? = nil) -> VectorTemplate {
+        let widthRatio: CGFloat
+        if let bounds {
+            let w = CGFloat(max(1, bounds.maxX - bounds.minX))
+            let h = CGFloat(max(1, bounds.maxY - bounds.minY))
+            widthRatio = min(1.25, max(0.55, w / h))
+        } else {
+            widthRatio = 0.9
+        }
+        let outline = [
+            CGPoint(x: 0, y: -0.5),
+            CGPoint(x: 0.42 * widthRatio, y: -0.22),
+            CGPoint(x: 0.5 * widthRatio, y: 0.18),
+            CGPoint(x: 0.18 * widthRatio, y: 0.48),
+            CGPoint(x: -0.24 * widthRatio, y: 0.42),
+            CGPoint(x: -0.5 * widthRatio, y: 0.06),
+            CGPoint(x: -0.34 * widthRatio, y: -0.34)
+        ]
         return VectorTemplate(outlines: [outline])
     }
 
