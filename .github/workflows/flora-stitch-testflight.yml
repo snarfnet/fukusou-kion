@@ -1,0 +1,229 @@
+name: FloraStitch TestFlight Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      register_only:
+        description: "Only create or resolve the App Store Connect app, then stop before signing/build/upload"
+        required: false
+        default: "false"
+      replace_distribution_certificate:
+        description: "Delete existing distribution certificates if Apple blocks creating a CI certificate"
+        required: false
+        default: "false"
+      version:
+        description: "Marketing version"
+        required: false
+        default: "1.0"
+      build_number:
+        description: "Build number. Leave blank to use the GitHub run number plus 100."
+        required: false
+        default: ""
+  push:
+    branches:
+      - codex/flora-stitch-testflight
+    paths:
+      - ".github/workflows/flora-stitch-testflight.yml"
+      - "ios/FloraStitch/**"
+
+concurrency:
+  group: flora-stitch-testflight
+  cancel-in-progress: true
+
+jobs:
+  upload-testflight:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/FloraStitch
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.florastitch
+      APP_NAME: "Flora Stitch"
+      APP_SKU: flora-stitch-ios
+      BUNDLE_NAME: FloraStitch
+      PROFILE_NAME: "FloraStitch App Store"
+      FLORA_STITCH_APP_ID: ${{ secrets.FLORA_STITCH_APP_ID }}
+      FLORA_STITCH_VERSION: ${{ inputs.version || '1.0' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          fi
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Install distribution certificate
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+          REPLACE_DISTRIBUTION_CERTIFICATE: ${{ github.event.inputs.replace_distribution_certificate }}
+          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "1"
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/flora-stitch-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/flora-stitch-cert.log >> "$GITHUB_ENV"
+          grep '^ASC_CERTIFICATE_ID=' /tmp/flora-stitch-cert.log >> "$GITHUB_ENV"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUNDLE_ID: ${{ env.APP_BUNDLE_ID }}
+        run: |
+          . .venv/bin/activate
+          if [ -n "$FLORA_STITCH_APP_ID" ]; then
+            echo "APP_ID=$FLORA_STITCH_APP_ID" >> "$GITHUB_ENV"
+            python scripts/ensure_asc_app.py
+          else
+            python scripts/ensure_asc_app.py | tee /tmp/flora-stitch-app.log
+            if grep '^APP_ID=' /tmp/flora-stitch-app.log >> "$GITHUB_ENV"; then
+              echo "App Store Connect app resolved."
+            else
+              echo "App Store Connect app is not ready yet."
+              echo "Create an app record for $APP_BUNDLE_ID, then add GitHub Secret FLORA_STITCH_APP_ID."
+              exit 1
+            fi
+          fi
+
+      - name: Resolve app bundle
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/resolve_app_bundle.py | tee /tmp/flora-stitch-bundle.log
+          grep '^APP_BUNDLE_ID=' /tmp/flora-stitch-bundle.log >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        run: xcodegen generate
+
+      - name: Set build number
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        run: |
+          if [ -n "${{ inputs.build_number }}" ]; then
+            BUILD_NUM="${{ inputs.build_number }}"
+          else
+            BUILD_NUM=$(( GITHUB_RUN_NUMBER + 100 ))
+          fi
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
+
+      - name: Archive
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive \
+            -project FloraStitch.xcodeproj \
+            -scheme FloraStitch \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/FloraStitch.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            MARKETING_VERSION="$FLORA_STITCH_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUM"
+
+      - name: Export IPA
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" export_options.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" export_options.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" export_options.plist
+          xcodebuild -exportArchive \
+            -archivePath build/FloraStitch.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload to App Store Connect
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        run: |
+          set -o pipefail
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apple-id "$APP_ID" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/flora-stitch-altool-upload.log
+          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/flora-stitch-altool-upload.log; then
+            exit 1
+          fi
+
+      - name: Wait for TestFlight build processing
+        if: ${{ github.event.inputs.register_only != 'true' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_testflight_build.py
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FloraStitch-ipa
+          path: ios/FloraStitch/build/export/*.ipa
+          if-no-files-found: ignore
