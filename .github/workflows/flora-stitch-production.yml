@@ -6,6 +6,7 @@ on:
       - codex/flora-stitch-testflight
     paths:
       - ".github/workflows/flora-stitch-production.yml"
+      - "ios/FloraStitch/scripts/asc_helpers.py"
       - "ios/FloraStitch/scripts/submit_production.py"
       - "ios/FloraStitch/scripts/generate_store_screenshots.py"
   workflow_dispatch:

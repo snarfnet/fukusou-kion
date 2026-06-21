@@ -429,7 +429,16 @@ def submit_for_review(version_id):
     last = None
     for attempt in range(1, 31):
         last = api("PATCH", f"/reviewSubmissions/{submission_id}", json={
-            "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+            "data": {
+                "type": "reviewSubmissions",
+                "id": submission_id,
+                "attributes": {"submitted": True},
+                "relationships": {
+                    "appStoreVersionForReview": {
+                        "data": {"type": "appStoreVersions", "id": version_id}
+                    }
+                },
+            }
         })
         print(f"Review submit {attempt}/30: {last.status_code}")
         if last.status_code == 200:
