@@ -100,7 +100,7 @@ enum SVGExporter {
                 parts.append("<polygon points=\"\(points(outline))\" fill=\"\(bird.wingColor.hex)\" stroke=\"#302b1d\" stroke-width=\"0.55\"/>")
             }
             for line in StitchPlanner.birdAccentLines(bird) {
-                parts.append("<polyline points=\"\(points(line))\" fill=\"none\" stroke=\"\(bird.accentColor.hex)\" stroke-width=\"0.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>")
+                parts.append("<polyline points=\"\(points(line))\" fill=\"none\" stroke=\"\(bird.accentColor.hex)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>")
             }
             return parts.joined(separator: "\n")
         case .curl(let curl):

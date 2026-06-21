@@ -83,7 +83,7 @@ struct ContentView: View {
     private var previewControls: some View {
         HStack(spacing: 10) {
             Button {
-                previewZoom = max(0.75, previewZoom - 0.15)
+                previewZoom = max(0.75, previewZoom - 0.25)
             } label: {
                 Image(systemName: "minus.magnifyingglass")
                     .frame(width: 42, height: 34)
@@ -96,7 +96,7 @@ struct ContentView: View {
                 .frame(width: 58)
 
             Button {
-                previewZoom = min(2.4, previewZoom + 0.15)
+                previewZoom = min(5.0, previewZoom + 0.25)
             } label: {
                 Image(systemName: "plus.magnifyingglass")
                     .frame(width: 42, height: 34)
@@ -350,7 +350,7 @@ private struct DesignPreview: View {
                 context.stroke(path, with: .color(AppTheme.thread.opacity(0.35)), lineWidth: 0.65)
             }
             for line in StitchPlanner.birdAccentLines(bird) {
-                context.stroke(polyline(line), with: .color(bird.accentColor.color.opacity(0.85)), style: StrokeStyle(lineWidth: 0.8, lineCap: .round, lineJoin: .round))
+                context.stroke(polyline(line), with: .color(bird.accentColor.color.opacity(0.95)), style: StrokeStyle(lineWidth: 1.45, lineCap: .round, lineJoin: .round))
             }
         case .curl(let curl):
             context.stroke(polyline(StitchPlanner.curlPoints(curl)), with: .color(curl.color.color), style: StrokeStyle(lineWidth: 1.25, lineCap: .round, lineJoin: .round, dash: [1.8, 2.8]))

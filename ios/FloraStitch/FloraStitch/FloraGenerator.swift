@@ -128,7 +128,7 @@ enum FloraGenerator {
                 let point = sample(stem, t: rng.double(0.08...0.92))
                 let kind = BirdKind.allCases[rng.int(0...(BirdKind.allCases.count - 1))]
                 let side = rng.bool() ? -1.0 : 1.0
-                let sizeValue = CGFloat(Double(size.height) * rng.double(0.13...0.21))
+                let sizeValue = CGFloat(Double(size.height) * rng.double(0.16...0.25))
                 elements.append(.bird(BirdElement(
                     center: CGPoint(
                         x: point.x + CGFloat(side * rng.double(18...44)),

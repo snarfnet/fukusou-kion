@@ -331,63 +331,52 @@ enum StitchPlanner {
     }
 
     static func birdBodyOutlines(_ bird: BirdElement) -> [[CGPoint]] {
-        let s = bird.size
-        return [
-            rotatedOval(center: birdPoint(bird, x: -0.08, y: 0.04), width: s * bodyWidth(for: bird.kind), height: s * bodyHeight(for: bird.kind), angle: bird.angle, steps: 24),
-            rotatedOval(center: birdPoint(bird, x: headX(for: bird.kind), y: headY(for: bird.kind)), width: s * headSize(for: bird.kind), height: s * headSize(for: bird.kind) * 0.86, angle: bird.angle, steps: 18),
-            tailShape(for: bird),
-            beakShape(for: bird)
-        ]
+        []
     }
 
     static func birdWingOutlines(_ bird: BirdElement) -> [[CGPoint]] {
-        let s = bird.size
-        switch bird.kind {
-        case .swallow, .gull, .lark:
-            return [birdShape(bird, [CGPoint(x: -0.38, y: -0.04), CGPoint(x: -0.02, y: -0.36), CGPoint(x: 0.34, y: -0.06), CGPoint(x: 0.08, y: 0.18)])]
-        case .hummingbird:
-            return [birdShape(bird, [CGPoint(x: -0.34, y: -0.02), CGPoint(x: -0.06, y: -0.52), CGPoint(x: 0.22, y: -0.04), CGPoint(x: -0.02, y: 0.14)])]
-        case .crane:
-            return [birdShape(bird, [CGPoint(x: -0.46, y: 0.02), CGPoint(x: -0.08, y: -0.36), CGPoint(x: 0.28, y: -0.06), CGPoint(x: 0.02, y: 0.18)])]
-        case .owl:
-            return [
-                rotatedOval(center: birdPoint(bird, x: -0.22, y: 0.08), width: s * 0.26, height: s * 0.5, angle: bird.angle - 0.12, steps: 14),
-                rotatedOval(center: birdPoint(bird, x: 0.12, y: 0.08), width: s * 0.26, height: s * 0.5, angle: bird.angle + 0.12, steps: 14)
-            ]
-        default:
-            return [rotatedOval(center: birdPoint(bird, x: -0.12, y: -0.02), width: s * 0.62, height: s * 0.38, angle: bird.angle - 0.18, steps: 16)]
-        }
+        []
     }
 
     static func birdAccentLines(_ bird: BirdElement) -> [[CGPoint]] {
         switch bird.kind {
         case .hummingbird:
             return [
-                [birdPoint(bird, x: 0.58, y: -0.08), birdPoint(bird, x: 1.22, y: -0.18)],
-                [birdPoint(bird, x: 0.56, y: 0.02), birdPoint(bird, x: 0.56, y: 0.02)]
+                birdIconLine(bird, [CGPoint(x: -0.95, y: 0.05), CGPoint(x: -0.36, y: -0.12), CGPoint(x: 0.28, y: -0.18), CGPoint(x: 0.54, y: -0.1), CGPoint(x: 1.28, y: -0.18), CGPoint(x: 0.56, y: 0.02), CGPoint(x: 0.18, y: 0.22), CGPoint(x: -0.4, y: 0.18), CGPoint(x: -0.95, y: 0.05)]),
+                birdIconLine(bird, [CGPoint(x: -0.18, y: -0.04), CGPoint(x: -0.02, y: -0.62), CGPoint(x: 0.18, y: -0.08)]),
+                birdIconLine(bird, [CGPoint(x: -0.18, y: 0.0), CGPoint(x: -0.04, y: 0.48), CGPoint(x: 0.16, y: 0.08)])
             ]
         case .kingfisher:
             return [
-                [birdPoint(bird, x: 0.58, y: -0.08), birdPoint(bird, x: 1.08, y: -0.14)],
-                [birdPoint(bird, x: 0.5, y: -0.18), birdPoint(bird, x: 0.5, y: -0.18)]
+                birdIconLine(bird, [CGPoint(x: -0.9, y: 0.08), CGPoint(x: -0.32, y: -0.2), CGPoint(x: 0.34, y: -0.2), CGPoint(x: 0.64, y: -0.1), CGPoint(x: 1.16, y: -0.14), CGPoint(x: 0.62, y: 0.04), CGPoint(x: 0.22, y: 0.26), CGPoint(x: -0.42, y: 0.2), CGPoint(x: -0.9, y: 0.08)]),
+                birdIconLine(bird, [CGPoint(x: -0.18, y: -0.02), CGPoint(x: 0.16, y: 0.06), CGPoint(x: -0.26, y: 0.18)])
             ]
         case .crane:
             return [
-                [birdPoint(bird, x: 0.44, y: -0.22), birdPoint(bird, x: 0.72, y: -0.52), birdPoint(bird, x: 0.62, y: -0.76)],
-                [birdPoint(bird, x: 0.58, y: -0.44), birdPoint(bird, x: 0.58, y: -0.44)]
+                birdIconLine(bird, [CGPoint(x: -0.92, y: 0.12), CGPoint(x: -0.38, y: -0.08), CGPoint(x: 0.22, y: -0.06), CGPoint(x: 0.5, y: -0.32), CGPoint(x: 0.72, y: -0.66), CGPoint(x: 1.0, y: -0.72), CGPoint(x: 0.7, y: -0.54), CGPoint(x: 0.52, y: -0.18), CGPoint(x: 0.24, y: 0.2), CGPoint(x: -0.42, y: 0.22), CGPoint(x: -0.92, y: 0.12)]),
+                birdIconLine(bird, [CGPoint(x: -0.16, y: 0.0), CGPoint(x: 0.18, y: 0.1), CGPoint(x: -0.24, y: 0.18)]),
+                birdIconLine(bird, [CGPoint(x: -0.1, y: 0.22), CGPoint(x: -0.2, y: 0.66)])
             ]
         case .owl:
             return [
-                [birdPoint(bird, x: -0.14, y: -0.48), birdPoint(bird, x: -0.14, y: -0.48)],
-                [birdPoint(bird, x: 0.14, y: -0.48), birdPoint(bird, x: 0.14, y: -0.48)],
-                [birdPoint(bird, x: -0.16, y: 0.48), birdPoint(bird, x: -0.28, y: 0.66)],
-                [birdPoint(bird, x: 0.16, y: 0.48), birdPoint(bird, x: 0.28, y: 0.66)]
+                birdIconLine(bird, [CGPoint(x: -0.48, y: -0.42), CGPoint(x: -0.18, y: -0.62), CGPoint(x: 0.16, y: -0.62), CGPoint(x: 0.48, y: -0.42), CGPoint(x: 0.44, y: 0.26), CGPoint(x: 0.18, y: 0.58), CGPoint(x: -0.18, y: 0.58), CGPoint(x: -0.44, y: 0.26), CGPoint(x: -0.48, y: -0.42)]),
+                birdIconLine(bird, [CGPoint(x: -0.24, y: -0.28), CGPoint(x: -0.1, y: -0.28)]),
+                birdIconLine(bird, [CGPoint(x: 0.1, y: -0.28), CGPoint(x: 0.24, y: -0.28)]),
+                birdIconLine(bird, [CGPoint(x: -0.08, y: -0.12), CGPoint(x: 0, y: 0.02), CGPoint(x: 0.08, y: -0.12)])
+            ]
+        case .swallow:
+            return [
+                birdIconLine(bird, [CGPoint(x: -0.98, y: 0.08), CGPoint(x: -0.42, y: -0.2), CGPoint(x: 0.32, y: -0.18), CGPoint(x: 0.62, y: -0.06), CGPoint(x: 0.96, y: -0.06), CGPoint(x: 0.62, y: 0.06), CGPoint(x: 0.2, y: 0.22), CGPoint(x: -0.4, y: 0.2), CGPoint(x: -0.98, y: 0.08)]),
+                birdIconLine(bird, [CGPoint(x: -0.62, y: 0.08), CGPoint(x: -1.18, y: -0.28)]),
+                birdIconLine(bird, [CGPoint(x: -0.62, y: 0.08), CGPoint(x: -1.18, y: 0.36)]),
+                birdIconLine(bird, [CGPoint(x: -0.18, y: -0.02), CGPoint(x: 0.18, y: 0.08), CGPoint(x: -0.28, y: 0.18)])
             ]
         default:
             return [
-                [birdPoint(bird, x: 0.52, y: -0.14), birdPoint(bird, x: 0.52, y: -0.14)],
-                [birdPoint(bird, x: -0.2, y: 0.34), birdPoint(bird, x: -0.26, y: 0.58)],
-                [birdPoint(bird, x: 0.04, y: 0.34), birdPoint(bird, x: 0.08, y: 0.58)]
+                birdIconLine(bird, [CGPoint(x: -0.9, y: 0.1), CGPoint(x: -0.38, y: -0.18), CGPoint(x: 0.26, y: -0.18), CGPoint(x: 0.56, y: -0.08), CGPoint(x: 0.92, y: -0.06), CGPoint(x: 0.56, y: 0.04), CGPoint(x: 0.24, y: 0.26), CGPoint(x: -0.38, y: 0.22), CGPoint(x: -0.9, y: 0.1)]),
+                birdIconLine(bird, [CGPoint(x: -0.2, y: -0.02), CGPoint(x: 0.14, y: 0.08), CGPoint(x: -0.28, y: 0.2)]),
+                birdIconLine(bird, [CGPoint(x: -0.18, y: 0.22), CGPoint(x: -0.26, y: 0.54)]),
+                birdIconLine(bird, [CGPoint(x: 0.04, y: 0.22), CGPoint(x: 0.08, y: 0.54)])
             ]
         }
     }
@@ -594,6 +583,10 @@ enum StitchPlanner {
     }
 
     private static func birdShape(_ bird: BirdElement, _ points: [CGPoint]) -> [CGPoint] {
+        points.map { birdPoint(bird, x: $0.x, y: $0.y) }
+    }
+
+    private static func birdIconLine(_ bird: BirdElement, _ points: [CGPoint]) -> [CGPoint] {
         points.map { birdPoint(bird, x: $0.x, y: $0.y) }
     }
 }
