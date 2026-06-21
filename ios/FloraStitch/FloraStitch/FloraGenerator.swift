@@ -93,11 +93,11 @@ enum FloraGenerator {
         }
 
         if let importedVector {
-            let motifCount = rng.int(2...5)
+            let motifCount = rng.int(4...8)
             for _ in 0..<motifCount {
                 let point = sample(stem, t: rng.double(0.06...0.94))
                 let side = rng.bool() ? -1.0 : 1.0
-                let motifSize = CGFloat(Double(size.height) * rng.double(0.15...0.28))
+                let motifSize = CGFloat(Double(size.height) * rng.double(0.2...0.36))
                 elements.append(.importedVector(ImportedVectorElement(
                     center: CGPoint(
                         x: point.x + CGFloat(side * rng.double(12...34)),

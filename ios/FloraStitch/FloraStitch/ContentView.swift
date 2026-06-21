@@ -109,7 +109,8 @@ struct ContentView: View {
                 if importedVector != nil {
                     Button {
                         importedVector = nil
-                        regenerate()
+                        design = FloraGenerator.make(seed: seed, settings: settings, importedVector: nil)
+                        exportMessage = "Image motif removed from seed \(seed)"
                     } label: {
                         Label("Remove image motif", systemImage: "xmark.circle")
                             .frame(maxWidth: .infinity)
@@ -171,8 +172,8 @@ struct ContentView: View {
                    let template = ImageVectorizer.template(from: data) {
                     await MainActor.run {
                         importedVector = template
-                        regenerate()
-                        exportMessage = "Image motif mixed into seed \(seed)"
+                        design = FloraGenerator.make(seed: seed, settings: settings, importedVector: template)
+                        exportMessage = "Image motif placed into seed \(seed)"
                     }
                 } else {
                     await MainActor.run {
