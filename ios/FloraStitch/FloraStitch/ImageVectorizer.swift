@@ -5,7 +5,7 @@ import UIKit
 enum ImageVectorizer {
     static func template(from data: Data) -> VectorTemplate? {
         guard let image = UIImage(data: data) else { return nil }
-        let target = CGSize(width: 96, height: 96)
+        let target = CGSize(width: 160, height: 160)
         let renderer = UIGraphicsImageRenderer(size: target)
         let rendered = renderer.image { context in
             UIColor.clear.setFill()
@@ -56,7 +56,7 @@ enum ImageVectorizer {
         let hasAlphaShape = Double(transparentCount) / Double(width * height) > 0.08
         let threshold = min(0.86, max(0.22, average * 0.92))
 
-        var mask = [Bool](repeating: false, count: width * height)
+        var rawMask = [Bool](repeating: false, count: width * height)
         var minX = width
         var minY = height
         var maxX = 0
@@ -72,7 +72,7 @@ enum ImageVectorizer {
                 let luminance = red * 0.299 + green * 0.587 + blue * 0.114
                 let filled = hasAlphaShape ? alpha > 0.12 : luminance < threshold
                 if filled {
-                    mask[y * width + x] = true
+                    rawMask[y * width + x] = true
                     minX = min(minX, x)
                     minY = min(minY, y)
                     maxX = max(maxX, x)
@@ -82,37 +82,176 @@ enum ImageVectorizer {
         }
 
         guard minX < maxX, minY < maxY else { return nil }
+        let mask = largestComponent(close(open(rawMask, width: width, height: height), width: width, height: height), width: width, height: height)
+        guard let bounds = bounds(of: mask, width: width, height: height) else { return nil }
+        minX = bounds.minX
+        minY = bounds.minY
+        maxX = bounds.maxX
+        maxY = bounds.maxY
+
+        let boundary = boundaryPoints(mask, width: width, height: height)
+        guard boundary.count >= 12 else { return nil }
+
         let centerX = Double(minX + maxX) / 2.0
         let centerY = Double(minY + maxY) / 2.0
         let scale = Double(max(maxX - minX, maxY - minY))
         guard scale > 0 else { return nil }
 
-        let rayCount = 72
-        let raySteps = 80
-        let maxRadius = hypot(Double(maxX - minX), Double(maxY - minY)) / 2.0 + 2.0
-        var outline: [CGPoint] = []
+        let sorted = boundary.sorted { lhs, rhs in
+            let leftAngle = atan2(Double(lhs.y) - centerY, Double(lhs.x) - centerX)
+            let rightAngle = atan2(Double(rhs.y) - centerY, Double(rhs.x) - centerX)
+            if abs(leftAngle - rightAngle) > 0.0001 {
+                return leftAngle < rightAngle
+            }
+            let leftDistance = hypot(Double(lhs.x) - centerX, Double(lhs.y) - centerY)
+            let rightDistance = hypot(Double(rhs.x) - centerX, Double(rhs.y) - centerY)
+            return leftDistance > rightDistance
+        }
+        let reduced = simplify(sorted.map {
+            CGPoint(x: (Double($0.x) - centerX) / scale, y: (Double($0.y) - centerY) / scale)
+        }, tolerance: 0.018)
 
-        for index in 0..<rayCount {
-            let angle = Double(index) / Double(rayCount) * Double.pi * 2.0
-            var lastHit: CGPoint?
-            for step in 0...raySteps {
-                let radius = maxRadius * Double(step) / Double(raySteps)
-                let x = Int((centerX + cos(angle) * radius).rounded())
-                let y = Int((centerY + sin(angle) * radius).rounded())
-                guard x >= 0, x < width, y >= 0, y < height else { continue }
-                if mask[y * width + x] {
-                    lastHit = CGPoint(
-                        x: (Double(x) - centerX) / scale,
-                        y: (Double(y) - centerY) / scale
-                    )
+        let outline = resample(reduced, maxPoints: 180)
+        guard outline.count >= 8 else { return nil }
+        return VectorTemplate(outlines: [outline])
+    }
+
+    private static func open(_ mask: [Bool], width: Int, height: Int) -> [Bool] {
+        dilate(erode(mask, width: width, height: height), width: width, height: height)
+    }
+
+    private static func close(_ mask: [Bool], width: Int, height: Int) -> [Bool] {
+        erode(dilate(mask, width: width, height: height), width: width, height: height)
+    }
+
+    private static func erode(_ mask: [Bool], width: Int, height: Int) -> [Bool] {
+        var output = mask
+        for y in 1..<(height - 1) {
+            for x in 1..<(width - 1) {
+                var keep = true
+                for dy in -1...1 {
+                    for dx in -1...1 where !mask[(y + dy) * width + (x + dx)] {
+                        keep = false
+                    }
+                }
+                output[y * width + x] = keep
+            }
+        }
+        return output
+    }
+
+    private static func dilate(_ mask: [Bool], width: Int, height: Int) -> [Bool] {
+        var output = mask
+        for y in 1..<(height - 1) {
+            for x in 1..<(width - 1) {
+                var fill = false
+                for dy in -1...1 {
+                    for dx in -1...1 where mask[(y + dy) * width + (x + dx)] {
+                        fill = true
+                    }
+                }
+                output[y * width + x] = fill
+            }
+        }
+        return output
+    }
+
+    private static func largestComponent(_ mask: [Bool], width: Int, height: Int) -> [Bool] {
+        var visited = [Bool](repeating: false, count: mask.count)
+        var best: [Int] = []
+
+        for index in mask.indices where mask[index] && !visited[index] {
+            var queue = [index]
+            var component: [Int] = []
+            visited[index] = true
+
+            while let current = queue.popLast() {
+                component.append(current)
+                let x = current % width
+                let y = current / width
+                for neighbor in neighbors(x: x, y: y, width: width, height: height) {
+                    if mask[neighbor] && !visited[neighbor] {
+                        visited[neighbor] = true
+                        queue.append(neighbor)
+                    }
                 }
             }
-            if let lastHit {
-                outline.append(lastHit)
+
+            if component.count > best.count {
+                best = component
             }
         }
 
-        guard outline.count >= 8 else { return nil }
-        return VectorTemplate(outlines: [outline])
+        var output = [Bool](repeating: false, count: mask.count)
+        for index in best {
+            output[index] = true
+        }
+        return output
+    }
+
+    private static func neighbors(x: Int, y: Int, width: Int, height: Int) -> [Int] {
+        var items: [Int] = []
+        for dy in -1...1 {
+            for dx in -1...1 where dx != 0 || dy != 0 {
+                let nx = x + dx
+                let ny = y + dy
+                if nx >= 0, nx < width, ny >= 0, ny < height {
+                    items.append(ny * width + nx)
+                }
+            }
+        }
+        return items
+    }
+
+    private static func bounds(of mask: [Bool], width: Int, height: Int) -> (minX: Int, minY: Int, maxX: Int, maxY: Int)? {
+        var minX = width
+        var minY = height
+        var maxX = 0
+        var maxY = 0
+        var found = false
+        for y in 0..<height {
+            for x in 0..<width where mask[y * width + x] {
+                found = true
+                minX = min(minX, x)
+                minY = min(minY, y)
+                maxX = max(maxX, x)
+                maxY = max(maxY, y)
+            }
+        }
+        return found ? (minX, minY, maxX, maxY) : nil
+    }
+
+    private static func boundaryPoints(_ mask: [Bool], width: Int, height: Int) -> [CGPoint] {
+        var points: [CGPoint] = []
+        for y in 1..<(height - 1) {
+            for x in 1..<(width - 1) where mask[y * width + x] {
+                let hasEmptyNeighbor = neighbors(x: x, y: y, width: width, height: height).contains { !mask[$0] }
+                if hasEmptyNeighbor {
+                    points.append(CGPoint(x: x, y: y))
+                }
+            }
+        }
+        return points
+    }
+
+    private static func simplify(_ points: [CGPoint], tolerance: CGFloat) -> [CGPoint] {
+        guard points.count > 3 else { return points }
+        var output: [CGPoint] = []
+        for point in points {
+            guard let last = output.last else {
+                output.append(point)
+                continue
+            }
+            if hypot(point.x - last.x, point.y - last.y) >= tolerance {
+                output.append(point)
+            }
+        }
+        return output.count >= 3 ? output : points
+    }
+
+    private static func resample(_ points: [CGPoint], maxPoints: Int) -> [CGPoint] {
+        guard points.count > maxPoints else { return points }
+        let stride = Double(points.count) / Double(maxPoints)
+        return (0..<maxPoints).map { points[min(points.count - 1, Int((Double($0) * stride).rounded(.down)))] }
     }
 }

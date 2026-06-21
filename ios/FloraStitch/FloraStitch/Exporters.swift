@@ -13,6 +13,10 @@ enum ExportFormat: String, CaseIterable, Identifiable {
 struct ExportFile: Identifiable {
     let id = UUID()
     let url: URL
+
+    var fileName: String {
+        url.lastPathComponent
+    }
 }
 
 enum DesignExporter {

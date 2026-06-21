@@ -48,7 +48,11 @@ struct ContentView: View {
                 importPhoto(item)
             }
             .sheet(item: $exportFile) { item in
-                ShareSheet(items: [item.url])
+                SaveToFilesSheet(url: item.url) { didSave in
+                    exportMessage = didSave
+                        ? "Saved as \(item.fileName) in the Files location you selected."
+                        : "Save cancelled"
+                }
             }
         }
     }
@@ -129,7 +133,7 @@ struct ContentView: View {
                 Button {
                     export()
                 } label: {
-                    Label("Export \(exportFormat.rawValue)", systemImage: "square.and.arrow.up")
+                    Label("Save \(exportFormat.rawValue)", systemImage: "folder.badge.plus")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -188,8 +192,8 @@ struct ContentView: View {
             let url = try DesignExporter.write(design: design, format: exportFormat)
             exportFile = ExportFile(url: url)
             exportMessage = exportFormat == .pes
-                ? "PES exported as an experimental stitch payload. Use DST for machine tests."
-                : "\(exportFormat.rawValue) exported"
+                ? "Choose a Files folder for \(url.lastPathComponent). PES is experimental; use DST for machine tests."
+                : "Choose a Files folder for \(url.lastPathComponent)"
         } catch {
             exportMessage = "Export failed: \(error.localizedDescription)"
         }
@@ -361,14 +365,42 @@ private struct StatPill: View {
     }
 }
 
-private struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
+private struct SaveToFilesSheet: UIViewControllerRepresentable {
+    let url: URL
+    let onComplete: (Bool) -> Void
 
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onComplete: onComplete)
     }
 
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
+        picker.delegate = context.coordinator
+        picker.shouldShowFileExtensions = true
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+
+    final class Coordinator: NSObject, UIDocumentPickerDelegate {
+        let onComplete: (Bool) -> Void
+
+        init(onComplete: @escaping (Bool) -> Void) {
+            self.onComplete = onComplete
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            DispatchQueue.main.async {
+                self.onComplete(!urls.isEmpty)
+            }
+        }
+
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            DispatchQueue.main.async {
+                self.onComplete(false)
+            }
+        }
+    }
 }
 
 private enum AppTheme {
