@@ -394,19 +394,41 @@ def assign_build(version_id, build_id):
 
 
 def submit_for_review(version_id):
-    response = api("POST", "/appStoreVersionSubmissions", json={
+    cleanup_review_submissions()
+    response = api("POST", "/reviewSubmissions", json={
         "data": {
-            "type": "appStoreVersionSubmissions",
+            "type": "reviewSubmissions",
+            "attributes": {"platform": "IOS"},
             "relationships": {
-                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "appStoreVersionForReview": {"data": {"type": "appStoreVersions", "id": version_id}},
             },
         }
     })
-    print(f"App Store version submission: {response.status_code}")
-    if response.status_code in (200, 201):
-        print(f"Submitted for App Review: {response.json()['data']['id']}")
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:1200]}")
+    submission_id = response.json()["data"]["id"]
+
+    response = api("PATCH", f"/reviewSubmissions/{submission_id}", json={
+        "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
+    })
+    print(f"Review submit: {response.status_code}")
+    if response.status_code == 200:
+        print(f"Submitted for App Review: {response.json()['data']['attributes'].get('state')}")
         return
-    raise RuntimeError(f"App Store version submission failed {response.status_code}: {response.text[:1200]}")
+    raise RuntimeError(f"Review submit failed {response.status_code}: {response.text[:1200]}")
+
+
+def cleanup_review_submissions():
+    response, body = api_json_or_none("GET", f"/apps/{APP_ID}/reviewSubmissions?limit=20")
+    if response.status_code != 200:
+        return
+    for submission in body.get("data", []):
+        state = submission.get("attributes", {}).get("state")
+        if state not in ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES"):
+            continue
+        delete_response, _ = api_json_or_none("DELETE", f"/reviewSubmissions/{submission['id']}")
+        print(f"Review submission cleanup {submission['id']} {state}: {delete_response.status_code}")
 
 
 def main():
