@@ -315,6 +315,21 @@ enum StitchPlanner {
         }
     }
 
+    static func importedVectorColoredShapes(_ vector: ImportedVectorElement) -> [VectorShape] {
+        vector.coloredShapes.map { shape in
+            VectorShape(
+                outline: shape.outline.map { point in
+                    rotate(
+                        CGPoint(x: point.x * vector.size.width, y: point.y * vector.size.height),
+                        by: vector.angle,
+                        around: vector.center
+                    )
+                },
+                fillHex: shape.fillHex
+            )
+        }
+    }
+
     static func birdBodyOutlines(_ bird: BirdElement) -> [[CGPoint]] {
         let s = bird.size
         return [

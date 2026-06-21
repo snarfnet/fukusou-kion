@@ -99,7 +99,8 @@ enum FloraGenerator {
                 size: CGSize(width: heroSize * 1.1, height: heroSize),
                 angle: CGFloat(rng.double(-0.15...0.15)),
                 color: accent,
-                outlines: importedVector.outlines
+                outlines: importedVector.outlines,
+                coloredShapes: importedVector.coloredShapes
             )))
 
             let motifCount = rng.int(4...8)
@@ -115,7 +116,8 @@ enum FloraGenerator {
                     size: CGSize(width: motifSize * CGFloat(rng.double(0.8...1.25)), height: motifSize),
                     angle: CGFloat(rng.double(-0.75...0.75) + side * 0.28),
                     color: rng.bool(0.45) ? leafDark : flowerColors[rng.int(0...(flowerColors.count - 1))],
-                    outlines: importedVector.outlines
+                    outlines: importedVector.outlines,
+                    coloredShapes: importedVector.coloredShapes
                 )))
             }
         }

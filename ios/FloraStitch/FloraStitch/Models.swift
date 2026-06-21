@@ -81,6 +81,12 @@ struct BerryElement {
 
 struct VectorTemplate {
     let outlines: [[CGPoint]]
+    let coloredShapes: [VectorShape]
+}
+
+struct VectorShape {
+    let outline: [CGPoint]
+    let fillHex: String
 }
 
 struct ImportedVectorElement {
@@ -90,6 +96,7 @@ struct ImportedVectorElement {
     let angle: CGFloat
     let color: EmbroideryColor
     let outlines: [[CGPoint]]
+    let coloredShapes: [VectorShape]
 }
 
 struct BirdElement {

@@ -323,11 +323,18 @@ private struct DesignPreview: View {
                 context.stroke(polyline(line), with: .color(AppTheme.thread.opacity(0.55)), lineWidth: 0.8)
             }
         case .importedVector(let vector):
+            for shape in StitchPlanner.importedVectorColoredShapes(vector) {
+                var path = polyline(shape.outline)
+                path.closeSubpath()
+                context.fill(path, with: .color(Color(hex: shape.fillHex).opacity(0.94)))
+            }
             for outline in StitchPlanner.importedVectorOutlines(vector) {
                 var path = polyline(outline)
                 path.closeSubpath()
-                context.fill(path, with: .color(vector.color.color.opacity(0.94)))
-                context.stroke(path, with: .color(AppTheme.thread.opacity(0.5)), lineWidth: 0.85)
+                if vector.coloredShapes.isEmpty {
+                    context.fill(path, with: .color(vector.color.color.opacity(0.94)))
+                }
+                context.stroke(path, with: .color(AppTheme.thread.opacity(0.68)), lineWidth: 1.2)
             }
         case .bird(let bird):
             for outline in StitchPlanner.birdBodyOutlines(bird) {

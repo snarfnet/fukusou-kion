@@ -82,9 +82,15 @@ enum SVGExporter {
             }
             return parts.joined(separator: "\n")
         case .importedVector(let vector):
-            return StitchPlanner.importedVectorOutlines(vector)
-                .map { "<polygon points=\"\(points($0))\" fill=\"\(vector.color.hex)\" stroke=\"#302b1d\" stroke-width=\"0.7\"/>" }
-                .joined(separator: "\n")
+            var parts: [String] = []
+            for shape in StitchPlanner.importedVectorColoredShapes(vector) {
+                parts.append("<polygon points=\"\(points(shape.outline))\" fill=\"\(shape.fillHex)\" stroke=\"none\"/>")
+            }
+            for outline in StitchPlanner.importedVectorOutlines(vector) {
+                let fill = vector.coloredShapes.isEmpty ? vector.color.hex : "none"
+                parts.append("<polygon points=\"\(points(outline))\" fill=\"\(fill)\" stroke=\"#302b1d\" stroke-width=\"1.0\"/>")
+            }
+            return parts.joined(separator: "\n")
         case .bird(let bird):
             var parts: [String] = []
             for outline in StitchPlanner.birdBodyOutlines(bird) {

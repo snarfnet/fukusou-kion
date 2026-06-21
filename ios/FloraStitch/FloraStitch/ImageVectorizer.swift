@@ -81,11 +81,12 @@ enum ImageVectorizer {
             }
         }
 
-        guard minX < maxX, minY < maxY else { return fallbackTemplate() }
+        let imageTiles = colorTileShapes(pixels: pixels, width: width, height: height, bytesPerPixel: bytesPerPixel)
+        guard minX < maxX, minY < maxY else { return VectorTemplate(outlines: [], coloredShapes: imageTiles) }
         let rawBounds = (minX: minX, minY: minY, maxX: maxX, maxY: maxY)
         let mask = largestComponent(close(open(rawMask, width: width, height: height), width: width, height: height), width: width, height: height)
         guard let bounds = bounds(of: mask, width: width, height: height) else {
-            return fallbackTemplate(bounds: rawBounds)
+            return VectorTemplate(outlines: [], coloredShapes: imageTiles)
         }
         minX = bounds.minX
         minY = bounds.minY
@@ -94,13 +95,13 @@ enum ImageVectorizer {
 
         let boundary = boundaryPoints(mask, width: width, height: height)
         guard boundary.count >= 12 else {
-            return fallbackTemplate(bounds: rawBounds)
+            return VectorTemplate(outlines: [], coloredShapes: imageTiles)
         }
 
         let centerX = Double(minX + maxX) / 2.0
         let centerY = Double(minY + maxY) / 2.0
         let scale = Double(max(maxX - minX, maxY - minY))
-        guard scale > 0 else { return fallbackTemplate(bounds: rawBounds) }
+        guard scale > 0 else { return VectorTemplate(outlines: [], coloredShapes: imageTiles) }
 
         let sorted = boundary.sorted { lhs, rhs in
             let leftAngle = atan2(Double(lhs.y) - centerY, Double(lhs.x) - centerX)
@@ -117,9 +118,8 @@ enum ImageVectorizer {
         }, tolerance: 0.018)
 
         let outline = resample(reduced, maxPoints: 180)
-        guard outline.count >= 8 else { return fallbackTemplate(bounds: rawBounds) }
-        let stipples = stippleOutlines(mask: rawMask, width: width, height: height, bounds: rawBounds, maxShapes: 120)
-        return VectorTemplate(outlines: [outline] + stipples)
+        guard outline.count >= 8 else { return VectorTemplate(outlines: [], coloredShapes: imageTiles) }
+        return VectorTemplate(outlines: [outline], coloredShapes: imageTiles)
     }
 
     private static func fallbackTemplate(bounds: (minX: Int, minY: Int, maxX: Int, maxY: Int)? = nil) -> VectorTemplate {
@@ -140,7 +140,7 @@ enum ImageVectorizer {
             CGPoint(x: -0.5 * widthRatio, y: 0.06),
             CGPoint(x: -0.34 * widthRatio, y: -0.34)
         ]
-        return VectorTemplate(outlines: [outline])
+        return VectorTemplate(outlines: [outline], coloredShapes: [])
     }
 
     private static func open(_ mask: [Bool], width: Int, height: Int) -> [Bool] {
@@ -326,5 +326,75 @@ enum ImageVectorizer {
         }
 
         return outlines
+    }
+
+    private static func colorTileShapes(
+        pixels: [UInt8],
+        width: Int,
+        height: Int,
+        bytesPerPixel: Int
+    ) -> [VectorShape] {
+        let columns = 24
+        let rows = 24
+        let cellWidth = max(1, width / columns)
+        let cellHeight = max(1, height / rows)
+        let scale = Double(max(width, height))
+        let centerX = Double(width) / 2.0
+        let centerY = Double(height) / 2.0
+        var shapes: [VectorShape] = []
+
+        for row in 0..<rows {
+            for column in 0..<columns {
+                let startX = column * cellWidth
+                let startY = row * cellHeight
+                let endX = min(width, startX + cellWidth)
+                let endY = min(height, startY + cellHeight)
+                var redTotal = 0
+                var greenTotal = 0
+                var blueTotal = 0
+                var alphaTotal = 0
+                var count = 0
+
+                for y in startY..<endY {
+                    for x in startX..<endX {
+                        let offset = (y * width + x) * bytesPerPixel
+                        let alpha = Int(pixels[offset + 3])
+                        guard alpha > 18 else { continue }
+                        redTotal += Int(pixels[offset])
+                        greenTotal += Int(pixels[offset + 1])
+                        blueTotal += Int(pixels[offset + 2])
+                        alphaTotal += alpha
+                        count += 1
+                    }
+                }
+
+                guard count > 0 else { continue }
+                let red = redTotal / count
+                let green = greenTotal / count
+                let blue = blueTotal / count
+                let alpha = alphaTotal / count
+                let luminance = Double(red) * 0.299 + Double(green) * 0.587 + Double(blue) * 0.114
+                if alpha > 235 && luminance > 244 {
+                    continue
+                }
+
+                let inset = 0.8
+                let x0 = (Double(startX) + inset - centerX) / scale
+                let y0 = (Double(startY) + inset - centerY) / scale
+                let x1 = (Double(endX) - inset - centerX) / scale
+                let y1 = (Double(endY) - inset - centerY) / scale
+                shapes.append(VectorShape(
+                    outline: [
+                        CGPoint(x: x0, y: y0),
+                        CGPoint(x: x1, y: y0),
+                        CGPoint(x: x1, y: y1),
+                        CGPoint(x: x0, y: y1)
+                    ],
+                    fillHex: String(format: "#%02X%02X%02X", red, green, blue)
+                ))
+            }
+        }
+
+        return shapes
     }
 }
