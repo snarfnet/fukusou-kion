@@ -135,7 +135,7 @@ enum FloraGenerator {
                         y: point.y - CGFloat(rng.double(42...82))
                     ),
                     size: sizeValue,
-                    angle: CGFloat(rng.double(-0.35...0.35) + (side < 0 ? Double.pi : 0)),
+                    angle: CGFloat(rng.double(-0.12...0.12)),
                     kind: kind,
                     bodyColor: rng.bool(0.45) ? accent : flowerColors[rng.int(0...(flowerColors.count - 1))],
                     wingColor: rng.bool(0.5) ? leafDark : leafLight,

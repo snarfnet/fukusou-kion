@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var importedVector: VectorTemplate?
     @State private var previewZoom: CGFloat = 1.0
+    @State private var previewPan: CGSize = .zero
 
     init() {
         let initialSeed = Int.random(in: 10000...99999)
@@ -26,7 +27,7 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 18) {
                         header
-                        DesignPreview(design: design, zoom: previewZoom)
+                        DesignPreview(design: design, zoom: previewZoom, pan: $previewPan)
                             .frame(height: 270)
                         previewControls
                         stats
@@ -105,6 +106,7 @@ struct ContentView: View {
 
             Button {
                 previewZoom = 1.0
+                previewPan = .zero
             } label: {
                 Image(systemName: "arrow.counterclockwise")
                     .frame(width: 42, height: 34)
@@ -255,14 +257,17 @@ struct ContentView: View {
 private struct DesignPreview: View {
     let design: StitchDesign
     let zoom: CGFloat
+    @Binding var pan: CGSize
+    @GestureState private var dragOffset: CGSize = .zero
 
     var body: some View {
         GeometryReader { _ in
             Canvas { context, size in
                 let scale = min((size.width - 28) / design.size.width, (size.height - 28) / design.size.height) * zoom
+                let activePan = CGSize(width: pan.width + dragOffset.width, height: pan.height + dragOffset.height)
                 let offset = CGSize(
-                    width: (size.width - design.size.width * scale) / 2,
-                    height: (size.height - design.size.height * scale) / 2
+                    width: (size.width - design.size.width * scale) / 2 + activePan.width,
+                    height: (size.height - design.size.height * scale) / 2 + activePan.height
                 )
                 context.translateBy(x: offset.width, y: offset.height)
                 context.scaleBy(x: scale, y: scale)
@@ -276,6 +281,15 @@ private struct DesignPreview: View {
                 }
             }
             .background(AppTheme.clothShadow, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .gesture(
+                DragGesture()
+                    .updating($dragOffset) { value, state, _ in
+                        state = value.translation
+                    }
+                    .onEnded { value in
+                        pan = CGSize(width: pan.width + value.translation.width, height: pan.height + value.translation.height)
+                    }
+            )
             .overlay(alignment: .bottomLeading) {
                 Text("\(String(format: "%.1f", Double(design.size.width / 240))) x \(String(format: "%.1f", Double(design.size.height / 240))) in")
                     .font(.caption.weight(.medium))
