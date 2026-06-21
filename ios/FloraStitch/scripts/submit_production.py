@@ -264,13 +264,21 @@ def ensure_localizations(version_id):
     for locale in META:
         if locale in existing:
             continue
-        body = api_json("POST", "/appStoreVersionLocalizations", json={
+        response = api("POST", "/appStoreVersionLocalizations", json={
             "data": {
                 "type": "appStoreVersionLocalizations",
                 "attributes": {"locale": locale},
                 "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}},
             }
         })
+        if response.status_code == 409 and "DUPLICATE_NAME" in response.text:
+            print(f"Localization {locale} skipped because the app name is already used in that storefront.")
+            continue
+        if response.status_code not in (200, 201):
+            raise RuntimeError(
+                f"POST /appStoreVersionLocalizations failed {response.status_code}: {response.text[:800]}"
+            )
+        body = response.json()
         existing[locale] = body["data"]
     return list(existing.values())
 
