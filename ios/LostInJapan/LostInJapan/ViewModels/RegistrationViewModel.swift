@@ -1,6 +1,7 @@
 import Foundation
 import PhotosUI
 import SwiftData
+import SwiftUI
 
 @MainActor
 final class RegistrationViewModel: ObservableObject {
@@ -39,4 +40,3 @@ final class RegistrationViewModel: ObservableObject {
         var errorDescription: String? { String(localized: "error.category") }
     }
 }
-

@@ -22,7 +22,7 @@ struct AppRouterView: View {
                     }
                 }
         }
-        .tint(.brandBlue)
+        .tint(Color.brandBlue)
     }
 }
 
@@ -30,4 +30,3 @@ extension Color {
     static let brandBlue = Color(red: 0.05, green: 0.23, blue: 0.48)
     static let supportBlue = Color(red: 0.17, green: 0.55, blue: 0.86)
 }
-

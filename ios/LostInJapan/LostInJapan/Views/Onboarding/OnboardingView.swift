@@ -14,7 +14,7 @@ struct OnboardingView: View {
             TabView(selection: $page) {
                 ForEach(pages.indices, id: \.self) { index in
                     VStack(spacing: 28) {
-                        Image(systemName: pages[index].2).font(.system(size: 76)).foregroundStyle(.brandBlue)
+                        Image(systemName: pages[index].2).font(.system(size: 76)).foregroundStyle(Color.brandBlue)
                         Text(LocalizedStringKey(pages[index].0)).font(.largeTitle.bold()).multilineTextAlignment(.center)
                         Text(LocalizedStringKey(pages[index].1)).font(.title3).multilineTextAlignment(.center).foregroundStyle(.secondary)
                     }.padding(30).tag(index)
@@ -32,9 +32,8 @@ struct OnboardingView: View {
 struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.font(.headline).frame(maxWidth: .infinity, minHeight: 56).foregroundStyle(.white)
-            .background(.brandBlue.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 16))
+            .background(Color.brandBlue.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 16))
     }
 }
 
 #Preview { OnboardingView {} }
-

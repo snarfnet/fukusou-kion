@@ -27,5 +27,5 @@ private struct RecoveryPlanSection: View {
 
 private struct ActionCard: View {
     let label: LocalizedStringKey; let action: RecoveryAction
-    var body: some View { VStack(alignment: .leading, spacing: 5) { Text(label).font(.caption.bold()).foregroundStyle(action.isUrgent ? .red : .brandBlue); Text(action.title).font(.headline); Text(action.detail).foregroundStyle(.secondary) }.frame(maxWidth: .infinity, alignment: .leading).padding().background(.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 14)).accessibilityElement(children: .combine) }
+    var body: some View { VStack(alignment: .leading, spacing: 5) { Text(label).font(.caption.bold()).foregroundStyle(action.isUrgent ? Color.red : Color.brandBlue); Text(action.title).font(.headline); Text(action.detail).foregroundStyle(.secondary) }.frame(maxWidth: .infinity, alignment: .leading).padding().background(.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 14)).accessibilityElement(children: .combine) }
 }

@@ -6,7 +6,7 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 HStack {
-                    Image(systemName: "mappin.and.ellipse").font(.title).foregroundStyle(.brandBlue)
+                    Image(systemName: "mappin.and.ellipse").font(.title).foregroundStyle(Color.brandBlue)
                     VStack(alignment: .leading) { Text("app.name").font(.title2.bold()); Text("app.subtitle").font(.caption).foregroundStyle(.secondary) }
                     Spacer()
                     Button { navigate(.settings) } label: { Image(systemName: "gearshape").frame(width: 44, height: 44) }.accessibilityLabel("home.settings")
@@ -35,4 +35,3 @@ private struct HomeTile: View {
 }
 
 #Preview { NavigationStack { HomeView { _ in } } }
-
