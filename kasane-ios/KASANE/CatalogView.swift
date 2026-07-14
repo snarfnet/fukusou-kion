@@ -59,9 +59,9 @@ struct CatalogView: View {
         LazyVGrid(columns: [.init(.flexible()), .init(.flexible())], spacing: 12) {
             ForEach(results) { item in Button { onSelect(item) } label: {
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack(alignment: .top) { Text(item.kanji).font(.kasaneSerif(27)).foregroundStyle(KasaneTheme.deep); Spacer(); if item.isFeatured { Text("KASANE STORY").font(.system(size: 6, weight: .bold)).tracking(.7).foregroundStyle(.white).padding(5).background(KasaneTheme.vermilion) } }
+                    HStack(alignment: .top) { Text(item.kanji).font(.kasaneSerif(27)).foregroundStyle(KasaneTheme.deep); Spacer(); if item.isFeatured { Text("KASANE STORY").font(.system(size: 6, weight: .bold)).tracking(0.7).foregroundStyle(.white).padding(5).background(KasaneTheme.vermilion) } }
                     Text(item.name).font(.kasaneSerif(16)).foregroundStyle(KasaneTheme.deep)
-                    Text(item.theme.uppercased()).font(.system(size: 7, weight: .semibold)).tracking(.8).foregroundStyle(.secondary).lineLimit(1)
+                    Text(item.theme.uppercased()).font(.system(size: 7, weight: .semibold)).tracking(0.8).foregroundStyle(.secondary).lineLimit(1)
                     HStack { Text(item.prefecture); Spacer(); if let distance = item.distance(from: locationManager.location) { Text(distance < 1000 ? "\(Int(distance)) m" : String(format: "%.0f km", distance / 1000)) } }
                         .font(.system(size: 8)).foregroundStyle(.secondary).padding(.top, 5)
                 }.padding(13).frame(maxWidth: .infinity, minHeight: 118, alignment: .topLeading).background(.white).overlay(Rectangle().stroke(Color.gray.opacity(0.22)))
@@ -71,4 +71,3 @@ struct CatalogView: View {
 }
 
 private extension MKCoordinateRegion { static let japan = MKCoordinateRegion(center: .init(latitude: 36.4, longitude: 137.3), span: .init(latitudeDelta: 18, longitudeDelta: 18)) }
-
