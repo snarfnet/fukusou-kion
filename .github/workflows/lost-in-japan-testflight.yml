@@ -1,0 +1,167 @@
+name: Lost in Japan TestFlight Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Marketing version
+        required: true
+        default: "1.0"
+  push:
+    branches:
+      - "codex/lost-in-japan-testflight"
+    paths:
+      - "ios/LostInJapan/**"
+      - ".github/workflows/lost-in-japan-testflight.yml"
+
+concurrency:
+  group: lost-in-japan-testflight
+  cancel-in-progress: true
+
+jobs:
+  upload-testflight:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ios/LostInJapan
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.lostinjapan
+      APP_NAME: "Lost in Japan - なくしもの案内"
+      APP_SKU: lost-in-japan-ios
+      BUNDLE_NAME: LostInJapan
+      PROFILE_NAME: "LostInJapan App Store"
+      APP_VERSION: ${{ inputs.version || '1.0' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Import distribution certificate
+        env:
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        run: |
+          test -n "$IOS_DISTRIBUTION_P12_BASE64"
+          test -n "$IOS_DISTRIBUTION_P12_PASSWORD"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/distribution.p12
+          security import /tmp/distribution.p12 -k build.keychain -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          CERT_SHA1=$(openssl pkcs12 -in /tmp/distribution.p12 -nokeys -clcerts -passin pass:"$IOS_DISTRIBUTION_P12_PASSWORD" | openssl x509 -noout -fingerprint -sha1 | sed -E 's/.*=//' | tr -d ':' | tr '[:lower:]' '[:upper:]')
+          echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
+          rm /tmp/distribution.p12
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python ../YakushoTetsuzukiNavi/scripts/ensure_asc_app.py | tee /tmp/lost-in-japan-app.log
+          grep '^APP_ID=' /tmp/lost-in-japan-app.log | tail -1 >> "$GITHUB_ENV"
+          test -n "$(grep '^APP_ID=' /tmp/lost-in-japan-app.log | tail -1)"
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python ../YakushoTetsuzukiNavi/scripts/prepare_profile.py
+
+      - name: Generate project and archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodegen generate
+          BUILD_NUM=$((GITHUB_RUN_NUMBER + 100))
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
+          xcodebuild archive \
+            -project LostInJapan.xcodeproj \
+            -scheme LostInJapan \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/LostInJapan.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUM"
+
+      - name: Export IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/LostInJapan.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload to App Store Connect
+        run: |
+          set -o pipefail
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/lost-in-japan-upload.log
+          grep -q "UPLOAD SUCCEEDED" /tmp/lost-in-japan-upload.log
+
+      - name: Wait for TestFlight processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python ../YakushoTetsuzukiNavi/scripts/wait_for_testflight_build.py
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lost-in-japan-ipa
+          path: ios/LostInJapan/build/export/*.ipa
+          if-no-files-found: ignore

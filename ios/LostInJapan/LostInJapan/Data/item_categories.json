@@ -1,0 +1,9 @@
+[
+  {"id":"passport","urgency":"a","icon":"book.closed"},
+  {"id":"wallet","urgency":"b","icon":"wallet.bifold"},
+  {"id":"smartphone","urgency":"a","icon":"iphone"},
+  {"id":"creditCard","urgency":"a","icon":"creditcard"},
+  {"id":"medicine","urgency":"a","icon":"pills"},
+  {"id":"other","urgency":"c","icon":"shippingbox"}
+]
+

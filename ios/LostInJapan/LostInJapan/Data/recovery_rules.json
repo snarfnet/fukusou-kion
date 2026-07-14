@@ -1,0 +1,7 @@
+[
+  {"match":"creditCard","priority":100,"action":"stopCard"},
+  {"match":"smartphone","priority":95,"action":"findPhone"},
+  {"match":"passport","priority":90,"action":"policeAndEmbassy"},
+  {"matchLocation":"train","priority":80,"action":"askStation"}
+]
+
