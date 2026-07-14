@@ -7,6 +7,13 @@ on:
         description: TestFlight build number
         required: true
         default: "107"
+  push:
+    branches:
+      - "codex/show-this-japan-testflight"
+    paths:
+      - ".github/workflows/show-this-japan-production.yml"
+      - "ios/ShowThisJapan/scripts/submit_production.py"
+      - "ios/ShowThisJapan/output/appstore-1284x2778/**"
 
 jobs:
   submit-production:
@@ -42,7 +49,7 @@ jobs:
 
       - name: Configure USD 2.99 release and submit build
         env:
-          BUILD_NUMBER: ${{ inputs.build_number }}
+          BUILD_NUMBER: ${{ inputs.build_number || '107' }}
           APP_VERSION: "1.0"
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
