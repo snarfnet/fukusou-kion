@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "target": 1000,
+  "language": "en",
+  "buckets": [
+    {"id":"tokyo","label":"Tokyo","target":150,"focus":["old waterways","post towns","temple districts","modern infrastructure","lost place names"]},
+    {"id":"kyoto","label":"Kyoto","target":100,"focus":["shrine and temple towns","court culture","craft districts","waterways","historic roads"]},
+    {"id":"kanto","label":"Kantō outside Tokyo","target":120,"focus":["Kamakura","Yokohama","Nikkō","Kawagoe","Hakone","port and pilgrimage routes"]},
+    {"id":"kansai","label":"Kansai outside Kyoto","target":120,"focus":["Nara","Osaka","Kobe","Sakai","castle towns","merchant cities"]},
+    {"id":"hokkaido_tohoku","label":"Hokkaidō and Tōhoku","target":100,"focus":["Ainu place names","ports","northern capitals","castle towns","disaster memory"]},
+    {"id":"chubu_hokuriku","label":"Chūbu and Hokuriku","target":110,"focus":["Kanazawa","Takayama","Matsumoto","post towns","mountain water systems","craft"]},
+    {"id":"chugoku_shikoku","label":"Chūgoku and Shikoku","target":90,"focus":["Hiroshima","Kurashiki","castle towns","pilgrimage","Inland Sea trade"]},
+    {"id":"kyushu_okinawa","label":"Kyūshū and Okinawa","target":130,"focus":["Nagasaki","Dazaifu","international exchange","industrial heritage","Ryūkyū history"]},
+    {"id":"national_themes","label":"National cross-regional stories","target":80,"focus":["Tōkaidō","pilgrimage networks","water engineering","railway history","disaster remembrance"]}
+  ]
+}
