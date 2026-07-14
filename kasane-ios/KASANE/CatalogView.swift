@@ -66,6 +66,7 @@ struct CatalogView: View {
                         .font(.system(size: 8)).foregroundStyle(.secondary).padding(.top, 5)
                 }.padding(13).frame(maxWidth: .infinity, minHeight: 118, alignment: .topLeading).background(.white).overlay(Rectangle().stroke(Color.gray.opacity(0.22)))
             }.buttonStyle(.plain)
+            }
         }.padding(22)
     }
 }
