@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var showDetail = false
     @State private var showSaved = false
     @State private var selectedTab = 0
+    @State private var shouldFocusUserLocation = false
     @AppStorage("saved.asakusa") private var isSaved = false
 
     var body: some View {
@@ -39,6 +40,11 @@ struct ContentView: View {
         .background(KasaneTheme.paper)
         .ignoresSafeArea(edges: .top)
         .toolbar(.hidden, for: .navigationBar)
+        .onChange(of: locationManager.location?.timestamp) { _, _ in
+            guard shouldFocusUserLocation, let coordinate = locationManager.location?.coordinate else { return }
+            focusMap(on: coordinate)
+            shouldFocusUserLocation = false
+        }
     }
 
     private var mapHeader: some View {
@@ -98,14 +104,22 @@ struct ContentView: View {
 
     private var locateButton: some View {
         Button {
+            shouldFocusUserLocation = true
             locationManager.requestLocation()
             if let coordinate = locationManager.location?.coordinate {
-                withAnimation { camera = .region(MKCoordinateRegion(center: coordinate, latitudinalMeters: 1400, longitudinalMeters: 1400)) }
+                focusMap(on: coordinate)
+                shouldFocusUserLocation = false
             }
         } label: {
             Image(systemName: "location.circle.fill").font(.system(size: 38)).symbolRenderingMode(.palette).foregroundStyle(KasaneTheme.indigo, .white)
         }
         .accessibilityLabel("Find my location")
+    }
+
+    private func focusMap(on coordinate: CLLocationCoordinate2D) {
+        withAnimation(.easeInOut) {
+            camera = .region(MKCoordinateRegion(center: coordinate, latitudinalMeters: 900, longitudinalMeters: 900))
+        }
     }
 
     private var storySheet: some View {
