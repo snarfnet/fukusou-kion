@@ -356,7 +356,6 @@ def main():
         return
     ensure_app_information(app_id)
     ensure_price(app_id)
-    ensure_no_data_collected(app_id)
     update_version(version_id)
     update_metadata(version_id)
     if screenshots_are_ready(version_id):
