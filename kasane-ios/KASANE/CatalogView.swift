@@ -12,6 +12,8 @@ struct CatalogView: View {
 
     private var usesCompactHeight: Bool { UIScreen.main.bounds.height <= 700 }
 
+    private var usesCompactHeight: Bool { UIScreen.main.bounds.height <= 700 }
+
     private var results: [LocationSummary] {
         var values = LocationCatalog.all.filter { item in
             (region == "All" || item.region == region) &&
