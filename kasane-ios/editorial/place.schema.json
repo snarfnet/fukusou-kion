@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://kasane.jp/schemas/place.schema.json",
+  "title":"KASANE Editorial Place",
+  "type":"object",
+  "required":["id","status","bucket","names","location","story","timeline","nearby","sources","review"],
+  "properties":{
+    "id":{"type":"string","pattern":"^[a-z0-9-]+$"},
+    "status":{"enum":["candidate","researching","drafted","translated","source_checked","location_checked","publishable"]},
+    "bucket":{"type":"string"},
+    "names":{"type":"object","required":["ja","kana","en"],"properties":{"ja":{"type":"string"},"kana":{"type":"string"},"en":{"type":"string"},"former":{"type":"array","items":{"type":"string"}}}},
+    "location":{"type":"object","required":["latitude","longitude","prefecture"],"properties":{"latitude":{"type":"number","minimum":20,"maximum":46},"longitude":{"type":"number","minimum":122,"maximum":154},"prefecture":{"type":"string"},"municipality":{"type":"string"},"accuracyMeters":{"type":"number","minimum":0}}},
+    "story":{"type":"object","required":["headline","summary","body","claims","placeNameOrigin","sensitivity"],"properties":{"headline":{"type":"string"},"summary":{"type":"string"},"body":{"type":"string"},"claims":{"type":"array","items":{"type":"object","required":["id","text","sourceIds"],"properties":{"id":{"type":"string"},"text":{"type":"string"},"sourceIds":{"type":"array","minItems":1,"items":{"type":"string"}}}}},"placeNameOrigin":{"type":"string"},"originCertainty":{"enum":["documented","probable","multiple_theories","unknown"]},"sensitivity":{"enum":["standard","disaster","war","religion","burial","discrimination"]}}},
+    "timeline":{"type":"array","minItems":4,"items":{"type":"object","required":["label","text","sourceIds"],"properties":{"label":{"type":"string"},"year":{"type":["integer","null"]},"text":{"type":"string"},"sourceIds":{"type":"array","minItems":1,"items":{"type":"string"}}}}},
+    "nearby":{"type":"array","minItems":2,"maxItems":5,"items":{"type":"object","required":["name","distanceMeters","latitude","longitude","sourceIds"],"properties":{"name":{"type":"string"},"distanceMeters":{"type":"integer","minimum":0},"latitude":{"type":"number"},"longitude":{"type":"number"},"sourceIds":{"type":"array","minItems":1,"items":{"type":"string"}}}}},
+    "sources":{"type":"array","minItems":2,"items":{"type":"object","required":["id","title","publisher","url","accessedAt","type"],"properties":{"id":{"type":"string"},"title":{"type":"string"},"publisher":{"type":"string"},"url":{"type":"string","format":"uri"},"accessedAt":{"type":"string","format":"date"},"type":{"enum":["government","museum","archive","academic","municipal","wikimedia","other"]},"license":{"type":"string"}}}},
+    "review":{"type":"object","required":["researcher","englishEditor","sourceReviewer","locationReviewer","lastReviewedAt"],"properties":{"researcher":{"type":["string","null"]},"englishEditor":{"type":["string","null"]},"sourceReviewer":{"type":["string","null"]},"locationReviewer":{"type":["string","null"]},"lastReviewedAt":{"type":["string","null"],"format":"date"},"notes":{"type":"string"}}}
+  }
+}

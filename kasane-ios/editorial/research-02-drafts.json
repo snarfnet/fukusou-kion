@@ -1,0 +1,131 @@
+[
+ {
+  "id":"tokyo-asakusa-sensoji",
+  "body":"Stand near Sensō-ji and look back toward the Sumida River. The temple’s origin story begins there: temple tradition says two fishermen pulled a statue of Kannon from the river in 628, and a local headman turned his home into a place of worship. Archaeology does not prove that sacred story, but excavations beneath the precinct have found ancient remains, coins and medieval roof tiles. They show that this was an active religious site across many centuries.\n\nAs worshippers arrived, a town grew around their route. Craftspeople and merchants gathered near the temple, while Nakamise developed along the approach between Kaminarimon and the inner gates. After the great Meireki fire of 1657, population and entertainment shifted toward Asakusa. The district later became one of Edo’s major places for performance and popular culture.\n\nMuch of the temple was destroyed in the 1945 air raids. The present main hall, completed in 1958, uses reinforced concrete while recalling older temple forms. What appears ancient is therefore a layered reconstruction: religious tradition, archaeological evidence, Edo commerce and postwar rebuilding occupy the same ground. Walk south through Nakamise, then continue toward Komagatadō. That small riverside hall marks the place associated in temple tradition with the statue’s discovery, reconnecting the crowded temple town to the water at the beginning of its story.",
+  "placeNameOrigin":"The reading and early derivation of Asakusa are debated. This story does not present a single place-name theory as fact.",
+  "claims":[
+   {"id":"asakusa-c1","text":"Sensō-ji tradition dates the discovery of the Kannon image in the Sumida River to 628.","sourceIds":["sensoji-official-history","taito-sensoji-archaeology"]},
+   {"id":"asakusa-c2","text":"Excavations found ancient remains, coins and medieval roof tiles beneath the precinct.","sourceIds":["taito-sensoji-archaeology"]},
+   {"id":"asakusa-c3","text":"Craft and entertainment districts grew around the temple town.","sourceIds":["taito-craft-history"]},
+   {"id":"asakusa-c4","text":"Nakamise occupies the approach from Kaminarimon toward Sensō-ji.","sourceIds":["taito-nakamise"]},
+   {"id":"asakusa-c5","text":"The present main hall was completed in reinforced concrete in 1958 after wartime destruction.","sourceIds":["taito-sensoji-visit"]},
+   {"id":"asakusa-c6","text":"Komagatadō marks the riverside place associated with the image's discovery.","sourceIds":["taito-komagata"]}
+  ],
+  "timeline":[
+   {"label":"Temple tradition","year":628,"text":"Two fishermen are said to have found a Kannon image in the Sumida River, leading to the temple’s origin.","sourceIds":["sensoji-official-history"]},
+   {"label":"Edo growth","year":1657,"text":"After the Meireki fire, merchants, craftspeople and entertainment increasingly gathered around Asakusa.","sourceIds":["taito-craft-history"]},
+   {"label":"Wartime loss","year":1945,"text":"The old main hall and other major structures were destroyed in the Tokyo air raids.","sourceIds":["taito-sensoji-visit"]},
+   {"label":"Rebuilt hall","year":1958,"text":"The present reinforced-concrete main hall was completed.","sourceIds":["taito-sensoji-visit"]}
+  ],
+  "nearby":[
+   {"name":"Kaminarimon","distanceMeters":260,"latitude":35.7111,"longitude":139.7964,"sourceIds":["taito-nakamise"]},
+   {"name":"Nakamise","distanceMeters":150,"latitude":35.7127,"longitude":139.7965,"sourceIds":["taito-nakamise"]},
+   {"name":"Komagatadō","distanceMeters":620,"latitude":35.7075,"longitude":139.7958,"sourceIds":["taito-komagata"]}
+  ],
+  "additionalSources":[
+   {"id":"taito-nakamise","title":"仲見世商店街","publisher":"Taitō City Official Tourism Site","url":"https://t-navi.city.taito.lg.jp/spot/1002","accessedAt":"2026-07-13","type":"municipal","license":"Check municipal content terms"},
+   {"id":"taito-sensoji-visit","title":"浅草寺に詣でる","publisher":"Taitō City Culture Guide","url":"https://www.culture.city.taito.lg.jp/bunkatanbou/history/sensoji/japanese/page_01.html","accessedAt":"2026-07-13","type":"municipal","license":"Check municipal content terms"},
+   {"id":"taito-komagata","title":"台東区の史跡・名所案内 浅草・花川戸・雷門","publisher":"Taitō City Culture Guide","url":"https://www.culture.city.taito.lg.jp/bunkatanbou/landscape/japanese/asakusa_03.html","accessedAt":"2026-07-13","type":"municipal","license":"Check municipal content terms"}
+  ]
+ },
+ {
+  "id":"tokyo-nihonbashi-road-origin",
+  "body":"Stand at the center of Nihonbashi and three transport eras overlap around you. In 1603, a bridge was built here as the Tokugawa government reshaped Edo. The following year, the five major highways were organized with Nihonbashi as their point of reference. Distances, official journeys, goods and news all converged on this crossing.\n\nThe bridge beneath you is not the Edo bridge. The present stone double-arch structure opened in 1911. Its granite surfaces, bronze lions and winged kirin expressed a modern capital adopting new engineering while designing a civic symbol. A replica of the national road-origin marker lies in the roadway; the former Tokyo City marker was moved to the northwest bridgehead after streetcars disappeared.\n\nLook upward and another layer interrupts the view. The Metropolitan Expressway opened above the river in 1963, built rapidly before the 1964 Tokyo Olympics. It turned the river corridor into transport space once again, this time for automobiles. Nearby, Ikkokubashi stands where the former outer moat met the Nihonbashi River, helping you reconstruct a waterside city partly erased by later filling.\n\nNihonbashi is less a single old object than a national measuring point repeatedly rebuilt. Road, river, streetcar and expressway have each claimed this crossing. Reading them together explains why the bridge still represents the center of movement even as the form of movement changes.",
+  "placeNameOrigin":"The bridge and district name literally mean 'Bridge of Japan'; municipal records connect its identity with its role as a national road origin.",
+  "claims":[
+   {"id":"nihonbashi-c1","text":"Nihonbashi was established around 1603 and made the reference point of the five highways in 1604.","sourceIds":["chuo-history-digest"]},
+   {"id":"nihonbashi-c2","text":"The current stone double-arch bridge opened in 1911.","sourceIds":["chuo-nihonbashi-cultural-property"]},
+   {"id":"nihonbashi-c3","text":"The former Tokyo City road marker was moved after streetcar service ended.","sourceIds":["chuo-nihonbashi-cultural-property"]},
+   {"id":"nihonbashi-c4","text":"The expressway above the river opened in 1963 ahead of the Tokyo Olympics.","sourceIds":["chuo-nihonbashi-cultural-property"]},
+   {"id":"nihonbashi-c5","text":"Ikkokubashi marks the former meeting of the outer moat and Nihonbashi River.","sourceIds":["chuo-ichikokubashi"]}
+  ],
+  "timeline":[
+   {"label":"Bridge and highways","year":1604,"text":"The five-highway system used Nihonbashi as its point of reference.","sourceIds":["chuo-history-digest"]},
+   {"label":"Stone bridge","year":1911,"text":"The present stone double-arch bridge opened.","sourceIds":["chuo-nihonbashi-cultural-property"]},
+   {"label":"Expressway","year":1963,"text":"The Metropolitan Expressway opened above the Nihonbashi River.","sourceIds":["chuo-nihonbashi-cultural-property"]},
+   {"label":"Cultural property","year":1999,"text":"The working road bridge was designated an Important Cultural Property.","sourceIds":["chuo-nihonbashi-cultural-property"]}
+  ],
+  "nearby":[
+   {"name":"Former Tokyo City Road Origin Marker","distanceMeters":45,"latitude":35.6843,"longitude":139.7742,"sourceIds":["chuo-nihonbashi-cultural-property"]},
+   {"name":"Ikkokubashi","distanceMeters":260,"latitude":35.6856,"longitude":139.7717,"sourceIds":["chuo-ichikokubashi"]},
+   {"name":"Nihonbashi River landing","distanceMeters":70,"latitude":35.6837,"longitude":139.7749,"sourceIds":["chuo-nihonbashi-cultural-property"]}
+  ],
+  "additionalSources":[{"id":"chuo-ichikokubashi","title":"一石橋の親柱","publisher":"Chūō City Board of Education","url":"https://www.city.chuo.lg.jp/a0052/bunkakankou/rekishi/bunkazai/kuminbunkazai/ichikokubashinooyabashira.html","accessedAt":"2026-07-13","type":"municipal","license":"Check municipal content terms"}]
+ },
+ {
+  "id":"kyoto-gion-shirakawa",
+  "body":"At Gion Shirakawa, the stream is not scenery added to an entertainment district. Water, shrine traffic and work helped produce the district itself. Gion developed near the gate of Yasaka Shrine, at the eastern end of Shijō Street. Teahouses serving pilgrims and visitors became part of a larger flower-town culture where geiko and maiko trained and worked.\n\nWalk beside the Shirakawa and notice the narrow relationship between water, bridges, stone paving and buildings. The scale makes the area feel preserved, but it is not an outdoor set. Gion remains a working and residential district. The teahouses are workplaces; side lanes can lead to private property; a geiko or maiko encountered on the street is usually travelling to an appointment, not performing for passers-by. Kyoto City specifically asks visitors not to follow or photograph people without permission.\n\nThe district's name is tied to Gion-sha, an older name associated with today’s Yasaka Shrine. The shrine’s own origin has more than one account, and the official Kyoto guide presents the date 656 as tradition rather than settled proof. That distinction matters in KASANE: religious tradition explains how communities remember the place, while streets and records show how the gate town developed.\n\nContinue from Shirakawa toward Hanamikoji and Yasaka Shrine. The short walk moves from water-edge teahouses to the shrine approach, revealing Gion as a connected urban system rather than a single photogenic street.",
+  "placeNameOrigin":"Gion derives from the historical name Gion-sha associated with Yasaka Shrine; the shrine's earliest origin has multiple accounts.",
+  "claims":[
+   {"id":"gion-c1","text":"Gion developed as a gate town of Yasaka Shrine and as a geiko district.","sourceIds":["kyoto-gion-area","kyoto-yasaka-gate-town"]},
+   {"id":"gion-c2","text":"The Shirakawa area contains stone paving, bridges, teahouses and restaurants along the stream.","sourceIds":["kyoto-gion-area"]},
+   {"id":"gion-c3","text":"Gion remains a living workplace and residential district where visitors must not follow or photograph people without permission.","sourceIds":["kyoto-respect-gion"]},
+   {"id":"gion-c4","text":"Yasaka Shrine was historically known as Gion-sha or Gion Kanjin'in.","sourceIds":["kyoto-yasaka-gate-town"]},
+   {"id":"gion-c5","text":"The date 656 belongs to one origin tradition rather than an uncontested founding record.","sourceIds":["kyoto-yasaka-gate-town"]}
+  ],
+  "timeline":[
+   {"label":"Origin tradition","year":656,"text":"One account places the beginning of worship associated with Yasaka Shrine in this year.","sourceIds":["kyoto-yasaka-gate-town"]},
+   {"label":"Gate town","year":1600,"text":"In the early modern period, the shrine approach developed with services for pilgrims and visitors.","sourceIds":["kyoto-gion-area","kyoto-yasaka-gate-town"]},
+   {"label":"Flower town","year":1800,"text":"Teahouse and performance culture established Gion as a major kagai district.","sourceIds":["kyoto-gion-area"]},
+   {"label":"Living culture","year":2026,"text":"Gion remains a working geiko district with visitor rules protecting residents and performers.","sourceIds":["kyoto-respect-gion"]}
+  ],
+  "nearby":[
+   {"name":"Tatsumi Bridge","distanceMeters":40,"latitude":35.0052,"longitude":135.7758,"sourceIds":["kyoto-gion-area"]},
+   {"name":"Hanamikoji","distanceMeters":300,"latitude":35.0039,"longitude":135.7755,"sourceIds":["kyoto-gion-area","kyoto-respect-gion"]},
+   {"name":"Yasaka Shrine","distanceMeters":650,"latitude":35.0037,"longitude":135.7785,"sourceIds":["kyoto-yasaka-gate-town"]}
+  ],
+  "additionalSources":[]
+ },
+ {
+  "id":"kyushu-nagasaki-dejima",
+  "body":"Dejima looks like an island again, but the water around it is partly an act of historical reconstruction. The Tokugawa government ordered the fan-shaped artificial island built for Portuguese residents; it was completed in 1636. After Portuguese ships were prohibited, the island stood empty until the Dutch trading post moved here from Hirado in 1641.\n\nFor the next two centuries, Dejima was a controlled point of exchange. Dutch merchants lived under restrictions, yet goods, medical knowledge, scientific information and descriptions of Japan passed through this small site. Calling Japan simply “closed” hides that managed exchange. Dejima was restrictive and connected at the same time.\n\nThe trading post ended in 1859 as new treaty-port arrangements changed Nagasaki. Harbor improvements and land reclamation later absorbed the island into the city. Its original outline became difficult to see. The site was designated a national historic site in 1922, and Nagasaki began restoration planning in 1951. Reconstruction has relied on excavation, trading-post diaries, old drawings, surviving models and comparative architectural research.\n\nWhat you see is therefore not an untouched Edo settlement. It is a carefully researched interpretation built over archaeological remains. Walk to the restored bridge and then look outward toward the modern streets. That contrast is the central KASANE story: a place once defined by controlled separation now survives because the city reconstructed its boundary and made the buried island legible again.",
+  "placeNameOrigin":"Dejima is written with characters meaning 'exit island.' Historical sources also record variant romanizations; the app uses the official modern form Dejima.",
+  "claims":[
+   {"id":"dejima-c1","text":"Dejima was completed in 1636 for Portuguese residents.","sourceIds":["dejima-official-history","nagasaki-city-timeline"]},
+   {"id":"dejima-c2","text":"The Dutch trading post moved from Hirado to Dejima in 1641.","sourceIds":["dejima-official-history","nagasaki-dejima-cultural-property"]},
+   {"id":"dejima-c3","text":"Trade, information, science and culture passed through Dejima during the controlled-exchange period.","sourceIds":["nagasaki-dejima-cultural-property","dejima-official-history"]},
+   {"id":"dejima-c4","text":"The Dutch trading post closed in 1859.","sourceIds":["dejima-official-history"]},
+   {"id":"dejima-c5","text":"The site was nationally designated in 1922 and Nagasaki began restoration work in 1951.","sourceIds":["nagasaki-dejima-restoration"]},
+   {"id":"dejima-c6","text":"Restoration uses excavation, diaries, drawings, models and architectural comparison.","sourceIds":["nagasaki-dejima-restoration-detail"]}
+  ],
+  "timeline":[
+   {"label":"Artificial island","year":1636,"text":"Dejima was completed to house Portuguese residents separately from the city.","sourceIds":["dejima-official-history","nagasaki-city-timeline"]},
+   {"label":"Dutch post","year":1641,"text":"The Dutch East India Company trading post moved from Hirado to Dejima.","sourceIds":["dejima-official-history"]},
+   {"label":"Trading post ends","year":1859,"text":"The Dejima trading post closed as Nagasaki entered the treaty-port era.","sourceIds":["dejima-official-history"]},
+   {"label":"Restoration begins","year":1951,"text":"Nagasaki City began the long-term effort to recover and reconstruct the historic site.","sourceIds":["nagasaki-dejima-restoration"]}
+  ],
+  "nearby":[
+   {"name":"Omotemon Bridge","distanceMeters":80,"latitude":32.7435,"longitude":129.8732,"sourceIds":["nagasaki-dejima-restoration"]},
+   {"name":"Southern stone revetment","distanceMeters":100,"latitude":32.7427,"longitude":129.8732,"sourceIds":["nagasaki-dejima-restoration-detail"]},
+   {"name":"Former Nagasaki International Club","distanceMeters":110,"latitude":32.7430,"longitude":129.8726,"sourceIds":["dejima-official-history"]}
+  ],
+  "additionalSources":[
+   {"id":"nagasaki-dejima-restoration","title":"長崎市の景観に関する受賞歴","publisher":"Nagasaki City","url":"https://www.city.nagasaki.lg.jp/page/3364.html","accessedAt":"2026-07-13","type":"municipal","license":"Check Nagasaki City content terms"},
+   {"id":"nagasaki-dejima-restoration-detail","title":"出島 あらたな魅力発信","publisher":"Nagasaki City","url":"https://www.city.nagasaki.lg.jp/nagazine/column/201604/index.html","accessedAt":"2026-07-13","type":"municipal","license":"Check Nagasaki City content terms"}
+  ]
+ },
+ {
+  "id":"kanto-kamakura-dankazura",
+  "body":"Stand on Dankazura and the street itself explains Kamakura’s political geography. Wakamiya Ōji runs in a straight line between the sea and Tsurugaoka Hachimangū, forming the central axis of the medieval city. Kamakura City records that Minamoto no Yoritomo moved the shrine to its present setting in 1180. In 1182, he had the grand approach constructed while praying for the safe childbirth of his wife, Hōjō Masako.\n\nThe raised central path is Dankazura. Its height separates it from the carriageway, but its present appearance is not unchanged since the twelfth century. Sections disappeared or became level ground, and later repairs shaped the surviving approach. The existing portion was incorporated into the shrine precinct in 1917 and received historic-site protection in 1967 as part of Tsurugaoka Hachimangū.\n\nAs you walk north, the approach narrows in perspective and the shrine grows larger. Shops and later buildings line both sides, showing how a ceremonial axis also became commercial space. Kamakura’s railway opening in 1889 brought more visitors and encouraged lodging, food and souvenir businesses along Wakamiya Ōji.\n\nDankazura is therefore both sacred approach and urban infrastructure. It connects prayer, political authority, tourism and everyday movement. Continue to the second torii, then turn back toward the sea. That reverse view makes the original scale of the planned axis easier to understand, even though the southern sections of the raised path no longer survive.",
+  "placeNameOrigin":"Dankazura names the raised central section of Wakamiya Ōji. The app treats the term as a feature name rather than assigning an unsupported literal origin story.",
+  "claims":[
+   {"id":"dankazura-c1","text":"Wakamiya Ōji formed an axis between Tsurugaoka Hachimangū and the sea.","sourceIds":["kamakura-dankazura-landscape","kamakura-historic-landscape-plan"]},
+   {"id":"dankazura-c2","text":"Yoritomo moved the shrine in 1180 and had the approach built while praying for Masako's safe childbirth.","sourceIds":["kamakura-dankazura-landscape","kamakura-historic-landscape-plan"]},
+   {"id":"dankazura-c3","text":"Parts of the raised approach disappeared or became level ground over time.","sourceIds":["kamakura-historic-landscape-plan"]},
+   {"id":"dankazura-c4","text":"The surviving portion was incorporated into the shrine precinct in 1917 and protected as part of the historic site in 1967.","sourceIds":["kamakura-historic-landscape-plan"]},
+   {"id":"dankazura-c5","text":"Rail access from 1889 supported visitor-oriented businesses along Wakamiya Ōji.","sourceIds":["kamakura-historic-landscape-plan"]}
+  ],
+  "timeline":[
+   {"label":"Shrine relocated","year":1180,"text":"Yoritomo moved Tsurugaoka Hachimangū to the center of Kamakura's valley.","sourceIds":["kamakura-dankazura-landscape"]},
+   {"label":"Approach built","year":1182,"text":"Wakamiya Ōji and its raised approach were constructed in connection with prayers for Masako's safe childbirth.","sourceIds":["kamakura-historic-landscape-plan"]},
+   {"label":"Railway visitors","year":1889,"text":"The opening of Kamakura Station helped expand visitor businesses along the avenue.","sourceIds":["kamakura-historic-landscape-plan"]},
+   {"label":"Protected precinct","year":1967,"text":"The surviving Dankazura became protected as part of the Tsurugaoka Hachimangū historic site.","sourceIds":["kamakura-historic-landscape-plan"]}
+  ],
+  "nearby":[
+   {"name":"Second Torii","distanceMeters":60,"latitude":35.3218,"longitude":139.5515,"sourceIds":["kamakura-dankazura-landscape"]},
+   {"name":"Tsurugaoka Hachimangū","distanceMeters":500,"latitude":35.3260,"longitude":139.5564,"sourceIds":["kamakura-dankazura-landscape"]},
+   {"name":"Former southern course of Wakamiya Ōji","distanceMeters":650,"latitude":35.3168,"longitude":139.5504,"sourceIds":["kamakura-historic-landscape-plan"]}
+  ],
+  "additionalSources":[]
+ }
+]
