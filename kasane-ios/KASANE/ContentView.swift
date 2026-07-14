@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var showDetail = false
     @State private var showSaved = false
     @State private var selectedTab = 0
+    @State private var shouldFocusUserLocation = false
     @AppStorage("saved.asakusa") private var isSaved = false
 
     var body: some View {
@@ -39,6 +40,11 @@ struct ContentView: View {
         .background(KasaneTheme.paper)
         .ignoresSafeArea(edges: .top)
         .toolbar(.hidden, for: .navigationBar)
+        .onChange(of: locationManager.location?.timestamp) { _, _ in
+            guard shouldFocusUserLocation, let coordinate = locationManager.location?.coordinate else { return }
+            focusMap(on: coordinate)
+            shouldFocusUserLocation = false
+        }
     }
 
     private var mapHeader: some View {
@@ -51,7 +57,7 @@ struct ContentView: View {
             .mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll))
             .overlay { KasaneMapTint().allowsHitTesting(false) }
 
-            TimeLens(year: selectedEra.year)
+            TimeLens(year: selectedEra.year, placeLabel: selectedPlace.oldName)
                 .frame(width: 194, height: 194)
                 .position(x: UIScreen.main.bounds.width / 2, y: 220)
                 .accessibilityLabel("Historical map lens, year \(selectedEra.year)")
@@ -71,10 +77,16 @@ struct ContentView: View {
 
             VStack {
                 HStack {
-                    HStack(spacing: 9) {
-                        Text("重").font(.kasaneSerif(17)).frame(width: 29, height: 29).overlay(Rectangle().stroke(.white.opacity(0.65)))
-                        Text("KASANE").font(.system(size: 13, weight: .semibold)).tracking(2.6)
+                    Button { showDetail = false } label: {
+                        Label("MAP", systemImage: "chevron.left")
+                            .font(.system(size: 12, weight: .bold))
+                            .tracking(1.2)
+                            .frame(minHeight: 44)
+                            .padding(.horizontal, 13)
+                            .background(.ultraThinMaterial, in: Capsule())
+                            .overlay(Capsule().stroke(.white.opacity(0.7)))
                     }
+                    .accessibilityLabel("Back to the Japan map")
                     Spacer()
                     Menu {
                         ForEach(PlaceStory.featured) { place in
@@ -92,14 +104,22 @@ struct ContentView: View {
 
     private var locateButton: some View {
         Button {
+            shouldFocusUserLocation = true
             locationManager.requestLocation()
             if let coordinate = locationManager.location?.coordinate {
-                withAnimation { camera = .region(MKCoordinateRegion(center: coordinate, latitudinalMeters: 1400, longitudinalMeters: 1400)) }
+                focusMap(on: coordinate)
+                shouldFocusUserLocation = false
             }
         } label: {
             Image(systemName: "location.circle.fill").font(.system(size: 38)).symbolRenderingMode(.palette).foregroundStyle(KasaneTheme.indigo, .white)
         }
         .accessibilityLabel("Find my location")
+    }
+
+    private func focusMap(on coordinate: CLLocationCoordinate2D) {
+        withAnimation(.easeInOut) {
+            camera = .region(MKCoordinateRegion(center: coordinate, latitudinalMeters: 900, longitudinalMeters: 900))
+        }
     }
 
     private var storySheet: some View {
@@ -157,6 +177,7 @@ struct ContentView: View {
 
 private struct TimeLens: View {
     let year: String
+    let placeLabel: String
     var body: some View {
         ZStack {
             Circle().fill(Color(red: 0.84, green: 0.77, blue: 0.62))
@@ -167,7 +188,7 @@ private struct TimeLens: View {
                     context.stroke(path, with: .color(.brown.opacity(0.38)), lineWidth: index.isMultiple(of: 3) ? 3 : 1)
                 }
             }.clipShape(Circle())
-            Text("浅草寺").font(.kasaneSerif(23)).tracking(4).foregroundStyle(.brown).padding(9).overlay(Rectangle().stroke(.brown.opacity(0.7))).rotationEffect(.degrees(90))
+            Text(placeLabel).font(.kasaneSerif(23)).tracking(4).foregroundStyle(.brown).padding(9).overlay(Rectangle().stroke(.brown.opacity(0.7))).rotationEffect(.degrees(90))
             Text(year).font(.caption2.bold()).tracking(1).foregroundStyle(.white).padding(.horizontal, 9).padding(.vertical, 5).background(KasaneTheme.vermilion).offset(x: 62, y: 62)
         }
         .overlay(Circle().stroke(KasaneTheme.paper, lineWidth: 7)).overlay(Circle().stroke(KasaneTheme.vermilion, lineWidth: 2).padding(-2)).shadow(color: .black.opacity(0.35), radius: 20, y: 12)

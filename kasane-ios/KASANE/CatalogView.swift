@@ -9,6 +9,8 @@ struct CatalogView: View {
     @State private var sortByDistance = false
     @State private var camera: MapCameraPosition = .region(.japan)
 
+    private var usesCompactHeight: Bool { UIScreen.main.bounds.height <= 700 }
+
     private var results: [LocationSummary] {
         var values = LocationCatalog.all.filter { item in
             (region == "All" || item.region == region) &&
@@ -31,6 +33,9 @@ struct CatalogView: View {
         }
         .background(KasaneTheme.paper)
         .navigationBarHidden(true)
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 72)
+        }
     }
 
     private var header: some View {
@@ -38,21 +43,24 @@ struct CatalogView: View {
             HStack { Text("KASANE").font(.kasaneSerif(21)).tracking(3); Text("重").font(.kasaneSerif(21)).foregroundStyle(KasaneTheme.vermilion); Spacer(); Text("EN").font(.caption.bold()).padding(8).overlay(Capsule().stroke(.secondary.opacity(0.4))) }
             Text("Stories beneath\nyour feet").font(.kasaneSerif(37)).tracking(-1.2).foregroundStyle(KasaneTheme.deep)
             HStack { Image(systemName: "magnifyingglass"); TextField("Search places, stories, or kanji", text: $query).textInputAutocapitalization(.never) }.padding(13).background(.white).clipShape(RoundedRectangle(cornerRadius: 12)).shadow(color: .black.opacity(0.07), radius: 12, y: 4)
-        }.padding(.horizontal, 22).padding(.top, 18).padding(.bottom, 20)
+        }
+        .padding(.horizontal, 22)
+        .padding(.top, usesCompactHeight ? 10 : 18)
+        .padding(.bottom, usesCompactHeight ? 14 : 20)
     }
 
     private var map: some View {
         Map(position: $camera) {
             ForEach(results) { item in Annotation(item.name, coordinate: item.coordinate) { Button { onSelect(item) } label: { Image(systemName: item.isFeatured ? "seal.fill" : "circle.fill").font(.system(size: item.isFeatured ? 19 : 10)).foregroundStyle(item.isFeatured ? KasaneTheme.vermilion : KasaneTheme.indigo).background(Circle().fill(.white).padding(3)).shadow(radius: 3) } }
             }
-        }.mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll)).frame(height: 270).overlay { KasaneTheme.indigo.opacity(0.12).allowsHitTesting(false) }.overlay(alignment: .bottomLeading) { Text("\(results.count) PLACE STORIES").font(.system(size: 9, weight: .bold)).tracking(1.2).foregroundStyle(.white).padding(9).background(KasaneTheme.indigo).padding(14) }
+        }.mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll)).frame(height: usesCompactHeight ? 215 : 270).overlay { KasaneTheme.indigo.opacity(0.12).allowsHitTesting(false) }.overlay(alignment: .bottomLeading) { Text("\(results.count) PLACE STORIES").font(.system(size: 9, weight: .bold)).tracking(1.2).foregroundStyle(.white).padding(9).background(KasaneTheme.indigo).padding(14) }
     }
 
     private var filters: some View {
         VStack(alignment: .leading, spacing: 13) {
             HStack { Text("Explore Japan").font(.kasaneSerif(24)); Spacer(); Button { locationManager.requestLocation(); sortByDistance.toggle() } label: { Label("Nearest", systemImage: "location.fill").font(.caption.bold()).foregroundStyle(sortByDistance ? KasaneTheme.vermilion : KasaneTheme.indigo) } }
             ScrollView(.horizontal, showsIndicators: false) { HStack { ForEach(LocationCatalog.regions, id: \.self) { value in Button(value) { region = value }.font(.caption.bold()).foregroundStyle(region == value ? .white : KasaneTheme.indigo).padding(.horizontal, 13).padding(.vertical, 8).background(region == value ? KasaneTheme.indigo : Color.white).clipShape(Capsule()).overlay(Capsule().stroke(KasaneTheme.indigo.opacity(0.18))) } } }
-        }.padding(.horizontal, 22).padding(.top, 25)
+        }.padding(.horizontal, 22).padding(.top, usesCompactHeight ? 18 : 25)
     }
 
     private var locationGrid: some View {
