@@ -133,11 +133,31 @@ struct ContentView: View {
             Text(selectedPlace.headline).font(.kasaneSerif(34)).tracking(-1).foregroundStyle(KasaneTheme.deep).padding(.top, 18)
             Text(selectedPlace.introduction)
                 .font(.system(size: 14)).foregroundStyle(.secondary).lineSpacing(7).padding(.top, 15)
+            if !selectedPlace.body.isEmpty {
+                Text(selectedPlace.body)
+                    .font(.system(size: 14))
+                    .foregroundStyle(KasaneTheme.deep.opacity(0.86))
+                    .lineSpacing(7)
+                    .padding(.top, 22)
+            }
+            if !selectedPlace.placeNameOrigin.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("PLACE NAME").font(.system(size: 9, weight: .bold)).tracking(1.4).foregroundStyle(KasaneTheme.vermilion)
+                    Text(selectedPlace.placeNameOrigin).font(.system(size: 12)).foregroundStyle(.secondary).lineSpacing(5)
+                }
+                .padding(15)
+                .background(KasaneTheme.mist)
+                .padding(.top, 20)
+            }
             FactStrip(founded: selectedPlace.foundedLabel, oldName: selectedPlace.oldName).padding(.vertical, 27)
             EraPicker(eras: selectedPlace.eras, selected: $selectedEra)
             Text(selectedEra.story).font(.kasaneSerif(13, weight: .medium)).lineSpacing(5).foregroundStyle(.secondary).padding(15).frame(maxWidth: .infinity, alignment: .leading).background(KasaneTheme.mist).overlay(alignment: .leading) { Rectangle().fill(KasaneTheme.vermilion).frame(width: 3) }.padding(.top, 18)
             NearbySection(stories: selectedPlace.nearby).padding(.top, 32)
-            SourceNote().padding(.top, 26)
+            if selectedPlace.sources.isEmpty {
+                SourceNote().padding(.top, 26)
+            } else {
+                SourcesSection(sources: selectedPlace.sources, claimCount: selectedPlace.claims.count).padding(.top, 26)
+            }
         }
         .padding(.horizontal, 22).padding(.top, 13).padding(.bottom, 38)
         .background(KasaneTheme.paper)
@@ -154,7 +174,13 @@ struct ContentView: View {
     }
 
     private func open(_ summary: LocationSummary) {
-        if let detailed = PlaceStory.featured.first(where: { $0.id == summary.id }) {
+        let editorial = EditorialCatalog.detailedStories.min { lhs, rhs in
+            abs(lhs.latitude - summary.latitude) + abs(lhs.longitude - summary.longitude) < abs(rhs.latitude - summary.latitude) + abs(rhs.longitude - summary.longitude)
+        }
+        let isNearbyEditorial = editorial.map { abs($0.latitude - summary.latitude) < 0.012 && abs($0.longitude - summary.longitude) < 0.012 } ?? false
+        if let editorial, isNearbyEditorial {
+            select(editorial)
+        } else if let detailed = PlaceStory.featured.first(where: { $0.id == summary.id }) {
             select(detailed)
         } else {
             let generalEras = [
@@ -235,6 +261,45 @@ private struct NearbySection: View {
 
 private struct SourceNote: View {
     var body: some View { HStack(alignment: .top, spacing: 12) { Text("資料").font(.kasaneSerif(13)).frame(width: 40, height: 33).overlay(Rectangle().stroke(.gray.opacity(0.6))); Text("Based on records from Taitō City, the Geospatial Information Authority of Japan and Wikimedia. View sources").font(.system(size: 9)).foregroundStyle(.secondary).lineSpacing(3) }.padding(.top, 17).overlay(alignment: .top) { Divider() } }
+}
+
+private struct SourcesSection: View {
+    let sources: [StorySource]
+    let claimCount: Int
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("SOURCES").font(.system(size: 9, weight: .bold)).tracking(1.4).foregroundStyle(KasaneTheme.vermilion)
+                Spacer()
+                Text("\(claimCount) sourced claims").font(.caption2).foregroundStyle(.secondary)
+            }
+            ForEach(sources) { source in
+                if let url = source.url {
+                    Link(destination: url) { sourceRow(source) }
+                } else {
+                    sourceRow(source)
+                }
+            }
+        }
+        .padding(.top, 17)
+        .overlay(alignment: .top) { Divider() }
+    }
+
+    private func sourceRow(_ source: StorySource) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "doc.text").foregroundStyle(KasaneTheme.indigo)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(source.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(KasaneTheme.deep)
+                Text(source.publisher).font(.system(size: 9)).foregroundStyle(.secondary)
+            }
+            Spacer()
+            if source.url != nil { Image(systemName: "arrow.up.right").font(.caption2).foregroundStyle(KasaneTheme.vermilion) }
+        }
+        .padding(11)
+        .background(.white)
+        .overlay(Rectangle().stroke(Color.gray.opacity(0.2)))
+    }
 }
 
 private struct EmptyStateView: View {
