@@ -2083,5 +2083,178 @@
                        "lastReviewedAt":  null,
                        "notes":  "Batch 01 seed candidate; kana, coordinates, sensitivity, and sources require review."
                    }
+    },
+    {
+        "id": "kanto-kawasaki-daishi-heikenji",
+        "status": "drafted",
+        "bucket": "kanto",
+        "names": {
+            "ja": "川崎大師平間寺",
+            "kana": "かわさきだいしへいけんじ",
+            "en": "Kawasaki Daishi Heikenji",
+            "former": ["平間寺", "大師河原平間寺"]
+        },
+        "location": {
+            "latitude": 35.5346,
+            "longitude": 139.7283,
+            "prefecture": "Kanagawa",
+            "municipality": "Kawasaki",
+            "accuracyMeters": 30
+        },
+        "story": {
+            "headline": "The pilgrimage temple that helped launch an electric railway",
+            "summary": "Temple tradition dates Heikenji to 1128. Its popularity created a busy approach, drew Edo-period pilgrims from the Tōkaidō, and later supplied the passengers for the Kantō region’s first electric railway.",
+            "body": "Stand before the main gate and turn toward the shopping street. This straight approach is part of the story: Kawasaki Daishi was not built as an isolated monument. Pilgrims, guides, food sellers and lodging houses shaped a temple town around it. The temple’s formal name is Heikenji, but most visitors know it as Kawasaki Daishi, the Kawasaki temple dedicated to Kōbō Daishi.\n\nAccording to temple tradition, the fisherman Hirama Kanenori recovered an image of Kōbō Daishi from the sea. With the monk Sonken, he founded the temple in 1128. The name Heikenji uses characters associated with Hirama’s family name. This is a religious foundation narrative, so KASANE presents it as temple tradition rather than archaeological proof.\n\nBy the Edo period, belief in the temple’s power to ward off misfortune drew large crowds. A stone guidepost dated 1663 once stood where the Daishi road branched from the Tōkaidō at Kawasaki-juku. City records and nineteenth-century travel writing describe a lively approach lined with shops, restaurants and places to drink. The surviving guidepost in the precinct connects the temple to that wider walking network.\n\nPilgrimage then shaped modern transport. On 21 January 1899, the Daishi Electric Railway opened a roughly two-kilometre line from Rokugō Bridge to Daishi to carry worshippers on a festival day. It was the first commercial electric railway in the Kantō region and became the origin of today’s Keikyu railway. The temple was heavily damaged in the 1945 air raids. Its present main hall took shape during the postwar reconstruction, and the principal image was transferred there in 1958. Walk back through Nakamise toward Kawasaki Daishi Station: the short route joins medieval tradition, Edo pilgrimage, electric transport and postwar rebuilding.",
+            "placeNameOrigin": "Heikenji is written 平間寺 and derives from the family name Hirama (平間) in the temple’s foundation tradition. ‘Kawasaki Daishi’ is the widely used name linking the temple to Kawasaki and Kōbō Daishi.",
+            "originCertainty": "documented",
+            "sensitivity": "religion",
+            "claims": [
+                {
+                    "id": "kawasaki-daishi-c1",
+                    "text": "Temple tradition says Hirama Kanenori and the monk Sonken founded Heikenji in 1128 after Kanenori recovered an image of Kōbō Daishi from the sea.",
+                    "sourceIds": ["kawasaki-daishi-official-about"]
+                },
+                {
+                    "id": "kawasaki-daishi-c2",
+                    "text": "A guidepost dated 1663 marked the Daishi road branching from the Tōkaidō at Kawasaki-juku.",
+                    "sourceIds": ["kawasaki-city-daishi-guidepost"]
+                },
+                {
+                    "id": "kawasaki-daishi-c3",
+                    "text": "Edo-period pilgrimage supported a busy temple approach with shops, restaurants and drinking places.",
+                    "sourceIds": ["kawasaki-city-heikenji"]
+                },
+                {
+                    "id": "kawasaki-daishi-c4",
+                    "text": "The Daishi Electric Railway opened between Rokugō Bridge and Daishi on 21 January 1899 to carry temple visitors.",
+                    "sourceIds": ["keikyu-founding-history", "kawasaki-city-daishi-station"]
+                },
+                {
+                    "id": "kawasaki-daishi-c5",
+                    "text": "The temple rebuilt after wartime destruction and transferred its principal image to the present main hall in 1958.",
+                    "sourceIds": ["kawasaki-daishi-official-map"]
+                }
+            ]
+        },
+        "timeline": [
+            {
+                "label": "Foundation tradition",
+                "year": 1128,
+                "text": "Temple tradition dates the founding of Heikenji by Hirama Kanenori and the monk Sonken to this year.",
+                "sourceIds": ["kawasaki-daishi-official-about"]
+            },
+            {
+                "label": "Pilgrimage road",
+                "year": 1663,
+                "text": "The oldest surviving Kōbō Daishi guidepost in Kawasaki marked the route from the Tōkaidō toward the temple.",
+                "sourceIds": ["kawasaki-city-daishi-guidepost"]
+            },
+            {
+                "label": "Electric pilgrimage",
+                "year": 1899,
+                "text": "The Daishi Electric Railway opened to carry worshippers, becoming the origin of present-day Keikyu.",
+                "sourceIds": ["keikyu-founding-history", "kawasaki-city-daishi-station"]
+            },
+            {
+                "label": "Postwar reconstruction",
+                "year": 1958,
+                "text": "The principal image was transferred to the reconstructed main hall after the wartime loss of the earlier hall.",
+                "sourceIds": ["kawasaki-daishi-official-map"]
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Nakamise shopping street",
+                "distanceMeters": 120,
+                "latitude": 35.5342,
+                "longitude": 139.7272,
+                "sourceIds": ["kawasaki-city-heikenji"]
+            },
+            {
+                "name": "Kōbō Daishi guidepost",
+                "distanceMeters": 90,
+                "latitude": 35.5350,
+                "longitude": 139.7281,
+                "sourceIds": ["kawasaki-city-daishi-guidepost"]
+            },
+            {
+                "name": "Kawasaki Daishi Station",
+                "distanceMeters": 650,
+                "latitude": 35.5357,
+                "longitude": 139.7260,
+                "sourceIds": ["kawasaki-city-daishi-station"]
+            },
+            {
+                "name": "Daishi Bridge and the Tama River",
+                "distanceMeters": 1400,
+                "latitude": 35.5427,
+                "longitude": 139.7360,
+                "sourceIds": ["keikyu-founding-history"]
+            }
+        ],
+        "sources": [
+            {
+                "id": "kawasaki-daishi-official-about",
+                "title": "About Kawasaki Daishi",
+                "publisher": "Kawasaki Daishi Heikenji",
+                "url": "https://www.kawasakidaishi.com/about/",
+                "accessedAt": "2026-07-14",
+                "type": "other",
+                "license": "Check site terms before reuse"
+            },
+            {
+                "id": "kawasaki-city-heikenji",
+                "title": "Heikenji (Kawasaki Daishi)",
+                "publisher": "Kawasaki City Board of Education",
+                "url": "https://www.city.kawasaki.jp/880/page/0000000032.html",
+                "accessedAt": "2026-07-14",
+                "type": "municipal",
+                "license": "Check Kawasaki City content terms"
+            },
+            {
+                "id": "kawasaki-city-daishi-guidepost",
+                "title": "Kōbō Daishi Guidepost",
+                "publisher": "Kawasaki City Board of Education",
+                "url": "https://www.city.kawasaki.jp/880/page/0000000292.html",
+                "accessedAt": "2026-07-14",
+                "type": "municipal",
+                "license": "Check Kawasaki City content terms"
+            },
+            {
+                "id": "keikyu-founding-history",
+                "title": "The Founding Years",
+                "publisher": "Keikyu Corporation",
+                "url": "https://www.keikyu.co.jp/history/chronology01.html",
+                "accessedAt": "2026-07-14",
+                "type": "archive",
+                "license": "Check Keikyu content terms"
+            },
+            {
+                "id": "kawasaki-city-daishi-station",
+                "title": "Kawasaki Daishi Station, Birthplace of Keikyu",
+                "publisher": "Kawasaki City",
+                "url": "https://www.city.kawasaki.jp/kawasaki/page/0000026371.html",
+                "accessedAt": "2026-07-14",
+                "type": "municipal",
+                "license": "Check Kawasaki City content terms"
+            },
+            {
+                "id": "kawasaki-daishi-official-map",
+                "title": "Temple Precinct Map",
+                "publisher": "Kawasaki Daishi Heikenji",
+                "url": "https://www.kawasakidaishi.com/map/",
+                "accessedAt": "2026-07-14",
+                "type": "other",
+                "license": "Check site terms before reuse"
+            }
+        ],
+        "review": {
+            "researcher": "KASANE editorial",
+            "englishEditor": null,
+            "sourceReviewer": null,
+            "locationReviewer": null,
+            "lastReviewedAt": "2026-07-14",
+            "notes": "Authoritative-source draft. English, source and on-site coordinate review remain before publishable status. Religious foundation account is explicitly attributed as temple tradition."
+        }
     }
 ]

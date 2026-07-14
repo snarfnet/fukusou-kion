@@ -15,9 +15,9 @@ if (Test-Path $candidate300Path) {
   $portfolio300 = [System.IO.File]::ReadAllText($portfolio300Path, $utf8) | ConvertFrom-Json
   $map300 = [System.IO.File]::ReadAllText($map300Path, $utf8) | ConvertFrom-Json
   if (@($candidate300).Count -ne 300) { $errors.Add("Candidate 300 file must contain 300 records; found $(@($candidate300).Count).") }
-  if (@($map300).Count -ne 300) { $errors.Add("iOS map catalog must contain 300 records; found $(@($map300).Count).") }
+  if (@($map300).Count -lt 300) { $errors.Add("iOS map catalog must contain at least 300 records; found $(@($map300).Count).") }
   if (@($candidate300.qid | Sort-Object -Unique).Count -ne 300) { $errors.Add('Candidate 300 contains duplicate Wikidata IDs.') }
-  if (@($map300.id | Sort-Object -Unique).Count -ne 300) { $errors.Add('iOS map catalog contains duplicate IDs.') }
+  if (@($map300.id | Sort-Object -Unique).Count -ne @($map300).Count) { $errors.Add('iOS map catalog contains duplicate IDs.') }
   foreach ($bucket in $portfolio300.buckets) {
     $count = @($candidate300 | Where-Object bucket -eq $bucket.id).Count
     if ($count -ne $bucket.target) { $errors.Add("Candidate 300 bucket $($bucket.id) requires $($bucket.target); found $count.") }
