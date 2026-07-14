@@ -157,6 +157,12 @@ struct ContentView: View {
                 Text("English audio").font(.caption2).foregroundStyle(.secondary)
             }
             .padding(.top, 16)
+            if let errorMessage = speechReader.errorMessage {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(KasaneTheme.vermilion)
+                    .padding(.top, 6)
+            }
             if !selectedPlace.body.isEmpty {
                 Text(selectedPlace.body)
                     .font(.system(size: 14))
