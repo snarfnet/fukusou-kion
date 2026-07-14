@@ -51,7 +51,7 @@ base.REVIEW_CONTACT = {
 
 def require_ok(response, label):
     print(f"{label}: {response.status_code}")
-    if response.status_code not in (200, 201, 204, 409):
+    if response.status_code not in (200, 201, 204):
         raise RuntimeError(f"{label} failed {response.status_code}: {response.text[:1200]}")
 
 
@@ -207,6 +207,87 @@ def update_version(version_id):
         }), "Review detail")
 
 
+def update_metadata(version_id):
+    for localization in base.ensure_localizations(version_id):
+        locale = localization["attributes"]["locale"]
+        attrs = dict(base.META.get(locale, base.META["en-US"]))
+        response = base.api("PATCH", f"/appStoreVersionLocalizations/{localization['id']}", json={
+            "data": {
+                "type": "appStoreVersionLocalizations",
+                "id": localization["id"],
+                "attributes": attrs,
+            }
+        })
+        if response.status_code == 409:
+            attrs.pop("whatsNew", None)
+            response = base.api("PATCH", f"/appStoreVersionLocalizations/{localization['id']}", json={
+                "data": {
+                    "type": "appStoreVersionLocalizations",
+                    "id": localization["id"],
+                    "attributes": attrs,
+                }
+            })
+        require_ok(response, f"Metadata {locale}")
+
+
+def screenshots_are_ready(version_id):
+    for localization in base.ensure_localizations(version_id):
+        sets = base.list_all(
+            f"/appStoreVersionLocalizations/{localization['id']}/appScreenshotSets?limit=200"
+        )
+        iphone_set = next(
+            (item for item in sets if item["attributes"]["screenshotDisplayType"] == "APP_IPHONE_65"),
+            None,
+        )
+        if not iphone_set:
+            return False
+        screenshots = base.list_all(f"/appScreenshotSets/{iphone_set['id']}/appScreenshots?limit=200")
+        if len(screenshots) < 3:
+            return False
+    return True
+
+
+def submit_for_review(app_id, version_id):
+    base.cancel_blocking_submissions(app_id)
+    response, body = base.api_json("POST", "/reviewSubmissions", json={
+        "data": {
+            "type": "reviewSubmissions",
+            "attributes": {"platform": "IOS"},
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": app_id}},
+                "appStoreVersionForReview": {
+                    "data": {"type": "appStoreVersions", "id": version_id}
+                },
+            },
+        }
+    })
+    require_ok(response, "Review submission")
+    submission_id = body["data"]["id"]
+    response = base.api("POST", "/reviewSubmissionItems", json={
+        "data": {
+            "type": "reviewSubmissionItems",
+            "relationships": {
+                "reviewSubmission": {
+                    "data": {"type": "reviewSubmissions", "id": submission_id}
+                },
+                "appStoreVersion": {
+                    "data": {"type": "appStoreVersions", "id": version_id}
+                },
+            },
+        }
+    })
+    require_ok(response, "Review item")
+    response, body = base.api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
+        "data": {
+            "type": "reviewSubmissions",
+            "id": submission_id,
+            "attributes": {"submitted": True},
+        }
+    })
+    require_ok(response, "Submit for review")
+    print(f"Submitted for App Review: {body['data']['attributes']['state']}")
+
+
 def main():
     app_id = base.find_app_id()
     version_id, state = base.find_or_create_version(app_id)
@@ -216,14 +297,16 @@ def main():
     ensure_app_information(app_id)
     ensure_price(app_id)
     update_version(version_id)
-    base.update_metadata(version_id)
-    base.upload_screenshots(version_id)
-    print("Waiting for screenshot processing...")
-    base.time.sleep(300)
+    update_metadata(version_id)
+    if screenshots_are_ready(version_id):
+        print("Screenshots: already uploaded")
+    else:
+        base.upload_screenshots(version_id)
+        print("Waiting for screenshot processing...")
+        base.time.sleep(300)
     build_id = base.wait_for_build(app_id)
     base.assign_build(version_id, build_id)
-    base.cancel_blocking_submissions(app_id)
-    base.submit_for_review(app_id, version_id)
+    submit_for_review(app_id, version_id)
 
 
 if __name__ == "__main__":
