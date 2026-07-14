@@ -6,5 +6,20 @@ struct EmergencyGuideView: View {
 }
 
 struct FoundSomethingView: View {
-    var body: some View { List { Section("found.doNow") { Label("found.station", systemImage: "tram"); Label("found.store", systemImage: "storefront"); Label("found.street", systemImage: "building.columns"); Label("found.dontInspect", systemImage: "eye.slash") } Section("found.card") { Text(JapaneseCardService.foundItemText).font(.title2.bold()).padding(.vertical) } }.navigationTitle("home.found") }
+    var body: some View {
+        List {
+            Section("found.doNow") {
+                Label("found.station", systemImage: "tram")
+                Label("found.store", systemImage: "storefront")
+                Label("found.street", systemImage: "building.columns")
+                Label("found.dontInspect", systemImage: "eye.slash")
+            }
+            Section("found.card") {
+                Text(JapaneseCardService.foundItemText)
+                    .font(.title2.bold())
+                    .padding(.vertical)
+            }
+        }
+        .navigationTitle("home.found")
+    }
 }

@@ -49,7 +49,28 @@ private struct PhotoStep: View {
 
 private struct DetailsStep: View {
     @Binding var details: ItemDescription; let categories: Set<LostItemCategory>
-    var body: some View { Form { Section("registration.details") { TextField("field.color", text: $details.color); TextField("field.brand", text: $details.brand); if categories.contains(.smartphone) { TextField("field.model", text: $details.model) }; if categories.contains(.passport) || categories.contains(.smartphone) { TextField("field.lastFour", text: $details.identifierLastFour).keyboardType(.numberPad) }; TextField("field.features", text: $details.details, axis: .vertical).lineLimit(3...6) } Section { Text("registration.optional").font(.footnote).foregroundStyle(.secondary) } } }
+    var body: some View {
+        Form {
+            Section("registration.details") {
+                TextField("field.color", text: $details.color)
+                TextField("field.brand", text: $details.brand)
+                if categories.contains(.smartphone) {
+                    TextField("field.model", text: $details.model)
+                }
+                if categories.contains(.passport) || categories.contains(.smartphone) {
+                    TextField("field.lastFour", text: $details.identifierLastFour)
+                        .keyboardType(.numberPad)
+                }
+                TextField("field.features", text: $details.details, axis: .vertical)
+                    .lineLimit(3...6)
+            }
+            Section {
+                Text("registration.optional")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
 }
 
 private struct LocationStep: View {
@@ -59,5 +80,18 @@ private struct LocationStep: View {
 
 private struct ConfirmationStep: View {
     @ObservedObject var model: RegistrationViewModel
-    var body: some View { List { Section("registration.summary") { LabeledContent("registration.what", value: model.categories.map(\.title).sorted().joined(separator: ", ")); LabeledContent("registration.where", value: model.location.name.isEmpty ? model.location.category.title : model.location.name); LabeledContent("field.lastSeen", value: model.location.lastSeenAt.formatted(date: .abbreviated, time: .shortened)) } Section { Text("registration.saveNote").font(.footnote).foregroundStyle(.secondary) } } }
+    var body: some View {
+        List {
+            Section("registration.summary") {
+                LabeledContent("registration.what", value: model.categories.map(\.title).sorted().joined(separator: ", "))
+                LabeledContent("registration.where", value: model.location.name.isEmpty ? model.location.category.title : model.location.name)
+                LabeledContent("field.lastSeen", value: model.location.lastSeenAt.formatted(date: .abbreviated, time: .shortened))
+            }
+            Section {
+                Text("registration.saveNote")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
 }
