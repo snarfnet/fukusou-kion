@@ -3,6 +3,7 @@ import MapKit
 
 struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
+    @StateObject private var speechReader = SpeechReader()
     @State private var selectedPlace = PlaceStory.featured[0]
     @State private var selectedEra = PlaceStory.featured[0].eras[0]
     @State private var camera: MapCameraPosition = .region(.asakusa)
@@ -133,6 +134,29 @@ struct ContentView: View {
             Text(selectedPlace.headline).font(.kasaneSerif(34)).tracking(-1).foregroundStyle(KasaneTheme.deep).padding(.top, 18)
             Text(selectedPlace.introduction)
                 .font(.system(size: 14)).foregroundStyle(.secondary).lineSpacing(7).padding(.top, 15)
+            HStack(spacing: 12) {
+                Button {
+                    let spokenText = selectedPlace.body.isEmpty ? selectedPlace.introduction : selectedPlace.body
+                    speechReader.toggle(text: "\(selectedPlace.name). \(spokenText)")
+                } label: {
+                    Label(speechReader.isPaused ? "Resume" : speechReader.isSpeaking ? "Pause" : "Listen",
+                          systemImage: speechReader.isPaused ? "play.fill" : speechReader.isSpeaking ? "pause.fill" : "speaker.wave.2.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .frame(minHeight: 44)
+                        .padding(.horizontal, 14)
+                        .foregroundStyle(.white)
+                        .background(KasaneTheme.indigo, in: Capsule())
+                }
+                if speechReader.isSpeaking || speechReader.isPaused {
+                    Button("Stop") { speechReader.stop() }
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(KasaneTheme.vermilion)
+                        .frame(minHeight: 44)
+                }
+                Spacer()
+                Text("English audio").font(.caption2).foregroundStyle(.secondary)
+            }
+            .padding(.top, 16)
             if !selectedPlace.body.isEmpty {
                 Text(selectedPlace.body)
                     .font(.system(size: 14))
@@ -168,6 +192,7 @@ struct ContentView: View {
     private var placeCoordinate: CLLocationCoordinate2D { .init(latitude: selectedPlace.latitude, longitude: selectedPlace.longitude) }
 
     private func select(_ place: PlaceStory) {
+        speechReader.stop()
         selectedPlace = place
         selectedEra = place.eras[0]
         withAnimation(.easeInOut) { camera = .region(MKCoordinateRegion(center: .init(latitude: place.latitude, longitude: place.longitude), latitudinalMeters: 1250, longitudinalMeters: 1250)) }
@@ -214,7 +239,14 @@ private struct TimeLens: View {
                     context.stroke(path, with: .color(.brown.opacity(0.38)), lineWidth: index.isMultiple(of: 3) ? 3 : 1)
                 }
             }.clipShape(Circle())
-            Text(placeLabel).font(.kasaneSerif(23)).tracking(4).foregroundStyle(.brown).padding(9).overlay(Rectangle().stroke(.brown.opacity(0.7))).rotationEffect(.degrees(90))
+            VStack(spacing: -1) {
+                ForEach(Array(placeLabel.prefix(4).enumerated()), id: \.offset) { pair in
+                    Text(String(pair.element)).font(.kasaneSerif(20)).foregroundStyle(.brown)
+                }
+            }
+            .padding(.horizontal, 11)
+            .padding(.vertical, 8)
+            .overlay(Rectangle().stroke(.brown.opacity(0.7)))
             Text(year).font(.caption2.bold()).tracking(1).foregroundStyle(.white).padding(.horizontal, 9).padding(.vertical, 5).background(KasaneTheme.vermilion).offset(x: 62, y: 62)
         }
         .overlay(Circle().stroke(KasaneTheme.paper, lineWidth: 7)).overlay(Circle().stroke(KasaneTheme.vermilion, lineWidth: 2).padding(-2)).shadow(color: .black.opacity(0.35), radius: 20, y: 12)
