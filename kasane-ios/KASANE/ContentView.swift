@@ -204,7 +204,7 @@ private struct NearbySection: View {
             ForEach(stories) { story in
                 HStack(spacing: 13) {
                     ZStack(alignment: .bottom) { Rectangle().fill(story.kanji == "舟" ? Color.teal : KasaneTheme.vermilion).frame(width: 58, height: 68); Text(story.kanji).font(.kasaneSerif(26)).foregroundStyle(.white).padding(.bottom, 17); Text("\(story.distance) m").font(.system(size: 7)).foregroundStyle(.white).padding(.bottom, 5) }
-                    VStack(alignment: .leading, spacing: 3) { Text(story.category).font(.system(size: 8)).tracking(.8).foregroundStyle(.secondary); Text(story.title).font(.kasaneSerif(14)); Text(story.place).font(.caption2).foregroundStyle(.secondary) }
+                    VStack(alignment: .leading, spacing: 3) { Text(story.category).font(.system(size: 8)).tracking(0.8).foregroundStyle(.secondary); Text(story.title).font(.kasaneSerif(14)); Text(story.place).font(.caption2).foregroundStyle(.secondary) }
                     Spacer(); Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(KasaneTheme.vermilion)
                 }.padding(12).background(.white).overlay(Rectangle().stroke(Color.gray.opacity(0.25)))
             }
