@@ -264,6 +264,50 @@ def update_app_submission_fields(app_id):
         },
     )
     print(f"Primary category: {response.status_code} {response.text[:500]}")
+    return app_info_id
+
+
+def update_age_rating(app_info_id):
+    frequency_fields = [
+        "alcoholTobaccoOrDrugUseOrReferences",
+        "contests",
+        "gamblingSimulated",
+        "gunsOrOtherWeapons",
+        "medicalOrTreatmentInformation",
+        "profanityOrCrudeHumor",
+        "sexualContentGraphicAndNudity",
+        "sexualContentOrNudity",
+        "horrorOrFearThemes",
+        "matureOrSuggestiveThemes",
+        "violenceCartoonOrFantasy",
+        "violenceRealisticProlongedGraphicOrSadistic",
+        "violenceRealistic",
+    ]
+    boolean_fields = [
+        "messagingAndChat",
+        "gambling",
+        "parentalControls",
+        "ageAssurance",
+        "userGeneratedContent",
+        "healthOrWellnessTopics",
+        "unrestrictedWebAccess",
+        "lootBox",
+    ]
+    attributes = {field: "NONE" for field in frequency_fields}
+    attributes.update({field: False for field in boolean_fields})
+    attributes["advertising"] = False
+    response = api(
+        "PATCH",
+        f"/ageRatingDeclarations/{app_info_id}",
+        json={
+            "data": {
+                "type": "ageRatingDeclarations",
+                "id": app_info_id,
+                "attributes": attributes,
+            }
+        },
+    )
+    print(f"Age rating: {response.status_code} {response.text[:500]}")
 
 
 def upload_screenshots(version_id):
@@ -419,7 +463,8 @@ def main():
         return
     build_id = wait_for_build(app_id)
     cancel_blocking_submissions(app_id)
-    update_app_submission_fields(app_id)
+    app_info_id = update_app_submission_fields(app_id)
+    update_age_rating(app_info_id)
     update_metadata(version_id)
     update_review_detail(version_id)
     if os.environ.get("SKIP_SCREENSHOTS") != "1":
