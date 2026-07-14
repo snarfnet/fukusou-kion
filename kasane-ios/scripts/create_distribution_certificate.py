@@ -4,6 +4,7 @@ import hashlib
 import os
 import subprocess
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -27,6 +28,11 @@ INVALID_SERIALS = {
     "797262360B421323CA2A52F022C3F0BF",
 }
 CI_CERT_MARKERS = ("kasane",)
+STALE_CERTIFICATE_IDS = {
+    value.strip()
+    for value in os.environ.get("KASANE_STALE_CERTIFICATE_IDS", "").split(",")
+    if value.strip()
+}
 
 
 def run(args):
@@ -122,6 +128,8 @@ def delete_known_invalid_certificates():
         reason = ""
         if REPLACE_DISTRIBUTION_CERTIFICATE:
             reason = "replace requested"
+        elif certificate["id"] in STALE_CERTIFICATE_IDS:
+            reason = "known KASANE CI certificate"
         elif serial in INVALID_SERIALS:
             reason = "known invalid serial"
         elif is_flora_stitch_ci_cert:
@@ -139,6 +147,7 @@ def delete_known_invalid_certificates():
         )
         should_delete = (
             REPLACE_DISTRIBUTION_CERTIFICATE
+            or certificate["id"] in STALE_CERTIFICATE_IDS
             or serial in INVALID_SERIALS
             or is_flora_stitch_ci_cert
             or (expiration is not None and expiration < now)
@@ -211,6 +220,7 @@ def create_certificate():
             deleted = delete_known_invalid_certificates()
             if deleted:
                 print(f"Retrying certificate creation after deleting {deleted} stale certificate(s).")
+                time.sleep(15)
                 continue
         break
     raise RuntimeError(last_error)
