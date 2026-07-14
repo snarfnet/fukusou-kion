@@ -23,12 +23,11 @@ struct LocationSummary: Codable, Identifiable, Hashable {
 
 enum LocationCatalog {
     static let all: [LocationSummary] = {
-        guard let url = Bundle.main.url(forResource: "locations", withExtension: "json"),
+        guard let url = Bundle.main.url(forResource: "locations-300", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let values = try? JSONDecoder().decode([LocationSummary].self, from: data) else { return [] }
         return values
     }()
 
-    static let regions = ["All", "Hokkaidō & Tōhoku", "Kantō", "Chūbu", "Kansai", "Chūgoku", "Kyūshū", "Okinawa"]
+    static let regions = ["All", "Tokyo", "Kyoto", "Hokkaido & Tohoku", "Kanto", "Chubu & Hokuriku", "Kansai", "Chugoku & Shikoku", "Kyushu & Okinawa", "Cross-regional"]
 }
-

@@ -6,6 +6,23 @@ $portfolio = [System.IO.File]::ReadAllText((Join-Path $root 'portfolio.json'), $
 $places = [System.IO.File]::ReadAllText((Join-Path $root 'places.json'), $utf8) | ConvertFrom-Json
 $selection = [System.IO.File]::ReadAllText((Join-Path $root 'batch-01-selection.json'), $utf8) | ConvertFrom-Json
 $errors = [System.Collections.Generic.List[string]]::new()
+$candidate300Path = Join-Path $root 'candidate-300.json'
+$portfolio300Path = Join-Path $root 'portfolio-300.json'
+$map300Path = Join-Path (Split-Path $root -Parent) 'KASANE\locations-300.json'
+
+if (Test-Path $candidate300Path) {
+  $candidate300 = [System.IO.File]::ReadAllText($candidate300Path, $utf8) | ConvertFrom-Json
+  $portfolio300 = [System.IO.File]::ReadAllText($portfolio300Path, $utf8) | ConvertFrom-Json
+  $map300 = [System.IO.File]::ReadAllText($map300Path, $utf8) | ConvertFrom-Json
+  if (@($candidate300).Count -ne 300) { $errors.Add("Candidate 300 file must contain 300 records; found $(@($candidate300).Count).") }
+  if (@($map300).Count -ne 300) { $errors.Add("iOS map catalog must contain 300 records; found $(@($map300).Count).") }
+  if (@($candidate300.qid | Sort-Object -Unique).Count -ne 300) { $errors.Add('Candidate 300 contains duplicate Wikidata IDs.') }
+  if (@($map300.id | Sort-Object -Unique).Count -ne 300) { $errors.Add('iOS map catalog contains duplicate IDs.') }
+  foreach ($bucket in $portfolio300.buckets) {
+    $count = @($candidate300 | Where-Object bucket -eq $bucket.id).Count
+    if ($count -ne $bucket.target) { $errors.Add("Candidate 300 bucket $($bucket.id) requires $($bucket.target); found $count.") }
+  }
+}
 
 if (($portfolio.buckets | Measure-Object target -Sum).Sum -ne $portfolio.target) { $errors.Add('Portfolio bucket targets do not equal the overall target.') }
 if ($selection.Count -ne 30) { $errors.Add("Batch 01 must contain exactly 30 selections; found $($selection.Count).") }

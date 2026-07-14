@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "target": 300,
+  "buckets": [
+    {"id":"tokyo","target":45},
+    {"id":"kyoto","target":30},
+    {"id":"kanto","target":36},
+    {"id":"kansai","target":36},
+    {"id":"hokkaido_tohoku","target":30},
+    {"id":"chubu_hokuriku","target":33},
+    {"id":"chugoku_shikoku","target":27},
+    {"id":"kyushu_okinawa","target":39},
+    {"id":"national_themes","target":24}
+  ]
+}
