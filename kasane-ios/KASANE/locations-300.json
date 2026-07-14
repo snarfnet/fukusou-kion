@@ -3386,5 +3386,17 @@
         "longitude": 139.5651,
         "theme": "Medieval defensive pass",
         "tier": "record"
-    }
+    },
+    {"id":"yokohama-zounohana","kanji":"象の鼻","name":"Zō-no-hana Park","prefecture":"Kanagawa","region":"Kanto","latitude":35.44955,"longitude":139.64295,"theme":"First port pier and waterfront archaeology","tier":"featured"},
+    {"id":"yokohama-osanbashi","kanji":"大さん橋","name":"Ōsanbashi Pier","prefecture":"Kanagawa","region":"Kanto","latitude":35.4515,"longitude":139.6461,"theme":"International passenger pier","tier":"record"},
+    {"id":"yokohama-yamate","kanji":"山手","name":"Yamate Bluff","prefecture":"Kanagawa","region":"Kanto","latitude":35.4380,"longitude":139.6508,"theme":"Foreign settlement and hillside residences","tier":"record"},
+    {"id":"yokohama-negishi-forest","kanji":"根岸","name":"Negishi and the Former Racecourse","prefecture":"Kanagawa","region":"Kanto","latitude":35.4233,"longitude":139.6368,"theme":"Treaty-port leisure and surviving grandstand","tier":"record"},
+    {"id":"kamakura-great-buddha","kanji":"鎌倉大仏","name":"Great Buddha of Kamakura","prefecture":"Kanagawa","region":"Kanto","latitude":35.3168,"longitude":139.5357,"theme":"Medieval bronze and lost hall","tier":"featured"},
+    {"id":"kamakura-tsurugaoka","kanji":"鶴岡八幡宮","name":"Tsurugaoka Hachimangū","prefecture":"Kanagawa","region":"Kanto","latitude":35.3258,"longitude":139.5564,"theme":"Shrine and warrior capital","tier":"record"},
+    {"id":"kamakura-hasedera","kanji":"長谷寺","name":"Hasedera Temple","prefecture":"Kanagawa","region":"Kanto","latitude":35.3125,"longitude":139.5330,"theme":"Kannon pilgrimage and coastal landscape","tier":"record"},
+    {"id":"kamakura-asaina-pass","kanji":"朝夷奈切通","name":"Asaina Kiridoshi Pass","prefecture":"Kanagawa","region":"Kanto","latitude":35.3310,"longitude":139.6043,"theme":"Medieval road cut through the hills","tier":"record"},
+    {"id":"hakone-checkpoint","kanji":"箱根関所","name":"Hakone Checkpoint","prefecture":"Kanagawa","region":"Kanto","latitude":35.19255,"longitude":139.02665,"theme":"Tokaido checkpoint and controlled movement","tier":"featured"},
+    {"id":"hakone-owakudani","kanji":"大涌谷","name":"Ōwakudani","prefecture":"Kanagawa","region":"Kanto","latitude":35.2440,"longitude":139.0208,"theme":"Volcanic landscape and modern tourism","tier":"record"},
+    {"id":"hakone-old-tokaido","kanji":"箱根旧街道","name":"Old Tōkaidō Stone Pavement","prefecture":"Kanagawa","region":"Kanto","latitude":35.2136,"longitude":139.0648,"theme":"Stone road across the mountains","tier":"record"},
+    {"id":"hakone-miyanoshita","kanji":"宮ノ下","name":"Miyanoshita","prefecture":"Kanagawa","region":"Kanto","latitude":35.2415,"longitude":139.0543,"theme":"Hot-spring resort and international travel","tier":"record"}
 ]

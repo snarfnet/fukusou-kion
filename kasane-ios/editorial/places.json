@@ -2256,5 +2256,78 @@
             "lastReviewedAt": "2026-07-14",
             "notes": "Authoritative-source draft. English, source and on-site coordinate review remain before publishable status. Religious foundation account is explicitly attributed as temple tradition."
         }
+    },
+    {
+      "id":"kanto-yokohama-zounohana-complete","status":"drafted","bucket":"kanto",
+      "names":{"ja":"象の鼻","kana":"ぞうのはな","en":"Zō-no-hana, Yokohama's First Pier","former":["East Pier","English Pier"]},
+      "location":{"latitude":35.44955,"longitude":139.64295,"prefecture":"Kanagawa","municipality":"Yokohama","accuracyMeters":25},
+      "story":{
+        "headline":"The small curve where modern Yokohama met the world",
+        "summary":"Zō-no-hana began as the eastern of two piers built when Yokohama opened in 1859. Its changing curve records the port's expansion, the 1923 earthquake and the city's decision to make old infrastructure visible again.",
+        "body":"Stand at the curved breakwater and compare its modest scale with the port around it. When Yokohama opened to international trade in 1859, this shoreline was much smaller. Two piers were built: a western customs pier and an eastern pier used by foreign ships. The eastern structure gradually acquired a bent outline. Seen from above, that curve suggested an elephant's trunk, giving Zō-no-hana—“elephant's nose”—its familiar name.\n\nThis was an arrival point as well as a piece of engineering. People, documents and cargo passed between ship and settlement here. The port expanded quickly, and later works created Ōsanbashi, Shinkō Pier and a larger customs system. Nearby rails and a turntable, built around 1895–1896, survive as traces of the machinery that moved goods through the waterfront.\n\nThe Great Kantō Earthquake of 1923 damaged Yokohama's port. The breakwater was repaired afterward, and that post-earthquake form became the basis of the curve visible today. Land reclamation and new port facilities gradually made the small pier less central to daily shipping, but its position still marks the beginning of the international port.\n\nIn 2009, the city opened Zō-no-hana Park for the 150th anniversary of the port. The project restored the breakwater's historic outline and exposed archaeological remains. Walk from the curve toward the former customs house, then continue to Ōsanbashi. Within a few minutes, the scale shifts from the first landing place to the modern passenger pier.",
+        "placeNameOrigin":"Zō-no-hana means “elephant's nose.” The name refers to the curved shape developed by the eastern pier after Yokohama opened.",
+        "originCertainty":"documented","sensitivity":"standard",
+        "claims":[
+          {"id":"zounohana-c1","text":"Two piers were built when Yokohama opened in 1859, and the eastern pier became the origin of Zō-no-hana.","sourceIds":["yokohama-zounohana-history","yokohama-port-timeline"]},
+          {"id":"zounohana-c2","text":"The present curve is based on the form repaired after the 1923 Great Kantō Earthquake.","sourceIds":["yokohama-zounohana-history"]},
+          {"id":"zounohana-c3","text":"Rail tracks and a turntable built around 1895–1896 survive in Zō-no-hana Park.","sourceIds":["yokohama-customs-turntable"]},
+          {"id":"zounohana-c4","text":"Zō-no-hana Park opened in 2009 as part of Yokohama port's 150th-anniversary projects.","sourceIds":["yokohama-zounohana-history"]}
+        ]
+      },
+      "timeline":[
+        {"label":"Port opens","year":1859,"text":"Yokohama opened to international trade and the eastern and western piers were built.","sourceIds":["yokohama-zounohana-history","yokohama-port-timeline"]},
+        {"label":"Freight infrastructure","year":1896,"text":"Rails and a turntable served the growing customs and cargo district.","sourceIds":["yokohama-customs-turntable"]},
+        {"label":"Earthquake reconstruction","year":1923,"text":"The port was damaged and the repaired breakwater established the basis of today's curve.","sourceIds":["yokohama-zounohana-history"]},
+        {"label":"Waterfront park","year":2009,"text":"The city opened Zō-no-hana Park and restored the historic breakwater outline.","sourceIds":["yokohama-zounohana-history"]}
+      ],
+      "nearby":[
+        {"name":"Yokohama Customs House","distanceMeters":180,"latitude":35.4488,"longitude":139.6408,"sourceIds":["yokohama-zounohana-history"]},
+        {"name":"Customs railway turntable remains","distanceMeters":100,"latitude":35.4490,"longitude":139.6420,"sourceIds":["yokohama-customs-turntable"]},
+        {"name":"Ōsanbashi Pier","distanceMeters":420,"latitude":35.4515,"longitude":139.6461,"sourceIds":["yokohama-port-timeline"]},
+        {"name":"Yokohama Port Opening Memorial Hall","distanceMeters":380,"latitude":35.4476,"longitude":139.6402,"sourceIds":["yokohama-port-timeline"]}
+      ],
+      "sources":[
+        {"id":"yokohama-zounohana-history","title":"History of the Zō-no-hana Area","publisher":"City of Yokohama","url":"https://www.city.yokohama.lg.jp/kanko-bunka/minato/yokohamako/gaiyo/zonohana/shokai/02.html","accessedAt":"2026-07-14","type":"municipal","license":"Check City of Yokohama content terms"},
+        {"id":"yokohama-port-timeline","title":"History and Timeline of the Port of Yokohama","publisher":"City of Yokohama","url":"https://www.city.yokohama.lg.jp/kanko-bunka/minato/taikan/manabu/rekishi/history0.html","accessedAt":"2026-07-14","type":"municipal","license":"Check City of Yokohama content terms"},
+        {"id":"yokohama-customs-turntable","title":"Yokohama Customs Railway and Turntable Remains","publisher":"City of Yokohama","url":"https://www.city.yokohama.lg.jp/kurashi/machizukuri-kankyo/toshiseibi/design/ikasu/rekishi/tenshadai.html","accessedAt":"2026-07-14","type":"municipal","license":"Check City of Yokohama content terms"}
+      ],
+      "review":{"researcher":"KASANE editorial","englishEditor":null,"sourceReviewer":null,"locationReviewer":null,"lastReviewedAt":"2026-07-14","notes":"Authoritative-source draft; English and on-site review remain."}
+    },
+    {
+      "id":"kanto-hakone-checkpoint-complete","status":"drafted","bucket":"kanto",
+      "names":{"ja":"箱根関所","kana":"はこねせきしょ","en":"Hakone Checkpoint","former":["箱根関跡"]},
+      "location":{"latitude":35.19255,"longitude":139.02665,"prefecture":"Kanagawa","municipality":"Hakone","accuracyMeters":25},
+      "story":{
+        "headline":"A narrow lakeside passage where the shogunate inspected the road",
+        "summary":"Established in 1619 between Lake Ashi and steep mountains, Hakone Checkpoint controlled movement on the Tōkaidō until 1869. Today's buildings are a research-based reconstruction completed in 2007.",
+        "body":"Stand between the gates and notice how little room the landscape leaves for avoiding them. Lake Ashi closes one side of the route and steep Byōbu-yama rises on the other. The Tokugawa shogunate placed Hakone Checkpoint here in 1619, using the terrain to monitor one of the main roads between Edo and Kyoto.\n\nA checkpoint was not simply a barrier across the road. Officials examined travel documents and watched the movement of people, weapons and political households. Controls changed over time as the shogunate's military concerns developed into a broader policing system. The checkpoint also shaped the settlement around it: officials, foot soldiers, carriers, inns and travellers all depended on passage through this narrow lakeside corridor.\n\nThe Meiji government abolished the checkpoint in 1869. Buildings were dismantled, but the site remained readable in documents and archaeology. In the twentieth century, Hakone developed as a modern resort linked to Tokyo by rail and road. An early reconstruction and museum opened in 1965, making the checkpoint part of the town's historical tourism.\n\nThe present complex was completed in 2007 after research using excavation results and detailed records from the late Edo period. Its gates, guard rooms, kitchen and lookout show a working institution rather than a decorative gateway. Leave through the Kyoto-side gate and continue into the cedar avenue. The surviving road landscape makes the checkpoint's position easier to understand: control depended as much on lake, mountain and road as on the buildings themselves.",
+        "placeNameOrigin":"Hakone Checkpoint takes its name from Hakone, the mountain area and post town through which the Tōkaidō crossed. This article does not assert a single origin for the older place-name Hakone.",
+        "originCertainty":"unknown","sensitivity":"standard",
+        "claims":[
+          {"id":"hakone-sekisho-c1","text":"The shogunate established Hakone Checkpoint in 1619 between Lake Ashi and Byōbu-yama.","sourceIds":["hakone-hachiri-official","hakone-town-history"]},
+          {"id":"hakone-sekisho-c2","text":"The checkpoint's role shifted from military control toward policing movement during the Edo period.","sourceIds":["hakone-town-cultural-properties"]},
+          {"id":"hakone-sekisho-c3","text":"The checkpoint ceased operating in 1869.","sourceIds":["hakone-town-cultural-properties"]},
+          {"id":"hakone-sekisho-c4","text":"The present research-based reconstruction was completed in 2007.","sourceIds":["hakone-hachiri-official","hakone-sekisho-visitor"]}
+        ]
+      },
+      "timeline":[
+        {"label":"Checkpoint established","year":1619,"text":"The shogunate placed the checkpoint in the narrow corridor beside Lake Ashi.","sourceIds":["hakone-hachiri-official"]},
+        {"label":"Checkpoint abolished","year":1869,"text":"The Meiji government ended the checkpoint system and Hakone's post ceased operating.","sourceIds":["hakone-town-cultural-properties"]},
+        {"label":"Museum era","year":1965,"text":"Hakone opened a reconstruction and historical museum as tourism expanded.","sourceIds":["hakone-town-history"]},
+        {"label":"Full reconstruction","year":2007,"text":"A research-based reconstruction recreated the late-Edo checkpoint complex.","sourceIds":["hakone-hachiri-official","hakone-sekisho-visitor"]}
+      ],
+      "nearby":[
+        {"name":"Hakone cedar avenue","distanceMeters":500,"latitude":35.1955,"longitude":139.0302,"sourceIds":["hakone-town-cultural-properties"]},
+        {"name":"Lake Ashi shore","distanceMeters":120,"latitude":35.1932,"longitude":139.0258,"sourceIds":["hakone-hachiri-official"]},
+        {"name":"Hakone-juku stone remains","distanceMeters":700,"latitude":35.1885,"longitude":139.0215,"sourceIds":["hakone-town-history"]},
+        {"name":"Old Tōkaidō stone pavement","distanceMeters":900,"latitude":35.1986,"longitude":139.0340,"sourceIds":["hakone-town-cultural-properties"]}
+      ],
+      "sources":[
+        {"id":"hakone-hachiri-official","title":"Japan Heritage: Hakone Hachiri","publisher":"Hakone Tourist Association","url":"https://www.hakone.or.jp/6345","accessedAt":"2026-07-14","type":"other","license":"Check site terms"},
+        {"id":"hakone-town-history","title":"History of Hakone Town","publisher":"Hakone Town","url":"https://www.town.hakone.kanagawa.jp/www/contents/1100000000353/index.html","accessedAt":"2026-07-14","type":"municipal","license":"Check Hakone Town content terms"},
+        {"id":"hakone-town-cultural-properties","title":"Cultural Properties of Hakone","publisher":"Hakone Town","url":"https://www.town.hakone.kanagawa.jp/www/contents/1100000000313/index.html","accessedAt":"2026-07-14","type":"municipal","license":"Check Hakone Town content terms"},
+        {"id":"hakone-sekisho-visitor","title":"Hakone Checkpoint and Museum","publisher":"Hakone Tourist Association","url":"https://www.hakone.or.jp/676","accessedAt":"2026-07-14","type":"other","license":"Check site terms"}
+      ],
+      "review":{"researcher":"KASANE editorial","englishEditor":null,"sourceReviewer":null,"locationReviewer":null,"lastReviewedAt":"2026-07-14","notes":"Authoritative-source draft; English and on-site review remain."}
     }
 ]
