@@ -23,6 +23,7 @@ jobs:
       BUILD_NUMBER: ${{ inputs.build_number }}
       SUBMISSION_CONFIG_PATH: kasane-ios/submission-config.json
       ASC_P8_PATH: /tmp/asc_key.p8
+      SKIP_SCREENSHOTS: "1"
 
     steps:
       - name: Checkout

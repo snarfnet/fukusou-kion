@@ -194,7 +194,7 @@ def update_metadata(version_id):
             }
         }
         response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json=payload)
-        print(f"Metadata {locale}: {response.status_code}")
+        print(f"Metadata {locale}: {response.status_code} {response.text[:1000]}")
 
 
 def update_review_detail(version_id):
@@ -341,7 +341,9 @@ def submit_for_review(app_id, version_id):
     if response.status_code != 201:
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
     submission_id = body["data"]["id"]
-    for attempt in range(20):
+    item_created = False
+    last_item_response = None
+    for attempt in range(6):
         response = api("POST", "/reviewSubmissionItems", json={
             "data": {
                 "type": "reviewSubmissionItems",
@@ -351,10 +353,17 @@ def submit_for_review(app_id, version_id):
                 },
             }
         })
-        print(f"Review item {attempt + 1}/20: {response.status_code}")
+        last_item_response = response
+        print(f"Review item {attempt + 1}/6: {response.status_code} {response.text[:1000]}")
         if response.status_code == 201:
+            item_created = True
             break
-        time.sleep(30)
+        time.sleep(10)
+    if not item_created:
+        raise RuntimeError(
+            f"Review item create failed {last_item_response.status_code}: "
+            f"{last_item_response.text[:2000]}"
+        )
     response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
         "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
     })
@@ -375,12 +384,13 @@ def main():
         print(f"Already submitted: {state}")
         return
     build_id = wait_for_build(app_id)
+    cancel_blocking_submissions(app_id)
     update_metadata(version_id)
     update_review_detail(version_id)
-    upload_screenshots(version_id)
-    print("Waiting for screenshot processing...")
-    time.sleep(300)
-    cancel_blocking_submissions(app_id)
+    if os.environ.get("SKIP_SCREENSHOTS") != "1":
+        upload_screenshots(version_id)
+        print("Waiting for screenshot processing...")
+        time.sleep(300)
     assign_build(version_id, build_id)
     submit_for_review(app_id, version_id)
 
