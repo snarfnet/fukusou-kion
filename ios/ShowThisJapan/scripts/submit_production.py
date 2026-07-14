@@ -249,10 +249,17 @@ def screenshots_are_ready(version_id):
 
 def ensure_no_data_collected(app_id):
     def iris(method, path, **kwargs):
+        now = int(base.time.time())
+        iris_token = base.jwt.encode(
+            {"iss": base.ISSUER, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+            base.p8,
+            algorithm="ES256",
+            headers={"kid": base.KEY_ID, "typ": "JWT"},
+        )
         response = base.requests.request(
             method,
             f"https://appstoreconnect.apple.com/iris/v1{path}",
-            headers=base.headers(),
+            headers={"Authorization": f"Bearer {iris_token}", "Content-Type": "application/json"},
             timeout=120,
             **kwargs,
         )
