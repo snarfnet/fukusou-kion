@@ -1,0 +1,5 @@
+build/
+.venv/
+*.xcodeproj/
+.DS_Store
+.playwright-cli/

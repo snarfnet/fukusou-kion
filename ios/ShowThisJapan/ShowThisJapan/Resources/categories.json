@@ -1,0 +1,12 @@
+[
+ {"id":"food","iconName":"fork.knife","titles":{"en":"Food","zh-Hans":"餐饮","ko":"음식","es":"Comida"},"sortOrder":1},
+ {"id":"transport","iconName":"tram.fill","titles":{"en":"Train & Bus","zh-Hans":"电车和巴士","ko":"전철・버스","es":"Tren y autobús"},"sortOrder":2},
+ {"id":"hotel","iconName":"bed.double.fill","titles":{"en":"Hotel","zh-Hans":"酒店","ko":"호텔","es":"Hotel"},"sortOrder":3},
+ {"id":"shopping","iconName":"bag.fill","titles":{"en":"Shopping","zh-Hans":"购物","ko":"쇼핑","es":"Compras"},"sortOrder":4},
+ {"id":"medical","iconName":"cross.case.fill","titles":{"en":"Medical","zh-Hans":"医疗","ko":"병원・약국","es":"Médico"},"sortOrder":5},
+ {"id":"trouble","iconName":"exclamationmark.triangle.fill","titles":{"en":"Lost & Trouble","zh-Hans":"遗失・麻烦","ko":"분실・문제","es":"Pérdidas y problemas"},"sortOrder":6},
+ {"id":"sightseeing","iconName":"camera.fill","titles":{"en":"Sightseeing","zh-Hans":"观光","ko":"관광","es":"Turismo"},"sortOrder":7},
+ {"id":"toilet","iconName":"figure.dress.line.vertical.figure","titles":{"en":"Toilet","zh-Hans":"洗手间","ko":"화장실","es":"Baño"},"sortOrder":8},
+ {"id":"manners","iconName":"person.2.fill","titles":{"en":"Japanese Manners","zh-Hans":"日本礼仪","ko":"일본 예절","es":"Modales japoneses"},"sortOrder":9},
+ {"id":"emergency","iconName":"sos","titles":{"en":"Emergency","zh-Hans":"紧急情况","ko":"긴급 상황","es":"Emergencia"},"sortOrder":10}
+]
