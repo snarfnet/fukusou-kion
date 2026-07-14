@@ -248,21 +248,28 @@ def screenshots_are_ready(version_id):
 
 
 def submit_for_review(app_id, version_id):
-    base.cancel_blocking_submissions(app_id)
-    response, body = base.api_json("POST", "/reviewSubmissions", json={
-        "data": {
-            "type": "reviewSubmissions",
-            "attributes": {"platform": "IOS"},
-            "relationships": {
-                "app": {"data": {"type": "apps", "id": app_id}},
-                "appStoreVersionForReview": {
-                    "data": {"type": "appStoreVersions", "id": version_id}
-                },
-            },
-        }
-    })
-    require_ok(response, "Review submission")
-    submission_id = body["data"]["id"]
+    response, body = base.api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=20")
+    require_ok(response, "Review submission lookup")
+    reusable = next(
+        (
+            item for item in body.get("data", [])
+            if item.get("attributes", {}).get("state") in ("READY_FOR_REVIEW", "UNRESOLVED_ISSUES")
+        ),
+        None,
+    )
+    if reusable:
+        submission_id = reusable["id"]
+        print(f"Reusing review submission: {submission_id}")
+    else:
+        response, body = base.api_json("POST", "/reviewSubmissions", json={
+            "data": {
+                "type": "reviewSubmissions",
+                "attributes": {"platform": "IOS"},
+                "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+            }
+        })
+        require_ok(response, "Review submission")
+        submission_id = body["data"]["id"]
     response = base.api("POST", "/reviewSubmissionItems", json={
         "data": {
             "type": "reviewSubmissionItems",
