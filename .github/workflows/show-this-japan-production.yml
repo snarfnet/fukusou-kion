@@ -68,19 +68,36 @@ jobs:
           build_id = submission.base.wait_for_build(app_id)
           submission.base.assign_build(version_id, build_id)
 
-          # Submitted items are immutable. Resubmitting a rejected version needs
-          # a fresh review submission containing the newly selected build.
-          response, review = submission.base.api_json("POST", "/reviewSubmissions", json={
+          response, reviews = submission.base.api_json(
+              "GET", f"/apps/{app_id}/reviewSubmissions?limit=20"
+          )
+          submission.require_ok(response, "Review submission lookup")
+          review = next(
+              item for item in reviews["data"]
+              if item["attributes"]["state"] == "UNRESOLVED_ISSUES"
+          )
+          review_id = review["id"]
+
+          # This is the API equivalent of App Store Connect's
+          # "Update Review Content" action.
+          response = submission.base.api("PATCH", f"/reviewSubmissions/{review_id}", json={
               "data": {
                   "type": "reviewSubmissions",
-                  "attributes": {"platform": "IOS"},
-                  "relationships": {
-                      "app": {"data": {"type": "apps", "id": app_id}}
-                  },
+                  "id": review_id,
+                  "attributes": {"submitted": False},
               }
           })
-          submission.require_ok(response, "New review submission")
-          review_id = review["data"]["id"]
+          submission.require_ok(response, "Unlock rejected review content")
+
+          response, items = submission.base.api_json(
+              "GET", f"/reviewSubmissions/{review_id}/items?limit=100"
+          )
+          submission.require_ok(response, "Review item lookup")
+          for item in items.get("data", []):
+              response = submission.base.api(
+                  "DELETE", f"/reviewSubmissionItems/{item['id']}"
+              )
+              submission.require_ok(response, "Remove old review item")
 
           response = submission.base.api("POST", "/reviewSubmissionItems", json={
               "data": {
