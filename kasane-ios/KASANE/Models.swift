@@ -16,6 +16,19 @@ struct NearbyStory: Identifiable {
     let distance: Int
 }
 
+struct StorySource: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let publisher: String
+    let url: URL?
+}
+
+struct StoryClaim: Identifiable, Hashable {
+    let id: String
+    let text: String
+    let sourceIds: [String]
+}
+
 struct PlaceStory: Identifiable, Hashable {
     let id: String
     let kanji: String
@@ -29,6 +42,11 @@ struct PlaceStory: Identifiable, Hashable {
     let oldName: String
     let eras: [Era]
     let nearby: [NearbyStory]
+    var body: String = ""
+    var placeNameOrigin: String = ""
+    var claims: [StoryClaim] = []
+    var sources: [StorySource] = []
+    var editorialStatus: String = "prototype"
 
     static func == (lhs: PlaceStory, rhs: PlaceStory) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }

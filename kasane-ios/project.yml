@@ -18,6 +18,8 @@ targets:
     platform: iOS
     sources:
       - path: KASANE
+      - path: editorial/places.json
+        buildPhase: resources
     info:
       path: KASANE/Info.plist
       properties:
