@@ -248,14 +248,27 @@ def screenshots_are_ready(version_id):
 
 
 def ensure_no_data_collected(app_id):
-    response, body = base.api_json(
+    def iris(method, path, **kwargs):
+        response = base.requests.request(
+            method,
+            f"https://appstoreconnect.apple.com/iris/v1{path}",
+            headers=base.headers(),
+            timeout=120,
+            **kwargs,
+        )
+        try:
+            return response, response.json()
+        except Exception:
+            return response, {}
+
+    response, body = iris(
         "GET",
         f"/apps/{app_id}/dataUsages?include=category,grouping,purpose,dataProtection&limit=500",
     )
     require_ok(response, "Privacy usage lookup")
     usages = body.get("data", [])
     if not usages:
-        response = base.api("POST", "/appDataUsages", json={
+        response, _ = iris("POST", "/appDataUsages", json={
             "data": {
                 "type": "appDataUsages",
                 "relationships": {
@@ -267,10 +280,10 @@ def ensure_no_data_collected(app_id):
             }
         })
         require_ok(response, "No data collected declaration")
-    response, body = base.api_json("GET", f"/apps/{app_id}/dataUsagePublishState")
+    response, body = iris("GET", f"/apps/{app_id}/dataUsagePublishState")
     require_ok(response, "Privacy publish state")
     state_id = body["data"]["id"]
-    response = base.api("PATCH", f"/appDataUsagesPublishState/{state_id}", json={
+    response, _ = iris("PATCH", f"/appDataUsagesPublishState/{state_id}", json={
         "data": {
             "type": "appDataUsagesPublishState",
             "id": state_id,
