@@ -356,6 +356,12 @@ def upload_screenshots(version_id):
         print(f"Screenshots for {locale}")
         sets = list_all(f"/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets?limit=200")
         existing = {item["attributes"]["screenshotDisplayType"]: item["id"] for item in sets}
+        for screenshot_set in sets:
+            for screenshot in list_all(
+                f"/appScreenshotSets/{screenshot_set['id']}/appScreenshots?limit=200"
+            ):
+                response = api("DELETE", f"/appScreenshots/{screenshot['id']}")
+                print(f"  Deleted old screenshot {screenshot['id']}: {response.status_code}")
         for display_type, filenames in SCREENSHOT_GROUPS:
             set_id = existing.get(display_type)
             if not set_id:
@@ -374,8 +380,6 @@ def upload_screenshots(version_id):
                 if response.status_code not in (200, 201):
                     raise RuntimeError(f"Screenshot set create failed: {response.text[:300]}")
                 set_id = body["data"]["id"]
-            for screenshot in list_all(f"/appScreenshotSets/{set_id}/appScreenshots?limit=200"):
-                api("DELETE", f"/appScreenshots/{screenshot['id']}")
             for filename in filenames:
                 upload_screenshot(set_id, filename)
 
