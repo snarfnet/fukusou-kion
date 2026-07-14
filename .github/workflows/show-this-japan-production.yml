@@ -6,7 +6,7 @@ on:
       build_number:
         description: TestFlight build number
         required: true
-        default: "107"
+        default: "114"
   push:
     branches:
       - "codex/show-this-japan-testflight"
@@ -49,9 +49,44 @@ jobs:
 
       - name: Configure USD 2.99 release and submit build
         env:
-          BUILD_NUMBER: ${{ inputs.build_number || '107' }}
+          BUILD_NUMBER: ${{ inputs.build_number || '114' }}
           APP_VERSION: "1.0"
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
           . .venv/bin/activate
-          python scripts/submit_production.py
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+
+          path = Path("scripts/submit_production.py").resolve()
+          spec = importlib.util.spec_from_file_location("show_this_japan_submission", path)
+          submission = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(submission)
+
+          app_id = submission.base.find_app_id()
+          version_id, _ = submission.base.find_or_create_version(app_id)
+          build_id = submission.base.wait_for_build(app_id)
+          submission.base.assign_build(version_id, build_id)
+
+          response, body = submission.base.api_json(
+              "GET", f"/apps/{app_id}/reviewSubmissions?limit=20"
+          )
+          submission.require_ok(response, "Review submission lookup")
+          review = next(
+              item for item in body["data"]
+              if item["attributes"]["state"] in ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW")
+          )
+          response, result = submission.base.api_json(
+              "PATCH",
+              f"/reviewSubmissions/{review['id']}",
+              json={
+                  "data": {
+                      "type": "reviewSubmissions",
+                      "id": review["id"],
+                      "attributes": {"submitted": True},
+                  }
+              },
+          )
+          submission.require_ok(response, "Resubmit build 114")
+          print(f"Submitted state: {result['data']['attributes']['state']}")
+          PY
