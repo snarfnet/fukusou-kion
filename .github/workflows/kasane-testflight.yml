@@ -181,6 +181,17 @@ jobs:
           . .venv/bin/activate
           python scripts/wait_for_testflight_build.py
 
+      - name: Upload App Store metadata and submit for review
+        if: ${{ inputs.register_only == 'submit' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          APP_VERSION: ${{ env.KASANE_VERSION }}
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          SUBMISSION_CONFIG_PATH: submission-config.json
+        run: |
+          . .venv/bin/activate
+          python ../ios/FukusouKion/scripts/submit_production.py
+
       - name: Upload IPA artifact
         if: always()
         uses: actions/upload-artifact@v4

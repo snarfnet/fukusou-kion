@@ -1,0 +1,55 @@
+name: KASANE App Store Submission
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: "Processed build number"
+        required: true
+        default: "11"
+
+concurrency:
+  group: kasane-app-store-submission
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    runs-on: macos-26
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.kasane
+      APP_NAME: "KASANE: Stories of Japan"
+      APP_SKU: kasane-ios
+      APP_VERSION: "1.0"
+      BUILD_NUMBER: ${{ inputs.build_number }}
+      SUBMISSION_CONFIG_PATH: kasane-ios/submission-config.json
+      ASC_P8_PATH: /tmp/asc_key.p8
+      SKIP_SCREENSHOTS: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install API tools
+        run: python3 -m pip install --break-system-packages pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > "$ASC_P8_PATH"
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "$ASC_P8_PATH"
+          fi
+          chmod 600 "$ASC_P8_PATH"
+
+      - name: Upload metadata and submit for review
+        run: python3 ios/FukusouKion/scripts/submit_production.py

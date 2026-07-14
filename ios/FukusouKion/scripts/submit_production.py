@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import sys
 import time
@@ -43,6 +44,17 @@ META = {
         "promotionalText": "Check today's outfit and umbrella before you leave.",
     },
 }
+REVIEW_NOTES = None
+
+config_path = os.environ.get("SUBMISSION_CONFIG_PATH")
+if config_path:
+    with open(config_path, encoding="utf-8") as config_file:
+        submission_config = json.load(config_file)
+    SCREENSHOT_DIR = submission_config.get("screenshotDir", SCREENSHOT_DIR)
+    SCREENSHOT_GROUPS = submission_config.get("screenshotGroups", SCREENSHOT_GROUPS)
+    REVIEW_CONTACT = submission_config.get("reviewContact", REVIEW_CONTACT)
+    REVIEW_NOTES = submission_config.get("reviewNotes", REVIEW_NOTES)
+    META = submission_config.get("metadata", META)
 
 p8 = open(P8_PATH, encoding="utf-8").read()
 
@@ -182,7 +194,7 @@ def update_metadata(version_id):
             }
         }
         response = api("PATCH", f"/appStoreVersionLocalizations/{loc['id']}", json=payload)
-        print(f"Metadata {locale}: {response.status_code}")
+        print(f"Metadata {locale}: {response.status_code} {response.text[:1000]}")
 
 
 def update_review_detail(version_id):
@@ -191,7 +203,7 @@ def update_review_detail(version_id):
         "demoAccountRequired": False,
         "demoAccountName": "",
         "demoAccountPassword": "",
-        "notes": (
+        "notes": REVIEW_NOTES or (
             "This build shows an in-app tracking explanation screen on first launch before weather refresh, "
             "location permission, Google Mobile Ads startup, or ad loading. Tap the '続ける' button on that screen "
             "to display the AppTrackingTransparency system permission request. After the ATT flow completes, "
@@ -329,7 +341,9 @@ def submit_for_review(app_id, version_id):
     if response.status_code != 201:
         raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
     submission_id = body["data"]["id"]
-    for attempt in range(20):
+    item_created = False
+    last_item_response = None
+    for attempt in range(6):
         response = api("POST", "/reviewSubmissionItems", json={
             "data": {
                 "type": "reviewSubmissionItems",
@@ -339,10 +353,17 @@ def submit_for_review(app_id, version_id):
                 },
             }
         })
-        print(f"Review item {attempt + 1}/20: {response.status_code}")
+        last_item_response = response
+        print(f"Review item {attempt + 1}/6: {response.status_code} {response.text[:1000]}")
         if response.status_code == 201:
+            item_created = True
             break
-        time.sleep(30)
+        time.sleep(10)
+    if not item_created:
+        raise RuntimeError(
+            f"Review item create failed {last_item_response.status_code}: "
+            f"{last_item_response.text[:2000]}"
+        )
     response, body = api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
         "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
     })
@@ -363,12 +384,13 @@ def main():
         print(f"Already submitted: {state}")
         return
     build_id = wait_for_build(app_id)
+    cancel_blocking_submissions(app_id)
     update_metadata(version_id)
     update_review_detail(version_id)
-    upload_screenshots(version_id)
-    print("Waiting for screenshot processing...")
-    time.sleep(300)
-    cancel_blocking_submissions(app_id)
+    if os.environ.get("SKIP_SCREENSHOTS") != "1":
+        upload_screenshots(version_id)
+        print("Waiting for screenshot processing...")
+        time.sleep(300)
     assign_build(version_id, build_id)
     submit_for_review(app_id, version_id)
 
