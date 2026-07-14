@@ -21,8 +21,9 @@ targets:
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: Your location helps find nearby police boxes and support desks.
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: Choose up to three photos that help identify your lost item.
         INFOPLIST_KEY_NSCameraUsageDescription: Take a reference photo of your lost item.
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         GENERATE_INFOPLIST_FILE: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     scheme:
       testTargets: []
-
