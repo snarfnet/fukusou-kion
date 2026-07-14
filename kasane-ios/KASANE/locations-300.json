@@ -3298,5 +3298,93 @@
         "longitude":  140.339569,
         "theme":  "Designated heritage place",
         "tier":  "record"
+    },
+    {
+        "id": "kawasaki-daishi",
+        "kanji": "川崎大師",
+        "name": "Kawasaki Daishi",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.5346,
+        "longitude": 139.7283,
+        "theme": "Pilgrimage, temple town and electric railway",
+        "tier": "featured"
+    },
+    {
+        "id": "kawasaki-juku",
+        "kanji": "川崎宿",
+        "name": "Kawasaki-juku",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.5328,
+        "longitude": 139.7058,
+        "theme": "Tokaido post town and Daishi road",
+        "tier": "record"
+    },
+    {
+        "id": "kawasaki-daishi-line",
+        "kanji": "大師線",
+        "name": "Keikyu Daishi Line",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.5357,
+        "longitude": 139.7260,
+        "theme": "Kanto's first electric railway",
+        "tier": "record"
+    },
+    {
+        "id": "kawasaki-nihon-minkaen",
+        "kanji": "日本民家園",
+        "name": "Japan Open-Air Folk House Museum",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.6099,
+        "longitude": 139.5615,
+        "theme": "Vernacular architecture and relocated houses",
+        "tier": "record"
+    },
+    {
+        "id": "kawasaki-ikuta-ryokuchi",
+        "kanji": "生田緑地",
+        "name": "Ikuta Ryokuchi",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.6105,
+        "longitude": 139.5621,
+        "theme": "Tama hills landscape and urban preservation",
+        "tier": "record"
+    },
+    {
+        "id": "kawasaki-todoroki",
+        "kanji": "等々力緑地",
+        "name": "Todoroki Ryokuchi",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.5867,
+        "longitude": 139.6479,
+        "theme": "Tama River floodplain and modern city life",
+        "tier": "record"
+    },
+    {
+        "id": "yokohama-kanazawa-bunko",
+        "kanji": "金沢文庫",
+        "name": "Kanazawa Bunko",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.3427,
+        "longitude": 139.6207,
+        "theme": "Medieval library and Hojo archive",
+        "tier": "record"
+    },
+    {
+        "id": "kamakura-nagoe-kiridoshi",
+        "kanji": "名越切通",
+        "name": "Nagoe Kiridoshi Pass",
+        "prefecture": "Kanagawa",
+        "region": "Kanto",
+        "latitude": 35.3118,
+        "longitude": 139.5651,
+        "theme": "Medieval defensive pass",
+        "tier": "record"
     }
 ]
