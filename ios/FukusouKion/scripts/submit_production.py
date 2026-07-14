@@ -446,23 +446,28 @@ def cancel_blocking_submissions(app_id):
                 }
             })
             print(f"Canceled {submission_id}: {response.status_code}")
-            canceled = True
+            canceled = canceled or response.status_code == 200
     if canceled:
         print("Waiting for cancellation to propagate...")
         time.sleep(30)
 
 
 def submit_for_review(app_id, version_id):
-    response, body = api_json("POST", "/reviewSubmissions", json={
-        "data": {
-            "type": "reviewSubmissions",
-            "attributes": {"platform": "IOS"},
-            "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
-        }
-    })
-    if response.status_code != 201:
-        raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
-    submission_id = body["data"]["id"]
+    ready = list_all(f"/apps/{app_id}/reviewSubmissions?filter[state]=READY_FOR_REVIEW&limit=200")
+    if ready:
+        submission_id = ready[0]["id"]
+        print(f"Reusing ready review submission: {submission_id}")
+    else:
+        response, body = api_json("POST", "/reviewSubmissions", json={
+            "data": {
+                "type": "reviewSubmissions",
+                "attributes": {"platform": "IOS"},
+                "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+            }
+        })
+        if response.status_code != 201:
+            raise RuntimeError(f"Review submission create failed {response.status_code}: {response.text[:300]}")
+        submission_id = body["data"]["id"]
     item_created = False
     last_item_response = None
     for attempt in range(6):
