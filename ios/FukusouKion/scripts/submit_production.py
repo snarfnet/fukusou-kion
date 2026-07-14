@@ -232,6 +232,40 @@ def update_review_detail(version_id):
     print(f"Review detail create: {response.status_code}")
 
 
+def update_app_submission_fields(app_id):
+    response = api(
+        "PATCH",
+        f"/apps/{app_id}",
+        json={
+            "data": {
+                "type": "apps",
+                "id": app_id,
+                "attributes": {"contentRightsDeclaration": "USES_THIRD_PARTY_CONTENT"},
+            }
+        },
+    )
+    print(f"Content rights: {response.status_code} {response.text[:500]}")
+
+    app_infos = list_all(f"/apps/{app_id}/appInfos?limit=1")
+    if not app_infos:
+        raise RuntimeError("App info record was not found")
+    app_info_id = app_infos[0]["id"]
+    response = api(
+        "PATCH",
+        f"/appInfos/{app_info_id}",
+        json={
+            "data": {
+                "type": "appInfos",
+                "id": app_info_id,
+                "relationships": {
+                    "primaryCategory": {"data": {"type": "appCategories", "id": "TRAVEL"}}
+                },
+            }
+        },
+    )
+    print(f"Primary category: {response.status_code} {response.text[:500]}")
+
+
 def upload_screenshots(version_id):
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
@@ -385,6 +419,7 @@ def main():
         return
     build_id = wait_for_build(app_id)
     cancel_blocking_submissions(app_id)
+    update_app_submission_fields(app_id)
     update_metadata(version_id)
     update_review_detail(version_id)
     if os.environ.get("SKIP_SCREENSHOTS") != "1":
