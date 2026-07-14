@@ -214,7 +214,14 @@ private struct TimeLens: View {
                     context.stroke(path, with: .color(.brown.opacity(0.38)), lineWidth: index.isMultiple(of: 3) ? 3 : 1)
                 }
             }.clipShape(Circle())
-            Text(placeLabel).font(.kasaneSerif(23)).tracking(4).foregroundStyle(.brown).padding(9).overlay(Rectangle().stroke(.brown.opacity(0.7))).rotationEffect(.degrees(90))
+            VStack(spacing: -1) {
+                ForEach(Array(placeLabel.prefix(4).enumerated()), id: \.offset) { pair in
+                    Text(String(pair.element)).font(.kasaneSerif(20)).foregroundStyle(.brown)
+                }
+            }
+            .padding(.horizontal, 11)
+            .padding(.vertical, 8)
+            .overlay(Rectangle().stroke(.brown.opacity(0.7)))
             Text(year).font(.caption2.bold()).tracking(1).foregroundStyle(.white).padding(.horizontal, 9).padding(.vertical, 5).background(KasaneTheme.vermilion).offset(x: 62, y: 62)
         }
         .overlay(Circle().stroke(KasaneTheme.paper, lineWidth: 7)).overlay(Circle().stroke(KasaneTheme.vermilion, lineWidth: 2).padding(-2)).shadow(color: .black.opacity(0.35), radius: 20, y: 12)

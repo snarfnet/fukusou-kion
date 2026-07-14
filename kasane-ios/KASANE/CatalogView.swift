@@ -8,6 +8,7 @@ struct CatalogView: View {
     @State private var region = "All"
     @State private var sortByDistance = false
     @State private var camera: MapCameraPosition = .region(.japan)
+    @State private var shouldFocusUserLocation = false
 
     private var usesCompactHeight: Bool { UIScreen.main.bounds.height <= 700 }
 
@@ -33,6 +34,11 @@ struct CatalogView: View {
         }
         .background(KasaneTheme.paper)
         .navigationBarHidden(true)
+        .onChange(of: locationManager.location?.timestamp) { _, _ in
+            guard shouldFocusUserLocation, let coordinate = locationManager.location?.coordinate else { return }
+            focusMap(on: coordinate)
+            shouldFocusUserLocation = false
+        }
         .safeAreaInset(edge: .bottom) {
             Color.clear.frame(height: 72)
         }
@@ -53,12 +59,29 @@ struct CatalogView: View {
         Map(position: $camera) {
             ForEach(results) { item in Annotation(item.name, coordinate: item.coordinate) { Button { onSelect(item) } label: { Image(systemName: item.isFeatured ? "seal.fill" : "circle.fill").font(.system(size: item.isFeatured ? 19 : 10)).foregroundStyle(item.isFeatured ? KasaneTheme.vermilion : KasaneTheme.indigo).background(Circle().fill(.white).padding(3)).shadow(radius: 3) } }
             }
-        }.mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll)).frame(height: usesCompactHeight ? 215 : 270).overlay { KasaneTheme.indigo.opacity(0.12).allowsHitTesting(false) }.overlay(alignment: .bottomLeading) { Text("\(results.count) PLACE STORIES").font(.system(size: 9, weight: .bold)).tracking(1.2).foregroundStyle(.white).padding(9).background(KasaneTheme.indigo).padding(14) }
+            UserAnnotation()
+        }
+        .mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll))
+        .frame(height: usesCompactHeight ? 215 : 270)
+        .overlay { KasaneTheme.indigo.opacity(0.12).allowsHitTesting(false) }
+        .overlay(alignment: .bottomLeading) { Text("\(results.count) PLACE STORIES").font(.system(size: 9, weight: .bold)).tracking(1.2).foregroundStyle(.white).padding(9).background(KasaneTheme.indigo).padding(14) }
+        .overlay(alignment: .bottomTrailing) {
+            Button { focusOnCurrentLocation() } label: {
+                Image(systemName: "location.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(KasaneTheme.indigo)
+                    .frame(width: 48, height: 48)
+                    .background(.white, in: Circle())
+                    .shadow(color: .black.opacity(0.2), radius: 8, y: 3)
+            }
+            .padding(14)
+            .accessibilityLabel("Zoom to my current location")
+        }
     }
 
     private var filters: some View {
         VStack(alignment: .leading, spacing: 13) {
-            HStack { Text("Explore Japan").font(.kasaneSerif(24)); Spacer(); Button { locationManager.requestLocation(); sortByDistance.toggle() } label: { Label("Nearest", systemImage: "location.fill").font(.caption.bold()).foregroundStyle(sortByDistance ? KasaneTheme.vermilion : KasaneTheme.indigo) } }
+            HStack { Text("Explore Japan").font(.kasaneSerif(24)); Spacer(); Button { sortByDistance.toggle(); focusOnCurrentLocation() } label: { Label("Nearest", systemImage: "location.fill").font(.caption.bold()).foregroundStyle(sortByDistance ? KasaneTheme.vermilion : KasaneTheme.indigo) } }
             ScrollView(.horizontal, showsIndicators: false) { HStack { ForEach(LocationCatalog.regions, id: \.self) { value in Button(value) { region = value }.font(.caption.bold()).foregroundStyle(region == value ? .white : KasaneTheme.indigo).padding(.horizontal, 13).padding(.vertical, 8).background(region == value ? KasaneTheme.indigo : Color.white).clipShape(Capsule()).overlay(Capsule().stroke(KasaneTheme.indigo.opacity(0.18))) } } }
         }.padding(.horizontal, 22).padding(.top, usesCompactHeight ? 18 : 25)
     }
@@ -76,6 +99,21 @@ struct CatalogView: View {
             }.buttonStyle(.plain)
             }
         }.padding(22)
+    }
+
+    private func focusOnCurrentLocation() {
+        shouldFocusUserLocation = true
+        locationManager.requestLocation()
+        if let coordinate = locationManager.location?.coordinate {
+            focusMap(on: coordinate)
+            shouldFocusUserLocation = false
+        }
+    }
+
+    private func focusMap(on coordinate: CLLocationCoordinate2D) {
+        withAnimation(.easeInOut) {
+            camera = .region(MKCoordinateRegion(center: coordinate, latitudinalMeters: 900, longitudinalMeters: 900))
+        }
     }
 }
 
