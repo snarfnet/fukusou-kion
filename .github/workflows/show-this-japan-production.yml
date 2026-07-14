@@ -76,6 +76,34 @@ jobs:
               item for item in body["data"]
               if item["attributes"]["state"] in ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW")
           )
+
+          # A rejected submission keeps its old review item. App Store Connect's
+          # "Update Review Content" action replaces that item before resubmission.
+          response, items = submission.base.api_json(
+              "GET", f"/reviewSubmissions/{review['id']}/items?limit=100"
+          )
+          submission.require_ok(response, "Review item lookup")
+          for item in items.get("data", []):
+              response = submission.base.api(
+                  "DELETE", f"/reviewSubmissionItems/{item['id']}"
+              )
+              submission.require_ok(response, "Remove rejected review item")
+
+          response = submission.base.api("POST", "/reviewSubmissionItems", json={
+              "data": {
+                  "type": "reviewSubmissionItems",
+                  "relationships": {
+                      "reviewSubmission": {
+                          "data": {"type": "reviewSubmissions", "id": review["id"]}
+                      },
+                      "appStoreVersion": {
+                          "data": {"type": "appStoreVersions", "id": version_id}
+                      },
+                  },
+              }
+          })
+          submission.require_ok(response, "Update review content to build 114")
+
           for attempt in range(20):
               response, result = submission.base.api_json(
                   "PATCH",
