@@ -17,11 +17,28 @@ enum PhraseDataService {
     override init() { super.init(); synthesizer.delegate = self }
     func toggle(_ text: String) {
         if synthesizer.isSpeaking { synthesizer.stopSpeaking(at: .immediate); return }
-        let utterance = AVSpeechUtterance(string: text); utterance.voice = .init(language: "ja-JP"); utterance.rate = 0.42
-        synthesizer.speak(utterance); isSpeaking = true
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+            try audioSession.setActive(true)
+        } catch {
+            // AVSpeechSynthesizer can still speak with the system's current audio session.
+        }
+
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "ja-JP")
+        utterance.rate = 0.42
+        utterance.volume = 1.0
+        synthesizer.speak(utterance)
     }
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) { isSpeaking = false }
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) { isSpeaking = false }
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) { isSpeaking = true }
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) { finishSpeaking() }
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) { finishSpeaking() }
+
+    private func finishSpeaking() {
+        isSpeaking = false
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
 }
 
 @MainActor final class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -44,4 +61,3 @@ enum PhraseDataService {
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) { errorMessage = "Your location could not be found. Try again outdoors." }
 }
-
