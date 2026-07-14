@@ -247,6 +247,39 @@ def screenshots_are_ready(version_id):
     return True
 
 
+def ensure_no_data_collected(app_id):
+    response, body = base.api_json(
+        "GET",
+        f"/apps/{app_id}/dataUsages?include=category,grouping,purpose,dataProtection&limit=500",
+    )
+    require_ok(response, "Privacy usage lookup")
+    usages = body.get("data", [])
+    if not usages:
+        response = base.api("POST", "/appDataUsages", json={
+            "data": {
+                "type": "appDataUsages",
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": app_id}},
+                    "dataProtection": {
+                        "data": {"type": "appDataUsageDataProtections", "id": "DATA_NOT_COLLECTED"}
+                    },
+                },
+            }
+        })
+        require_ok(response, "No data collected declaration")
+    response, body = base.api_json("GET", f"/apps/{app_id}/dataUsagePublishState")
+    require_ok(response, "Privacy publish state")
+    state_id = body["data"]["id"]
+    response = base.api("PATCH", f"/appDataUsagesPublishState/{state_id}", json={
+        "data": {
+            "type": "appDataUsagesPublishState",
+            "id": state_id,
+            "attributes": {"published": True},
+        }
+    })
+    require_ok(response, "Privacy answers publish")
+
+
 def submit_for_review(app_id, version_id):
     response, body = base.api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=20")
     require_ok(response, "Review submission lookup")
@@ -303,6 +336,7 @@ def main():
         return
     ensure_app_information(app_id)
     ensure_price(app_id)
+    ensure_no_data_collected(app_id)
     update_version(version_id)
     update_metadata(version_id)
     if screenshots_are_ready(version_id):
