@@ -76,17 +76,22 @@ jobs:
               item for item in body["data"]
               if item["attributes"]["state"] in ("UNRESOLVED_ISSUES", "READY_FOR_REVIEW")
           )
-          response, result = submission.base.api_json(
-              "PATCH",
-              f"/reviewSubmissions/{review['id']}",
-              json={
-                  "data": {
-                      "type": "reviewSubmissions",
-                      "id": review["id"],
-                      "attributes": {"submitted": True},
-                  }
-              },
-          )
+          for attempt in range(20):
+              response, result = submission.base.api_json(
+                  "PATCH",
+                  f"/reviewSubmissions/{review['id']}",
+                  json={
+                      "data": {
+                          "type": "reviewSubmissions",
+                          "id": review["id"],
+                          "attributes": {"submitted": True},
+                      }
+                  },
+              )
+              if response.status_code == 200:
+                  break
+              print(f"Waiting for build 114 assignment: {attempt + 1}/20")
+              submission.base.time.sleep(30)
           submission.require_ok(response, "Resubmit build 114")
           print(f"Submitted state: {result['data']['attributes']['state']}")
           PY
