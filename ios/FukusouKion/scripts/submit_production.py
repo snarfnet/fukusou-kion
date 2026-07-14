@@ -310,6 +310,46 @@ def update_age_rating(app_info_id):
     print(f"Age rating: {response.status_code} {response.text[:500]}")
 
 
+def update_app_info_localizations(app_info_id):
+    localizations = list_all(f"/appInfos/{app_info_id}/appInfoLocalizations?limit=200")
+    for localization in localizations:
+        response = api(
+            "PATCH",
+            f"/appInfoLocalizations/{localization['id']}",
+            json={
+                "data": {
+                    "type": "appInfoLocalizations",
+                    "id": localization["id"],
+                    "attributes": {"privacyPolicyUrl": "https://snarfnet.github.io/privacy.html"},
+                }
+            },
+        )
+        print(f"Privacy policy {localization['attributes']['locale']}: {response.status_code}")
+
+
+def wait_for_screenshot_processing(version_id):
+    for attempt in range(30):
+        states = []
+        for localization in ensure_localizations(version_id):
+            screenshot_sets = list_all(
+                f"/appStoreVersionLocalizations/{localization['id']}/appScreenshotSets?limit=200"
+            )
+            for screenshot_set in screenshot_sets:
+                screenshots = list_all(
+                    f"/appScreenshotSets/{screenshot_set['id']}/appScreenshots?limit=200"
+                )
+                for screenshot in screenshots:
+                    delivery = screenshot["attributes"].get("assetDeliveryState") or {}
+                    states.append(delivery.get("state"))
+        print(f"Screenshot states {attempt + 1}/30: {states}")
+        if states and all(state in ("COMPLETE", "COMPLETED") for state in states):
+            return
+        if any(state in ("FAILED", "ERROR") for state in states):
+            raise RuntimeError(f"Screenshot processing failed: {states}")
+        time.sleep(30)
+    raise RuntimeError("Screenshots did not finish processing within 15 minutes")
+
+
 def upload_screenshots(version_id):
     for loc in ensure_localizations(version_id):
         locale = loc["attributes"]["locale"]
@@ -465,12 +505,13 @@ def main():
     cancel_blocking_submissions(app_id)
     app_info_id = update_app_submission_fields(app_id)
     update_age_rating(app_info_id)
+    update_app_info_localizations(app_info_id)
     update_metadata(version_id)
     update_review_detail(version_id)
     if os.environ.get("SKIP_SCREENSHOTS") != "1":
         upload_screenshots(version_id)
         print("Waiting for screenshot processing...")
-        time.sleep(300)
+    wait_for_screenshot_processing(version_id)
     assign_build(version_id, build_id)
     submit_for_review(app_id, version_id)
 
