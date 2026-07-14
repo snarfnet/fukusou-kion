@@ -18,8 +18,8 @@ targets:
       - path: ShowThisJapan
         excludes:
           - Resources
-    resources:
       - path: ShowThisJapan/Resources
+        buildPhase: resources
     settings:
       base:
         TARGETED_DEVICE_FAMILY: "1"
