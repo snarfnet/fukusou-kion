@@ -1,0 +1,30 @@
+{
+  "screenshotDir": "AppStoreScreenshots/iphone-65",
+  "screenshotGroups": [
+    [
+      "APP_IPHONE_65",
+      [
+        "01-explore.png",
+        "02-time-lens.png",
+        "03-story.png"
+      ]
+    ]
+  ],
+  "reviewContact": {
+    "contactFirstName": "Satoshi",
+    "contactLastName": "Amasaki",
+    "contactEmail": "tokyonasu@yahoo.co.jp",
+    "contactPhone": "+81 80-2368-9194"
+  },
+  "reviewNotes": "Sign-in is not required. Tap a map point to open a place story. Tap the location-arrow button to center the map on the device's current location. Location permission is used only for this feature. Tap Listen on a story to test offline narration. The app does not collect user data or use generative AI.",
+  "metadata": {
+    "en-US": {
+      "description": "KASANE reveals the history beneath the places you visit in Japan.\n\nOpen the map to find nearby temples, old roads, port districts, castle towns and landscapes shaped by water. Selected place stories connect what you see today with key dates, nearby traces and source links.\n\nUse KASANE to:\n• Explore 320 mapped places across Japan\n• Jump to your current location with GPS\n• Read detailed stories for selected locations\n• Follow four-part timelines\n• Find related places nearby\n• Listen to stories with offline narration\n• Save places for later\n\nKASANE does not use generative AI to create stories while you travel. Your location stays on your device and is used only to show your position and nearby places.\n\nThe collection begins with detailed stories in Tokyo, Kyoto, Kanagawa and other regions. More place stories will follow.",
+      "keywords": "Japan,travel,history,map,GPS,temple,shrine,Tokyo,Kyoto,Kamakura,Yokohama,Hakone",
+      "promotionalText": "Find the history, old roads and changing landscapes hidden beneath the places you visit in Japan.",
+      "supportUrl": "https://snarfnet.github.io/",
+      "marketingUrl": "https://snarfnet.github.io/",
+      "whatsNew": "Initial release."
+    }
+  }
+}

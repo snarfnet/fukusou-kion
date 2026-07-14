@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import sys
 import time
@@ -43,6 +44,17 @@ META = {
         "promotionalText": "Check today's outfit and umbrella before you leave.",
     },
 }
+REVIEW_NOTES = None
+
+config_path = os.environ.get("SUBMISSION_CONFIG_PATH")
+if config_path:
+    with open(config_path, encoding="utf-8") as config_file:
+        submission_config = json.load(config_file)
+    SCREENSHOT_DIR = submission_config.get("screenshotDir", SCREENSHOT_DIR)
+    SCREENSHOT_GROUPS = submission_config.get("screenshotGroups", SCREENSHOT_GROUPS)
+    REVIEW_CONTACT = submission_config.get("reviewContact", REVIEW_CONTACT)
+    REVIEW_NOTES = submission_config.get("reviewNotes", REVIEW_NOTES)
+    META = submission_config.get("metadata", META)
 
 p8 = open(P8_PATH, encoding="utf-8").read()
 
@@ -191,7 +203,7 @@ def update_review_detail(version_id):
         "demoAccountRequired": False,
         "demoAccountName": "",
         "demoAccountPassword": "",
-        "notes": (
+        "notes": REVIEW_NOTES or (
             "This build shows an in-app tracking explanation screen on first launch before weather refresh, "
             "location permission, Google Mobile Ads startup, or ad loading. Tap the '続ける' button on that screen "
             "to display the AppTrackingTransparency system permission request. After the ATT flow completes, "
