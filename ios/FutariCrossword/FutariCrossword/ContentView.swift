@@ -2,8 +2,6 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var game = GameViewModel()
-    @FocusState private var keyboardFocused: Bool
-    @State private var input = ""
 
     var body: some View {
         NavigationStack {
@@ -46,7 +44,7 @@ struct ContentView: View {
             }.foregroundStyle(.cream).padding(.horizontal)
             CompanionView(line: game.companion).padding(.horizontal)
             if let puzzle = game.puzzle {
-                CrosswordGridView(puzzle: puzzle, answers: game.answers, selectedEntry: game.selectedEntry, selectedPoint: game.selectedPoint, onSelect: { game.select($0); keyboardFocused = true })
+                CrosswordGridView(puzzle: puzzle, answers: game.answers, selectedEntry: game.selectedEntry, selectedPoint: game.selectedPoint, onSelect: game.select)
                     .frame(maxHeight: .infinity).padding(.horizontal, 8)
             }
             cluePanel
@@ -70,17 +68,9 @@ struct ContentView: View {
     }
 
     private var kanaKeyboard: some View {
-        TextField("ひらがなを入力", text: $input)
-            .focused($keyboardFocused)
-            .textInputAutocapitalization(.never).autocorrectionDisabled()
-            .padding(.horizontal)
-            .frame(height: 1).opacity(0.01)
-            .onChange(of: input) { _, value in
-                guard let character = value.last else { return }
-                game.type(character); input = ""
-            }
+        KanaKeyboardView(onInput: game.type, onDelete: game.deleteCurrent)
+            .padding(.horizontal, 8)
     }
 }
 
 #Preview { ContentView() }
-

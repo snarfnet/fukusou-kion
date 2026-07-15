@@ -52,6 +52,18 @@ final class GameViewModel: ObservableObject {
         if isComplete { speak(.completed) }
     }
 
+    func deleteCurrent() {
+        guard let point = selectedPoint, let entry = selectedEntry else { return }
+        if answers[point] != nil {
+            answers.removeValue(forKey: point)
+            return
+        }
+        guard let index = entry.points.firstIndex(of: point), index > 0 else { return }
+        let previous = entry.points[index - 1]
+        answers.removeValue(forKey: previous)
+        selectedPoint = previous
+    }
+
     func hint() {
         guard let entry = selectedEntry, let puzzle else { return }
         if let point = entry.points.first(where: { answers[$0] != puzzle.solution[$0.row][$0.column] }), let letter = puzzle.solution[point.row][point.column] {
@@ -78,4 +90,3 @@ final class GameViewModel: ObservableObject {
         if recentLines.count > 8 { recentLines.removeFirst() }
     }
 }
-

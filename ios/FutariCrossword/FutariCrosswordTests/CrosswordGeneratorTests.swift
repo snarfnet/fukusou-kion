@@ -19,5 +19,22 @@ final class CrosswordGeneratorTests: XCTestCase {
             }
         }
     }
-}
 
+    @MainActor
+    func testSequentialKanaInputAdvancesAndDeleteReturns() {
+        let game = GameViewModel()
+        game.selectedSize = 5
+        game.generate()
+        guard let entry = game.selectedEntry, entry.points.count >= 2 else {
+            return XCTFail("Expected an entry with at least two characters")
+        }
+        let letters = Array(entry.word.answer)
+        game.type(letters[0])
+        XCTAssertEqual(game.answers[entry.points[0]], letters[0])
+        XCTAssertEqual(game.selectedPoint, entry.points[1])
+        game.type(letters[1])
+        XCTAssertEqual(game.answers[entry.points[1]], letters[1])
+        game.deleteCurrent()
+        XCTAssertNil(game.answers[entry.points[1]])
+    }
+}
