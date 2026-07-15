@@ -2,6 +2,8 @@ import SwiftUI
 
 struct CompanionView: View {
     let line: CompanionLine
+    var height: CGFloat = 224
+    var compact = false
     @State private var blink = false
 
     var body: some View {
@@ -18,16 +20,20 @@ struct CompanionView: View {
             HStack(alignment: .bottom, spacing: 10) {
                 expressionBadge
                 Text(line.text)
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .font(.system(size: compact ? 13 : 16, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 0.20, green: 0.12, blue: 0.08))
-                    .padding(16)
+                    .lineLimit(compact ? 2 : 3)
+                    .minimumScaleFactor(0.78)
+                    .padding(compact ? 9 : 16)
+                    .frame(minHeight: compact ? 48 : nil)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.cream, in: RoundedRectangle(cornerRadius: 22))
                     .overlay(alignment: .bottomLeading) { Triangle().fill(.cream).frame(width: 18, height: 14).rotationEffect(.degrees(20)).offset(x: -8, y: -8) }
             }
-            .padding(.horizontal, 18).padding(.bottom, 12)
+            .padding(.horizontal, compact ? 10 : 18)
+            .padding(.bottom, compact ? 9 : 12)
         }
-        .frame(height: 224)
+        .frame(height: height)
         .clipShape(RoundedRectangle(cornerRadius: 28))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("彼女は\(line.expression.label)の表情。\(line.text)")
@@ -58,7 +64,7 @@ struct CompanionView: View {
         Image(systemName: symbol)
             .font(.system(size: 18, weight: .bold))
             .foregroundStyle(color)
-            .frame(width: 38, height: 38)
+            .frame(width: compact ? 30 : 38, height: compact ? 30 : 38)
             .background(.black.opacity(0.58), in: Circle())
             .scaleEffect(blink ? 0.92 : 1)
     }

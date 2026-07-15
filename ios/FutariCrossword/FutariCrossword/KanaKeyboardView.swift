@@ -3,6 +3,7 @@ import SwiftUI
 struct KanaKeyboardView: View {
     let onInput: (Character) -> Void
     let onDelete: () -> Void
+    var compact = false
     @State private var page: KanaPage = .basic
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: 10)
@@ -18,7 +19,7 @@ struct KanaKeyboardView: View {
                     Label("消す", systemImage: "delete.left.fill")
                         .font(.caption.bold())
                         .padding(.horizontal, 10)
-                        .frame(height: 30)
+                        .frame(height: compact ? 26 : 30)
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.cream)
@@ -29,16 +30,16 @@ struct KanaKeyboardView: View {
             LazyVGrid(columns: columns, spacing: 4) {
                 ForEach(Array(page.characters.enumerated()), id: \.offset) { _, character in
                     if character == "　" {
-                        Color.clear.frame(height: 34)
+                        Color.clear.frame(height: compact ? 25 : 34)
                     } else {
                         Button {
                             onInput(character)
                         } label: {
                             Text(String(character))
-                                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                                .font(.system(size: compact ? 15 : 17, weight: .semibold, design: .rounded))
                                 .foregroundStyle(Color(red: 0.20, green: 0.12, blue: 0.08))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 34)
+                                .frame(height: compact ? 25 : 34)
                                 .background(Color.cream, in: RoundedRectangle(cornerRadius: 8))
                         }
                         .buttonStyle(.plain)
@@ -47,7 +48,7 @@ struct KanaKeyboardView: View {
                 }
             }
         }
-        .padding(8)
+        .padding(compact ? 5 : 8)
         .background(Color.black.opacity(0.22), in: RoundedRectangle(cornerRadius: 16))
     }
 
@@ -57,7 +58,7 @@ struct KanaKeyboardView: View {
             .buttonStyle(.plain)
             .foregroundStyle(page == target ? Color(red: 0.20, green: 0.12, blue: 0.08) : .cream)
             .padding(.horizontal, 12)
-            .frame(height: 30)
+            .frame(height: compact ? 26 : 30)
             .background(page == target ? Color.amber : .white.opacity(0.12), in: Capsule())
     }
 }
