@@ -6,11 +6,17 @@ struct CompanionView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            LinearGradient(colors: [Color(red: 0.18, green: 0.10, blue: 0.06), Color(red: 0.39, green: 0.22, blue: 0.12)], startPoint: .top, endPoint: .bottom)
-            cafeDetails
-            HStack(alignment: .bottom, spacing: 14) {
-                face
-                    .frame(width: 122, height: 138)
+            Image("CompanionCafe")
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .saturation(line.expression == .worried ? 0.72 : 1)
+                .brightness(line.expression == .delighted ? 0.06 : 0)
+                .scaleEffect([.surprised, .delighted].contains(line.expression) ? 1.025 : 1)
+            LinearGradient(colors: [.clear, .black.opacity(0.7)], startPoint: .center, endPoint: .bottom)
+            HStack(alignment: .bottom, spacing: 10) {
+                expressionBadge
                 Text(line.text)
                     .font(.system(size: 16, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 0.20, green: 0.12, blue: 0.08))
@@ -21,7 +27,7 @@ struct CompanionView: View {
             }
             .padding(.horizontal, 18).padding(.bottom, 12)
         }
-        .frame(height: 210)
+        .frame(height: 224)
         .clipShape(RoundedRectangle(cornerRadius: 28))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("彼女は\(line.expression.label)の表情。\(line.text)")
@@ -35,53 +41,26 @@ struct CompanionView: View {
         }
     }
 
-    private var cafeDetails: some View {
-        VStack { HStack { Circle().fill(.orange.opacity(0.28)).frame(width: 70).blur(radius: 12); Spacer(); RoundedRectangle(cornerRadius: 3).fill(.yellow.opacity(0.13)).frame(width: 90, height: 120) }.padding(); Spacer() }
-    }
-
-    private var face: some View {
-        ZStack {
-            Ellipse().fill(Color(red: 0.18, green: 0.09, blue: 0.06)).frame(width: 112, height: 132).offset(y: -5)
-            Ellipse().fill(Color(red: 0.95, green: 0.76, blue: 0.64)).frame(width: 86, height: 106)
-            hair
-            eyes.offset(y: -11)
-            mouth.offset(y: 18)
-            if [.delighted, .shy, .surprised].contains(line.expression) {
-                HStack(spacing: 53) { Circle().fill(.pink.opacity(0.45)); Circle().fill(.pink.opacity(0.45)) }.frame(width: 72, height: 10).offset(y: 9)
-            }
-            if line.expression == .surprised { Text("!").font(.title.bold()).foregroundStyle(.amber).offset(x: 51, y: -55) }
-            if line.expression == .thinking { Circle().fill(.cream.opacity(0.8)).frame(width: 8).offset(x: 46, y: -44) }
-        }
-        .animation(.spring(response: 0.35, dampingFraction: 0.65), value: line.expression)
-    }
-
-    private var hair: some View {
-        ZStack {
-            Capsule().fill(Color(red: 0.12, green: 0.06, blue: 0.04)).frame(width: 92, height: 36).offset(y: -46)
-            Capsule().fill(Color(red: 0.12, green: 0.06, blue: 0.04)).frame(width: 24, height: 72).rotationEffect(.degrees(13)).offset(x: -38, y: -18)
-        }
-    }
-
-    private var eyes: some View {
-        HStack(spacing: 25) {
-            ForEach(0..<2) { _ in
-                Group {
-                    if blink || [.delighted, .shy].contains(line.expression) { Capsule().fill(.brown).frame(width: 17, height: 3) }
-                    else if line.expression == .worried { Capsule().fill(.brown).frame(width: 15, height: 5).rotationEffect(.degrees(-8)) }
-                    else { Ellipse().fill(.brown).frame(width: line.expression == .surprised ? 12 : 10, height: line.expression == .surprised ? 16 : 13).overlay(Circle().fill(.white).frame(width: 3).offset(x: -2, y: -3)) }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder private var mouth: some View {
+    @ViewBuilder private var expressionBadge: some View {
         switch line.expression {
-        case .delighted, .cheering, .proud: Capsule().fill(.red.opacity(0.72)).frame(width: 27, height: 10)
-        case .surprised: Circle().stroke(.red.opacity(0.7), lineWidth: 3).frame(width: 11)
-        case .worried: Capsule().stroke(.red.opacity(0.65), lineWidth: 2).frame(width: 18, height: 7).rotationEffect(.degrees(180))
-        case .shy: Capsule().fill(.red.opacity(0.6)).frame(width: 19, height: 6).rotationEffect(.degrees(-4))
-        default: Capsule().fill(.red.opacity(0.6)).frame(width: 20, height: 6)
+        case .thinking: badge("ellipsis.bubble.fill", .amber)
+        case .delighted: badge("heart.fill", .pink)
+        case .surprised: badge("exclamationmark", .amber)
+        case .worried: badge("drop.fill", .cyan)
+        case .cheering: badge("sparkles", .amber)
+        case .proud: badge("lightbulb.fill", .yellow)
+        case .shy: badge("heart.circle.fill", .pink)
+        case .gentle: badge("cup.and.saucer.fill", .cream)
         }
+    }
+
+    private func badge(_ symbol: String, _ color: Color) -> some View {
+        Image(systemName: symbol)
+            .font(.system(size: 18, weight: .bold))
+            .foregroundStyle(color)
+            .frame(width: 38, height: 38)
+            .background(.black.opacity(0.58), in: Circle())
+            .scaleEffect(blink ? 0.92 : 1)
     }
 }
 
