@@ -33,6 +33,23 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         }
     }
 
+    var nativeTitle: String {
+        switch self {
+        case .system: "System language"
+        case .english: "English"
+        case .simplifiedChinese: "简体中文"
+        case .traditionalChinese: "繁體中文"
+        case .korean: "한국어"
+        case .spanish: "Español"
+        case .french: "Français"
+        case .german: "Deutsch"
+        case .thai: "ไทย"
+        case .japanese: "日本語"
+        }
+    }
+
+    static let selectableLanguages = allCases.filter { $0 != .system }
+
     static var selected: AppLanguage {
         AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "system") ?? .system
     }

@@ -11,11 +11,18 @@ struct LostInJapanApp: App {
 
 struct RootView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("hasSelectedInitialLanguage") private var hasSelectedInitialLanguage = false
     @AppStorage("appLanguage") private var appLanguage = AppLanguage.system.rawValue
 
     var body: some View {
         Group {
-            if hasCompletedOnboarding { AppRouterView() }
+            if !hasSelectedInitialLanguage {
+                InitialLanguageView { language in
+                    appLanguage = language.rawValue
+                    hasSelectedInitialLanguage = true
+                }
+            }
+            else if hasCompletedOnboarding { AppRouterView() }
             else { OnboardingView { hasCompletedOnboarding = true } }
         }
         .environment(\.locale, AppLanguage(rawValue: appLanguage)?.locale ?? .autoupdatingCurrent)

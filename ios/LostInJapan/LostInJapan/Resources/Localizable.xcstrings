@@ -1,6 +1,818 @@
 {
     "sourceLanguage":  "en",
     "strings":  {
+"emergency.callPolice": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "If you are in immediate danger, call 110."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "危険が迫っている場合は110番へ電話してください。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "如有紧急危险，请拨打110。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "如有緊急危險，請撥打110。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "즉시 위험한 상황이면 110에 전화하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Si hay peligro inmediato, llama al 110."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "En cas de danger immédiat, appelez le 110."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Rufen Sie bei unmittelbarer Gefahr die 110 an."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "หากมีอันตรายเร่งด่วน โทร 110"
+                }
+            }
+        }
+    },
+    "emergency.passport.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Contact the nearest police box first and get a lost-property report. Then contact your embassy or consulate. Keep a photo of the report number."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "最寄りの交番で遺失届を出し、受理番号を控えてください。その後、大使館または領事館へ連絡します。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "先到最近的派出所提交遗失申报并记下受理编号，然后联系使领馆。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "先到最近的派出所提交遺失申報並記下受理編號，再聯絡使領館。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "가까운 파출소에서 분실 신고를 하고 접수 번호를 받은 뒤 대사관이나 영사관에 연락하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Presenta una denuncia de pérdida en el puesto de policía más cercano, guarda el número y contacta con tu embajada o consulado."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Déclarez la perte au poste de police le plus proche, notez le numéro, puis contactez votre ambassade ou consulat."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Melden Sie den Verlust beim nächsten Koban, notieren Sie die Vorgangsnummer und kontaktieren Sie Ihre Botschaft oder Ihr Konsulat."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "แจ้งของหายที่ป้อมตำรวจใกล้ที่สุด เก็บเลขรับเรื่อง แล้วติดต่อสถานทูตหรือสถานกงสุล"
+                }
+            }
+        }
+    },
+    "emergency.wallet.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Freeze your bank cards and payment apps. Report the wallet to the police and contact the last place you visited. List the cash, cards and IDs inside."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "銀行カードと決済アプリを停止し、警察へ届けてください。最後に立ち寄った場所にも連絡し、中身を一覧にします。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "立即停用银行卡和支付应用，向警方报失，并联系最后到访的地点。列出钱包内的现金、卡片和证件。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "立即停用銀行卡和支付應用程式，向警方報失，並聯絡最後到訪的地點。列出錢包內物品。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "은행 카드와 결제 앱을 정지하고 경찰에 신고하세요. 마지막 방문 장소에도 연락하고 지갑 안 물품을 정리하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Bloquea tarjetas y aplicaciones de pago, denuncia la pérdida y contacta con el último lugar visitado. Haz una lista del contenido."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Bloquez cartes et applications de paiement, signalez la perte et contactez le dernier lieu visité. Listez le contenu."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Sperren Sie Karten und Bezahl-Apps, melden Sie den Verlust und kontaktieren Sie den zuletzt besuchten Ort. Listen Sie den Inhalt auf."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ระงับบัตรธนาคารและแอปชำระเงิน แจ้งตำรวจ ติดต่อสถานที่ล่าสุด และทำรายการของในกระเป๋า"
+                }
+            }
+        }
+    },
+    "emergency.phone.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Use Find My iPhone or Find My Device, lock the phone and contact your carrier. Do not go alone to an unknown location shown on the map."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "端末の探索機能で位置を確認し、遠隔ロックして通信会社へ連絡してください。表示された知らない場所へ一人で向かわないでください。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "使用设备查找功能定位并远程锁定，然后联系运营商。不要独自前往地图显示的陌生地点。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "使用裝置尋找功能定位並遠端鎖定，再聯絡電訊商。不要獨自前往地圖顯示的陌生地點。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "기기 찾기로 위치를 확인하고 원격 잠금한 뒤 통신사에 연락하세요. 지도에 나온 낯선 장소에는 혼자 가지 마세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Localiza y bloquea el teléfono a distancia y contacta con tu operador. No vayas solo a un lugar desconocido del mapa."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Localisez et verrouillez le téléphone à distance, puis contactez votre opérateur. N'allez pas seul à un lieu inconnu indiqué sur la carte."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Orten und sperren Sie das Telefon aus der Ferne und kontaktieren Sie den Mobilfunkanbieter. Gehen Sie nicht allein zu einem unbekannten Kartenort."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ใช้ระบบค้นหาและล็อกโทรศัพท์จากระยะไกล แล้วติดต่อเครือข่าย อย่าไปยังสถานที่ไม่รู้จักเพียงลำพัง"
+                }
+            }
+        }
+    },
+    "emergency.card.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Freeze the card in the issuer's app or call the number on its website. Check recent transactions and report any charge you do not recognize."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "カード会社のアプリまたは公式窓口で利用停止し、直近の明細を確認してください。身に覚えのない利用はすぐ申告します。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "通过发卡机构应用或官网电话停卡，检查近期交易并立即报告陌生扣款。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "透過發卡機構應用程式或官網電話停卡，檢查近期交易並立即報告不明扣款。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "카드사 앱이나 공식 번호로 카드를 정지하고 최근 결제를 확인하세요. 모르는 결제는 즉시 신고하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Bloquea la tarjeta desde la aplicación o el número oficial. Revisa los movimientos y comunica cualquier cargo desconocido."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Bloquez la carte via l'application ou le numéro officiel. Vérifiez les opérations et signalez tout débit inconnu."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Sperren Sie die Karte über die App oder offizielle Nummer. Prüfen Sie Umsätze und melden Sie unbekannte Abbuchungen."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ระงับบัตรผ่านแอปหรือเบอร์ทางการ ตรวจสอบรายการล่าสุด และแจ้งรายการที่ไม่รู้จักทันที"
+                }
+            }
+        }
+    },
+    "emergency.medicine.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Ask a pharmacy or clinic for help. Show the medicine name, prescription or a photo of the package. For urgent symptoms, call 119."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "薬局または医療機関へ相談し、薬の名前・処方箋・包装の写真を見せてください。症状が緊急なら119番へ電話します。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "向药店或医疗机构求助，并出示药名、处方或包装照片。症状紧急时拨打119。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "向藥房或醫療機構求助，並出示藥名、處方或包裝照片。症狀緊急時撥打119。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "약국이나 의료기관에 약 이름, 처방전 또는 포장 사진을 보여 주세요. 증상이 긴급하면 119에 전화하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Pide ayuda en una farmacia o clínica y muestra el nombre, la receta o una foto del envase. Si es urgente, llama al 119."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Demandez de l'aide à une pharmacie ou une clinique et montrez le nom, l'ordonnance ou une photo. En urgence, appelez le 119."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Bitten Sie eine Apotheke oder Klinik um Hilfe und zeigen Sie Name, Rezept oder Packungsfoto. Im Notfall 119 anrufen."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ขอความช่วยเหลือจากร้านขายยาหรือคลินิก แสดงชื่อยา ใบสั่งยา หรือรูปบรรจุภัณฑ์ หากฉุกเฉินโทร 119"
+                }
+            }
+        }
+    },
+    "emergency.child.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Tell station staff or police immediately. Stay where the child was last seen, share a recent photo and describe their clothes. Call 110 if you cannot find them quickly."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "駅員や警察へすぐ伝え、最後に見た場所で待ってください。最近の写真と服装を共有し、見つからない場合は110番へ電話します。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "立即通知车站人员或警方，在最后见到孩子的地方等待，并提供近期照片和衣着特征。无法迅速找到时拨打110。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "立即通知車站人員或警方，在最後見到孩子的地方等候，並提供近期照片和衣著特徵。無法迅速找到時撥打110。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "역무원이나 경찰에게 즉시 알리고 마지막으로 본 장소에서 기다리세요. 최근 사진과 옷차림을 알려 주고 찾지 못하면 110에 전화하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Avisa de inmediato al personal o a la policía. Espera donde lo viste por última vez, comparte una foto y describe su ropa. Llama al 110."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Prévenez immédiatement le personnel ou la police. Restez au dernier lieu, partagez une photo et décrivez ses vêtements. Appelez le 110."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Informieren Sie sofort Personal oder Polizei. Bleiben Sie am letzten Sichtungsort, zeigen Sie ein Foto und beschreiben Sie die Kleidung. Rufen Sie 110 an."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "แจ้งเจ้าหน้าที่หรือตำรวจทันที รอที่จุดที่เห็นเด็กครั้งสุดท้าย แสดงรูปล่าสุดและบอกเสื้อผ้า หากยังไม่พบโทร 110"
+                }
+            }
+        }
+    },
+    "emergency.theft.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Move to a safe place and call 110. Do not confront the person. Note the time, location and appearance, and preserve receipts, photos or messages as evidence."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "安全な場所へ移動して110番へ電話してください。相手を追わず、時刻・場所・特徴を記録し、レシートや写真などを保存します。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "前往安全地点并拨打110。不要与对方冲突。记录时间、地点和外貌，并保存收据、照片或消息。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "前往安全地點並撥打110。不要與對方衝突。記錄時間、地點和外貌，並保存收據、照片或訊息。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "안전한 곳으로 이동해 110에 전화하세요. 상대를 쫓지 말고 시간, 장소, 인상착의를 기록하며 증거를 보관하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Ve a un lugar seguro y llama al 110. No te enfrentes a nadie. Anota hora, lugar y aspecto, y conserva pruebas."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Mettez-vous en sécurité et appelez le 110. Ne confrontez personne. Notez l'heure, le lieu et l'apparence, et gardez les preuves."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Gehen Sie an einen sicheren Ort und rufen Sie 110. Konfrontieren Sie niemanden. Notieren Sie Zeit, Ort und Aussehen und sichern Sie Belege."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ไปยังที่ปลอดภัยและโทร 110 อย่าเผชิญหน้ากับผู้ต้องสงสัย จดเวลา สถานที่ ลักษณะ และเก็บหลักฐาน"
+                }
+            }
+        }
+    },
+    "emergency.departure.detail": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Tell your airline and the airport information desk. Submit a police report before leaving Japan and keep the report number, contact details and online tracking links."
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "航空会社と空港案内所へ相談してください。出国前に遺失届を出し、受理番号・連絡先・追跡ページを保存します。"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "联系航空公司和机场问讯处。离境前提交遗失申报，并保存受理编号、联系方式和查询链接。"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "聯絡航空公司和機場詢問處。離境前提交遺失申報，並保存受理編號、聯絡方式和查詢連結。"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "항공사와 공항 안내소에 문의하세요. 출국 전에 분실 신고를 하고 접수 번호, 연락처와 조회 링크를 보관하세요."
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Habla con la aerolínea y el mostrador del aeropuerto. Denuncia la pérdida antes de salir y guarda el número, contactos y enlaces de seguimiento."
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Contactez la compagnie et le comptoir de l'aéroport. Déclarez la perte avant de partir et gardez le numéro, les contacts et les liens de suivi."
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Kontaktieren Sie Fluggesellschaft und Flughafeninformation. Melden Sie den Verlust vor der Ausreise und speichern Sie Nummer, Kontakte und Tracking-Links."
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ติดต่อสายการบินและประชาสัมพันธ์สนามบิน แจ้งของหายก่อนออกจากญี่ปุ่น และเก็บเลขรับเรื่อง ช่องทางติดต่อ และลิงก์ติดตาม"
+                }
+            }
+        }
+    },
+    "found.transport": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "On a train, bus or taxi: give it to staff or the driver"
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "電車・バス・タクシー内：係員または運転手へ渡す"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "在电车、公交车或出租车内：交给工作人员或司机"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "在電車、巴士或的士內：交給工作人員或司機"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "전철·버스·택시 안: 직원이나 기사에게 전달"
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "En tren, autobús o taxi: entrégalo al personal o conductor"
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Dans un train, bus ou taxi : remettez-le au personnel ou au conducteur"
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "In Zug, Bus oder Taxi: Personal oder Fahrer übergeben"
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "บนรถไฟ รถบัส หรือแท็กซี่: ส่งให้เจ้าหน้าที่หรือคนขับ"
+                }
+            }
+        }
+    },
+    "found.facility": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "At a hotel, museum or airport: take it to the information desk"
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ホテル・施設・空港内：受付または案内所へ渡す"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "在酒店、场馆或机场：交给前台或问讯处"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "在酒店、場館或機場：交給櫃檯或詢問處"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "호텔·시설·공항: 안내 데스크에 전달"
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "En un hotel, museo o aeropuerto: llévalo al mostrador de información"
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Dans un hôtel, musée ou aéroport : remettez-le à l'accueil"
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "In Hotel, Museum oder Flughafen: am Informationsschalter abgeben"
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "ในโรงแรม พิพิธภัณฑ์ หรือสนามบิน: ส่งให้ประชาสัมพันธ์"
+                }
+            }
+        }
+    },
+    "found.cash": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Cash: do not keep it; take it to a police box"
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "現金：持ち帰らず、交番へ届ける"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "现金：不要自行保管，交到派出所"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "現金：不要自行保管，交到派出所"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "현금: 보관하지 말고 파출소에 전달"
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Dinero en efectivo: no lo guardes; llévalo a un puesto de policía"
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Espèces : ne les gardez pas ; apportez-les à un poste de police"
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Bargeld: nicht behalten, sondern zu einem Koban bringen"
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "เงินสด: อย่าเก็บไว้ ให้นำไปส่งป้อมตำรวจ"
+                }
+            }
+        }
+    },
+    "found.valuable": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Wallet, phone, passport or ID: take it to police promptly"
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "財布・スマホ・旅券・身分証：早めに警察へ届ける"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "钱包、手机、护照或证件：尽快交给警方"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "錢包、手機、護照或證件：儘快交給警方"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "지갑·휴대전화·여권·신분증: 신속히 경찰에 전달"
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Cartera, teléfono, pasaporte o identificación: llévalo pronto a la policía"
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Portefeuille, téléphone, passeport ou pièce d'identité : apportez-les rapidement à la police"
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Brieftasche, Telefon, Pass oder Ausweis: zeitnah zur Polizei bringen"
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "กระเป๋าสตางค์ โทรศัพท์ หนังสือเดินทาง หรือบัตร: ส่งตำรวจโดยเร็ว"
+                }
+            }
+        }
+    },
+    "found.dangerous": {
+        "localizations": {
+            "en": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Suspicious or dangerous item: do not touch it; call 110"
+                }
+            },
+            "ja": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "不審物・危険物：触らずに110番へ連絡する"
+                }
+            },
+            "zh-Hans": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "可疑或危险物品：不要触碰，拨打110"
+                }
+            },
+            "zh-Hant": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "可疑或危險物品：不要觸碰，撥打110"
+                }
+            },
+            "ko": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "수상하거나 위험한 물건: 만지지 말고 110에 신고"
+                }
+            },
+            "es": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Objeto sospechoso o peligroso: no lo toques; llama al 110"
+                }
+            },
+            "fr": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Objet suspect ou dangereux : ne le touchez pas ; appelez le 110"
+                }
+            },
+            "de": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "Verdächtiger oder gefährlicher Gegenstand: nicht berühren, 110 anrufen"
+                }
+            },
+            "th": {
+                "stringUnit": {
+                    "state": "translated",
+                    "value": "สิ่งของน่าสงสัยหรืออันตราย: อย่าแตะต้อง โทร 110"
+                }
+            }
+        }
+    },
                     "app.name":  {
                                      "localizations":  {
                                                            "en":  {
