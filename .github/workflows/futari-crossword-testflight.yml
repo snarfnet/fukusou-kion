@@ -177,6 +177,15 @@ jobs:
           . .venv/bin/activate
           python ../YakushoTetsuzukiNavi/scripts/wait_for_testflight_build.py
 
+      - name: Make build available to internal testers
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          BETA_GROUP_NAME: "Internal Testers"
+        run: |
+          . .venv/bin/activate
+          python scripts/configure_testflight_build.py
+
       - name: Upload IPA artifact
         if: always()
         uses: actions/upload-artifact@v4
