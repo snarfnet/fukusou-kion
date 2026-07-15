@@ -29,6 +29,7 @@ jobs:
       APP_BUNDLE_ID: com.tokyonasu.futaricrossword
       APP_NAME: "ふたりでクロスワード"
       APP_SKU: futari-crossword-ios
+      APP_ID: "6791103112"
       BUNDLE_NAME: FutariCrossword
       PROFILE_NAME: "FutariCrossword App Store"
       APP_VERSION: ${{ inputs.version || '1.0' }}
@@ -103,8 +104,7 @@ jobs:
         run: |
           . .venv/bin/activate
           python ../YakushoTetsuzukiNavi/scripts/ensure_asc_app.py | tee /tmp/futari-app.log
-          grep '^APP_ID=' /tmp/futari-app.log | tail -1 >> "$GITHUB_ENV"
-          test -n "$(grep '^APP_ID=' /tmp/futari-app.log | tail -1)"
+          grep -q '^APP_ID=6791103112$' /tmp/futari-app.log
 
       - name: Prepare provisioning profile
         env:
