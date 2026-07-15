@@ -119,7 +119,7 @@ jobs:
           xcodebuild test \
             -project FutariCrossword.xcodeproj \
             -scheme FutariCrossword \
-            -destination "platform=iOS Simulator,name=iPhone 16 Pro" \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Archive
