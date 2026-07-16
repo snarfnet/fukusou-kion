@@ -11,6 +11,7 @@ final class GameViewModel: ObservableObject {
     @Published var streak = 0
     @Published var isShowingSetup = true
     @Published var feedback: String?
+    @Published var completionCelebrationID: UUID?
     private var recentLines: [String] = []
 
     var selectedEntry: CrosswordEntry? { puzzle?.entries.first { $0.id == selectedEntryID } }
@@ -21,7 +22,7 @@ final class GameViewModel: ObservableObject {
 
     func generate() {
         puzzle = CrosswordGenerator().generate(size: selectedSize)
-        answers = [:]; streak = 0; feedback = nil; isShowingSetup = false
+        answers = [:]; streak = 0; feedback = nil; completionCelebrationID = nil; isShowingSetup = false
         selectedEntryID = puzzle?.entries.first?.id
         selectedPoint = puzzle?.entries.first?.start
         speak(.generated)
@@ -49,7 +50,14 @@ final class GameViewModel: ObservableObject {
             }
             moveNext(in: entry, puzzle: puzzle)
         }
-        if isComplete { speak(.completed) }
+        if isComplete, completionCelebrationID == nil {
+            completionCelebrationID = UUID()
+            speak(.completed)
+        }
+    }
+
+    func finishCelebration() {
+        completionCelebrationID = nil
     }
 
     func deleteCurrent() {

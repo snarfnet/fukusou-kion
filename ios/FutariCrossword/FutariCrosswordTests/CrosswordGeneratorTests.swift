@@ -37,4 +37,17 @@ final class CrosswordGeneratorTests: XCTestCase {
         game.deleteCurrent()
         XCTAssertNil(game.answers[entry.points[1]])
     }
+
+    @MainActor
+    func testHeartCelebrationOnlyAfterCorrectCompletion() {
+        let game = GameViewModel()
+        game.selectedSize = 1
+        game.generate()
+        XCTAssertNil(game.completionCelebrationID)
+        guard let entry = game.selectedEntry, let answer = entry.word.answer.first else {
+            return XCTFail("Expected a one-character entry")
+        }
+        game.type(answer)
+        XCTAssertNotNil(game.completionCelebrationID)
+    }
 }

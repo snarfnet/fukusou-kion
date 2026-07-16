@@ -9,6 +9,14 @@ struct ContentView: View {
                 Color(red: 0.10, green: 0.06, blue: 0.04).ignoresSafeArea()
                 if game.isShowingSetup { setup }
                 else { gameScreen }
+                if let celebrationID = game.completionCelebrationID {
+                    CompletionHeartView(praise: game.companion.text) {
+                        game.finishCelebration()
+                    }
+                    .id(celebrationID)
+                    .transition(.opacity)
+                    .zIndex(10)
+                }
             }
             .toolbar(.hidden, for: .navigationBar)
         }
