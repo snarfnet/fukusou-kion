@@ -50,4 +50,17 @@ final class CrosswordGeneratorTests: XCTestCase {
         game.type(answer)
         XCTAssertNotNil(game.completionCelebrationID)
     }
+
+    @MainActor
+    func testHintCanTriggerCompletionCelebration() {
+        let game = GameViewModel()
+        game.selectedSize = 1
+        game.generate()
+        game.hint()
+        XCTAssertTrue(game.isComplete)
+        XCTAssertNotNil(game.completionCelebrationID)
+        if case .completed = game.companion.event {} else {
+            XCTFail("Expected the completion praise")
+        }
+    }
 }

@@ -50,10 +50,7 @@ final class GameViewModel: ObservableObject {
             }
             moveNext(in: entry, puzzle: puzzle)
         }
-        if isComplete, completionCelebrationID == nil {
-            completionCelebrationID = UUID()
-            speak(.completed)
-        }
+        celebrateIfComplete()
     }
 
     func finishCelebration() {
@@ -76,6 +73,7 @@ final class GameViewModel: ObservableObject {
         guard let entry = selectedEntry, let puzzle else { return }
         if let point = entry.points.first(where: { answers[$0] != puzzle.solution[$0.row][$0.column] }), let letter = puzzle.solution[point.row][point.column] {
             answers[point] = letter; selectedPoint = point; speak(.hint)
+            celebrateIfComplete()
         }
     }
 
@@ -83,7 +81,15 @@ final class GameViewModel: ObservableObject {
         guard let puzzle else { return }
         let wrong = answers.filter { puzzle.solution[$0.key.row][$0.key.column] != $0.value }.count
         feedback = wrong == 0 ? "ここまで全部合ってるよ" : "違うマスが\(wrong)個あるみたい"
-        speak(wrong == 0 ? .correct : .incorrect)
+        if !celebrateIfComplete() { speak(wrong == 0 ? .correct : .incorrect) }
+    }
+
+    @discardableResult
+    private func celebrateIfComplete() -> Bool {
+        guard isComplete, completionCelebrationID == nil else { return isComplete }
+        speak(.completed)
+        completionCelebrationID = UUID()
+        return true
     }
 
     private func moveNext(in entry: CrosswordEntry, puzzle: CrosswordPuzzle) {

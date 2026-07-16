@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var game = GameViewModel()
+    @State private var keyboardFocused = false
 
     var body: some View {
         NavigationStack {
@@ -46,7 +47,7 @@ struct ContentView: View {
     private var gameScreen: some View {
         GeometryReader { proxy in
             let compact = proxy.size.height < 700
-            let gridHeight = max(128, min(proxy.size.width - 16, proxy.size.height * (compact ? 0.22 : 0.25)))
+            let gridHeight = max(180, min(proxy.size.width - 16, proxy.size.height * (compact ? 0.34 : 0.38)))
             VStack(spacing: compact ? 4 : 7) {
                 HStack {
                     Button { game.isShowingSetup = true } label: { Image(systemName: "chevron.left") }
@@ -56,19 +57,26 @@ struct ContentView: View {
                 .frame(height: compact ? 34 : 40)
                 .foregroundStyle(.cream)
                 .padding(.horizontal)
-                CompanionView(line: game.companion, height: compact ? 116 : 138, compact: true)
+                CompanionView(line: game.companion, height: compact ? 156 : 205, compact: true)
                     .padding(.horizontal)
                 if let puzzle = game.puzzle {
-                    CrosswordGridView(puzzle: puzzle, answers: game.answers, selectedEntry: game.selectedEntry, selectedPoint: game.selectedPoint, onSelect: game.select)
+                    CrosswordGridView(puzzle: puzzle, answers: game.answers, selectedEntry: game.selectedEntry, selectedPoint: game.selectedPoint) { point in
+                        game.select(point)
+                        keyboardFocused = true
+                    }
                         .frame(height: gridHeight)
                         .layoutPriority(2)
                         .padding(.horizontal, 8)
                 }
                 cluePanel(compact: compact)
-                KanaKeyboardView(onInput: game.type, onDelete: game.deleteCurrent, compact: compact)
-                    .padding(.horizontal, 8)
+                NativeKanaInput(isFocused: $keyboardFocused, onInput: { character in
+                    game.type(character)
+                    if game.isComplete { keyboardFocused = false }
+                }, onDelete: game.deleteCurrent)
+                    .frame(width: 1, height: 1)
             }
             .padding(.vertical, 3)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
 

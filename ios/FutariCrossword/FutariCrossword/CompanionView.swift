@@ -12,6 +12,7 @@ struct CompanionView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .offset(y: compact ? 22 : 0)
                 .clipped()
                 .saturation(line.expression == .worried ? 0.72 : 1)
                 .brightness(line.expression == .delighted ? 0.06 : 0)
