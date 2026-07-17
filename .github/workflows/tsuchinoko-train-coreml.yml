@@ -1,0 +1,57 @@
+name: Train Tsuchinoko Core ML
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/simple-traffic-survey-production
+    paths:
+      - ".github/workflows/tsuchinoko-train-coreml.yml"
+      - "ml/tsuchinoko/**"
+
+jobs:
+  train-coreml:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ml/tsuchinoko
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_APP=$(ls /Applications/ | grep -E "^Xcode_2[6-9]|^Xcode_[3-9][0-9]" | sort -V | tail -1)
+          if [ -n "$XCODE_APP" ]; then
+            sudo xcode-select -s "/Applications/$XCODE_APP"
+          else
+            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          fi
+          xcodebuild -version
+
+      - name: Prepare dataset
+        run: |
+          python3 -m pip install --break-system-packages pillow
+          python3 scripts/prepare_dataset.py
+          python3 scripts/augment_dataset.py
+          python3 scripts/dataset_report.py
+          python3 scripts/quality_check.py
+
+      - name: Train Create ML image classifier
+        run: swift scripts/train_create_ml.swift
+
+      - name: Evaluate Core ML model
+        run: |
+          swift scripts/evaluate_coreml.swift
+          python3 scripts/collect_hard_examples.py
+
+      - name: Upload model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TsuchinokoCandidate-CoreML
+          path: |
+            ml/tsuchinoko/models/TsuchinokoCandidate.mlmodel
+            ml/tsuchinoko/models/evaluation.csv
+            ml/tsuchinoko/models/evaluation.json
+            ml/tsuchinoko/models/hard_examples
