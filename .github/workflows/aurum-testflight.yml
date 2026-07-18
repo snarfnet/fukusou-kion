@@ -15,7 +15,6 @@ on:
     branches:
       - codex/aurum-mystic-build
     paths:
-      - ".github/workflows/aurum-testflight.yml"
       - "ios/Aurum/**"
 
 concurrency:
@@ -72,6 +71,7 @@ jobs:
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
           REPLACE_DISTRIBUTION_CERTIFICATE: "false"
+          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "true"
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
