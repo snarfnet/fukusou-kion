@@ -297,7 +297,6 @@ def main():
     ensure_price(app_id)
     update_version(version_id)
     update_metadata(version_id)
-    ensure_no_data_collected(app_id)
     build_id = base.wait_for_build(app_id)
     base.upload_screenshots(version_id)
     print("Waiting for screenshot processing...")

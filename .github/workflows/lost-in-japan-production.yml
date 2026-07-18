@@ -43,31 +43,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pyjwt cryptography requests
 
-      - name: Build screenshot app
-        run: |
-          xcodegen generate
-          xcodebuild build \
-            -project LostInJapan.xcodeproj \
-            -scheme LostInJapan \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -destination "generic/platform=iOS Simulator" \
-            -derivedDataPath build/simulator \
-            CODE_SIGNING_ALLOWED=NO \
-            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID"
-
-      - name: Capture App Store screenshots
-        run: |
-          APP_PATH="$(find build/simulator/Build/Products -path '*Debug-iphonesimulator/Lost in Japan.app' -print -quit)"
-          test -n "$APP_PATH"
-          python3 Scripts/capture_store_screenshots.py "$APP_PATH" MarketingAssets/Screenshots
-          find MarketingAssets/Screenshots -name '*.png' -print
-
-      - name: Upload screenshot artifact
-        uses: actions/upload-artifact@v4
+      - name: Download generated App Store screenshots
+        uses: actions/download-artifact@v4
         with:
           name: lost-in-japan-app-store-screenshots
-          path: ios/LostInJapan/MarketingAssets/Screenshots/**/*.png
+          path: ios/LostInJapan/MarketingAssets/Screenshots
+          run-id: 29633341264
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare App Store Connect credentials
         env:
