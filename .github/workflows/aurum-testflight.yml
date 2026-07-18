@@ -1,0 +1,139 @@
+name: Aurum TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Marketing version"
+        required: false
+        default: "1.0"
+      build_number:
+        description: "Build number; blank uses GitHub run number plus 100"
+        required: false
+        default: ""
+  push:
+    branches:
+      - codex/aurum-mystic-build
+    paths:
+      - "ios/Aurum/**"
+
+concurrency:
+  group: aurum-testflight
+  cancel-in-progress: false
+
+jobs:
+  upload-testflight:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/Aurum
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.aurum
+      APP_NAME: "Aurum 古の錬金帖"
+      APP_SKU: aurum-ios
+      BUNDLE_NAME: Aurum
+      PROFILE_NAME: "Aurum App Store"
+      AURUM_VERSION: ${{ inputs.version || '1.0' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+      - name: Create distribution certificate
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+          REPLACE_DISTRIBUTION_CERTIFICATE: "false"
+          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "false"
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/aurum-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/aurum-cert.log >> "$GITHUB_ENV"
+          grep '^ASC_CERTIFICATE_ID=' /tmp/aurum-cert.log >> "$GITHUB_ENV"
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/ensure_asc_app.py | tee /tmp/aurum-app.log
+          grep '^APP_ID=' /tmp/aurum-app.log | tail -1 >> "$GITHUB_ENV"
+          grep -q '^APP_ID=' /tmp/aurum-app.log
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Set build number
+        run: |
+          if [ -n "${{ inputs.build_number }}" ]; then BUILD_NUM="${{ inputs.build_number }}"; else BUILD_NUM=$((GITHUB_RUN_NUMBER + 100)); fi
+          echo "BUILD_NUM=$BUILD_NUM" >> "$GITHUB_ENV"
+          echo "Uploading version $AURUM_VERSION ($BUILD_NUM)"
+      - name: Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive -project Aurum.xcodeproj -scheme Aurum -configuration Release \
+            -destination "generic/platform=iOS" -archivePath build/Aurum.xcarchive \
+            -allowProvisioningUpdates -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            MARKETING_VERSION="$AURUM_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUM"
+      - name: Export and upload IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild -exportArchive -archivePath build/Aurum.xcarchive -exportPath build/export \
+            -exportOptionsPlist export_options.plist -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+      - name: Verify TestFlight processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_testflight_build.py
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Aurum-ipa
+          path: ios/Aurum/build/export/*.ipa
+          if-no-files-found: ignore

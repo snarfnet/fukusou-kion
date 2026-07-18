@@ -1,0 +1,43 @@
+name: Aurum iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ios/Aurum/**"
+      - ".github/workflows/aurum-ios-build.yml"
+
+concurrency:
+  group: aurum-ios-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ios/Aurum
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project Aurum.xcodeproj \
+            -scheme Aurum \
+            -configuration Debug \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO
