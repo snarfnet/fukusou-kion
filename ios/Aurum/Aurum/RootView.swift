@@ -355,6 +355,43 @@ struct AboutView: View {
                         .overlay(Circle().stroke(AurumTheme.gold.opacity(0.55), lineWidth: 1).frame(width: 190, height: 190))
                     Text("占いではなく、変容のための読書具").font(.system(size: 25, weight: .semibold, design: .serif)).foregroundStyle(AurumTheme.parchment)
                     Text("Aurumは、古い錬金術書やヘルメス思想に見られる『変容』『器』『照応』『象徴』を、短い自己省察へ翻訳したアプリです。未来を予言したり、医学的・宗教的な効能をうたったりしません。").foregroundStyle(AurumTheme.muted).lineSpacing(6)
+
+                    AboutChapter(
+                        mark: "sparkles",
+                        title: "Aurumという名",
+                        body: "Aurumはラテン語で『金』を意味します。ここでの金は、富や運勢ではありません。ありふれた経験を見つめ直し、そこから自分にとって確かな意味を取り出す営みの象徴です。答えを授けるアプリではなく、自分の言葉を見つけるための静かな器として設計しました。"
+                    )
+
+                    AboutChapter(
+                        mark: "circle.hexagongrid.fill",
+                        title: "四つの色をめぐる道",
+                        body: "書庫は、黒化・白化・黄化・赤化という錬金術の色彩的な流れを手がかりにしています。黒化で混乱をほどき、白化で事実と感情を澄ませ、黄化で小さな兆しを見いだし、赤化で気づきを日常の行いへ結び直します。これは性格診断や運命の段階ではなく、考えを整理するための往復可能な地図です。"
+                    )
+
+                    AboutChapter(
+                        mark: "hourglass",
+                        title: "三分で終わる小さな実践",
+                        body: "知恵を読むだけで終わらせず、30秒の呼吸、2分の具体的な行動、30秒の一行記録へつなげます。短さは簡略化のためではなく、忙しい日にも実行できる大きさへ知恵を戻すためです。続けることより、今日一度だけ丁寧に試すことを大切にしています。"
+                    )
+
+                    AboutChapter(
+                        mark: "book.closed.fill",
+                        title: "原典との距離",
+                        body: "収録文は古典の逐語訳ではありません。歴史的な象徴や操作を、現代の日常で安全に使える問いと行動へ再構成しています。異なる時代の宗教観や自然観を事実として押しつけず、出典への敬意と、現代の利用者が自分で考える余白の両方を守ります。"
+                    )
+
+                    AboutChapter(
+                        mark: "hand.raised.fill",
+                        title: "このアプリがしないこと",
+                        body: "未来の予言、吉凶の判定、診断、治療、宗教的な救済は行いません。表示される問いに唯一の正解はなく、実践を途中でやめても失敗にはなりません。強い苦痛を感じるときは使用を止め、必要に応じて身近な人や専門家へ相談してください。"
+                    )
+
+                    AboutChapter(
+                        mark: "lock.fill",
+                        title: "静かに使える設計",
+                        body: "お気に入りと錬金帖の記録は端末内に保存され、アカウント登録は不要です。記録は共有操作を選んだときだけ書き出されます。通知や連続日数に追い立てられるのではなく、自分の速度で書庫へ戻れる道具を目指しています。"
+                    )
+
                     Text("主な参照資料").font(.caption).tracking(2).foregroundStyle(AurumTheme.gold)
                     Text("Alchemy: Ancient and Modern — Herbert Stanley Redgrove\nThe Pictorial Symbols of Alchemy — Arthur Edward Waite\nCorpus Hermetica\nSymbol and the Symbolic\nSeven Hermetic Letters")
                         .font(.system(.callout, design: .serif)).foregroundStyle(AurumTheme.parchment).lineSpacing(6)
@@ -363,5 +400,23 @@ struct AboutView: View {
                 }.padding(24)
             }
         }.navigationTitle("このアプリの由来")
+    }
+}
+
+private struct AboutChapter: View {
+    let mark: String
+    let title: LocalizedStringKey
+    let body: LocalizedStringKey
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label(title, systemImage: mark)
+                .font(.system(.headline, design: .serif, weight: .semibold))
+                .foregroundStyle(AurumTheme.gold)
+            Text(body)
+                .foregroundStyle(AurumTheme.muted)
+                .lineSpacing(6)
+        }
+        .modifier(MysticCardModifier())
     }
 }
