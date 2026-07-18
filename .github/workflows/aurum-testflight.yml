@@ -11,6 +11,12 @@ on:
         description: "Build number; blank uses GitHub run number plus 100"
         required: false
         default: ""
+  push:
+    branches:
+      - codex/aurum-mystic-build
+    paths:
+      - ".github/workflows/aurum-testflight.yml"
+      - "ios/Aurum/**"
 
 concurrency:
   group: aurum-testflight
