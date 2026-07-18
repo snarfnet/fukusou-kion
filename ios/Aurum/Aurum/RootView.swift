@@ -84,6 +84,20 @@ struct PracticeView: View {
     @FocusState private var noteIsFocused: Bool
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
+    private var currentStepTitle: LocalizedStringKey {
+        if !running { return "始める前に" }
+        if seconds > 150 { return "一、呼吸を整える" }
+        if seconds > 30 { return "二、今日の実践" }
+        return "三、気づきを記す"
+    }
+
+    private var currentStepBody: String {
+        if !running { return String(localized: "静かに座り、下の三つの段階を確認してください。") }
+        if seconds > 150 { return String(localized: "肩の力を抜き、ゆっくり三回呼吸します。答えを急がなくて大丈夫です。") }
+        if seconds > 30 { return wisdom.practice }
+        return String(localized: "いま気づいたことを、正解を探さず一行だけ書いてください。")
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -93,7 +107,32 @@ struct PracticeView: View {
                         StageSeal(stage: wisdom.stage)
                         Text(wisdom.practice).font(.system(size: 23, design: .serif)).multilineTextAlignment(.center).foregroundStyle(AurumTheme.parchment).padding(.horizontal)
                         Text(String(format: "%d:%02d", seconds / 60, seconds % 60)).font(.system(size: 52, weight: .light, design: .monospaced)).foregroundStyle(AurumTheme.gold)
-                        Button(running ? "静かに続ける" : "計時を始める") { running = true }.modifier(GoldCapsule())
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(currentStepTitle)
+                                .font(.system(.headline, design: .serif, weight: .semibold))
+                                .foregroundStyle(AurumTheme.gold)
+                            Text(currentStepBody)
+                                .foregroundStyle(AurumTheme.parchment)
+                                .lineSpacing(5)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .modifier(MysticCardModifier())
+
+                        if !running {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Label("最初の30秒　呼吸を整える", systemImage: "wind")
+                                Label("次の2分　示された実践を行う", systemImage: "hourglass")
+                                Label("最後の30秒　気づきを一行書く", systemImage: "pencil.line")
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(AurumTheme.muted)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+
+                        Button(running ? "実践中" : "三分の実践を始める") { running = true }
+                            .modifier(GoldCapsule())
+                            .disabled(running)
                         TextField("気づきを一行だけ", text: $note, axis: .vertical)
                             .focused($noteIsFocused)
                             .submitLabel(.done)

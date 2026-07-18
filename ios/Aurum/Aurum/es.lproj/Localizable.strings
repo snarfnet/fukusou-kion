@@ -51,6 +51,17 @@
 "お気に入りだけ" = "Solo favoritos";
 "知恵を検索" = "Buscar reflexiones";
 "完了" = "Listo";
+"始める前に" = "Antes de empezar";
+"一、呼吸を整える" = "1. Calma la respiración";
+"二、今日の実践" = "2. Práctica de hoy";
+"三、気づきを記す" = "3. Anota tu hallazgo";
+"静かに座り、下の三つの段階を確認してください。" = "Siéntate en silencio y revisa las tres etapas.";
+"肩の力を抜き、ゆっくり三回呼吸します。答えを急がなくて大丈夫です。" = "Relaja los hombros y respira lentamente tres veces. No necesitas apresurar la respuesta.";
+"いま気づいたことを、正解を探さず一行だけ書いてください。" = "Escribe en una línea lo que notaste, sin buscar la respuesta correcta.";
+"最初の30秒　呼吸を整える" = "Primeros 30 segundos: calma la respiración";
+"次の2分　示された実践を行う" = "Siguientes 2 minutos: realiza la práctica";
+"最後の30秒　気づきを一行書く" = "Últimos 30 segundos: escribe un hallazgo";
+"実践中" = "Práctica en curso";
 "この実践を始める" = "Iniciar esta práctica";
 "お気に入りから外す" = "Quitar de favoritos";
 "お気に入りに追加" = "Añadir a favoritos";

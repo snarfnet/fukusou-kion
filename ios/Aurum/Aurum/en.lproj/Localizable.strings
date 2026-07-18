@@ -71,6 +71,17 @@
 "実践日数 %d日" = "%d days practiced";
 "錬金帖を書き出す" = "Export journal";
 "完了" = "Done";
+"始める前に" = "Before you begin";
+"一、呼吸を整える" = "1. Settle your breath";
+"二、今日の実践" = "2. Today's practice";
+"三、気づきを記す" = "3. Record your insight";
+"静かに座り、下の三つの段階を確認してください。" = "Sit quietly and review the three stages below.";
+"肩の力を抜き、ゆっくり三回呼吸します。答えを急がなくて大丈夫です。" = "Relax your shoulders and take three slow breaths. There is no need to hurry toward an answer.";
+"いま気づいたことを、正解を探さず一行だけ書いてください。" = "Write one line about what you noticed, without searching for the right answer.";
+"最初の30秒　呼吸を整える" = "First 30 seconds: settle your breath";
+"次の2分　示された実践を行う" = "Next 2 minutes: follow the practice";
+"最後の30秒　気づきを一行書く" = "Last 30 seconds: write one insight";
+"実践中" = "Practice in progress";
 "検索を消去" = "Clear search";
 "%lld件" = "%lld entries";
 "お気に入りはまだありません" = "No favorites yet";
