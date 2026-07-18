@@ -7,6 +7,11 @@ on:
         description: TestFlight build number
         required: true
         default: "108"
+  push:
+    branches:
+      - "codex/lost-in-japan-testflight"
+    paths:
+      - ".github/workflows/lost-in-japan-production.yml"
 
 concurrency:
   group: lost-in-japan-production
@@ -22,7 +27,7 @@ jobs:
     env:
       APP_BUNDLE_ID: com.tokyonasu.lostinjapan
       APP_VERSION: "1.0"
-      BUILD_NUMBER: ${{ inputs.build_number }}
+      BUILD_NUMBER: ${{ inputs.build_number || '108' }}
 
     steps:
       - name: Checkout
