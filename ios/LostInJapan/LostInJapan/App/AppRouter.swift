@@ -5,7 +5,22 @@ enum AppRoute: Hashable {
 }
 
 struct AppRouterView: View {
-    @State private var path: [AppRoute] = []
+    @State private var path: [AppRoute]
+
+    init() {
+        let arguments = ProcessInfo.processInfo.arguments
+        let route: AppRoute?
+        if let index = arguments.firstIndex(of: "-screenshotRoute"), arguments.indices.contains(index + 1) {
+            switch arguments[index + 1] {
+            case "emergency": route = .emergency
+            case "found": route = .found
+            default: route = nil
+            }
+        } else {
+            route = nil
+        }
+        _path = State(initialValue: route.map { [$0] } ?? [])
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
