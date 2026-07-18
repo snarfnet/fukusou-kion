@@ -81,7 +81,7 @@ jobs:
           printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/distribution.p12
           security import /tmp/distribution.p12 -k build.keychain -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
-          openssl pkcs12 -in /tmp/distribution.p12 -clcerts -nokeys -passin "pass:$IOS_DISTRIBUTION_P12_PASSWORD" -out /tmp/distribution.pem
+          openssl pkcs12 -legacy -in /tmp/distribution.p12 -clcerts -nokeys -passin "pass:$IOS_DISTRIBUTION_P12_PASSWORD" -out /tmp/distribution.pem
           openssl x509 -in /tmp/distribution.pem -outform DER -out /tmp/distribution.cer
           CERT_SHA1=$(shasum -a 1 /tmp/distribution.cer | awk '{print toupper($1)}')
           echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
