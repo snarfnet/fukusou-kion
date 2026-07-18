@@ -113,7 +113,11 @@ struct LibraryView: View {
     private var results: [Wisdom] {
         Library.wisdom.filter { wisdom in
             (!favoritesOnly || store.isFavorite(wisdom)) &&
-            (query.isEmpty || wisdom.title.localizedCaseInsensitiveContains(query) || wisdom.reflection.localizedCaseInsensitiveContains(query))
+            (query.isEmpty ||
+             wisdom.title.localizedCaseInsensitiveContains(query) ||
+             wisdom.sourceIdea.localizedCaseInsensitiveContains(query) ||
+             wisdom.reflection.localizedCaseInsensitiveContains(query) ||
+             wisdom.practice.localizedCaseInsensitiveContains(query))
         }
     }
 
@@ -121,31 +125,79 @@ struct LibraryView: View {
         ZStack {
             ManuscriptBackground()
             List {
-                Toggle(isOn: $favoritesOnly) {
-                    Label("お気に入りだけ", systemImage: "bookmark.fill")
-                        .foregroundStyle(AurumTheme.gold)
-                }
-                .tint(AurumTheme.gold)
-                ForEach(Stage.allCases, id: \.self) { stage in
-                    Section {
-                        ForEach(results.filter { $0.stage == stage }) { wisdom in
-                            NavigationLink { WisdomDetailView(wisdom: wisdom) } label: {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Text(wisdom.title).font(.system(.headline, design: .serif)).foregroundStyle(AurumTheme.parchment)
-                                        Text(wisdom.reflection).font(.caption).foregroundStyle(AurumTheme.muted).lineLimit(2)
-                                    }
-                                    Spacer()
-                                    if store.isFavorite(wisdom) { Image(systemName: "bookmark.fill").foregroundStyle(AurumTheme.gold) }
-                                }.padding(.vertical, 5)
+                Section {
+                    HStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(AurumTheme.gold)
+                        TextField("知恵を検索", text: $query)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .foregroundStyle(AurumTheme.parchment)
+                        if !query.isEmpty {
+                            Button { query = "" } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(AurumTheme.muted)
                             }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("検索を消去")
                         }
-                    } header: { Label("\(stage.displayName)・\(stage.subtitle)", systemImage: stage.mark).foregroundStyle(AurumTheme.gold) }
+                    }
+                    .padding(.vertical, 8)
+
+                    HStack(spacing: 12) {
+                        Label("お気に入りだけ", systemImage: favoritesOnly ? "bookmark.fill" : "bookmark")
+                            .foregroundStyle(AurumTheme.gold)
+                        Spacer()
+                        Text("\(results.count)件")
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(AurumTheme.muted)
+                        Toggle("", isOn: $favoritesOnly)
+                            .labelsHidden()
+                            .tint(AurumTheme.gold)
+                    }
+                }
+
+                if results.isEmpty {
+                    ContentUnavailableView(
+                        favoritesOnly ? "お気に入りはまだありません" : "知恵が見つかりません",
+                        systemImage: favoritesOnly ? "bookmark" : "magnifyingglass",
+                        description: Text(favoritesOnly ? "書庫の項目を開き、しおりを付けてください。" : "別の言葉で検索してください。")
+                    )
+                    .listRowBackground(Color.clear)
+                }
+
+                ForEach(Stage.allCases, id: \.self) { stage in
+                    let stageResults = results.filter { $0.stage == stage }
+                    if !stageResults.isEmpty {
+                        Section {
+                            ForEach(stageResults) { wisdom in
+                                NavigationLink { WisdomDetailView(wisdom: wisdom) } label: {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            Text(wisdom.title).font(.system(.headline, design: .serif)).foregroundStyle(AurumTheme.parchment)
+                                            Text(wisdom.reflection).font(.caption).foregroundStyle(AurumTheme.muted).lineLimit(2)
+                                        }
+                                        Spacer()
+                                        if store.isFavorite(wisdom) { Image(systemName: "bookmark.fill").foregroundStyle(AurumTheme.gold) }
+                                    }
+                                    .padding(.vertical, 5)
+                                }
+                                .swipeActions(edge: .trailing) {
+                                    Button { store.toggleFavorite(wisdom) } label: {
+                                        Label(
+                                            store.isFavorite(wisdom) ? "お気に入りから外す" : "お気に入りに追加",
+                                            systemImage: store.isFavorite(wisdom) ? "bookmark.slash" : "bookmark.fill"
+                                        )
+                                    }
+                                    .tint(AurumTheme.gold)
+                                }
+                            }
+                        } header: { Label("\(stage.displayName)・\(stage.subtitle)", systemImage: stage.mark).foregroundStyle(AurumTheme.gold) }
+                    }
                 }
             }.scrollContentBackground(.hidden)
         }
         .navigationTitle("変容の書庫")
-        .searchable(text: $query, prompt: "知恵を検索")
     }
 }
 
