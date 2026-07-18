@@ -70,6 +70,7 @@
 "日" = "days";
 "実践日数 %d日" = "%d days practiced";
 "錬金帖を書き出す" = "Export journal";
+"完了" = "Done";
 "検索を消去" = "Clear search";
 "%lld件" = "%lld entries";
 "お気に入りはまだありません" = "No favorites yet";

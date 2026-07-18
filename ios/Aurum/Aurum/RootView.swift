@@ -81,25 +81,53 @@ struct PracticeView: View {
     @State private var note = ""
     @State private var seconds = 180
     @State private var running = false
+    @FocusState private var noteIsFocused: Bool
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         NavigationStack {
             ZStack {
                 ManuscriptBackground()
-                VStack(spacing: 24) {
-                    StageSeal(stage: wisdom.stage)
-                    Text(wisdom.practice).font(.system(size: 23, design: .serif)).multilineTextAlignment(.center).foregroundStyle(AurumTheme.parchment).padding(.horizontal)
-                    Text(String(format: "%d:%02d", seconds / 60, seconds % 60)).font(.system(size: 52, weight: .light, design: .monospaced)).foregroundStyle(AurumTheme.gold)
-                    Button(running ? "静かに続ける" : "計時を始める") { running = true }.modifier(GoldCapsule())
-                    TextField("気づきを一行だけ", text: $note, axis: .vertical)
-                        .lineLimit(3...6).padding().background(AurumTheme.charcoal).clipShape(RoundedRectangle(cornerRadius: 16)).foregroundStyle(AurumTheme.parchment)
-                    Button("錬金帖に封じる") { store.save(wisdom: wisdom, note: note); dismiss() }
-                        .font(.system(.body, design: .serif, weight: .semibold)).foregroundStyle(AurumTheme.gold)
-                }.padding(24)
+                ScrollView {
+                    VStack(spacing: 24) {
+                        StageSeal(stage: wisdom.stage)
+                        Text(wisdom.practice).font(.system(size: 23, design: .serif)).multilineTextAlignment(.center).foregroundStyle(AurumTheme.parchment).padding(.horizontal)
+                        Text(String(format: "%d:%02d", seconds / 60, seconds % 60)).font(.system(size: 52, weight: .light, design: .monospaced)).foregroundStyle(AurumTheme.gold)
+                        Button(running ? "静かに続ける" : "計時を始める") { running = true }.modifier(GoldCapsule())
+                        TextField("気づきを一行だけ", text: $note, axis: .vertical)
+                            .focused($noteIsFocused)
+                            .submitLabel(.done)
+                            .onSubmit { noteIsFocused = false }
+                            .lineLimit(3...6)
+                            .padding()
+                            .background(AurumTheme.charcoal)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .foregroundStyle(AurumTheme.parchment)
+                    }
+                    .padding(24)
+                    .padding(.bottom, 72)
+                }
+                .scrollDismissesKeyboard(.interactively)
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button("錬金帖に封じる") {
+                    noteIsFocused = false
+                    store.save(wisdom: wisdom, note: note)
+                    dismiss()
+                }
+                .modifier(GoldCapsule())
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(AurumTheme.ink.opacity(0.96))
             }
             .navigationTitle(wisdom.stage.displayName).navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("閉じる") { dismiss() } } }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) { Button("閉じる") { dismiss() } }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("完了") { noteIsFocused = false }
+                }
+            }
             .onReceive(timer) { _ in if running && seconds > 0 { seconds -= 1 } }
         }.presentationDetents([.large])
     }
