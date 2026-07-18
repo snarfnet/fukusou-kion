@@ -63,6 +63,9 @@ struct ContentView: View {
                     .padding(.horizontal)
                     .contentShape(Rectangle())
                     .onTapGesture { keyboardFocused = false }
+                cluePanel(compact: compact)
+                    .contentShape(Rectangle())
+                    .onTapGesture { keyboardFocused = false }
                 if let puzzle = game.puzzle {
                     CrosswordGridView(puzzle: puzzle, answers: game.answers, selectedEntry: game.selectedEntry, selectedPoint: game.selectedPoint) { point in
                         game.select(point)
@@ -72,9 +75,6 @@ struct ContentView: View {
                         .layoutPriority(2)
                         .padding(.horizontal, 8)
                 }
-                cluePanel(compact: compact)
-                    .contentShape(Rectangle())
-                    .onTapGesture { keyboardFocused = false }
                 NativeKanaInput(isFocused: $keyboardFocused, onInput: { character in
                     game.type(character)
                     if game.isComplete { keyboardFocused = false }
