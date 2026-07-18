@@ -406,14 +406,20 @@ struct AboutView: View {
 private struct AboutChapter: View {
     let mark: String
     let title: LocalizedStringKey
-    let body: LocalizedStringKey
+    let content: LocalizedStringKey
+
+    init(mark: String, title: LocalizedStringKey, body: LocalizedStringKey) {
+        self.mark = mark
+        self.title = title
+        self.content = body
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label(title, systemImage: mark)
                 .font(.system(.headline, design: .serif, weight: .semibold))
                 .foregroundStyle(AurumTheme.gold)
-            Text(body)
+            Text(content)
                 .foregroundStyle(AurumTheme.muted)
                 .lineSpacing(6)
         }
