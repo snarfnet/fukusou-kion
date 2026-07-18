@@ -1,4 +1,5 @@
 name: Lost in Japan Production Submission
+# Captures current App Store screenshots before submission.
 
 on:
   workflow_dispatch:

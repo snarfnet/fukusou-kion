@@ -41,8 +41,9 @@ def capture(name, device_type, expected_group):
         destination.mkdir(parents=True, exist_ok=True)
         screens = [("01-home.png", None), ("02-emergency.png", "emergency"), ("03-found-item.png", "found")]
         for filename, route in screens:
+            subprocess.run(["xcrun", "simctl", "terminate", udid, BUNDLE_ID], check=False)
             args = [
-                "xcrun", "simctl", "launch", "--terminate-running", udid, BUNDLE_ID,
+                "xcrun", "simctl", "launch", udid, BUNDLE_ID,
                 "-hasSelectedInitialLanguage", "YES", "-hasCompletedOnboarding", "YES", "-appLanguage", "en",
             ]
             if route:
