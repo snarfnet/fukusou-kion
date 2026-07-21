@@ -2,6 +2,8 @@ using UnityEngine;
 
 namespace ShinobiZero.Runtime
 {
+    public enum OpponentVisualStyle { Rookie, Scout, Berserker, Veteran, Shadow }
+
     [CreateAssetMenu(menuName = "SHINOBI ZERO/Opponent Profile")]
     public sealed class OpponentProfile : ScriptableObject
     {
@@ -22,6 +24,8 @@ namespace ShinobiZero.Runtime
         [SerializeField] private ThrowAnimationProfile animationProfile;
         [SerializeField] private Color outfitColor = new Color(.04f, .045f, .045f);
         [SerializeField] private Color accentColor = new Color(.18f, .19f, .18f);
+        [SerializeField] private OpponentVisualStyle visualStyle;
+        [SerializeField] private Vector3 bodyScale = Vector3.one;
 
         public string DisplayName { get { return displayName; } }
         public string Title { get { return title; } }
@@ -40,5 +44,7 @@ namespace ShinobiZero.Runtime
         public ThrowAnimationProfile AnimationProfile { get { return animationProfile; } }
         public Color OutfitColor { get { return outfitColor; } }
         public Color AccentColor { get { return accentColor; } }
+        public OpponentVisualStyle VisualStyle { get { return visualStyle; } }
+        public Vector3 BodyScale { get { return bodyScale; } }
     }
 }

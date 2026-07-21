@@ -360,8 +360,15 @@ if (!progress.includes('cloud.Normalize(opponentCount)') || !progress.includes('
   throw new Error('Local and cloud career candidates are not normalized before conflict resolution.');
 
 const opponentProfile = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/OpponentProfile.cs'), 'utf8');
-for (const identityField of ['StyleDescription', 'EnglishDisplayName', 'EnglishTitle', 'EnglishStyleDescription', 'Strategy', 'OutfitColor', 'AccentColor']) {
+for (const identityField of ['StyleDescription', 'EnglishDisplayName', 'EnglishTitle', 'EnglishStyleDescription', 'Strategy', 'OutfitColor', 'AccentColor', 'VisualStyle', 'BodyScale']) {
   if (!opponentProfile.includes(identityField)) throw new Error(`Missing opponent identity field: ${identityField}`);
+}
+const ninjaVisual = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/NinjaVisualController.cs'), 'utf8');
+for (const visualBehavior of ['profile.BodyScale', 'profile.VisualStyle', 'styleAccessories[i].SetActive']) {
+  if (!ninjaVisual.includes(visualBehavior)) throw new Error(`Five rivals do not have distinct silhouettes: ${visualBehavior}`);
+}
+for (const accessory of ['Kagero Rookie Sash', 'Shigure Scout Hood Tails', 'Yasha Armored Shoulders', 'Genma Veteran Back Blades', 'Mukuro Shadow Crest']) {
+  if (!sceneBuilder.includes(accessory)) throw new Error(`Missing rival equipment set: ${accessory}`);
 }
 
 const achievementCatalog = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Core/AchievementCatalog.cs'), 'utf8');

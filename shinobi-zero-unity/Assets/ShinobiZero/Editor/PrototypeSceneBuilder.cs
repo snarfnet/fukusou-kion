@@ -448,6 +448,8 @@ namespace ShinobiZero.Editor
             release.SetParent(wrist, false);
             release.localPosition = new Vector3(.14f, 0f, -.08f);
 
+            var styleAccessories = CreateNinjaStyleAccessories(root.transform, head, torso, armor, cloth, accentRenderers);
+
             var animator = root.AddComponent<NinjaThrowAnimator>();
             var serialized = new SerializedObject(animator);
             serialized.FindProperty("profile").objectReferenceValue = defaultProfile;
@@ -460,6 +462,8 @@ namespace ShinobiZero.Editor
             var visualSerialized = new SerializedObject(visual);
             AssignArray(visualSerialized.FindProperty("clothRenderers"), clothRenderers.ToArray());
             AssignArray(visualSerialized.FindProperty("accentRenderers"), accentRenderers.ToArray());
+            visualSerialized.FindProperty("characterRoot").objectReferenceValue = root.transform;
+            AssignArray(visualSerialized.FindProperty("styleAccessories"), styleAccessories);
             visualSerialized.ApplyModifiedPropertiesWithoutUndo();
             var reaction = root.AddComponent<NinjaReactionController>();
             var reactionSerialized = new SerializedObject(reaction);
@@ -469,6 +473,58 @@ namespace ShinobiZero.Editor
             reactionSerialized.FindProperty("head").objectReferenceValue = head;
             reactionSerialized.ApplyModifiedPropertiesWithoutUndo();
             return new NinjaRig { Animator = animator, Visual = visual, Reaction = reaction, ReleasePoint = release };
+        }
+
+        private static GameObject[] CreateNinjaStyleAccessories(Transform root, Transform head, Transform torso,
+            Material armor, Material cloth, List<Renderer> accentRenderers)
+        {
+            var styles = new GameObject[5];
+
+            styles[0] = new GameObject("Kagero Rookie Sash");
+            styles[0].transform.SetParent(root, false);
+            var sash = CreateRigPrimitive("Plain Waist Sash", PrimitiveType.Cylinder, styles[0].transform,
+                new Vector3(0f, .55f, 0f), new Vector3(.39f, .055f, .27f), cloth);
+            accentRenderers.Add(sash.GetComponent<Renderer>());
+
+            styles[1] = new GameObject("Shigure Scout Hood Tails");
+            styles[1].transform.SetParent(head, false);
+            for (var side = -1; side <= 1; side += 2)
+            {
+                var tail = CreateRigPrimitive("Wind Hood Tail", PrimitiveType.Cube, styles[1].transform,
+                    new Vector3(side * .34f, .15f, .18f), new Vector3(.09f, .42f, .035f), cloth);
+                tail.localRotation = Quaternion.Euler(0f, 0f, side * 24f);
+                accentRenderers.Add(tail.GetComponent<Renderer>());
+            }
+
+            styles[2] = new GameObject("Yasha Armored Shoulders");
+            styles[2].transform.SetParent(torso, false);
+            for (var side = -1; side <= 1; side += 2)
+            {
+                var guard = CreateRigPrimitive("Layered Shoulder Guard", PrimitiveType.Cube, styles[2].transform,
+                    new Vector3(side * .7f, .38f, -.04f), new Vector3(.28f, .13f, .42f), armor);
+                guard.localRotation = Quaternion.Euler(0f, 0f, side * 12f);
+                accentRenderers.Add(guard.GetComponent<Renderer>());
+            }
+
+            styles[3] = new GameObject("Genma Veteran Back Blades");
+            styles[3].transform.SetParent(torso, false);
+            for (var side = -1; side <= 1; side += 2)
+            {
+                var scabbard = CreateRigPrimitive("Back Scabbard", PrimitiveType.Cube, styles[3].transform,
+                    new Vector3(side * .25f, .05f, .38f), new Vector3(.08f, .78f, .08f), armor);
+                scabbard.localRotation = Quaternion.Euler(side * 7f, 0f, side * 25f);
+                accentRenderers.Add(scabbard.GetComponent<Renderer>());
+            }
+
+            styles[4] = new GameObject("Mukuro Shadow Crest");
+            styles[4].transform.SetParent(head, false);
+            var crest = CreateRigPrimitive("Shadow Forehead Crest", PrimitiveType.Cube, styles[4].transform,
+                new Vector3(0f, .47f, -.18f), new Vector3(.08f, .25f, .06f), armor);
+            crest.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            accentRenderers.Add(crest.GetComponent<Renderer>());
+
+            for (var i = 0; i < styles.Length; i++) styles[i].SetActive(false);
+            return styles;
         }
 
         private static Transform CreateRigPrimitive(string name, PrimitiveType type, Transform parent, Vector3 localPosition, Vector3 localScale, Material material)
@@ -639,6 +695,11 @@ namespace ShinobiZero.Editor
                 new Color(.18f, .19f, .17f), new Color(.12f, .24f, .31f),
                 new Color(.38f, .075f, .045f), new Color(.23f, .15f, .075f), new Color(.34f, .37f, .38f)
             };
+            var bodyScales = new[]
+            {
+                new Vector3(.94f, .96f, .94f), new Vector3(.98f, 1.02f, .96f),
+                new Vector3(1.08f, 1.04f, 1.08f), new Vector3(1.03f, 1.08f, 1f), new Vector3(1f, 1.12f, .98f)
+            };
             var profiles = new OpponentProfile[assetNames.Length];
             for (var i = 0; i < assetNames.Length; i++)
             {
@@ -668,6 +729,8 @@ namespace ShinobiZero.Editor
                 serialized.FindProperty("animationProfile").objectReferenceValue = motionProfiles[i];
                 serialized.FindProperty("outfitColor").colorValue = outfitColors[i];
                 serialized.FindProperty("accentColor").colorValue = accentColors[i];
+                serialized.FindProperty("visualStyle").enumValueIndex = i;
+                serialized.FindProperty("bodyScale").vector3Value = bodyScales[i];
                 serialized.ApplyModifiedPropertiesWithoutUndo();
                 profiles[i] = profile;
             }

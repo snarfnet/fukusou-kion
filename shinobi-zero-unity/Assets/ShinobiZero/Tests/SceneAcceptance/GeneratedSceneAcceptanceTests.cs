@@ -46,7 +46,7 @@ namespace ShinobiZero.Tests
             var target = Reference<TargetBoard>(serialized, "target");
             var localAim = target.transform.InverseTransformPoint(target.BoardPointToWorld(Vector2.zero));
             Assert.That(localAim.z, Is.EqualTo(target.SurfaceLocalZ).Within(.0001f));
-            Assert.That(localAim.z, Is.EqualTo(-.5f).Within(.0001f));
+            Assert.That(localAim.z, Is.EqualTo(-.071f).Within(.0001f));
         }
 
         [Test] public void AllFiveOpponentsHaveCompleteProfiles()
@@ -66,7 +66,12 @@ namespace ShinobiZero.Tests
                 Assert.That(opponent.EnglishStyleDescription, Is.Not.Empty);
                 Assert.That(OpponentStrategyNames.Japanese(opponent.Strategy), Is.Not.Empty);
                 Assert.That(opponent.AnimationProfile, Is.Not.Null);
+                Assert.That((int)opponent.VisualStyle, Is.EqualTo(i));
+                Assert.That(opponent.BodyScale.x, Is.GreaterThan(.9f));
             }
+            var visual = Object.FindObjectOfType<NinjaVisualController>();
+            Assert.That(visual, Is.Not.Null);
+            Assert.That(new SerializedObject(visual).FindProperty("styleAccessories").arraySize, Is.EqualTo(5));
         }
 
         [Test] public void RegulationBoardVisualIsGenerated()
@@ -79,6 +84,9 @@ namespace ShinobiZero.Tests
             for (var i = 0; i < board.childCount; i++)
                 if (board.GetChild(i).name.StartsWith("Number ")) numberCount++;
             Assert.That(numberCount, Is.EqualTo(20));
+            var wireRoot = GameObject.Find("Regulation Spider Wires");
+            Assert.That(wireRoot, Is.Not.Null);
+            Assert.That(wireRoot.GetComponentsInChildren<LineRenderer>(true).Length, Is.EqualTo(26));
         }
 
         [Test] public void PortraitHudAndInputSystemArePresent()
