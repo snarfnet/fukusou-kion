@@ -485,6 +485,12 @@ Assert-Equal $decodedVolume.VolumeStep 6 'Master volume survives save round trip
 Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(0).VolumeStep) 8 'New players start at safe volume'
 Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(512 + 1 + 2 + 16).VolumeStep) 10 'Previous settings retain former full volume'
 Assert-Equal ([ShinobiZero.Core.GamePreferences]::new($true, $true, $false, $false, $true, 99).VolumeStep) 10 'Master volume clamps to ten steps'
+$aimPreferences = [ShinobiZero.Core.GamePreferences]::new($true, $true, $false, $false, $true, 8, 8)
+$decodedAim = [ShinobiZero.Core.PreferencesCodec]::Decode([ShinobiZero.Core.PreferencesCodec]::Encode($aimPreferences))
+Assert-Equal $decodedAim.AimSensitivityStep 8 'Aim sensitivity survives save round trip'
+Assert-Close $decodedAim.AimSensitivityMultiplier 1.3 0.0001 'Aim sensitivity maps to a stable multiplier'
+Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(1024 + 1 + 16 + (7 * 2048)).AimSensitivityStep) 5 'Volume-era settings migrate to standard aim sensitivity'
+Assert-Equal ([ShinobiZero.Core.GamePreferences]::new($true, $true, $false, $false, $true, 8, 99).AimSensitivityStep) 10 'Aim sensitivity clamps to ten steps'
 
 $endurance = [ShinobiZero.Core.MatchEnduranceSimulator]::Run(3200, 23063)
 Assert-Equal $endurance.Matches 3200 'Endurance simulation completes every configured match'

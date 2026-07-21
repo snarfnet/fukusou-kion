@@ -962,6 +962,7 @@ namespace ShinobiZero.Editor
             var fullscreenToggle = CreateToggle("Fullscreen Setting", settingsPanel.transform, "フルスクリーン", new Vector2(0, -150), new Vector2(620, 82));
             var englishToggle = CreateToggle("Language Setting", settingsPanel.transform, "英語UI", new Vector2(0, -270), new Vector2(620, 82));
             var closeSettings = CreateButton("Close Settings", settingsPanel.transform, "決定", new Vector2(0, -520), new Vector2(620, 100), out _);
+            var aimSensitivitySlider = CreateSlider("Aim Sensitivity Setting", settingsPanel.transform, "照準感度", new Vector2(0, -390), new Vector2(620, 82), out var aimSensitivityValue);
             var settings = canvasObject.AddComponent<SettingsController>();
             var settingsSerialized = new SerializedObject(settings);
             settingsSerialized.FindProperty("panel").objectReferenceValue = settingsPanel;
@@ -970,6 +971,8 @@ namespace ShinobiZero.Editor
             settingsSerialized.FindProperty("soundToggle").objectReferenceValue = soundToggle;
             settingsSerialized.FindProperty("volumeSlider").objectReferenceValue = volumeSlider;
             settingsSerialized.FindProperty("volumeValueText").objectReferenceValue = volumeValue;
+            settingsSerialized.FindProperty("aimSensitivitySlider").objectReferenceValue = aimSensitivitySlider;
+            settingsSerialized.FindProperty("aimSensitivityValueText").objectReferenceValue = aimSensitivityValue;
             settingsSerialized.FindProperty("hapticsToggle").objectReferenceValue = hapticsToggle;
             settingsSerialized.FindProperty("reducedMotionToggle").objectReferenceValue = motionToggle;
             settingsSerialized.FindProperty("englishToggle").objectReferenceValue = englishToggle;
@@ -979,6 +982,7 @@ namespace ShinobiZero.Editor
             settingsSerialized.FindProperty("ninjaReaction").objectReferenceValue = ninjaReaction;
             settingsSerialized.FindProperty("titleBackground").objectReferenceValue = titleBackground;
             settingsSerialized.FindProperty("localization").objectReferenceValue = localization;
+            settingsSerialized.FindProperty("alternativeThrow").objectReferenceValue = alternativeInput;
             settingsSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             var pausePanel = CreatePanel("Pause", safeArea.transform, new Color(.006f, .009f, .012f, .97f));

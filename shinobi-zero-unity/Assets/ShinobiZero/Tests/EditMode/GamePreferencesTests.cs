@@ -14,6 +14,8 @@ namespace ShinobiZero.Tests
             Assert.That(value.EnglishUi, Is.False);
             Assert.That(value.Fullscreen, Is.True);
             Assert.That(value.VolumeStep, Is.EqualTo(8));
+            Assert.That(value.AimSensitivityStep, Is.EqualTo(5));
+            Assert.That(value.AimSensitivityMultiplier, Is.EqualTo(1f));
         }
 
         [TestCase(true, true, false, false, true)]
@@ -22,13 +24,15 @@ namespace ShinobiZero.Tests
         [TestCase(false, false, false, true, true)]
         public void RoundTrips(bool sound, bool haptics, bool reducedMotion, bool english, bool fullscreen)
         {
-            var decoded = PreferencesCodec.Decode(PreferencesCodec.Encode(new GamePreferences(sound, haptics, reducedMotion, english, fullscreen, 6)));
+            var decoded = PreferencesCodec.Decode(PreferencesCodec.Encode(new GamePreferences(sound, haptics, reducedMotion, english, fullscreen, 6, 8)));
             Assert.That(decoded.SoundEnabled, Is.EqualTo(sound));
             Assert.That(decoded.HapticsEnabled, Is.EqualTo(haptics));
             Assert.That(decoded.ReducedMotion, Is.EqualTo(reducedMotion));
             Assert.That(decoded.EnglishUi, Is.EqualTo(english));
             Assert.That(decoded.Fullscreen, Is.EqualTo(fullscreen));
             Assert.That(decoded.VolumeStep, Is.EqualTo(6));
+            Assert.That(decoded.AimSensitivityStep, Is.EqualTo(8));
+            Assert.That(decoded.AimSensitivityMultiplier, Is.EqualTo(1.3f).Within(.001f));
         }
 
         [Test] public void LegacyPreferencesDefaultToFullscreen()
@@ -47,9 +51,25 @@ namespace ShinobiZero.Tests
             Assert.That(decoded.VolumeStep, Is.EqualTo(10));
         }
 
+        [Test] public void VolumeEraPreferencesMigrateToStandardAimSensitivity()
+        {
+            var decoded = PreferencesCodec.Decode((1 << 10) | 1 | 16 | (7 << 11));
+            Assert.That(decoded.VolumeStep, Is.EqualTo(7));
+            Assert.That(decoded.AimSensitivityStep, Is.EqualTo(5));
+        }
+
         [TestCase(-5, 0)]
         [TestCase(11, 10)]
         public void VolumeStepIsClamped(int requested, int expected) =>
             Assert.That(new GamePreferences(true, true, false, false, true, requested).VolumeStep, Is.EqualTo(expected));
+
+        [TestCase(-2, 0, .5f)]
+        [TestCase(12, 10, 1.5f)]
+        public void AimSensitivityIsClamped(int requested, int expected, float multiplier)
+        {
+            var value = new GamePreferences(true, true, false, false, true, 8, requested);
+            Assert.That(value.AimSensitivityStep, Is.EqualTo(expected));
+            Assert.That(value.AimSensitivityMultiplier, Is.EqualTo(multiplier).Within(.001f));
+        }
     }
 }

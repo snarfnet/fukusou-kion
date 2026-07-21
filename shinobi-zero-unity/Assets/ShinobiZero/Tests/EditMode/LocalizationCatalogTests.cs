@@ -14,6 +14,9 @@ namespace ShinobiZero.Tests
         [Test] public void DesktopQuitHasEnglishTranslation() =>
             Assert.That(LocalizationCatalog.Literal("終了", GameLanguage.English), Is.EqualTo("QUIT"));
 
+        [Test] public void AimSensitivityHasEnglishTranslation() =>
+            Assert.That(LocalizationCatalog.Literal("照準感度", GameLanguage.English), Is.EqualTo("AIM SENSITIVITY"));
+
         [Test] public void UnknownProperNounIsPreserved() =>
             Assert.That(LocalizationCatalog.Literal("SHINOBI ZERO", GameLanguage.English), Is.EqualTo("SHINOBI ZERO"));
 

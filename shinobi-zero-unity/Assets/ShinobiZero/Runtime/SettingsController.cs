@@ -13,6 +13,8 @@ namespace ShinobiZero.Runtime
         [SerializeField] private Toggle soundToggle;
         [SerializeField] private Slider volumeSlider;
         [SerializeField] private Text volumeValueText;
+        [SerializeField] private Slider aimSensitivitySlider;
+        [SerializeField] private Text aimSensitivityValueText;
         [SerializeField] private Toggle hapticsToggle;
         [SerializeField] private Toggle reducedMotionToggle;
         [SerializeField] private Toggle englishToggle;
@@ -23,6 +25,7 @@ namespace ShinobiZero.Runtime
         [SerializeField] private TitleBackgroundController titleBackground;
         [SerializeField] private UiLocalizationController localization;
         [SerializeField] private GameHudController hud;
+        [SerializeField] private AlternativeThrowController alternativeThrow;
 
         private void Awake()
         {
@@ -32,6 +35,8 @@ namespace ShinobiZero.Runtime
             soundToggle.SetIsOnWithoutNotify(preferences.SoundEnabled);
             volumeSlider.SetValueWithoutNotify(preferences.VolumeStep);
             UpdateVolumeLabel(preferences.VolumeStep);
+            aimSensitivitySlider.SetValueWithoutNotify(preferences.AimSensitivityStep);
+            UpdateAimSensitivityLabel(preferences.AimSensitivityStep);
             hapticsToggle.SetIsOnWithoutNotify(preferences.HapticsEnabled);
             reducedMotionToggle.SetIsOnWithoutNotify(preferences.ReducedMotion);
             englishToggle.SetIsOnWithoutNotify(preferences.EnglishUi);
@@ -39,6 +44,7 @@ namespace ShinobiZero.Runtime
             fullscreenToggle.gameObject.SetActive(!Application.isMobilePlatform);
             soundToggle.onValueChanged.AddListener(_ => ApplyAndSave());
             volumeSlider.onValueChanged.AddListener(value => { UpdateVolumeLabel(Mathf.RoundToInt(value)); ApplyAndSave(); });
+            aimSensitivitySlider.onValueChanged.AddListener(value => { UpdateAimSensitivityLabel(Mathf.RoundToInt(value)); ApplyAndSave(); });
             hapticsToggle.onValueChanged.AddListener(_ => ApplyAndSave());
             reducedMotionToggle.onValueChanged.AddListener(_ => ApplyAndSave());
             englishToggle.onValueChanged.AddListener(_ => ApplyAndSave());
@@ -50,7 +56,7 @@ namespace ShinobiZero.Runtime
         private void ApplyAndSave()
         {
             var preferences = new GamePreferences(soundToggle.isOn, hapticsToggle.isOn, reducedMotionToggle.isOn,
-                englishToggle.isOn, fullscreenToggle.isOn, Mathf.RoundToInt(volumeSlider.value));
+                englishToggle.isOn, fullscreenToggle.isOn, Mathf.RoundToInt(volumeSlider.value), Mathf.RoundToInt(aimSensitivitySlider.value));
             Apply(preferences);
             PlayerPrefs.SetInt(PreferencesKey, PreferencesCodec.Encode(preferences));
             PlayerPrefs.Save();
@@ -65,6 +71,7 @@ namespace ShinobiZero.Runtime
             if (ninjaReaction != null) ninjaReaction.ReducedMotion = preferences.ReducedMotion;
             if (titleBackground != null) titleBackground.ReducedMotion = preferences.ReducedMotion;
             if (hud != null) hud.ReducedMotion = preferences.ReducedMotion;
+            if (alternativeThrow != null) alternativeThrow.AimSensitivity = preferences.AimSensitivityMultiplier;
             if (localization != null) localization.SetLanguage(preferences.EnglishUi ? GameLanguage.English : GameLanguage.Japanese);
             if (!Application.isMobilePlatform)
                 Screen.fullScreenMode = preferences.Fullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
@@ -73,6 +80,11 @@ namespace ShinobiZero.Runtime
         private void UpdateVolumeLabel(int volumeStep)
         {
             if (volumeValueText != null) volumeValueText.text = (volumeStep * 10) + "%";
+        }
+
+        private void UpdateAimSensitivityLabel(int sensitivityStep)
+        {
+            if (aimSensitivityValueText != null) aimSensitivityValueText.text = (50 + sensitivityStep * 10) + "%";
         }
     }
 }

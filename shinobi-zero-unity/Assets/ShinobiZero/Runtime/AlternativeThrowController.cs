@@ -10,6 +10,7 @@ namespace ShinobiZero.Runtime
         [SerializeField] private MatchCoordinator coordinator;
         [SerializeField, Range(.2f, 2f)] private float aimSpeed = .8f;
         public event Action<Vector2, bool> AimTracked;
+        public float AimSensitivity { get; set; } = 1f;
 
         private Vector2 _aim;
         private bool _charging;
@@ -30,7 +31,7 @@ namespace ShinobiZero.Runtime
             var movement = ReadAimMovement();
             if (movement.sqrMagnitude > .001f)
             {
-                _aim = Vector2.ClampMagnitude(_aim + movement * aimSpeed * Time.unscaledDeltaTime, 1.15f);
+                _aim = Vector2.ClampMagnitude(_aim + movement * aimSpeed * AimSensitivity * Time.unscaledDeltaTime, 1.15f);
                 AimTracked?.Invoke(_aim, true);
             }
 

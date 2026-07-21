@@ -30,6 +30,7 @@ namespace ShinobiZero.Core
                 case "スキップ": return "SKIP";
                 case "効果音": return "SOUND";
                 case "音量": return "VOLUME";
+                case "照準感度": return "AIM SENSITIVITY";
                 case "触覚フィードバック": return "HAPTICS";
                 case "カメラ反応を抑える": return "REDUCED MOTION";
                 case "英語UI": return "ENGLISH UI";
