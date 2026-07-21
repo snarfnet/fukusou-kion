@@ -254,8 +254,19 @@ def ensure_no_data_collected(app_id):
 def submit_for_review(app_id, version_id):
     response, body = base.api_json("GET", f"/apps/{app_id}/reviewSubmissions?limit=20")
     require_ok(response, "Review submission lookup")
-    reusable = next((item for item in body.get("data", []) if item.get("attributes", {}).get("state") == "READY_FOR_REVIEW"), None)
-    if reusable:
+    submissions = body.get("data", [])
+    unresolved = next(
+        (item for item in submissions if item.get("attributes", {}).get("state") == "UNRESOLVED_ISSUES"),
+        None,
+    )
+    reusable = next(
+        (item for item in submissions if item.get("attributes", {}).get("state") == "READY_FOR_REVIEW"),
+        None,
+    )
+    if unresolved:
+        submission_id = unresolved["id"]
+        print(f"Reusing unresolved review submission: {submission_id}")
+    elif reusable:
         submission_id = reusable["id"]
     else:
         response, body = base.api_json("POST", "/reviewSubmissions", json={
@@ -266,15 +277,16 @@ def submit_for_review(app_id, version_id):
         })
         require_ok(response, "Review submission")
         submission_id = body["data"]["id"]
-    require_ok(base.api("POST", "/reviewSubmissionItems", json={
-        "data": {
-            "type": "reviewSubmissionItems",
-            "relationships": {
-                "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
-            },
-        }
-    }), "Review item")
+    if not unresolved:
+        require_ok(base.api("POST", "/reviewSubmissionItems", json={
+            "data": {
+                "type": "reviewSubmissionItems",
+                "relationships": {
+                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                },
+            }
+        }), "Review item")
     for attempt in range(20):
         response, body = base.api_json("PATCH", f"/reviewSubmissions/{submission_id}", json={
             "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"submitted": True}}
