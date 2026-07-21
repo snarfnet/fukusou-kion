@@ -107,17 +107,25 @@ namespace ShinobiZero.Runtime
             {
                 _audio.pitch = 1f;
                 _audio.PlayOneShot(_victoryClip, .9f);
+                PlayImpactAt(_metalClip, worldPoint, hasWorldPoint, .72f, 1.08f);
             }
             else if (profile.Tier == ImpactTier.MatchDefeat || profile.Tier == ImpactTier.Bust)
             {
                 _audio.pitch = profile.Tier == ImpactTier.Bust ? .82f : .72f;
-                _audio.PlayOneShot(profile.Tier == ImpactTier.Bust ? _woodClip : _defeatClip, .7f);
+                if (profile.Tier == ImpactTier.Bust)
+                    PlayImpactAt(_woodClip, worldPoint, hasWorldPoint, .7f, _audio.pitch);
+                else
+                {
+                    _audio.PlayOneShot(_defeatClip, .7f);
+                    PlayImpactAt(_metalClip, worldPoint, hasWorldPoint, .62f, .9f);
+                }
             }
             else
             {
                 var premium = profile.Tier != ImpactTier.Standard;
                 _audio.pitch = premium ? 1.08f : Random.Range(.92f, 1.03f);
-                _audio.PlayOneShot(premium ? _metalClip : _woodClip, premium ? .78f : .62f);
+                PlayImpactAt(premium ? _metalClip : _woodClip, worldPoint, hasWorldPoint,
+                    premium ? .78f : .62f, _audio.pitch);
             }
 
             if (hasWorldPoint && profile.SparkCount > 0) EmitSparks(worldPoint, profile);
@@ -130,6 +138,30 @@ namespace ShinobiZero.Runtime
             if (gameCamera == null || ReducedMotion) return;
             if (_cameraRoutine != null) StopCoroutine(_cameraRoutine);
             _cameraRoutine = StartCoroutine(KickCamera(profile.CameraStrength, profile.ZoomDegrees));
+        }
+
+        private void PlayImpactAt(AudioClip clip, Vector3 worldPoint, bool hasWorldPoint, float volume, float pitch)
+        {
+            if (!hasWorldPoint)
+            {
+                _audio.pitch = pitch;
+                _audio.PlayOneShot(clip, volume);
+                return;
+            }
+            var emitter = new GameObject("Spatial Shuriken Impact", typeof(AudioSource));
+            emitter.transform.position = worldPoint;
+            var source = emitter.GetComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.clip = clip;
+            source.volume = volume;
+            source.pitch = pitch;
+            source.spatialBlend = .82f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = .8f;
+            source.maxDistance = 14f;
+            source.dopplerLevel = 0f;
+            source.Play();
+            Destroy(emitter, clip.length / Mathf.Max(.1f, Mathf.Abs(pitch)) + .1f);
         }
 
         private IEnumerator KickCamera(float strength, float zoomDegrees)

@@ -141,6 +141,9 @@ namespace ShinobiZero.Tests
             Assert.That(GameObject.Find("Weathered Dojo Frame"), Is.Not.Null);
             Assert.That(GameObject.Find("Weathered Iron Lantern"), Is.Not.Null);
             Assert.That(GameObject.Find("Rain Puddles"), Is.Not.Null);
+            var reverb = Object.FindObjectOfType<AudioReverbZone>();
+            Assert.That(reverb, Is.Not.Null);
+            Assert.That(reverb.reverbPreset, Is.EqualTo(AudioReverbPreset.StoneCorridor));
             Assert.That(RenderSettings.fog, Is.True);
         }
 

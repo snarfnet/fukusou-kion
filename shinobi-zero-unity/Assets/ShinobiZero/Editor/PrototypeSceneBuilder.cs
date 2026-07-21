@@ -168,6 +168,16 @@ namespace ShinobiZero.Editor
             CreateDojoFrame(cedar);
             CreateLanternFixture();
             CreateFloorPuddles();
+            CreateDojoReverb();
+        }
+
+        private static void CreateDojoReverb()
+        {
+            var zone = new GameObject("Dojo Stone Reverb", typeof(AudioReverbZone)).GetComponent<AudioReverbZone>();
+            zone.transform.position = new Vector3(0f, 0f, -1f);
+            zone.minDistance = 2.5f;
+            zone.maxDistance = 14f;
+            zone.reverbPreset = AudioReverbPreset.StoneCorridor;
         }
 
         private static void CreateDojoFrame(Material cedar)

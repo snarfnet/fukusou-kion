@@ -219,6 +219,9 @@ for (const migrationBehavior of ['LegacyVersionFlag', 'value.Fullscreen ? 16 : 0
 }
 
 const feedback = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/ThrowFeedbackController.cs'), 'utf8');
+for (const spatialAudio of ['Spatial Shuriken Impact', 'source.spatialBlend = .82f', 'source.maxDistance = 14f', 'source.dopplerLevel = 0f', 'Destroy(emitter, clip.length']) {
+  if (!feedback.includes(spatialAudio)) throw new Error(`Impact audio is not spatial and bounded: ${spatialAudio}`);
+}
 for (const behavior of ['ThrowLaunched += HandleLaunched', 'ThrowImpactResolved += HandleResolved', 'ImpactFeedbackModel.Evaluate', 'CreateImpactSparks', 'EmitSparks', 'HapticFeedback.Success', 'MakeNoiseClip', 'KickCamera']) {
   if (!feedback.includes(behavior)) throw new Error(`Missing throw feedback behavior: ${behavior}`);
 }
