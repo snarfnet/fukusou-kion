@@ -41,4 +41,10 @@ namespace ShinobiZero.Core
             return Math.Max(minimum, Math.Min(maximum, value));
         }
     }
+
+    public static class GamepadInputTuning
+    {
+        public const float DeadzoneMinimum = .18f;
+        public const float DeadzoneMaximum = .95f;
+    }
 }

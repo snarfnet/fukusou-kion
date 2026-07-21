@@ -31,5 +31,12 @@ namespace ShinobiZero.Tests
             var length = System.Math.Sqrt(result.BoardX * result.BoardX + result.BoardY * result.BoardY);
             Assert.That(length, Is.EqualTo(1.25f).Within(.0001f));
         }
+
+        [Test] public void GamepadDeadzoneHasStablePlayableRange()
+        {
+            Assert.That(GamepadInputTuning.DeadzoneMinimum, Is.EqualTo(.18f));
+            Assert.That(GamepadInputTuning.DeadzoneMaximum, Is.EqualTo(.95f));
+            Assert.That(GamepadInputTuning.DeadzoneMinimum, Is.LessThan(GamepadInputTuning.DeadzoneMaximum));
+        }
     }
 }

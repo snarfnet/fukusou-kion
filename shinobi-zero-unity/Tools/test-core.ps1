@@ -593,6 +593,8 @@ Assert-Equal $idealButtonThrow.Valid $true 'Ideal button hold is valid'
 Assert-Close $idealButtonThrow.BoardY -0.2 0.0001 'Ideal button hold preserves vertical aim'
 Assert-Close $idealButtonThrow.Power 1 0.0001 'Ideal button hold reaches full power'
 Assert-Close ([ShinobiZero.Core.ButtonThrowModel]::Map(0, 0, 0.48, 1).Spin) 24 0.0001 'Right stick controls button throw spin'
+Assert-Close ([ShinobiZero.Core.GamepadInputTuning]::DeadzoneMinimum) 0.18 0.0001 'Gamepad drift deadzone is stable'
+Assert-Close ([ShinobiZero.Core.GamepadInputTuning]::DeadzoneMaximum) 0.95 0.0001 'Gamepad outer range is normalized'
 
 $missingCheckouts = @()
 $allCheckoutRoutesValid = $true

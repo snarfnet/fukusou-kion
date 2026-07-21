@@ -16,6 +16,12 @@ namespace ShinobiZero.Runtime
         private bool _charging;
         private float _chargeStarted;
 
+        private void Awake()
+        {
+            InputSystem.settings.defaultDeadzoneMin = GamepadInputTuning.DeadzoneMinimum;
+            InputSystem.settings.defaultDeadzoneMax = GamepadInputTuning.DeadzoneMaximum;
+        }
+
         private void Update()
         {
             if (coordinator == null) return;
