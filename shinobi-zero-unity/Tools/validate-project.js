@@ -83,6 +83,7 @@ const required = [
   'Docs/Privacy/PRIVACY_POLICY_JA.md',
   'Docs/Privacy/APP_STORE_PRIVACY_ANSWERS.md',
   'Assets/ShinobiZero/Runtime/PlatformServices.cs',
+  'Assets/ShinobiZero/Tests/EditMode/PlatformServicesTests.cs',
   'Assets/ShinobiZero/Editor/PrototypeSceneBuilder.cs',
   'Assets/ShinobiZero/Editor/ProductBuildMenu.cs',
   'Assets/ShinobiZero/Editor/CiBuild.cs',
@@ -92,7 +93,8 @@ const required = [
   'Assets/ShinobiZero/Art/Title/title-background-landscape-v1.png',
   'Docs/Art/title-background-v1-prompt.md',
   'Docs/CHARACTER_BIBLE.md',
-  'Docs/THROW_ANIMATION_SPEC.md'
+  'Docs/THROW_ANIMATION_SPEC.md',
+  'Docs/STEAM_RELEASE.md'
 ];
 
 const missing = required.filter(file => !fs.existsSync(path.join(root, file)));
@@ -124,6 +126,13 @@ for (const setting of ['UIOrientation.Portrait', 'targetOSVersionString = "15.0"
 }
 for (const identityBehavior of ['SHINOBI_ZERO_VERSION', 'SHINOBI_ZERO_BUILD_NUMBER', 'BuildIdentityResolver.Resolve', 'WriteBuildManifest', 'build-manifest.json', 'Application.unityVersion', 'DateTime.UtcNow.ToString("O")']) {
   if (!buildMenu.includes(identityBehavior)) throw new Error(`Build is missing reproducible identity behavior: ${identityBehavior}`);
+}
+for (const desktopBuild of ['BuildTarget.StandaloneWindows64', 'BuildTarget.StandaloneOSX', 'BuildTarget.StandaloneLinux64']) {
+  if (!buildMenu.includes(desktopBuild)) throw new Error(`Missing desktop store build target: ${desktopBuild}`);
+}
+const desktopPlatformServices = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/PlatformServices.cs'), 'utf8');
+for (const cloudBehavior of ['career-cloud.json', 'File.WriteAllBytes(temporary, data)', 'File.Copy(_cloudPath, backup, true)', 'MaximumCloudBytes']) {
+  if (!desktopPlatformServices.includes(cloudBehavior)) throw new Error(`Steam Auto Cloud save is incomplete: ${cloudBehavior}`);
 }
 
 const sceneBuilder = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Editor/PrototypeSceneBuilder.cs'), 'utf8');

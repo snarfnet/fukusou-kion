@@ -88,6 +88,12 @@ namespace ShinobiZero.Editor
         [MenuItem("Tools/SHINOBI ZERO/Build/Windows x64")]
         public static void BuildWindows() => Build(BuildTarget.StandaloneWindows64, "Builds/Windows/SHINOBI ZERO.exe");
 
+        [MenuItem("Tools/SHINOBI ZERO/Build/macOS Universal")]
+        public static void BuildMacOs() => Build(BuildTarget.StandaloneOSX, "Builds/macOS/SHINOBI ZERO.app");
+
+        [MenuItem("Tools/SHINOBI ZERO/Build/Linux x64")]
+        public static void BuildLinux() => Build(BuildTarget.StandaloneLinux64, "Builds/Linux/SHINOBI ZERO.x86_64");
+
         private static void Build(BuildTarget target, string output)
         {
             var identity = ConfigureProductSettings();

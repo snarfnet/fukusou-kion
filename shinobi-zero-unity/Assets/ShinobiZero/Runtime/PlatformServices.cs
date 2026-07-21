@@ -52,6 +52,14 @@ namespace ShinobiZero.Runtime
     {
         private const string AchievementPrefix = "shinobi-zero.achievement.";
         private const string StatPrefix = "shinobi-zero.stat.";
+        private const int MaximumCloudBytes = 1024 * 1024;
+        private readonly string _cloudPath;
+
+        public LocalPlatformServices(string cloudRoot = null)
+        {
+            var root = cloudRoot ?? Path.Combine(Application.persistentDataPath, "Cloud");
+            _cloudPath = Path.Combine(root, "career-cloud.json");
+        }
 
         public bool UnlockAchievement(string id)
         {
@@ -63,8 +71,35 @@ namespace ShinobiZero.Runtime
         }
 
         public void SetStat(string id, int value) => PlayerPrefs.SetInt(StatPrefix + id, Math.Max(0, value));
-        public void SaveCloud(byte[] data) { }
-        public bool TryLoadCloud(out byte[] data) { data = null; return false; }
+        public void SaveCloud(byte[] data)
+        {
+            if (data == null) throw new ArgumentNullException("data");
+            if (data.Length > MaximumCloudBytes) throw new ArgumentException("Cloud save exceeds 1 MiB.", "data");
+            var directory = Path.GetDirectoryName(_cloudPath);
+            if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+            var temporary = _cloudPath + ".tmp";
+            var backup = _cloudPath + ".bak";
+            File.WriteAllBytes(temporary, data);
+            if (File.Exists(_cloudPath)) File.Copy(_cloudPath, backup, true);
+            if (File.Exists(_cloudPath)) File.Delete(_cloudPath);
+            File.Move(temporary, _cloudPath);
+        }
+
+        public bool TryLoadCloud(out byte[] data)
+        {
+            try
+            {
+                if (File.Exists(_cloudPath))
+                {
+                    data = File.ReadAllBytes(_cloudPath);
+                    return data.Length <= MaximumCloudBytes;
+                }
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+            data = null;
+            return false;
+        }
         public void Flush() => PlayerPrefs.Save();
     }
 

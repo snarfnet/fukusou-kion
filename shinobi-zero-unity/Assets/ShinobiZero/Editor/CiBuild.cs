@@ -6,10 +6,19 @@ namespace ShinobiZero.Editor
     {
         public static void BuildIos()
         {
+            Prepare();
+            ProductBuildMenu.BuildIos();
+        }
+
+        public static void BuildWindows() { Prepare(); ProductBuildMenu.BuildWindows(); }
+        public static void BuildMacOs() { Prepare(); ProductBuildMenu.BuildMacOs(); }
+        public static void BuildLinux() { Prepare(); ProductBuildMenu.BuildLinux(); }
+
+        private static void Prepare()
+        {
             ApplyArgument("-szVersion", "SHINOBI_ZERO_VERSION");
             ApplyArgument("-szBuildNumber", "SHINOBI_ZERO_BUILD_NUMBER");
             PrototypeSceneBuilder.CreateScene();
-            ProductBuildMenu.BuildIos();
         }
 
         private static void ApplyArgument(string argument, string environmentVariable)

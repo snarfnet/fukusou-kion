@@ -90,7 +90,7 @@ PowerShell -ExecutionPolicy Bypass -File Tools/run-unity-tests.ps1 `
 ```text
 Assets/ShinobiZero/Core       Unity非依存のルールとAI
 Assets/ShinobiZero/Runtime    入力、物理、プラットフォーム境界
-Assets/ShinobiZero/Editor     製品シーンとiOS・Windowsビルド生成
+Assets/ShinobiZero/Editor     製品シーンとiOS・Windows・macOS・Linuxビルド生成
 Assets/ShinobiZero/Tests      EditMode自動テスト
 ```
 

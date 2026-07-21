@@ -1,0 +1,88 @@
+name: SHINOBI ZERO Desktop Builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version
+        required: true
+        default: 0.1.0
+  push:
+    branches: [codex/shinobi-zero-testflight]
+    paths:
+      - shinobi-zero-unity/**
+      - .github/workflows/shinobi-zero-desktop.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Windows x64
+            runner: windows-2025
+            target: StandaloneWindows64
+            method: ShinobiZero.Editor.CiBuild.BuildWindows
+            artifact: shinobi-zero-unity/Builds/Windows
+            slug: shinobi-zero-windows-x64
+          - label: macOS Universal
+            runner: macos-15
+            target: StandaloneOSX
+            method: ShinobiZero.Editor.CiBuild.BuildMacOs
+            artifact: shinobi-zero-unity/Builds/macOS
+            slug: shinobi-zero-macos
+          - label: Linux x64
+            runner: ubuntu-24.04
+            target: StandaloneLinux64
+            method: ShinobiZero.Editor.CiBuild.BuildLinux
+            artifact: shinobi-zero-unity/Builds/Linux
+            slug: shinobi-zero-linux-x64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Unity license
+        shell: bash
+        env:
+          UNITY_LICENSE_VALUE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          test -n "$UNITY_LICENSE_VALUE" || { echo "Missing GitHub Secret: UNITY_LICENSE"; exit 1; }
+
+      - name: Validate project
+        shell: bash
+        run: node shinobi-zero-unity/Tools/validate-project.js
+
+      - uses: actions/cache@v4
+        with:
+          path: shinobi-zero-unity/Library
+          key: Library-${{ matrix.target }}-${{ hashFiles('shinobi-zero-unity/Assets/**', 'shinobi-zero-unity/Packages/**', 'shinobi-zero-unity/ProjectSettings/**') }}
+          restore-keys: Library-${{ matrix.target }}-
+
+      - name: Build player
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: shinobi-zero-unity
+          unityVersion: 6000.3.0f1
+          targetPlatform: ${{ matrix.target }}
+          customBuildMethod: ${{ matrix.method }}
+          customParameters: -szVersion ${{ inputs.version || '0.1.0' }} -szBuildNumber ${{ github.run_number }}
+          allowDirtyBuild: true
+          cacheUnityInstallationOnMac: true
+
+      - name: Verify packaged build
+        shell: bash
+        run: test -f "${{ matrix.artifact }}/build-manifest.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.slug }}-${{ github.run_number }}
+          path: ${{ matrix.artifact }}
+          if-no-files-found: error
+          retention-days: 14
