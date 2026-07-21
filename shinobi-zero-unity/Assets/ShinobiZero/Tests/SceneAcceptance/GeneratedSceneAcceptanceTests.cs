@@ -32,6 +32,8 @@ namespace ShinobiZero.Tests
             Assert.That(shuriken.GetComponent<Rigidbody>().collisionDetectionMode, Is.EqualTo(CollisionDetectionMode.ContinuousDynamic));
             Assert.That(shuriken.GetComponent<Rigidbody>().maxAngularVelocity, Is.GreaterThanOrEqualTo(40f));
             Assert.That(new SerializedObject(shuriken).FindProperty("surfaceClearance").floatValue, Is.EqualTo(.015f).Within(.0001f));
+            Assert.That(new SerializedObject(shuriken).FindProperty("maximumImpactWobble").floatValue, Is.InRange(4f, 10f));
+            Assert.That(new SerializedObject(shuriken).FindProperty("impactSettleDuration").floatValue, Is.InRange(.15f, .4f));
             var enemyAnimator = Reference<NinjaThrowAnimator>(serialized, "enemyThrowAnimator");
             Assert.That(enemyAnimator, Is.Not.Null);
             var heldEnemyShuriken = Reference<GameObject>(new SerializedObject(enemyAnimator), "heldShuriken");

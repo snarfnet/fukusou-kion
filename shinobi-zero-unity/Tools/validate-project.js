@@ -22,6 +22,7 @@ const required = [
   'Assets/ShinobiZero/Core/AchievementCatalog.cs',
   'Assets/ShinobiZero/Core/PlatformProgress.cs',
   'Assets/ShinobiZero/Core/ImpactFeedbackModel.cs',
+  'Assets/ShinobiZero/Core/ImpactSettleModel.cs',
   'Assets/ShinobiZero/Core/PlayerThrowMotionModel.cs',
   'Assets/ShinobiZero/Core/ResponsiveLayoutModel.cs',
   'Assets/ShinobiZero/Core/UiFocusModel.cs',
@@ -78,6 +79,7 @@ const required = [
   'Assets/ShinobiZero/Tests/SceneAcceptance/GeneratedSceneAcceptanceTests.cs',
   'Assets/ShinobiZero/Tests/EditMode/TargetBoardTests.cs',
   'Assets/ShinobiZero/Tests/EditMode/ThrowReleaseGateTests.cs',
+  'Assets/ShinobiZero/Tests/EditMode/ImpactSettleModelTests.cs',
   'Tools/run-unity-tests.ps1',
   'Assets/Plugins/iOS/ShinobiHaptics.mm',
   'Assets/Plugins/iOS/AppIcon.appiconset/Contents.json',
@@ -221,6 +223,9 @@ for (const releasePoint of ['playerReleasePoint', 'enemyReleasePoint', 'enemyThr
   if (!coordinator.includes(releasePoint)) throw new Error(`Missing separated thrower source: ${releasePoint}`);
 }
 const projectile = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/ShurikenProjectile.cs'), 'utf8');
+for (const settleBehavior of ['collision.relativeVelocity.magnitude', 'ImpactSettleModel.Amplitude', 'ImpactSettleModel.Angle', 'embeddedRotation * Quaternion.AngleAxis']) {
+  if (!projectile.includes(settleBehavior)) throw new Error(`Embedded shuriken has no physical settle: ${settleBehavior}`);
+}
 for (const flightBehavior of ['CollisionDetectionMode.ContinuousDynamic', 'Quaternion.LookRotation(velocity.normalized, transform.up)', 'ShurikenFlightModel.Spin', '_body.maxAngularVelocity = spin.RequiredAngularLimit', 'transform.forward * spin.RadiansPerSecond', 'Quaternion.FromToRotation(transform.forward, -contact.normal)', 'contact.point + contact.normal * surfaceClearance']) {
   if (!projectile.includes(flightBehavior)) throw new Error(`Shuriken flight is missing high-speed behavior: ${flightBehavior}`);
 }

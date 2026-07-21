@@ -649,4 +649,11 @@ Assert-Equal ([ShinobiZero.Core.OpponentDifficultyModel]::Level(-1)) 1 'Difficul
 Assert-Equal ([ShinobiZero.Core.OpponentDifficultyModel]::Level(2)) 5 'Difficulty clamps skill above range'
 Assert-Equal ([ShinobiZero.Core.OpponentDifficultyModel]::Stars(0.62).Length) 5 'Difficulty always renders five stars'
 
+$softImpact = [ShinobiZero.Core.ImpactSettleModel]::Amplitude(4, 8)
+$hardImpact = [ShinobiZero.Core.ImpactSettleModel]::Amplitude(12, 8)
+Assert-Equal ($hardImpact -gt $softImpact) $true 'Hard impact produces stronger embedded wobble'
+Assert-Close ([ShinobiZero.Core.ImpactSettleModel]::Amplitude(100, 8)) 8 0.0001 'Impact wobble respects authored cap'
+Assert-Close ([ShinobiZero.Core.ImpactSettleModel]::Angle(0, 8)) 0 0.0001 'Embedded wobble starts from scored contact pose'
+Assert-Close ([ShinobiZero.Core.ImpactSettleModel]::Angle(1, 8)) 0 0.0001 'Embedded wobble settles to scored contact pose'
+
 Write-Output "SHINOBI ZERO C# core: $checks checks passed"
