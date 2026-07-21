@@ -198,6 +198,9 @@ const settingsController = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/R
 for (const displaySetting of ['fullscreenToggle.gameObject.SetActive(!Application.isMobilePlatform)', 'FullScreenMode.FullScreenWindow', 'FullScreenMode.Windowed', 'preferences.Fullscreen']) {
   if (!settingsController.includes(displaySetting)) throw new Error(`Missing desktop display preference: ${displaySetting}`);
 }
+for (const accessibilityBinding of ['hud.ReducedMotion = preferences.ReducedMotion', '[SerializeField] private GameHudController hud']) {
+  if (!settingsController.includes(accessibilityBinding)) throw new Error(`Score callout ignores reduced-motion setting: ${accessibilityBinding}`);
+}
 for (const displayBinding of ['FindProperty("fullscreenToggle")', 'フルスクリーン']) {
   if (!sceneBuilder.includes(displayBinding)) throw new Error(`Generated settings miss fullscreen control: ${displayBinding}`);
 }
@@ -347,6 +350,9 @@ for (const quitBinding of ['AddComponent<DesktopQuitController>()', 'FindPropert
 }
 
 const gameHud = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/GameHudController.cs'), 'utf8');
+for (const calloutBehavior of ['PlayHitCallout(ImpactFeedbackModel.Evaluate(outcome))', 'profile.CalloutScale', 'profile.CalloutHoldSeconds', 'Time.unscaledDeltaTime', 'ReducedMotion ? 1f']) {
+  if (!gameHud.includes(calloutBehavior)) throw new Error(`Impact score callout is incomplete: ${calloutBehavior}`);
+}
 for (const resumeHud of ['flow.MatchStarted += HandleMatchStarted', 'matchPanel.SetActive(true)', 'flow.LastMatchWasResumed', 'MATCH RESTORED']) {
   if (!gameHud.includes(resumeHud)) throw new Error(`HUD does not reveal restored match state: ${resumeHud}`);
 }

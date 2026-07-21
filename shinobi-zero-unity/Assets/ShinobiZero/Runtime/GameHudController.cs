@@ -1,3 +1,4 @@
+using System.Collections;
 using ShinobiZero.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,10 +58,16 @@ namespace ShinobiZero.Runtime
         private readonly TurnHistoryTracker _turnHistory = new TurnHistoryTracker();
         private TutorialInputMode _inputMode;
         private bool _showingInputPrompt;
+        private Coroutine _hitCalloutRoutine;
+        private Vector3 _hitTextScale;
+        private Color _hitTextColor;
+        public bool ReducedMotion { get; set; }
 
         private void Awake()
         {
             InstallRuntimeFont();
+            _hitTextScale = hitText.rectTransform.localScale;
+            _hitTextColor = hitText.color;
             for (var i = 0; i < opponentButtons.Length; i++)
             {
                 var index = i;
@@ -122,6 +129,7 @@ namespace ShinobiZero.Runtime
             if (progress != null) progress.StatsChanged -= RefreshCareer;
             if (gestureReader != null) gestureReader.Rejected -= HandleRejectedThrow;
             if (localization != null) localization.LanguageChanged -= HandleLanguageChanged;
+            ResetHitCallout();
         }
 
         private void SelectOpponent(int index)
@@ -254,6 +262,7 @@ namespace ShinobiZero.Runtime
                 : outcome.Score.Bust
                     ? (outcome.Score.InvalidCheckout ? (English ? "BUST — FINISH ON A DOUBLE" : "BUST — 最後はダブル") : "BUST")
                     : HitLabel(outcome.Hit);
+            PlayHitCallout(ImpactFeedbackModel.Evaluate(outcome));
             RenderMatch();
             if (!outcome.MatchEnded)
             {
@@ -276,6 +285,54 @@ namespace ShinobiZero.Runtime
                 : "\n3投平均 " + performance.ThreeDartAverage.ToString("0.0") + "　命中率 " + Mathf.RoundToInt(performance.HitRate * 100f)
                     + "%　最高 " + performance.BestTurn + "　上がり " + performance.BestCheckout;
             resultPanel.SetActive(true);
+        }
+
+        private void PlayHitCallout(ImpactFeedbackProfile profile)
+        {
+            ResetHitCallout();
+            _hitCalloutRoutine = StartCoroutine(AnimateHitCallout(profile));
+        }
+
+        private IEnumerator AnimateHitCallout(ImpactFeedbackProfile profile)
+        {
+            hitText.color = CalloutColor(profile.Tier);
+            hitText.rectTransform.localScale = _hitTextScale * (ReducedMotion ? 1f : profile.CalloutScale);
+            var elapsed = 0f;
+            while (elapsed < profile.CalloutHoldSeconds)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            const float settleDuration = .18f;
+            elapsed = 0f;
+            while (elapsed < settleDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                var t = Mathf.Clamp01(elapsed / settleDuration);
+                hitText.color = Color.Lerp(CalloutColor(profile.Tier), _hitTextColor, t);
+                if (!ReducedMotion)
+                    hitText.rectTransform.localScale = Vector3.Lerp(_hitTextScale * profile.CalloutScale, _hitTextScale, t);
+                yield return null;
+            }
+            ResetHitCallout();
+        }
+
+        private void ResetHitCallout()
+        {
+            if (_hitCalloutRoutine != null) StopCoroutine(_hitCalloutRoutine);
+            _hitCalloutRoutine = null;
+            if (hitText == null) return;
+            hitText.rectTransform.localScale = _hitTextScale;
+            hitText.color = _hitTextColor;
+        }
+
+        private static Color CalloutColor(ImpactTier tier)
+        {
+            if (tier == ImpactTier.Bust || tier == ImpactTier.MatchDefeat) return new Color(1f, .24f, .16f);
+            if (tier == ImpactTier.Bull || tier == ImpactTier.Checkout || tier == ImpactTier.MatchVictory) return new Color(1f, .78f, .26f);
+            if (tier == ImpactTier.Triple || tier == ImpactTier.Double) return new Color(1f, .48f, .2f);
+            if (tier == ImpactTier.Miss) return new Color(.55f, .58f, .6f);
+            return Color.white;
         }
 
         private void RenderMatch()

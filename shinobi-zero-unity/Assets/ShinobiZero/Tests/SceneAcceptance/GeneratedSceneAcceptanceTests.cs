@@ -125,7 +125,9 @@ namespace ShinobiZero.Tests
         [Test] public void ProductControllersAreConnected()
         {
             Assert.That(Object.FindObjectOfType<PlayerProgressController>(), Is.Not.Null);
-            Assert.That(Object.FindObjectOfType<SettingsController>(), Is.Not.Null);
+            var settings = Object.FindObjectOfType<SettingsController>();
+            Assert.That(settings, Is.Not.Null);
+            Assert.That(Reference<GameHudController>(new SerializedObject(settings), "hud"), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<TutorialController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<GamePauseController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<AimReticleController>(), Is.Not.Null);

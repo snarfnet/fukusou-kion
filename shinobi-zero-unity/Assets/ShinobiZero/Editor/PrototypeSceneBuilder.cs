@@ -1026,6 +1026,10 @@ namespace ShinobiZero.Editor
             serialized.FindProperty("changeOpponentButton").objectReferenceValue = change;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            settingsSerialized.Update();
+            settingsSerialized.FindProperty("hud").objectReferenceValue = hud;
+            settingsSerialized.ApplyModifiedPropertiesWithoutUndo();
+
             var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             eventSystem.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
         }

@@ -20,6 +20,7 @@ namespace ShinobiZero.Runtime
         [SerializeField] private NinjaReactionController ninjaReaction;
         [SerializeField] private TitleBackgroundController titleBackground;
         [SerializeField] private UiLocalizationController localization;
+        [SerializeField] private GameHudController hud;
 
         private void Awake()
         {
@@ -57,6 +58,7 @@ namespace ShinobiZero.Runtime
             if (playerThrowAnimator != null) playerThrowAnimator.ReducedMotion = preferences.ReducedMotion;
             if (ninjaReaction != null) ninjaReaction.ReducedMotion = preferences.ReducedMotion;
             if (titleBackground != null) titleBackground.ReducedMotion = preferences.ReducedMotion;
+            if (hud != null) hud.ReducedMotion = preferences.ReducedMotion;
             if (localization != null) localization.SetLanguage(preferences.EnglishUi ? GameLanguage.English : GameLanguage.Japanese);
             if (!Application.isMobilePlatform)
                 Screen.fullScreenMode = preferences.Fullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;

@@ -29,6 +29,8 @@ namespace ShinobiZero.Tests
             Assert.That(profile.Tier, Is.EqualTo(ImpactTier.MatchVictory));
             Assert.That(profile.CameraStrength, Is.GreaterThan(ImpactFeedbackModel.Evaluate(Outcome(DartHit.Bull)).CameraStrength));
             Assert.That(profile.SparkCount, Is.GreaterThan(20));
+            Assert.That(profile.CalloutScale, Is.GreaterThan(ImpactFeedbackModel.Evaluate(Outcome(DartHit.Bull)).CalloutScale));
+            Assert.That(profile.CalloutHoldSeconds, Is.GreaterThan(.5f));
         }
 
         [Test] public void EnemyMatchWinUsesDefeatTone()
