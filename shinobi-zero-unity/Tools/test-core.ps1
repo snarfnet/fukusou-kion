@@ -650,15 +650,19 @@ Assert-Equal ($touchGuideEn.Contains('finger')) $true 'Touch tutorial explains t
 Assert-Equal ($gamepadGuideEn.Contains('left stick')) $true 'Gamepad tutorial explains aiming'
 Assert-Equal ($gamepadGuideEn.Contains('RT')) $true 'Gamepad tutorial explains throw charging'
 Assert-Equal ($gamepadGuideEn.Contains('right stick')) $true 'Gamepad tutorial explains spin'
+Assert-Equal ($gamepadGuideEn.Contains('L3')) $true 'Gamepad tutorial explains aim reset'
 Assert-Equal ($keyboardGuideEn.Contains('WASD')) $true 'Keyboard tutorial explains aiming'
 Assert-Equal ($keyboardGuideEn.Contains('F')) $true 'Keyboard tutorial explains throw charging'
+Assert-Equal ($keyboardGuideEn.Contains('R to reset')) $true 'Keyboard tutorial explains aim reset'
 $touchPromptEn = [ShinobiZero.Core.ThrowPromptCatalog]::Text([ShinobiZero.Core.TutorialInputMode]::Touch, [ShinobiZero.Core.GameLanguage]::English)
 $gamepadPromptEn = [ShinobiZero.Core.ThrowPromptCatalog]::Text([ShinobiZero.Core.TutorialInputMode]::Gamepad, [ShinobiZero.Core.GameLanguage]::English)
 $keyboardPromptEn = [ShinobiZero.Core.ThrowPromptCatalog]::Text([ShinobiZero.Core.TutorialInputMode]::KeyboardMouse, [ShinobiZero.Core.GameLanguage]::English)
 Assert-Equal ($touchPromptEn.Contains('SWIPE')) $true 'Match touch prompt explains swipe input'
 Assert-Equal ($gamepadPromptEn.Contains('LEFT STICK')) $true 'Match gamepad prompt explains aiming'
 Assert-Equal ($gamepadPromptEn.Contains('RT')) $true 'Match gamepad prompt explains release input'
+Assert-Equal ($gamepadPromptEn.Contains('L3 RESET')) $true 'Match gamepad prompt keeps reset visible'
 Assert-Equal ($keyboardPromptEn.Contains('WASD')) $true 'Match keyboard prompt explains aiming'
+Assert-Equal ($keyboardPromptEn.Contains('R RESET')) $true 'Match keyboard prompt keeps reset visible'
 Assert-Equal ($keyboardPromptEn.Contains('F')) $true 'Match keyboard prompt explains release input'
 Assert-Equal ($touchPromptEn -ne $gamepadPromptEn) $true 'Match prompt changes with active device'
 

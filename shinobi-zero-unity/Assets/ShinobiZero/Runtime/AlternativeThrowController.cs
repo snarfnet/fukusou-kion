@@ -34,6 +34,8 @@ namespace ShinobiZero.Runtime
                 return;
             }
 
+            if (WasAimResetPressed()) ResetAim();
+
             var movement = ReadAimMovement();
             if (movement.sqrMagnitude > .001f)
             {
@@ -56,6 +58,12 @@ namespace ShinobiZero.Runtime
             AimTracked?.Invoke(_aim, false);
         }
 
+        public void ResetAim()
+        {
+            _aim = Vector2.zero;
+            AimTracked?.Invoke(_aim, true);
+        }
+
         private static Vector2 ReadAimMovement()
         {
             var movement = Gamepad.current == null ? Vector2.zero : Gamepad.current.leftStick.ReadValue();
@@ -75,5 +83,9 @@ namespace ShinobiZero.Runtime
         private static bool WasChargeReleased() =>
             (Gamepad.current != null && Gamepad.current.rightTrigger.wasReleasedThisFrame)
             || (Keyboard.current != null && Keyboard.current.fKey.wasReleasedThisFrame);
+
+        private static bool WasAimResetPressed() =>
+            (Gamepad.current != null && Gamepad.current.leftStickButton.wasPressedThisFrame)
+            || (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame);
     }
 }
