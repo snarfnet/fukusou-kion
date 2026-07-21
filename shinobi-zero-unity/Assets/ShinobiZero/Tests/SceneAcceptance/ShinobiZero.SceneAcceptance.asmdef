@@ -1,0 +1,16 @@
+{
+  "name": "ShinobiZero.SceneAcceptance",
+  "rootNamespace": "ShinobiZero.Tests",
+  "references": [
+    "ShinobiZero.Core",
+    "ShinobiZero.Runtime",
+    "ShinobiZero.Editor",
+    "Unity.InputSystem",
+    "Unity.ugui"
+  ],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false,
+  "overrideReferences": false,
+  "noEngineReferences": false
+}

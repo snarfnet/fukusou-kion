@@ -1,0 +1,7 @@
+{
+  "name": "ShinobiZero.Core",
+  "rootNamespace": "ShinobiZero.Core",
+  "autoReferenced": true,
+  "overrideReferences": false,
+  "noEngineReferences": true
+}

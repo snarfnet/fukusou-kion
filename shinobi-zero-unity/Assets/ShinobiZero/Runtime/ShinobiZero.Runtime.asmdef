@@ -1,0 +1,8 @@
+{
+  "name": "ShinobiZero.Runtime",
+  "rootNamespace": "ShinobiZero.Runtime",
+  "references": ["ShinobiZero.Core", "Unity.InputSystem", "Unity.ugui"],
+  "autoReferenced": true,
+  "overrideReferences": false,
+  "noEngineReferences": false
+}
