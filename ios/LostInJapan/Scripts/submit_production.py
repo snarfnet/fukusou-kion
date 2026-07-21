@@ -35,7 +35,7 @@ base.META = {
             "Show a clear Japanese assistance card, search for nearby police boxes, and keep each case organized "
             "on your device. Emergency guides cover passports, wallets, phones, payment cards, medicine, missing "
             "children, theft, and approaching departures.\n\n"
-            "The interface supports 15 languages. Case details and photos stay on your device. No account, ads, "
+            "The interface supports 15 languages. Case details stay on your device. No account, ads, "
             "or subscription is required."
         ),
         "keywords": "Japan,lost property,travel,police box,passport,wallet,phone,tourist,offline",
@@ -175,7 +175,7 @@ def update_version(version_id):
         "demoAccountName": "",
         "demoAccountPassword": "",
         "notes": (
-            "No login is required. The app stores case details and selected photos only on the device. "
+            "No login is required. The app stores case details only on the device. "
             "Location permission is used only to search for nearby police boxes. The app does not collect "
             "or transmit personal data and contains no advertising or in-app purchases."
         ),
