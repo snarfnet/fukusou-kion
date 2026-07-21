@@ -13,6 +13,7 @@ namespace ShinobiZero.Runtime
         [SerializeField] private Transform shoulder;
         [SerializeField] private Transform elbow;
         [SerializeField] private Transform wrist;
+        [SerializeField] private GameObject heldShuriken;
         public event Action ReleaseRequested;
         public bool IsThrowing { get; private set; }
         private Quaternion _torsoRest;
@@ -20,6 +21,7 @@ namespace ShinobiZero.Runtime
         private Quaternion _elbowRest;
         private Quaternion _wristRest;
         private ThrowAnimationProfile _activeProfile;
+        private readonly ThrowReleaseGate _releaseGate = new ThrowReleaseGate();
 
         private void Awake()
         {
@@ -27,6 +29,7 @@ namespace ShinobiZero.Runtime
             if (shoulder != null) _shoulderRest = shoulder.localRotation;
             if (elbow != null) _elbowRest = elbow.localRotation;
             if (wrist != null) _wristRest = wrist.localRotation;
+            if (heldShuriken != null) heldShuriken.SetActive(true);
         }
 
         public bool PlayThrow()
@@ -38,7 +41,9 @@ namespace ShinobiZero.Runtime
         {
             if (IsThrowing || overrideProfile == null) return false;
             IsThrowing = true;
+            _releaseGate.Arm();
             _activeProfile = overrideProfile;
+            if (heldShuriken != null) heldShuriken.SetActive(true);
             if (animator != null)
                 animator.CrossFadeInFixedTime(_activeProfile.StateName, _activeProfile.CrossFadeDuration);
             else
@@ -78,19 +83,27 @@ namespace ShinobiZero.Runtime
         // Call from the release frame's Animation Event.
         public void ReleaseShuriken()
         {
-            if (!IsThrowing) return;
+            if (!IsThrowing || !_releaseGate.TryRelease()) return;
+            if (heldShuriken != null) heldShuriken.SetActive(false);
             ReleaseRequested?.Invoke();
         }
 
         // Call from the final frame's Animation Event.
-        public void FinishThrow() => IsThrowing = false;
+        public void FinishThrow()
+        {
+            IsThrowing = false;
+            _releaseGate.Reset();
+            if (heldShuriken != null) heldShuriken.SetActive(true);
+        }
 
         public void CancelThrow()
         {
             StopAllCoroutines();
             Pose(0f, 0f, 0f, 0f);
             IsThrowing = false;
+            _releaseGate.Reset();
             _activeProfile = null;
+            if (heldShuriken != null) heldShuriken.SetActive(true);
         }
     }
 }

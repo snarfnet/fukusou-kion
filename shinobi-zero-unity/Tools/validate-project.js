@@ -42,6 +42,7 @@ const required = [
   'Assets/ShinobiZero/Core/ThrowInputModel.cs',
   'Assets/ShinobiZero/Core/ThrowPromptCatalog.cs',
   'Assets/ShinobiZero/Core/ThrowCalibrationModel.cs',
+  'Assets/ShinobiZero/Core/ThrowReleaseGate.cs',
   'Assets/ShinobiZero/Runtime/ThrowGestureReader.cs',
   'Assets/ShinobiZero/Runtime/InputModeDetector.cs',
   'Assets/ShinobiZero/Runtime/ShurikenProjectile.cs',
@@ -76,6 +77,7 @@ const required = [
   'Assets/ShinobiZero/Tests/SceneAcceptance/ShinobiZero.SceneAcceptance.asmdef',
   'Assets/ShinobiZero/Tests/SceneAcceptance/GeneratedSceneAcceptanceTests.cs',
   'Assets/ShinobiZero/Tests/EditMode/TargetBoardTests.cs',
+  'Assets/ShinobiZero/Tests/EditMode/ThrowReleaseGateTests.cs',
   'Tools/run-unity-tests.ps1',
   'Assets/Plugins/iOS/ShinobiHaptics.mm',
   'Assets/Plugins/iOS/AppIcon.appiconset/Contents.json',
@@ -139,6 +141,13 @@ for (const cloudBehavior of ['career-cloud.json', 'File.WriteAllBytes(temporary,
 const sceneBuilder = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Editor/PrototypeSceneBuilder.cs'), 'utf8');
 for (const sourceBinding of ['FindProperty("playerReleasePoint")', 'FindProperty("enemyReleasePoint")', 'FindProperty("enemyThrowAnimator")', 'FindProperty("playerThrowAnimator")']) {
   if (!sceneBuilder.includes(sourceBinding)) throw new Error(`Generated scene misses thrower binding: ${sourceBinding}`);
+}
+const ninjaThrowAnimator = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/NinjaThrowAnimator.cs'), 'utf8');
+for (const releaseBehavior of ['heldShuriken.SetActive(false)', 'heldShuriken.SetActive(true)', '_releaseGate.TryRelease()', '_releaseGate.Arm()']) {
+  if (!ninjaThrowAnimator.includes(releaseBehavior)) throw new Error(`Enemy held shuriken release is incomplete: ${releaseBehavior}`);
+}
+for (const heldShurikenBinding of ['CreateHeldShuriken("Enemy Held Shuriken"', 'FindProperty("heldShuriken")']) {
+  if (!sceneBuilder.includes(heldShurikenBinding)) throw new Error(`Generated ninja misses held shuriken: ${heldShurikenBinding}`);
 }
 for (const realisticBoard of ['Round Bound Straw Backing', 'Regulation Spider Wires', 'CreateDartboardWires(board)', 'FindProperty("scoringRadius").floatValue = 1f', 'const float localRadius = 1f']) {
   if (!sceneBuilder.includes(realisticBoard)) throw new Error(`Competition target still lacks production geometry: ${realisticBoard}`);

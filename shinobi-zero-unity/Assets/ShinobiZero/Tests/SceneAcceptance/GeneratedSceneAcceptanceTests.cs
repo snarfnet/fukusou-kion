@@ -32,7 +32,11 @@ namespace ShinobiZero.Tests
             Assert.That(shuriken.GetComponent<Rigidbody>().collisionDetectionMode, Is.EqualTo(CollisionDetectionMode.ContinuousDynamic));
             Assert.That(shuriken.GetComponent<Rigidbody>().maxAngularVelocity, Is.GreaterThanOrEqualTo(40f));
             Assert.That(new SerializedObject(shuriken).FindProperty("surfaceClearance").floatValue, Is.EqualTo(.015f).Within(.0001f));
-            Assert.That(Reference<NinjaThrowAnimator>(serialized, "enemyThrowAnimator"), Is.Not.Null);
+            var enemyAnimator = Reference<NinjaThrowAnimator>(serialized, "enemyThrowAnimator");
+            Assert.That(enemyAnimator, Is.Not.Null);
+            var heldEnemyShuriken = Reference<GameObject>(new SerializedObject(enemyAnimator), "heldShuriken");
+            Assert.That(heldEnemyShuriken.name, Is.EqualTo("Enemy Held Shuriken"));
+            Assert.That(heldEnemyShuriken.GetComponentInChildren<MeshFilter>(), Is.Not.Null);
             Assert.That(Reference<FirstPersonThrowAnimator>(serialized, "playerThrowAnimator"), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<NinjaReactionController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<GamepadRumbleDriver>(), Is.Not.Null);

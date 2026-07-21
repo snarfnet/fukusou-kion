@@ -408,6 +408,7 @@ namespace ShinobiZero.Editor
         {
             var cloth = CreateMaterial("Ninja Charcoal Cloth", new Color(.025f, .03f, .032f), .08f, .2f);
             var armor = CreateMaterial("Ninja Iron Plates", new Color(.095f, .11f, .115f), .72f, .38f);
+            var shurikenSteel = CreateMaterial("Shuriken Steel", new Color(.28f, .32f, .34f), .9f, .72f);
             var skin = CreateMaterial("Ninja Skin", new Color(.38f, .24f, .17f), .02f, .24f);
             var root = new GameObject("Procedural Throwing Ninja");
             root.transform.position = new Vector3(-1.25f, -1.55f, -1.15f);
@@ -447,6 +448,7 @@ namespace ShinobiZero.Editor
             var release = new GameObject("Shuriken Release").transform;
             release.SetParent(wrist, false);
             release.localPosition = new Vector3(.14f, 0f, -.08f);
+            var heldEnemyShuriken = CreateHeldShuriken("Enemy Held Shuriken", release, shurikenSteel, .68f);
 
             var styleAccessories = CreateNinjaStyleAccessories(root.transform, head, torso, armor, cloth, accentRenderers);
 
@@ -457,6 +459,7 @@ namespace ShinobiZero.Editor
             serialized.FindProperty("shoulder").objectReferenceValue = shoulder;
             serialized.FindProperty("elbow").objectReferenceValue = elbow;
             serialized.FindProperty("wrist").objectReferenceValue = wrist;
+            serialized.FindProperty("heldShuriken").objectReferenceValue = heldEnemyShuriken;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             var visual = root.AddComponent<NinjaVisualController>();
             var visualSerialized = new SerializedObject(visual);
@@ -473,6 +476,28 @@ namespace ShinobiZero.Editor
             reactionSerialized.FindProperty("head").objectReferenceValue = head;
             reactionSerialized.ApplyModifiedPropertiesWithoutUndo();
             return new NinjaRig { Animator = animator, Visual = visual, Reaction = reaction, ReleasePoint = release };
+        }
+
+        private static GameObject CreateHeldShuriken(string name, Transform parent, Material metal, float scale)
+        {
+            var held = new GameObject(name);
+            held.transform.SetParent(parent, false);
+            held.transform.localRotation = Quaternion.Euler(0f, 0f, 18f);
+            held.transform.localScale = Vector3.one * scale;
+
+            var blade = new GameObject("Forged Blades", typeof(MeshFilter), typeof(MeshRenderer));
+            blade.transform.SetParent(held.transform, false);
+            blade.GetComponent<MeshFilter>().sharedMesh = CreateShurikenMesh();
+            blade.GetComponent<MeshRenderer>().sharedMaterial = metal;
+
+            var hub = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            Object.DestroyImmediate(hub.GetComponent<Collider>());
+            hub.name = "Raised Hub";
+            hub.transform.SetParent(held.transform, false);
+            hub.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            hub.transform.localScale = new Vector3(.078f, .014f, .078f);
+            hub.GetComponent<Renderer>().sharedMaterial = metal;
+            return held;
         }
 
         private static GameObject[] CreateNinjaStyleAccessories(Transform root, Transform head, Transform torso,
