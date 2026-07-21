@@ -55,7 +55,9 @@ jobs:
 
       - name: Validate project
         shell: bash
-        run: node shinobi-zero-unity/Tools/validate-project.js
+        run: |
+          node shinobi-zero-unity/Tools/validate-project.js
+          python3 shinobi-zero-unity/Tools/validate-font-coverage.py
 
       - uses: actions/cache@v4
         with:

@@ -103,7 +103,8 @@ const required = [
   'Docs/STEAM_RELEASE.md',
   'Assets/ShinobiZero/Fonts/NotoSansJP-Variable.ttf',
   'ThirdParty/Fonts/NotoSansJP-OFL.txt',
-  'ThirdParty/Fonts/README.md'
+  'ThirdParty/Fonts/README.md',
+  'Tools/validate-font-coverage.py'
 ];
 
 const missing = required.filter(file => !fs.existsSync(path.join(root, file)));

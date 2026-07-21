@@ -71,6 +71,7 @@ node Tools/validate-project.js
 PowerShell -ExecutionPolicy Bypass -File Tools/test-core.ps1
 python Tools/validate-ios-icons.py
 python Tools/validate-privacy-manifest.py
+python Tools/validate-font-coverage.py
 ```
 
 Unity導入後は、生成シーンを含むEditModeテストをバッチ実行できる。
