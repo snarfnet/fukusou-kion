@@ -226,8 +226,14 @@ for (const displayBinding of ['FindProperty("fullscreenToggle")', 'フルスク�
   if (!sceneBuilder.includes(displayBinding)) throw new Error(`Generated settings miss fullscreen control: ${displayBinding}`);
 }
 const preferenceCodec = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Core/GamePreferences.cs'), 'utf8');
-for (const migrationBehavior of ['LegacyVersionFlag', 'value.Fullscreen ? 16 : 0', '(value & 16) != 0']) {
+for (const migrationBehavior of ['LegacyVersionFlag', 'PreviousVersionFlag', 'VolumeShift', 'value.Fullscreen ? 16 : 0', '(value & 16) != 0', 'value.VolumeStep << VolumeShift']) {
   if (!preferenceCodec.includes(migrationBehavior)) throw new Error(`Fullscreen preference migration is incomplete: ${migrationBehavior}`);
+}
+for (const volumeSetting of ['volumeSlider.onValueChanged', 'preferences.VolumeStep / 10f', 'Mathf.RoundToInt(volumeSlider.value)', 'UpdateVolumeLabel']) {
+  if (!settingsController.includes(volumeSetting)) throw new Error(`Master volume setting is incomplete: ${volumeSetting}`);
+}
+for (const volumeBinding of ['CreateSlider("Volume Setting"', 'FindProperty("volumeSlider")', 'FindProperty("volumeValueText")']) {
+  if (!sceneBuilder.includes(volumeBinding)) throw new Error(`Generated settings miss master volume: ${volumeBinding}`);
 }
 
 const feedback = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/ThrowFeedbackController.cs'), 'utf8');

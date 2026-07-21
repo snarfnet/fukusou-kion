@@ -11,6 +11,8 @@ namespace ShinobiZero.Runtime
         [SerializeField] private Button openButton;
         [SerializeField] private Button closeButton;
         [SerializeField] private Toggle soundToggle;
+        [SerializeField] private Slider volumeSlider;
+        [SerializeField] private Text volumeValueText;
         [SerializeField] private Toggle hapticsToggle;
         [SerializeField] private Toggle reducedMotionToggle;
         [SerializeField] private Toggle englishToggle;
@@ -28,12 +30,15 @@ namespace ShinobiZero.Runtime
             closeButton.onClick.AddListener(() => panel.SetActive(false));
             var preferences = PreferencesCodec.Decode(PlayerPrefs.GetInt(PreferencesKey, 0));
             soundToggle.SetIsOnWithoutNotify(preferences.SoundEnabled);
+            volumeSlider.SetValueWithoutNotify(preferences.VolumeStep);
+            UpdateVolumeLabel(preferences.VolumeStep);
             hapticsToggle.SetIsOnWithoutNotify(preferences.HapticsEnabled);
             reducedMotionToggle.SetIsOnWithoutNotify(preferences.ReducedMotion);
             englishToggle.SetIsOnWithoutNotify(preferences.EnglishUi);
             fullscreenToggle.SetIsOnWithoutNotify(preferences.Fullscreen);
             fullscreenToggle.gameObject.SetActive(!Application.isMobilePlatform);
             soundToggle.onValueChanged.AddListener(_ => ApplyAndSave());
+            volumeSlider.onValueChanged.AddListener(value => { UpdateVolumeLabel(Mathf.RoundToInt(value)); ApplyAndSave(); });
             hapticsToggle.onValueChanged.AddListener(_ => ApplyAndSave());
             reducedMotionToggle.onValueChanged.AddListener(_ => ApplyAndSave());
             englishToggle.onValueChanged.AddListener(_ => ApplyAndSave());
@@ -44,7 +49,8 @@ namespace ShinobiZero.Runtime
 
         private void ApplyAndSave()
         {
-            var preferences = new GamePreferences(soundToggle.isOn, hapticsToggle.isOn, reducedMotionToggle.isOn, englishToggle.isOn, fullscreenToggle.isOn);
+            var preferences = new GamePreferences(soundToggle.isOn, hapticsToggle.isOn, reducedMotionToggle.isOn,
+                englishToggle.isOn, fullscreenToggle.isOn, Mathf.RoundToInt(volumeSlider.value));
             Apply(preferences);
             PlayerPrefs.SetInt(PreferencesKey, PreferencesCodec.Encode(preferences));
             PlayerPrefs.Save();
@@ -52,7 +58,7 @@ namespace ShinobiZero.Runtime
 
         private void Apply(GamePreferences preferences)
         {
-            AudioListener.volume = preferences.SoundEnabled ? 1f : 0f;
+            AudioListener.volume = preferences.SoundEnabled ? preferences.VolumeStep / 10f : 0f;
             HapticFeedback.Enabled = preferences.HapticsEnabled;
             if (feedback != null) feedback.ReducedMotion = preferences.ReducedMotion;
             if (playerThrowAnimator != null) playerThrowAnimator.ReducedMotion = preferences.ReducedMotion;
@@ -62,6 +68,11 @@ namespace ShinobiZero.Runtime
             if (localization != null) localization.SetLanguage(preferences.EnglishUi ? GameLanguage.English : GameLanguage.Japanese);
             if (!Application.isMobilePlatform)
                 Screen.fullScreenMode = preferences.Fullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        }
+
+        private void UpdateVolumeLabel(int volumeStep)
+        {
+            if (volumeValueText != null) volumeValueText.text = (volumeStep * 10) + "%";
         }
     }
 }

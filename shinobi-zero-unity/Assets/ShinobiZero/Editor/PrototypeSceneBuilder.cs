@@ -955,11 +955,12 @@ namespace ShinobiZero.Editor
 
             var settingsPanel = CreatePanel("Settings", safeArea.transform, new Color(.008f, .012f, .015f, .98f));
             CreateText("Settings Title", settingsPanel.transform, "設定", 72, new Vector2(0, 470), new Vector2(800, 120), TextAnchor.MiddleCenter, Color.white);
-            var soundToggle = CreateToggle("Sound Setting", settingsPanel.transform, "効果音", new Vector2(0, 210), new Vector2(620, 82));
-            var hapticsToggle = CreateToggle("Haptics Setting", settingsPanel.transform, "触覚フィードバック", new Vector2(0, 70), new Vector2(620, 82));
-            var motionToggle = CreateToggle("Motion Setting", settingsPanel.transform, "カメラ反応を抑える", new Vector2(0, -70), new Vector2(620, 82));
-            var fullscreenToggle = CreateToggle("Fullscreen Setting", settingsPanel.transform, "フルスクリーン", new Vector2(0, -210), new Vector2(620, 82));
-            var englishToggle = CreateToggle("Language Setting", settingsPanel.transform, "英語UI", new Vector2(0, -330), new Vector2(620, 82));
+            var soundToggle = CreateToggle("Sound Setting", settingsPanel.transform, "効果音", new Vector2(0, 320), new Vector2(620, 82));
+            var volumeSlider = CreateSlider("Volume Setting", settingsPanel.transform, "音量", new Vector2(0, 210), new Vector2(620, 82), out var volumeValue);
+            var hapticsToggle = CreateToggle("Haptics Setting", settingsPanel.transform, "触覚フィードバック", new Vector2(0, 90), new Vector2(620, 82));
+            var motionToggle = CreateToggle("Motion Setting", settingsPanel.transform, "カメラ反応を抑える", new Vector2(0, -30), new Vector2(620, 82));
+            var fullscreenToggle = CreateToggle("Fullscreen Setting", settingsPanel.transform, "フルスクリーン", new Vector2(0, -150), new Vector2(620, 82));
+            var englishToggle = CreateToggle("Language Setting", settingsPanel.transform, "英語UI", new Vector2(0, -270), new Vector2(620, 82));
             var closeSettings = CreateButton("Close Settings", settingsPanel.transform, "決定", new Vector2(0, -520), new Vector2(620, 100), out _);
             var settings = canvasObject.AddComponent<SettingsController>();
             var settingsSerialized = new SerializedObject(settings);
@@ -967,6 +968,8 @@ namespace ShinobiZero.Editor
             settingsSerialized.FindProperty("openButton").objectReferenceValue = openSettings;
             settingsSerialized.FindProperty("closeButton").objectReferenceValue = closeSettings;
             settingsSerialized.FindProperty("soundToggle").objectReferenceValue = soundToggle;
+            settingsSerialized.FindProperty("volumeSlider").objectReferenceValue = volumeSlider;
+            settingsSerialized.FindProperty("volumeValueText").objectReferenceValue = volumeValue;
             settingsSerialized.FindProperty("hapticsToggle").objectReferenceValue = hapticsToggle;
             settingsSerialized.FindProperty("reducedMotionToggle").objectReferenceValue = motionToggle;
             settingsSerialized.FindProperty("englishToggle").objectReferenceValue = englishToggle;
@@ -1257,6 +1260,39 @@ namespace ShinobiZero.Editor
             toggle.graphic = mark.GetComponent<Image>();
             CreateText("Label", item.transform, label, 25, new Vector2(28, 0), new Vector2(235, 60), TextAnchor.MiddleCenter, Color.white);
             return toggle;
+        }
+
+        private static Slider CreateSlider(string name, Transform parent, string label, Vector2 position, Vector2 dimensions, out Text valueText)
+        {
+            var item = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Slider));
+            item.transform.SetParent(parent, false);
+            SetRect(item.GetComponent<RectTransform>(), position, dimensions);
+            item.GetComponent<Image>().color = new Color(.055f, .07f, .075f, .96f);
+            CreateText("Label", item.transform, label, 25, new Vector2(-205, 0), new Vector2(150, 60), TextAnchor.MiddleLeft, Color.white);
+
+            var track = new GameObject("Track", typeof(RectTransform), typeof(Image));
+            track.transform.SetParent(item.transform, false);
+            SetRect(track.GetComponent<RectTransform>(), new Vector2(35, 0), new Vector2(300, 12));
+            track.GetComponent<Image>().color = new Color(.16f, .18f, .19f, 1f);
+            var fill = new GameObject("Fill", typeof(RectTransform), typeof(Image));
+            fill.transform.SetParent(track.transform, false);
+            Stretch(fill.GetComponent<RectTransform>());
+            fill.GetComponent<Image>().color = new Color(.62f, .12f, .09f, 1f);
+            var handle = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+            handle.transform.SetParent(track.transform, false);
+            handle.GetComponent<RectTransform>().sizeDelta = new Vector2(34, 44);
+            handle.GetComponent<Image>().color = new Color(.9f, .74f, .4f, 1f);
+
+            var slider = item.GetComponent<Slider>();
+            slider.minValue = 0f;
+            slider.maxValue = 10f;
+            slider.wholeNumbers = true;
+            slider.fillRect = fill.GetComponent<RectTransform>();
+            slider.handleRect = handle.GetComponent<RectTransform>();
+            slider.targetGraphic = handle.GetComponent<Image>();
+            slider.direction = Slider.Direction.LeftToRight;
+            valueText = CreateText("Value", item.transform, "80%", 24, new Vector2(250, 0), new Vector2(100, 60), TextAnchor.MiddleCenter, Color.white);
+            return slider;
         }
 
         private static void AssignArray<T>(SerializedProperty property, T[] values) where T : Object

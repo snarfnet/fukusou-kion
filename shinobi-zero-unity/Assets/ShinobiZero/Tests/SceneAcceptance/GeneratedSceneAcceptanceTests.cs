@@ -132,6 +132,9 @@ namespace ShinobiZero.Tests
             var settings = Object.FindObjectOfType<SettingsController>();
             Assert.That(settings, Is.Not.Null);
             Assert.That(Reference<GameHudController>(new SerializedObject(settings), "hud"), Is.Not.Null);
+            var settingsSerialized = new SerializedObject(settings);
+            Assert.That(Reference<Slider>(settingsSerialized, "volumeSlider").wholeNumbers, Is.True);
+            Assert.That(Reference<Text>(settingsSerialized, "volumeValueText"), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<TutorialController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<GamePauseController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<AimReticleController>(), Is.Not.Null);

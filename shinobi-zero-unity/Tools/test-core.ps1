@@ -479,6 +479,12 @@ $decodedPreferences = [ShinobiZero.Core.PreferencesCodec]::Decode([ShinobiZero.C
 Assert-Equal $decodedPreferences.SoundEnabled $false 'Sound preference round trips'
 Assert-Equal $decodedPreferences.HapticsEnabled $true 'Haptics preference round trips'
 Assert-Equal $decodedPreferences.ReducedMotion $true 'Motion preference round trips'
+$volumePreferences = [ShinobiZero.Core.GamePreferences]::new($true, $true, $false, $false, $true, 6)
+$decodedVolume = [ShinobiZero.Core.PreferencesCodec]::Decode([ShinobiZero.Core.PreferencesCodec]::Encode($volumePreferences))
+Assert-Equal $decodedVolume.VolumeStep 6 'Master volume survives save round trip'
+Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(0).VolumeStep) 8 'New players start at safe volume'
+Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(512 + 1 + 2 + 16).VolumeStep) 10 'Previous settings retain former full volume'
+Assert-Equal ([ShinobiZero.Core.GamePreferences]::new($true, $true, $false, $false, $true, 99).VolumeStep) 10 'Master volume clamps to ten steps'
 
 $ballistic = [ShinobiZero.Core.BallisticSolver]::SolveLowArc(0, 0, 0, 0, 2, 10, 16, 9.81)
 Assert-Equal $ballistic.Reachable $true 'Nearby board is ballistically reachable'
