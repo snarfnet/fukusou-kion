@@ -63,6 +63,11 @@ private struct EmergencyGuideDetailView: View {
 struct FoundSomethingView: View {
     var body: some View {
         List {
+            Section {
+                Label("found.guidanceOnly", systemImage: "info.circle")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
             Section("found.doNow") {
                 Label("found.station", systemImage: "tram")
                 Label("found.store", systemImage: "storefront")

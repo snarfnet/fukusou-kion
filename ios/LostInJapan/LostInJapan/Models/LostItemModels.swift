@@ -98,17 +98,16 @@ final class LostItemCase {
     var categoryRawValues: [String]
     var itemDescriptionData: Data
     var locationData: Data
-    var photoData: [Data]
     var urgencyRawValue: String
     var statusRawValue: String
     var notes: String
 
-    init(id: UUID = UUID(), title: String, categories: [LostItemCategory], itemDescription: ItemDescription, location: LostLocation, photoData: [Data] = [], urgency: UrgencyLevel, status: CaseStatus = .searching, notes: String = "") {
+    init(id: UUID = UUID(), title: String, categories: [LostItemCategory], itemDescription: ItemDescription, location: LostLocation, urgency: UrgencyLevel, status: CaseStatus = .searching, notes: String = "") {
         self.id = id; self.createdAt = Date(); self.updatedAt = Date(); self.title = title
         self.categoryRawValues = categories.map(\.rawValue)
         self.itemDescriptionData = (try? JSONEncoder().encode(itemDescription)) ?? Data()
         self.locationData = (try? JSONEncoder().encode(location)) ?? Data()
-        self.photoData = photoData; self.urgencyRawValue = urgency.rawValue; self.statusRawValue = status.rawValue; self.notes = notes
+        self.urgencyRawValue = urgency.rawValue; self.statusRawValue = status.rawValue; self.notes = notes
     }
 
     var categories: [LostItemCategory] { categoryRawValues.compactMap(LostItemCategory.init(rawValue:)) }

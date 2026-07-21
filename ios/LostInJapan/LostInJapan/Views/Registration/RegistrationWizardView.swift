@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import PhotosUI
 
 struct RegistrationWizardView: View {
     @Environment(\.modelContext) private var context
@@ -9,24 +8,22 @@ struct RegistrationWizardView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ProgressView(value: Double(model.step + 1), total: 5).padding()
+            ProgressView(value: Double(model.step + 1), total: 4).padding()
             Group {
                 switch model.step {
                 case 0: CategoryStep(selection: $model.categories)
-                case 1: PhotoStep(items: $model.photoItems, photos: model.photos)
-                case 2: DetailsStep(details: $model.details, categories: model.categories)
-                case 3: LocationStep(location: $model.location)
+                case 1: DetailsStep(details: $model.details, categories: model.categories)
+                case 2: LocationStep(location: $model.location)
                 default: ConfirmationStep(model: model)
                 }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack {
                 if model.step > 0 { Button("common.back") { model.step -= 1 }.frame(minWidth: 70, minHeight: 50) }
                 Button {
-                    if model.step == 1 { Task { await model.loadPhotos(); model.step += 1 } }
-                    else if model.step < 4 { model.step += 1 }
+                    if model.step < 3 { model.step += 1 }
                     else { do { completion(try model.save(in: context)) } catch { model.errorMessage = error.localizedDescription } }
                 } label: {
-                    Text(LocalizedStringKey(model.step == 4 ? "common.save" : "common.next"))
+                    Text(LocalizedStringKey(model.step == 3 ? "common.save" : "common.next"))
                 }.buttonStyle(PrimaryButtonStyle()).disabled(!model.canContinue)
             }.padding()
         }
@@ -40,11 +37,6 @@ private struct CategoryStep: View {
     @Binding var selection: Set<LostItemCategory>
     let columns = [GridItem(.adaptive(minimum: 100))]
     var body: some View { ScrollView { VStack(alignment: .leading) { Text("registration.what").font(.title.bold()); Text("registration.multiple").foregroundStyle(.secondary); LazyVGrid(columns: columns) { ForEach(LostItemCategory.allCases) { item in Button { if selection.contains(item) { selection.remove(item) } else { selection.insert(item) } } label: { VStack { Image(systemName: item.icon).font(.title); Text(item.title).font(.caption).multilineTextAlignment(.center) }.frame(maxWidth: .infinity, minHeight: 88).background(selection.contains(item) ? Color.supportBlue.opacity(0.18) : Color.clear, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(selection.contains(item) ? Color.brandBlue : Color.secondary.opacity(0.25), lineWidth: selection.contains(item) ? 2 : 1)) }.buttonStyle(.plain).accessibilityAddTraits(selection.contains(item) ? .isSelected : []) } } }.padding() } }
-}
-
-private struct PhotoStep: View {
-    @Binding var items: [PhotosPickerItem]; let photos: [Data]
-    var body: some View { VStack(spacing: 24) { Text("registration.photos").font(.title.bold()); PhotosPicker(selection: $items, maxSelectionCount: 3, matching: .images) { Label("registration.choosePhotos", systemImage: "photo.on.rectangle.angled").frame(minHeight: 56) }.buttonStyle(.borderedProminent); Text("registration.photoPrivacy").font(.footnote).foregroundStyle(.secondary); if !photos.isEmpty { Text("registration.photoCount \(photos.count)") } ; Spacer() }.padding() }
 }
 
 private struct DetailsStep: View {

@@ -3202,91 +3202,91 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "I found something"
+            "value": "Found-item guidance"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "落とし物を見つけた"
+            "value": "拾った物の取り扱い案内"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "我发现了一些东西"
+            "value": "捡到物品时的指南"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "我發現了一些東西"
+            "value": "拾獲物品處理指南"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "뭔가를 찾았어요"
+            "value": "습득물 처리 안내"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "encontré algo"
+            "value": "Guía sobre objetos encontrados"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "j'ai trouvé quelque chose"
+            "value": "Guide des objets trouvés"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ich habe etwas gefunden"
+            "value": "Hinweise zu Fundsachen"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ฉันพบบางสิ่งบางอย่าง"
+            "value": "คำแนะนำเมื่อพบสิ่งของ"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Saya menemukan sesuatu"
+            "value": "Panduan barang temuan"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tôi đã tìm thấy thứ gì đó"
+            "value": "Hướng dẫn xử lý đồ nhặt được"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eu encontrei algo"
+            "value": "Guia de objetos encontrados"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ho trovato qualcosa"
+            "value": "Guida agli oggetti ritrovati"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "я нашел кое-что"
+            "value": "Инструкция по найденным вещам"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "لقد وجدت شيئا"
+            "value": "إرشادات الأغراض التي تم العثور عليها"
           }
         }
       }
@@ -7432,91 +7432,91 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Show the Japanese card and a reference photo."
+            "value": "Show the Japanese card and describe the item."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "出示日本卡和参考照片。"
+            "value": "出示日语说明卡并描述物品。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "出示日本卡和參考照片。"
+            "value": "出示日語說明卡並描述物品。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "일본 카드와 참고 사진을 보여주세요."
+            "value": "일본어 안내 카드를 보여주고 물건의 특징을 설명하세요."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Muestra la tarjeta japonesa y una foto de referencia."
+            "value": "Muestra la tarjeta en japonés y describe el objeto."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Montrez la carte japonaise et une photo de référence."
+            "value": "Montrez la carte en japonais et décrivez l’objet."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zeigen Sie die japanische Karte und ein Referenzfoto vor."
+            "value": "Zeigen Sie die japanische Karte und beschreiben Sie den Gegenstand."
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสดงบัตรภาษาญี่ปุ่นและรูปถ่ายอ้างอิง"
+            "value": "แสดงบัตรภาษาญี่ปุ่นและอธิบายลักษณะสิ่งของ"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "日本語のカードと参考写真を見せてください。"
+            "value": "日本語のカードを見せ、品物の特徴を伝えてください。"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tunjukkan kartu Jepang dan foto referensi."
+            "value": "Tunjukkan kartu bahasa Jepang dan jelaskan ciri barangnya."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Xuất trình thẻ tiếng Nhật và ảnh tham khảo."
+            "value": "Đưa thẻ tiếng Nhật và mô tả đặc điểm món đồ."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostre o cartão japonês e uma foto de referência."
+            "value": "Mostre o cartão em japonês e descreva o item."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostra la carta giapponese e una foto di riferimento."
+            "value": "Mostra la carta in giapponese e descrivi l’oggetto."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Покажите японскую карточку и эталонную фотографию."
+            "value": "Покажите карточку на японском языке и опишите вещь."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "أظهر البطاقة اليابانية وصورة مرجعية."
+            "value": "اعرض البطاقة اليابانية وصِف الغرض."
           }
         }
       }
@@ -9688,91 +9688,91 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cases and photos stay on this device."
+            "value": "Case information stays on this device."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "案例和照片保留在此设备上。"
+            "value": "失物记录保留在此设备上。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "案例和照片保留在此設備上。"
+            "value": "失物記錄保留在此設備上。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "케이스와 사진은 이 기기에 보관됩니다."
+            "value": "분실물 기록은 이 기기에 보관됩니다."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Los casos y las fotos permanecen en este dispositivo."
+            "value": "La información de los casos permanece en este dispositivo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les coques et les photos restent sur cet appareil."
+            "value": "Les informations des dossiers restent sur cet appareil."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hüllen und Fotos bleiben auf diesem Gerät."
+            "value": "Die Falldaten bleiben auf diesem Gerät."
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "เคสและรูปภาพจะยังคงอยู่ในอุปกรณ์นี้"
+            "value": "ข้อมูลกรณีสิ่งของสูญหายจะอยู่ในอุปกรณ์นี้"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ケースと写真はこのデバイスに残ります。"
+            "value": "落とし物の記録はこの端末内に保存します。"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Casing dan foto tetap ada di perangkat ini."
+            "value": "Informasi kasus tetap tersimpan di perangkat ini."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vỏ và ảnh vẫn còn trên thiết bị này."
+            "value": "Thông tin vụ việc được lưu trên thiết bị này."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os casos e as fotos permanecem neste dispositivo."
+            "value": "As informações dos casos permanecem neste dispositivo."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le custodie e le foto rimangono su questo dispositivo."
+            "value": "Le informazioni sui casi restano su questo dispositivo."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Чехлы и фотографии остаются на этом устройстве."
+            "value": "Информация о случаях хранится на этом устройстве."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تبقى الحالات والصور على هذا الجهاز."
+            "value": "تبقى معلومات الحالات على هذا الجهاز."
           }
         }
       }
@@ -16261,6 +16261,25 @@
             "value": "إذا كانت السرقة ممكنة، اشرح الوضع للشرطة."
           }
         }
+      }
+    },
+    "found.guidanceOnly": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This is guidance only. The app does not contact, match, or exchange messages with other users." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "この画面は案内専用です。他のユーザーとの連絡、照合、メッセージ交換は行いません。" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "此页面仅提供指南。本应用不会联系、匹配其他用户或与其交换消息。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "此頁面僅提供指南。本App不會聯絡、配對其他使用者或與其交換訊息。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "이 화면은 안내 전용입니다. 다른 사용자와 연락하거나 연결하거나 메시지를 주고받지 않습니다." } },
+        "es": { "stringUnit": { "state": "translated", "value": "Esta sección es solo informativa. La app no contacta, conecta ni intercambia mensajes con otros usuarios." } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Cette section est uniquement informative. L’app ne permet ni contact, ni mise en relation, ni échange de messages entre utilisateurs." } },
+        "de": { "stringUnit": { "state": "translated", "value": "Dieser Bereich dient nur als Anleitung. Die App stellt keinen Kontakt her und ermöglicht weder Zuordnung noch Nachrichtenaustausch zwischen Nutzern." } },
+        "th": { "stringUnit": { "state": "translated", "value": "หน้านี้มีไว้เพื่อให้คำแนะนำเท่านั้น แอปไม่มีการติดต่อ จับคู่ หรือแลกเปลี่ยนข้อความกับผู้ใช้รายอื่น" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Bagian ini hanya berisi panduan. Aplikasi tidak menghubungkan, mencocokkan, atau bertukar pesan dengan pengguna lain." } },
+        "vi": { "stringUnit": { "state": "translated", "value": "Mục này chỉ cung cấp hướng dẫn. Ứng dụng không liên hệ, kết nối hay trao đổi tin nhắn với người dùng khác." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Esta seção é apenas informativa. O app não contata, conecta nem troca mensagens com outros usuários." } },
+        "it": { "stringUnit": { "state": "translated", "value": "Questa sezione è solo informativa. L’app non contatta, abbina né scambia messaggi con altri utenti." } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Этот раздел содержит только инструкции. Приложение не связывает пользователей и не позволяет обмениваться сообщениями." } },
+        "ar": { "stringUnit": { "state": "translated", "value": "هذا القسم للإرشاد فقط. لا يتيح التطبيق التواصل أو المطابقة أو تبادل الرسائل مع مستخدمين آخرين." } }
       }
     },
     "found.doNow": {
