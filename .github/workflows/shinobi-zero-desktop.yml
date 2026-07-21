@@ -66,7 +66,7 @@ jobs:
           checkName: SHINOBI ZERO Desktop EditMode Tests
 
       - name: Upload Unity test results
-        if: always()
+        if: always() && steps.unity-tests.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
           name: shinobi-zero-desktop-test-results-${{ github.run_number }}

@@ -70,7 +70,7 @@ jobs:
           checkName: SHINOBI ZERO iOS EditMode Tests
 
       - name: Upload Unity test results
-        if: always()
+        if: always() && steps.unity-tests.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
           name: shinobi-zero-ios-test-results-${{ github.run_number }}
