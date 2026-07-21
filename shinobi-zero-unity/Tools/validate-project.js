@@ -141,6 +141,9 @@ for (const cloudBehavior of ['career-cloud.json', 'File.WriteAllBytes(temporary,
 }
 
 const sceneBuilder = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Editor/PrototypeSceneBuilder.cs'), 'utf8');
+for (const environmentDetail of ['Weathered Dojo Frame', 'Weathered Iron Lantern', 'Rain Puddles', 'FogMode.ExponentialSquared', 'fogDensity = .018f']) {
+  if (!sceneBuilder.includes(environmentDetail)) throw new Error(`Realistic dojo environment is incomplete: ${environmentDetail}`);
+}
 for (const sourceBinding of ['FindProperty("playerReleasePoint")', 'FindProperty("enemyReleasePoint")', 'FindProperty("enemyThrowAnimator")', 'FindProperty("playerThrowAnimator")']) {
   if (!sceneBuilder.includes(sourceBinding)) throw new Error(`Generated scene misses thrower binding: ${sourceBinding}`);
 }
@@ -199,6 +202,10 @@ for (const titleSetting of ['FindProperty("titleBackground")', 'titleBackground.
 const settingsController = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/SettingsController.cs'), 'utf8');
 for (const displaySetting of ['fullscreenToggle.gameObject.SetActive(!Application.isMobilePlatform)', 'FullScreenMode.FullScreenWindow', 'FullScreenMode.Windowed', 'preferences.Fullscreen']) {
   if (!settingsController.includes(displaySetting)) throw new Error(`Missing desktop display preference: ${displaySetting}`);
+}
+const adaptiveAtmosphere = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/AdaptivePerformanceController.cs'), 'utf8');
+for (const scalableAtmosphere of ['RenderSettings.fogDensity', '.018f', '.012f', '.006f']) {
+  if (!adaptiveAtmosphere.includes(scalableAtmosphere)) throw new Error(`Atmosphere does not scale for iPhone and Steam Deck: ${scalableAtmosphere}`);
 }
 for (const accessibilityBinding of ['hud.ReducedMotion = preferences.ReducedMotion', '[SerializeField] private GameHudController hud']) {
   if (!settingsController.includes(accessibilityBinding)) throw new Error(`Score callout ignores reduced-motion setting: ${accessibilityBinding}`);

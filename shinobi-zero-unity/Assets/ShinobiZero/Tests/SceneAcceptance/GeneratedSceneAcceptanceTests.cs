@@ -138,6 +138,10 @@ namespace ShinobiZero.Tests
             Assert.That(Object.FindObjectOfType<AlternativeThrowController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<FirstPersonThrowAnimator>(true), Is.Not.Null);
             Assert.That(GameObject.Find("Cold Rain"), Is.Not.Null);
+            Assert.That(GameObject.Find("Weathered Dojo Frame"), Is.Not.Null);
+            Assert.That(GameObject.Find("Weathered Iron Lantern"), Is.Not.Null);
+            Assert.That(GameObject.Find("Rain Puddles"), Is.Not.Null);
+            Assert.That(RenderSettings.fog, Is.True);
         }
 
         private static T Reference<T>(SerializedObject serialized, string propertyName) where T : Object

@@ -91,6 +91,8 @@ namespace ShinobiZero.Runtime
             QualitySettings.shadowDistance = tier == RuntimeQualityTier.High ? 30f : tier == RuntimeQualityTier.Balanced ? 18f : 0f;
             QualitySettings.antiAliasing = tier == RuntimeQualityTier.High ? 2 : 0;
             QualitySettings.lodBias = tier == RuntimeQualityTier.Performance ? .7f : tier == RuntimeQualityTier.Balanced ? .85f : 1f;
+            RenderSettings.fogDensity = tier == RuntimeQualityTier.High ? .018f
+                : tier == RuntimeQualityTier.Balanced ? .012f : .006f;
         }
     }
 }

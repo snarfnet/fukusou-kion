@@ -23,6 +23,10 @@ namespace ShinobiZero.Editor
             ConfigureTitleBackground();
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             RenderSettings.ambientLight = new Color(.07f, .09f, .1f);
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = new Color(.025f, .035f, .045f);
+            RenderSettings.fogDensity = .018f;
 
             var gameCamera = CreateCamera();
             var keyLight = CreateLighting();
@@ -148,17 +152,68 @@ namespace ShinobiZero.Editor
 
         private static void CreateEnvironment()
         {
+            var cedar = CreateMaterial("Cedar", new Color(.055f, .038f, .03f), .18f, .05f);
             var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
             wall.name = "Wet Cedar Wall";
             wall.transform.position = new Vector3(0, 0, .5f);
             wall.transform.localScale = new Vector3(12, 8, .25f);
-            wall.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Cedar", new Color(.055f, .038f, .03f), .18f, .05f);
+            wall.GetComponent<Renderer>().sharedMaterial = cedar;
 
             var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
             floor.name = "Stone Floor";
             floor.transform.position = new Vector3(0, -2.5f, -1f);
             floor.transform.localScale = new Vector3(1.2f, 1, 1.2f);
             floor.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Wet Stone", new Color(.025f, .035f, .04f), .72f, .65f);
+
+            CreateDojoFrame(cedar);
+            CreateLanternFixture();
+            CreateFloorPuddles();
+        }
+
+        private static void CreateDojoFrame(Material cedar)
+        {
+            var frame = new GameObject("Weathered Dojo Frame").transform;
+            foreach (var x in new[] { -3.35f, 3.35f })
+                CreateEnvironmentPrimitive("Cedar Pillar", PrimitiveType.Cube, frame, new Vector3(x, -.15f, .15f), new Vector3(.28f, 4.7f, .32f), cedar);
+            CreateEnvironmentPrimitive("Cedar Crossbeam", PrimitiveType.Cube, frame, new Vector3(0f, 2.17f, .15f), new Vector3(7.05f, .32f, .36f), cedar);
+            for (var x = -2.7f; x <= 2.7f; x += .9f)
+                CreateEnvironmentPrimitive("Vertical Cedar Slat", PrimitiveType.Cube, frame, new Vector3(x, 0f, .32f), new Vector3(.055f, 3.8f, .09f), cedar);
+        }
+
+        private static void CreateLanternFixture()
+        {
+            var root = new GameObject("Weathered Iron Lantern").transform;
+            root.localPosition = new Vector3(-2.55f, 1.05f, -.5f);
+            var iron = CreateMaterial("Lantern Iron", new Color(.045f, .04f, .035f), .82f, .28f);
+            var glow = CreateMaterial("Lantern Paper", new Color(.9f, .24f, .06f), .05f, .52f);
+            CreateEnvironmentPrimitive("Lantern Body", PrimitiveType.Cylinder, root, Vector3.zero, new Vector3(.28f, .42f, .28f), glow);
+            CreateEnvironmentPrimitive("Lantern Cap", PrimitiveType.Cylinder, root, new Vector3(0f, .47f, 0f), new Vector3(.36f, .055f, .36f), iron);
+            CreateEnvironmentPrimitive("Lantern Base", PrimitiveType.Cylinder, root, new Vector3(0f, -.47f, 0f), new Vector3(.36f, .055f, .36f), iron);
+            for (var side = -1; side <= 1; side += 2)
+                CreateEnvironmentPrimitive("Lantern Guard", PrimitiveType.Cube, root, new Vector3(side * .29f, 0f, 0f), new Vector3(.035f, .9f, .035f), iron);
+        }
+
+        private static void CreateFloorPuddles()
+        {
+            var puddle = CreateMaterial("Rain Puddle", new Color(.035f, .075f, .09f), .55f, .92f);
+            var root = new GameObject("Rain Puddles").transform;
+            var positions = new[] { new Vector3(-2.1f, -2.47f, -2.2f), new Vector3(1.65f, -2.47f, -1.3f), new Vector3(.25f, -2.47f, 1.2f) };
+            var scales = new[] { new Vector3(.16f, 1f, .07f), new Vector3(.11f, 1f, .05f), new Vector3(.14f, 1f, .06f) };
+            for (var i = 0; i < positions.Length; i++)
+                CreateEnvironmentPrimitive("Shallow Reflection Puddle", PrimitiveType.Plane, root, positions[i], scales[i], puddle);
+        }
+
+        private static Transform CreateEnvironmentPrimitive(string name, PrimitiveType type, Transform parent,
+            Vector3 position, Vector3 scale, Material material)
+        {
+            var part = GameObject.CreatePrimitive(type);
+            Object.DestroyImmediate(part.GetComponent<Collider>());
+            part.name = name;
+            part.transform.SetParent(parent, false);
+            part.transform.localPosition = position;
+            part.transform.localScale = scale;
+            part.GetComponent<Renderer>().sharedMaterial = material;
+            return part.transform;
         }
 
         private static ParticleSystem CreateRainAtmosphere()
