@@ -14,6 +14,7 @@ namespace ShinobiZero.Runtime
         [SerializeField] private PlayerProgressController progress;
         [SerializeField] private ThrowGestureReader gestureReader;
         [SerializeField] private UiLocalizationController localization;
+        [SerializeField] private Font bundledFont;
 
         [Header("Screens")]
         [SerializeField] private GameObject selectionPanel;
@@ -439,8 +440,10 @@ namespace ShinobiZero.Runtime
 
         private void InstallRuntimeFont()
         {
-            var font = Font.CreateDynamicFontFromOSFont(
-                new[] { "Yu Gothic UI", "Hiragino Sans", "Noto Sans CJK JP", "Meiryo", "Arial" }, 32);
+            var font = bundledFont;
+            if (font == null)
+                font = Font.CreateDynamicFontFromOSFont(
+                    new[] { "Yu Gothic UI", "Hiragino Sans", "Noto Sans CJK JP", "Meiryo", "Arial" }, 32);
             if (font == null) return;
             foreach (var text in GetComponentsInChildren<Text>(true)) text.font = font;
         }

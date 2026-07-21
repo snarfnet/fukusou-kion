@@ -15,6 +15,7 @@ namespace ShinobiZero.Editor
     public static class PrototypeSceneBuilder
     {
         private const string GeneratedRoot = "Assets/ShinobiZero/Generated";
+        private const string BundledFontPath = "Assets/ShinobiZero/Fonts/NotoSansJP-Variable.ttf";
 
         [MenuItem("Tools/SHINOBI ZERO/Create 3D Prototype Scene")]
         public static void CreateScene()
@@ -1059,6 +1060,7 @@ namespace ShinobiZero.Editor
             serialized.FindProperty("progress").objectReferenceValue = progress;
             serialized.FindProperty("gestureReader").objectReferenceValue = gesture;
             serialized.FindProperty("localization").objectReferenceValue = localization;
+            serialized.FindProperty("bundledFont").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>(BundledFontPath);
             serialized.FindProperty("selectionPanel").objectReferenceValue = selection;
             serialized.FindProperty("matchPanel").objectReferenceValue = match;
             serialized.FindProperty("resultPanel").objectReferenceValue = result;
@@ -1199,7 +1201,8 @@ namespace ShinobiZero.Editor
             SetRect(item.GetComponent<RectTransform>(), position, dimensions);
             var text = item.GetComponent<Text>();
             text.text = value;
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.font = AssetDatabase.LoadAssetAtPath<Font>(BundledFontPath)
+                ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             text.fontSize = size;
             text.resizeTextForBestFit = true;
             text.resizeTextMinSize = Mathf.Min(22, size);

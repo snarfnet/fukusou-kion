@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 
 const root = path.resolve(__dirname, '..');
 const required = [
@@ -99,11 +100,21 @@ const required = [
   'Docs/Art/title-background-v1-prompt.md',
   'Docs/CHARACTER_BIBLE.md',
   'Docs/THROW_ANIMATION_SPEC.md',
-  'Docs/STEAM_RELEASE.md'
+  'Docs/STEAM_RELEASE.md',
+  'Assets/ShinobiZero/Fonts/NotoSansJP-Variable.ttf',
+  'ThirdParty/Fonts/NotoSansJP-OFL.txt',
+  'ThirdParty/Fonts/README.md'
 ];
 
 const missing = required.filter(file => !fs.existsSync(path.join(root, file)));
 if (missing.length) throw new Error(`Missing files:\n${missing.join('\n')}`);
+
+const bundledFont = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Fonts/NotoSansJP-Variable.ttf'));
+const bundledFontHash = crypto.createHash('sha256').update(bundledFont).digest('hex').toUpperCase();
+if (bundledFontHash !== 'C2F3B4D463500A2DDCD3849CDED1FCEEB9FD6D1C32E6CBECD568453BA50FC68F')
+  throw new Error('Bundled Japanese font differs from the reviewed Google Fonts binary.');
+const fontLicense = fs.readFileSync(path.join(root, 'ThirdParty/Fonts/NotoSansJP-OFL.txt'), 'utf8');
+if (!fontLicense.includes('SIL OPEN FONT LICENSE Version 1.1')) throw new Error('Bundled Japanese font license is missing or invalid.');
 
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'Packages/manifest.json'), 'utf8'));
 for (const packageName of ['com.unity.inputsystem', 'com.unity.test-framework', 'com.unity.ugui']) {
@@ -365,6 +376,9 @@ for (const quitBinding of ['AddComponent<DesktopQuitController>()', 'FindPropert
 }
 
 const gameHud = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/GameHudController.cs'), 'utf8');
+for (const bundledFontBehavior of ['[SerializeField] private Font bundledFont', 'var font = bundledFont', 'Font.CreateDynamicFontFromOSFont']) {
+  if (!gameHud.includes(bundledFontBehavior)) throw new Error(`Japanese UI font fallback is incomplete: ${bundledFontBehavior}`);
+}
 for (const calloutBehavior of ['PlayHitCallout(ImpactFeedbackModel.Evaluate(outcome))', 'profile.CalloutScale', 'profile.CalloutHoldSeconds', 'Time.unscaledDeltaTime', 'ReducedMotion ? 1f']) {
   if (!gameHud.includes(calloutBehavior)) throw new Error(`Impact score callout is incomplete: ${calloutBehavior}`);
 }

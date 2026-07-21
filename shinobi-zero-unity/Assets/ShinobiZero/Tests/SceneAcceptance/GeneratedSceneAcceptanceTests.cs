@@ -104,6 +104,8 @@ namespace ShinobiZero.Tests
         {
             var hud = Object.FindObjectOfType<GameHudController>();
             Assert.That(hud, Is.Not.Null);
+            var bundledFont = Reference<Font>(new SerializedObject(hud), "bundledFont");
+            Assert.That(AssetDatabase.GetAssetPath(bundledFont), Is.EqualTo("Assets/ShinobiZero/Fonts/NotoSansJP-Variable.ttf"));
             var canvas = hud.GetComponent<Canvas>();
             var scaler = hud.GetComponent<CanvasScaler>();
             Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
