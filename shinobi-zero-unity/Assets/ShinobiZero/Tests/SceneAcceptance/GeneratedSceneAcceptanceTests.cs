@@ -37,7 +37,12 @@ namespace ShinobiZero.Tests
             var heldEnemyShuriken = Reference<GameObject>(new SerializedObject(enemyAnimator), "heldShuriken");
             Assert.That(heldEnemyShuriken.name, Is.EqualTo("Enemy Held Shuriken"));
             Assert.That(heldEnemyShuriken.GetComponentInChildren<MeshFilter>(), Is.Not.Null);
-            Assert.That(Reference<FirstPersonThrowAnimator>(serialized, "playerThrowAnimator"), Is.Not.Null);
+            var playerAnimator = Reference<FirstPersonThrowAnimator>(serialized, "playerThrowAnimator");
+            Assert.That(playerAnimator, Is.Not.Null);
+            var heldPlayerShuriken = Reference<GameObject>(new SerializedObject(playerAnimator), "heldShuriken");
+            Assert.That(heldPlayerShuriken.transform.Find("Forged Blades"), Is.Not.Null);
+            Assert.That(heldPlayerShuriken.transform.Find("Raised Hub"), Is.Not.Null);
+            Assert.That(heldPlayerShuriken.transform.Find("Dark Finger Recess"), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<NinjaReactionController>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<GamepadRumbleDriver>(), Is.Not.Null);
             Assert.That(Object.FindObjectOfType<AdaptivePerformanceController>(), Is.Not.Null);

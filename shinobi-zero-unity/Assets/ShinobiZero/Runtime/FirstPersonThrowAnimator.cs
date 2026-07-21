@@ -21,6 +21,7 @@ namespace ShinobiZero.Runtime
         private Quaternion _wristRest;
         private Coroutine _routine;
         private bool _recoverAfterThrow;
+        private readonly ThrowReleaseGate _releaseGate = new ThrowReleaseGate();
 
         private void Awake()
         {
@@ -33,6 +34,7 @@ namespace ShinobiZero.Runtime
         {
             if (IsThrowing) return false;
             IsThrowing = true;
+            _releaseGate.Arm();
             _recoverAfterThrow = false;
             if (heldShuriken != null) heldShuriken.SetActive(true);
             _routine = StartCoroutine(Animate(PlayerThrowMotionModel.Tune(power, spin, ReducedMotion)));
@@ -64,6 +66,7 @@ namespace ShinobiZero.Runtime
             _routine = null;
             _recoverAfterThrow = false;
             IsThrowing = false;
+            _releaseGate.Reset();
             Pose(0f, 0f, 0f);
             HideHeldShuriken();
         }
@@ -71,15 +74,13 @@ namespace ShinobiZero.Runtime
         private IEnumerator Animate(PlayerThrowMotionTuning tuning)
         {
             var elapsed = 0f;
-            var released = false;
             while (elapsed < tuning.Duration)
             {
                 var previous = Mathf.Clamp01(elapsed / tuning.Duration);
                 elapsed += Time.deltaTime;
                 var normalized = Mathf.Clamp01(elapsed / tuning.Duration);
-                if (!released && ThrowMotionModel.CrossedRelease(previous, normalized, tuning.ReleaseTime))
+                if (ThrowMotionModel.CrossedRelease(previous, normalized, tuning.ReleaseTime) && _releaseGate.TryRelease())
                 {
-                    released = true;
                     HideHeldShuriken();
                     ReleaseRequested?.Invoke();
                 }
@@ -87,7 +88,7 @@ namespace ShinobiZero.Runtime
                 Pose(pose.Shoulder, pose.Elbow, pose.Wrist + tuning.WristBias);
                 yield return null;
             }
-            if (!released)
+            if (_releaseGate.TryRelease())
             {
                 HideHeldShuriken();
                 ReleaseRequested?.Invoke();

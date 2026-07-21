@@ -146,6 +146,13 @@ const ninjaThrowAnimator = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/R
 for (const releaseBehavior of ['heldShuriken.SetActive(false)', 'heldShuriken.SetActive(true)', '_releaseGate.TryRelease()', '_releaseGate.Arm()']) {
   if (!ninjaThrowAnimator.includes(releaseBehavior)) throw new Error(`Enemy held shuriken release is incomplete: ${releaseBehavior}`);
 }
+const playerThrowAnimator = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/FirstPersonThrowAnimator.cs'), 'utf8');
+for (const releaseBehavior of ['_releaseGate.Arm()', '_releaseGate.TryRelease()', '_releaseGate.Reset()']) {
+  if (!playerThrowAnimator.includes(releaseBehavior)) throw new Error(`Player throw release is not single-fire: ${releaseBehavior}`);
+}
+for (const heldDetail of ['CreateHeldShuriken("Held Four Point Shuriken"', 'Raised Hub', 'Dark Finger Recess']) {
+  if (!sceneBuilder.includes(heldDetail)) throw new Error(`First-person shuriken lacks forged detail: ${heldDetail}`);
+}
 for (const heldShurikenBinding of ['CreateHeldShuriken("Enemy Held Shuriken"', 'FindProperty("heldShuriken")']) {
   if (!sceneBuilder.includes(heldShurikenBinding)) throw new Error(`Generated ninja misses held shuriken: ${heldShurikenBinding}`);
 }

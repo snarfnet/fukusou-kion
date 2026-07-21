@@ -386,12 +386,7 @@ namespace ShinobiZero.Editor
             release.localPosition = new Vector3(-.16f, .02f, .055f);
             release.localRotation = Quaternion.identity;
 
-            var held = new GameObject("Held Four Point Shuriken", typeof(MeshFilter), typeof(MeshRenderer));
-            held.transform.SetParent(release, false);
-            held.transform.localRotation = Quaternion.Euler(0f, 0f, 18f);
-            held.transform.localScale = Vector3.one * .82f;
-            held.GetComponent<MeshFilter>().sharedMesh = CreateShurikenMesh();
-            held.GetComponent<MeshRenderer>().sharedMaterial = metal;
+            var held = CreateHeldShuriken("Held Four Point Shuriken", release, metal, .82f);
 
             var animator = root.AddComponent<FirstPersonThrowAnimator>();
             var serialized = new SerializedObject(animator);
@@ -497,6 +492,15 @@ namespace ShinobiZero.Editor
             hub.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
             hub.transform.localScale = new Vector3(.078f, .014f, .078f);
             hub.GetComponent<Renderer>().sharedMaterial = metal;
+
+            var recess = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            Object.DestroyImmediate(recess.GetComponent<Collider>());
+            recess.name = "Dark Finger Recess";
+            recess.transform.SetParent(held.transform, false);
+            recess.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            recess.transform.localPosition = new Vector3(0f, 0f, -.016f);
+            recess.transform.localScale = new Vector3(.038f, .016f, .038f);
+            recess.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Shuriken Recess", new Color(.012f, .014f, .014f), .15f, .1f);
             return held;
         }
 
