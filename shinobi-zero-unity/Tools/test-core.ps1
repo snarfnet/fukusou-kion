@@ -486,6 +486,13 @@ Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(0).VolumeStep) 8 'New 
 Assert-Equal ([ShinobiZero.Core.PreferencesCodec]::Decode(512 + 1 + 2 + 16).VolumeStep) 10 'Previous settings retain former full volume'
 Assert-Equal ([ShinobiZero.Core.GamePreferences]::new($true, $true, $false, $false, $true, 99).VolumeStep) 10 'Master volume clamps to ten steps'
 
+$endurance = [ShinobiZero.Core.MatchEnduranceSimulator]::Run(3200, 23063)
+Assert-Equal $endurance.Matches 3200 'Endurance simulation completes every configured match'
+Assert-Equal ($endurance.Throws -gt 9600) $true 'Endurance simulation exercises many throws'
+Assert-Equal ($endurance.Legs -ge 3200) $true 'Endurance simulation completes every leg'
+Assert-Equal ($endurance.Busts -gt 0) $true 'Endurance simulation exercises bust recovery'
+Assert-Equal ($endurance.MaximumThrowsInMatch -lt 600) $true 'Every endurance match terminates within guard'
+
 $ballistic = [ShinobiZero.Core.BallisticSolver]::SolveLowArc(0, 0, 0, 0, 2, 10, 16, 9.81)
 Assert-Equal $ballistic.Reachable $true 'Nearby board is ballistically reachable'
 $flightTime = $ballistic.FlightTime
