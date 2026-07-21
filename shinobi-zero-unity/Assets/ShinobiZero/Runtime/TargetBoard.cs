@@ -5,8 +5,8 @@ namespace ShinobiZero.Runtime
 {
     public sealed class TargetBoard : MonoBehaviour
     {
-        [SerializeField, Min(.01f)] private float scoringRadius = .5f;
-        [SerializeField] private float surfaceLocalZ = -.5f;
+        [SerializeField, Min(.01f)] private float scoringRadius = 1f;
+        [SerializeField] private float surfaceLocalZ = -.071f;
         public float SurfaceLocalZ { get { return surfaceLocalZ; } }
 
         public DartHit ScoreWorldPoint(Vector3 worldPoint)

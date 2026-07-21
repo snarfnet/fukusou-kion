@@ -204,14 +204,22 @@ namespace ShinobiZero.Editor
 
         private static TargetBoard CreateTarget()
         {
-            var board = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var board = new GameObject("Competition Target", typeof(BoxCollider));
             board.name = "Competition Target";
-            board.transform.localScale = new Vector3(2f, 2f, .14f);
-            board.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Target Wood", new Color(.14f, .075f, .04f), .22f, .12f);
+            board.GetComponent<BoxCollider>().size = new Vector3(2f, 2f, .14f);
+
+            var backing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            backing.name = "Round Bound Straw Backing";
+            backing.transform.SetParent(board.transform, false);
+            backing.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            backing.transform.localScale = new Vector3(2.12f, .07f, 2.12f);
+            Object.DestroyImmediate(backing.GetComponent<Collider>());
+            backing.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Target Wood", new Color(.14f, .075f, .04f), .22f, .12f);
             CreateDartboardSurface(board.transform);
             var target = board.AddComponent<TargetBoard>();
             var serialized = new SerializedObject(target);
-            serialized.FindProperty("surfaceLocalZ").floatValue = -.5f;
+            serialized.FindProperty("scoringRadius").floatValue = 1f;
+            serialized.FindProperty("surfaceLocalZ").floatValue = -.071f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return target;
         }
@@ -243,19 +251,64 @@ namespace ShinobiZero.Editor
                 CreateMaterial("Board Green", new Color(.025f, .27f, .16f), .04f, .16f)
             };
 
+            CreateDartboardWires(board);
+
             for (var i = 0; i < DartboardGeometry.ClockwiseNumbers.Length; i++)
             {
                 var angle = i * Mathf.PI / 10f;
                 var number = new GameObject("Number " + DartboardGeometry.ClockwiseNumbers[i], typeof(TextMesh));
                 number.transform.SetParent(board, false);
-                number.transform.localPosition = new Vector3(Mathf.Sin(angle) * .58f, Mathf.Cos(angle) * .58f, -.53f);
+                number.transform.localPosition = new Vector3(Mathf.Sin(angle) * 1.17f, Mathf.Cos(angle) * 1.17f, -.076f);
                 var text = number.GetComponent<TextMesh>();
                 text.text = DartboardGeometry.ClockwiseNumbers[i].ToString();
                 text.anchor = TextAnchor.MiddleCenter;
                 text.alignment = TextAlignment.Center;
                 text.fontSize = 64;
-                text.characterSize = .018f;
+                text.characterSize = .036f;
                 text.color = new Color(.78f, .76f, .68f);
+            }
+        }
+
+        private static void CreateDartboardWires(Transform board)
+        {
+            var wireRoot = new GameObject("Regulation Spider Wires").transform;
+            wireRoot.SetParent(board, false);
+            var wire = CreateMaterial("Board Wire", new Color(.35f, .38f, .37f), .9f, .55f);
+            foreach (var radius in new[]
+            {
+                (float)DartboardGeometry.InnerBullRadius,
+                (float)DartboardGeometry.OuterBullRadius,
+                (float)DartboardGeometry.TripleInnerRadius,
+                (float)DartboardGeometry.TripleOuterRadius,
+                (float)DartboardGeometry.DoubleInnerRadius,
+                1f
+            })
+            {
+                var ring = new GameObject("Wire Ring", typeof(LineRenderer)).GetComponent<LineRenderer>();
+                ring.transform.SetParent(wireRoot, false);
+                ring.useWorldSpace = false;
+                ring.loop = true;
+                ring.positionCount = 80;
+                ring.widthMultiplier = .008f;
+                ring.sharedMaterial = wire;
+                for (var i = 0; i < ring.positionCount; i++)
+                {
+                    var angle = i * Mathf.PI * 2f / ring.positionCount;
+                    ring.SetPosition(i, new Vector3(Mathf.Sin(angle) * radius, Mathf.Cos(angle) * radius, -.074f));
+                }
+            }
+
+            for (var sector = 0; sector < 20; sector++)
+            {
+                var angle = sector * Mathf.PI / 10f - Mathf.PI / 20f;
+                var spoke = new GameObject("Sector Wire", typeof(LineRenderer)).GetComponent<LineRenderer>();
+                spoke.transform.SetParent(wireRoot, false);
+                spoke.useWorldSpace = false;
+                spoke.positionCount = 2;
+                spoke.widthMultiplier = .007f;
+                spoke.sharedMaterial = wire;
+                spoke.SetPosition(0, new Vector3(Mathf.Sin(angle) * (float)DartboardGeometry.OuterBullRadius, Mathf.Cos(angle) * (float)DartboardGeometry.OuterBullRadius, -.074f));
+                spoke.SetPosition(1, new Vector3(Mathf.Sin(angle), Mathf.Cos(angle), -.074f));
             }
         }
 
@@ -275,7 +328,7 @@ namespace ShinobiZero.Editor
 
         private static void AddWedge(List<Vector3> vertices, List<int> triangles, float innerNormalized, float outerNormalized, int sector)
         {
-            const float localRadius = .5f;
+            const float localRadius = 1f;
             var start = sector * Mathf.PI / 10f - Mathf.PI / 20f;
             var end = start + Mathf.PI / 10f;
             var first = vertices.Count;
@@ -288,7 +341,7 @@ namespace ShinobiZero.Editor
         }
 
         private static Vector3 BoardVertex(float radius, float angle) =>
-            new Vector3(Mathf.Sin(angle) * radius, Mathf.Cos(angle) * radius, -.51f);
+            new Vector3(Mathf.Sin(angle) * radius, Mathf.Cos(angle) * radius, -.072f);
 
         private struct NinjaRig
         {

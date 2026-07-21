@@ -75,6 +75,7 @@ const required = [
   'Assets/ShinobiZero/Runtime/ScreenWakeController.cs',
   'Assets/ShinobiZero/Tests/SceneAcceptance/ShinobiZero.SceneAcceptance.asmdef',
   'Assets/ShinobiZero/Tests/SceneAcceptance/GeneratedSceneAcceptanceTests.cs',
+  'Assets/ShinobiZero/Tests/EditMode/TargetBoardTests.cs',
   'Tools/run-unity-tests.ps1',
   'Assets/Plugins/iOS/ShinobiHaptics.mm',
   'Assets/Plugins/iOS/AppIcon.appiconset/Contents.json',
@@ -138,6 +139,9 @@ for (const cloudBehavior of ['career-cloud.json', 'File.WriteAllBytes(temporary,
 const sceneBuilder = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Editor/PrototypeSceneBuilder.cs'), 'utf8');
 for (const sourceBinding of ['FindProperty("playerReleasePoint")', 'FindProperty("enemyReleasePoint")', 'FindProperty("enemyThrowAnimator")', 'FindProperty("playerThrowAnimator")']) {
   if (!sceneBuilder.includes(sourceBinding)) throw new Error(`Generated scene misses thrower binding: ${sourceBinding}`);
+}
+for (const realisticBoard of ['Round Bound Straw Backing', 'Regulation Spider Wires', 'CreateDartboardWires(board)', 'FindProperty("scoringRadius").floatValue = 1f', 'const float localRadius = 1f']) {
+  if (!sceneBuilder.includes(realisticBoard)) throw new Error(`Competition target still lacks production geometry: ${realisticBoard}`);
 }
 if (!sceneBuilder.includes('AddComponent<ResponsiveHudLayout>()')) throw new Error('Generated HUD is not adaptive for Steam landscape displays.');
 const responsiveHud = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/ResponsiveHudLayout.cs'), 'utf8');
@@ -206,10 +210,10 @@ if (projectile.includes('transform.SetParent(board.transform'))
 if (!sceneBuilder.includes('rigidbody.maxAngularVelocity = 40f'))
   throw new Error('Generated shuriken prefab clamps its authored spin speed.');
 const targetBoard = fs.readFileSync(path.join(root, 'Assets/ShinobiZero/Runtime/TargetBoard.cs'), 'utf8');
-for (const surfaceBehavior of ['surfaceLocalZ = -.5f', 'surfaceLocalZ + surfaceOffset', 'float surfaceOffset = 0f']) {
+for (const surfaceBehavior of ['surfaceLocalZ = -.071f', 'surfaceLocalZ + surfaceOffset', 'float surfaceOffset = 0f']) {
   if (!targetBoard.includes(surfaceBehavior)) throw new Error(`Board aim does not target the physical scoring surface: ${surfaceBehavior}`);
 }
-if (!sceneBuilder.includes('FindProperty("surfaceLocalZ").floatValue = -.5f'))
+if (!sceneBuilder.includes('FindProperty("surfaceLocalZ").floatValue = -.071f'))
   throw new Error('Generated board does not bind its physical scoring surface depth.');
 for (const playerMotionBehavior of ['_pendingPlayerIntent', 'playerThrowAnimator.PlayThrow(power, spin)', 'HandlePlayerAnimationRelease', 'UpdatePlayerHand(outcome)']) {
   if (!coordinator.includes(playerMotionBehavior)) throw new Error(`Missing synchronized first-person throw behavior: ${playerMotionBehavior}`);
