@@ -1,0 +1,9 @@
+{
+  "name": "ShinobiZero.Editor",
+  "rootNamespace": "ShinobiZero.Editor",
+  "references": ["ShinobiZero.Runtime", "ShinobiZero.Core", "Unity.InputSystem", "Unity.ugui"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true,
+  "overrideReferences": false,
+  "noEngineReferences": false
+}
