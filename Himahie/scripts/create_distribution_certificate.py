@@ -224,12 +224,16 @@ def create_certificate():
 def delete_explicit_stale_certificates():
     for certificate_id in sorted(STALE_CERTIFICATE_IDS):
         response = api("DELETE", f"/certificates/{certificate_id}")
-        if response.status_code not in (204, 404):
+        already_inactive = (
+            response.status_code == 409
+            and "not in an &quot;issued&quot; state" in response.text
+        )
+        if response.status_code not in (204, 404) and not already_inactive:
             raise RuntimeError(
                 f"Could not delete stale certificate {certificate_id}: "
                 f"{response.status_code} {response.text[:400]}"
             )
-        print(f"Deleted stale CI certificate {certificate_id}: {response.status_code}")
+        print(f"Stale CI certificate handled {certificate_id}: {response.status_code}")
 
 
 def import_certificate(certificate):
