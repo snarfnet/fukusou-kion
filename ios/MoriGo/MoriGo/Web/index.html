@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173f35">
+  <title>もりの囲碁教室</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">●○</span><span>もりの囲碁教室<small>はじめての一手から</small></span></a>
+    <div class="progress"><span>きょうの一歩</span><b>石を囲んで取ろう</b><i><em></em></i></div>
+    <button class="sound" id="soundBtn" aria-label="音のオン・オフ">♪ <span>音あり</span></button>
+  </header>
+
+  <main>
+    <section class="game-shell">
+      <aside class="opponents" aria-label="対戦相手を選ぶ">
+        <div class="section-label"><span>たいせん相手</span><small>いつでも変えられます</small></div>
+        <div class="opponent-list" id="opponentList"></div>
+        <button class="rules-link" id="rulesBtn"><span>?</span> 囲碁のルールを3分で</button>
+      </aside>
+
+      <section class="board-area">
+        <div class="match-strip">
+          <div class="player"><span class="stone black"></span><div><small>あなた</small><b>黒</b></div></div>
+          <div class="turn-status"><span id="turnLabel">あなたの番</span><small id="moveLabel">黒石を置いてね</small></div>
+          <div class="player right"><div><small id="rivalTitle">ゆっくり考える</small><b id="rivalName">ハムすけ</b></div><span class="avatar mini"><img id="rivalAvatar" src="assets/characters/hamster.png" alt=""></span></div>
+        </div>
+        <div class="board-wrap">
+          <canvas id="board" width="720" height="720" aria-label="9路の囲碁盤"></canvas>
+          <div class="thinking" id="thinking"><i></i><span>考え中…</span></div>
+        </div>
+        <div class="board-actions">
+          <button id="undoBtn">↶ 一手もどす</button>
+          <button id="hintBtn" class="primary">💡 次の一手を教えて</button>
+          <button id="passBtn">パス・終局</button>
+        </div>
+        <p class="micro-help">交点をタップすると石を置けます。まちがえても大丈夫。</p>
+      </section>
+
+      <aside class="coach">
+        <div class="coach-head">
+          <span class="avatar large"><img id="coachAvatar" src="assets/characters/hamster.png" alt=""></span>
+          <div><small>となりで先生</small><h2 id="coachName">ハムすけ</h2></div>
+          <span class="live-dot">対局中</span>
+        </div>
+        <div class="speech" id="speech">
+          <span class="speech-tag">いまのポイント</span>
+          <p id="coachMessage">まずは盤のすみに置いてみよう。すみは少ない石で陣地を作りやすいよ。</p>
+        </div>
+        <div class="liberty-card">
+          <div><span>あなたの取った石</span><b id="blackCaps">0</b></div>
+          <i></i>
+          <div><span>相手の取った石</span><b id="whiteCaps">0</b></div>
+        </div>
+        <button class="why" id="whyBtn"><span>🌱</span><div><b>「なぜ？」を聞く</b><small>いまの説明をもう少しくわしく</small></div><span>›</span></button>
+        <div class="mini-lesson">
+          <div class="section-label"><span>対局でおぼえたこと</span><small id="lessonCount">0 / 3</small></div>
+          <ul id="learnedList">
+            <li><i>1</i><span><b>呼吸点</b><small>石が息をする場所</small></span></li>
+            <li class="locked"><i>2</i><span><b>アタリ</b><small>あと一手で取れる形</small></span></li>
+            <li class="locked"><i>3</i><span><b>つながる</b><small>石どうしを助け合う</small></span></li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <section class="joseki-section">
+      <div>
+        <span class="eyebrow">まねして身につく</span>
+        <h2>はじめての定石</h2>
+        <p>定石は、すみでおたがいに無理なく打つ「おすすめの順番」。丸暗記しなくて大丈夫です。</p>
+      </div>
+      <div class="joseki-cards">
+        <button class="joseki-card" data-lesson="komoku"><span class="tiny-board pattern-a"></span><span><small>まずはここから</small><b>小目の受け方</b><em>4手で体験</em></span><i>›</i></button>
+        <button class="joseki-card" data-lesson="hoshi"><span class="tiny-board pattern-b"></span><span><small>広くかまえる</small><b>星へのカカリ</b><em>6手で体験</em></span><i>›</i></button>
+        <button class="joseki-card" data-lesson="sanrensei"><span class="tiny-board pattern-c"></span><span><small>形をつかもう</small><b>石のつながり</b><em>5手で体験</em></span><i>›</i></button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="lessonDialog">
+    <button class="close" id="closeDialog" aria-label="閉じる">×</button>
+    <span class="eyebrow">盤の上で見てみよう</span>
+    <h2 id="dialogTitle">囲碁のルール</h2>
+    <div id="dialogContent"></div>
+  </dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

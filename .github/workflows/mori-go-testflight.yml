@@ -1,0 +1,168 @@
+name: MoriGo TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Marketing version
+        required: false
+        default: "1.0"
+      build_number:
+        description: Build number (blank uses GitHub run number)
+        required: false
+        default: ""
+      skip_tests:
+        description: Skip unit tests
+        required: false
+        default: "false"
+  push:
+    branches: [codex/mori-go-testflight]
+    paths:
+      - ".github/workflows/mori-go-testflight.yml"
+      - "ios/MoriGo/**"
+
+concurrency:
+  group: mori-go-testflight
+  cancel-in-progress: true
+
+jobs:
+  test-build-upload:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/MoriGo
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.morigo
+      APP_NAME: "もりの囲碁教室"
+      APP_SKU: mori-go-ios
+      BUNDLE_NAME: MoriGo
+      PROFILE_NAME: "MoriGo App Store"
+      APP_VERSION: ${{ inputs.version || '1.0' }}
+      BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Install distribution certificate
+        env:
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'temporary-keychain-password' }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+        run: |
+          test -n "$IOS_DISTRIBUTION_P12_BASE64"
+          test -n "$IOS_DISTRIBUTION_P12_PASSWORD"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/distribution.p12
+          security import /tmp/distribution.p12 -k build.keychain -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/ensure_asc_app.py | tee /tmp/mori-go-app.log
+          APP_ID_VALUE="$(grep '^APP_ID=' /tmp/mori-go-app.log | tail -1 | cut -d= -f2)"
+          test -n "$APP_ID_VALUE"
+          echo "APP_ID=$APP_ID_VALUE" >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          IOS_DISTRIBUTION_CERT_SHA1="$(security find-certificate -a -c 'Apple Distribution' -Z build.keychain | awk '/SHA-1 hash:/ {print $3; exit}')"
+          test -n "$IOS_DISTRIBUTION_CERT_SHA1"
+          echo "IOS_DISTRIBUTION_CERT_SHA1=$IOS_DISTRIBUTION_CERT_SHA1" >> "$GITHUB_ENV"
+          . .venv/bin/activate
+          export IOS_DISTRIBUTION_CERT_SHA1
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run unit tests
+        if: ${{ inputs.skip_tests != 'true' }}
+        run: |
+          DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for values in d.values() for x in values if x["name"].startswith("iPhone")))' )"
+          xcodebuild test -project MoriGo.xcodeproj -scheme MoriGo -destination "platform=iOS Simulator,id=$DEVICE_ID" CODE_SIGNING_ALLOWED=NO
+
+      - name: Archive
+        run: |
+          xcodebuild archive \
+            -project MoriGo.xcodeproj \
+            -scheme MoriGo \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/MoriGo.xcarchive \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID"
+
+      - name: Verify bundled game assets
+        run: |
+          APP_BUNDLE="build/MoriGo.xcarchive/Products/Applications/MoriGo.app"
+          test -f "$APP_BUNDLE/Web/index.html"
+          test -f "$APP_BUNDLE/Web/app.js"
+          test -f "$APP_BUNDLE/Web/style.css"
+          test "$(find "$APP_BUNDLE/Web/assets/characters" -name '*.png' | wc -l | tr -d ' ')" -eq 5
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/MoriGo.xcarchive \
+            -exportOptionsPlist exportOptions.plist \
+            -exportPath build/export
+
+      - name: Upload to TestFlight
+        run: |
+          set -o pipefail
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee /tmp/mori-go-upload.log
+          if grep -Eqi 'UPLOAD FAILED|Validation failed|STATE_ERROR|ERROR:' /tmp/mori-go-upload.log; then
+            exit 1
+          fi
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoriGo-ipa
+          path: ios/MoriGo/build/export/*.ipa
+          if-no-files-found: ignore
