@@ -16,4 +16,21 @@ final class SpotViewModelTests: XCTestCase {
         XCTAssertEqual(catalog.first?.fileName, "spots_14")
         XCTAssertEqual(catalog.first?.spotCount, 20)
     }
+
+    func testBundledRegionalDataCanBeLoaded() throws {
+        let repository = SpotRepository()
+        let catalog = try repository.loadCatalog()
+
+        XCTAssertEqual(catalog.count, 47)
+        XCTAssertTrue(catalog.contains { $0.code == "14" })
+
+        for prefecture in catalog {
+            let spots = try repository.load(prefecture: prefecture)
+            XCTAssertEqual(
+                spots.count,
+                prefecture.spotCount,
+                "\(prefecture.name)の登録件数とJSON件数が一致しません"
+            )
+        }
+    }
 }

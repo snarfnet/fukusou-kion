@@ -143,6 +143,14 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
+      - name: Verify regional data in app bundle
+        run: |
+          APP_BUNDLE="build/Himahie.xcarchive/Products/Applications/Himahie.app"
+          test -f "$APP_BUNDLE/prefectures.json"
+          test -f "$APP_BUNDLE/spots_14.json"
+          JSON_COUNT="$(find "$APP_BUNDLE" -maxdepth 1 -name '*.json' | wc -l | tr -d ' ')"
+          test "$JSON_COUNT" -ge 48
+
       - name: Export and upload IPA
         env:
           ASC_P8_PATH: /tmp/asc_key.p8

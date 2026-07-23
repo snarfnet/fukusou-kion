@@ -17,8 +17,8 @@ targets:
       - path: Himahie
         excludes:
           - Resources
-    resources:
-      - Himahie/Resources
+      - path: Himahie/Resources
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.sokosokojikan
