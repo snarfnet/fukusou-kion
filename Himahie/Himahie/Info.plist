@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleDisplayName</key><string>そこそこ時間を潰せる</string>
+  <key>NSLocationWhenInUseUsageDescription</key><string>近くの涼しい無料スポットを探すために現在地を使います。</string>
+  <key>UILaunchScreen</key><dict/>
+</dict></plist>

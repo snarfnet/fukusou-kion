@@ -1,0 +1,171 @@
+name: Sokosoko Jikan TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Marketing version
+        required: false
+        default: "1.0"
+      build_number:
+        description: Build number (blank uses GitHub run number + 100)
+        required: false
+        default: ""
+  push:
+    branches:
+      - codex/himahie-testflight
+    paths:
+      - ".github/workflows/himahie-testflight.yml"
+      - "Himahie/**"
+
+concurrency:
+  group: himahie-testflight
+  cancel-in-progress: true
+
+jobs:
+  test-build-upload:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: Himahie
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.sokosokojikan
+      APP_NAME: "そこそこ時間を潰せる"
+      APP_SKU: sokosoko-jikan-ios
+      BUNDLE_NAME: SokosokoJikan
+      PROFILE_NAME: "SokosokoJikan App Store"
+      APP_VERSION: ${{ inputs.version || '1.0' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m pip install --break-system-packages --upgrade PyJWT cryptography requests
+
+      - name: Validate facility data
+        run: python3 scripts/audit_spots.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run unit tests
+        run: |
+          DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for values in d.values() for x in values if x["name"].startswith("iPhone")))' )"
+          xcodebuild test \
+            -project Himahie.xcodeproj \
+            -scheme Himahie \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Set build number
+        run: |
+          if [ -n "${{ inputs.build_number }}" ]; then
+            BUILD_NUMBER="${{ inputs.build_number }}"
+          else
+            BUILD_NUMBER=$((GITHUB_RUN_NUMBER + 100))
+          fi
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Install distribution certificate
+        env:
+          CERT_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        run: |
+          test -n "$CERT_BASE64"
+          test -n "$CERT_PASSWORD"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          printf '%s' "$CERT_BASE64" | base64 --decode > /tmp/distribution.p12
+          security import /tmp/distribution.p12 -k build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          CERT_SHA1="$(security find-certificate -a -c "Apple Distribution" -Z build.keychain | awk '/SHA-1 hash:/ {print $3; exit}')"
+          test -n "$CERT_SHA1"
+          echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/ensure_asc_app.py
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/prepare_profile.py
+
+      - name: Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive \
+            -project Himahie.xcodeproj \
+            -scheme Himahie \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/Himahie.xcarchive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            DEVELOPMENT_TEAM=83VGKGSQUH \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Export and upload IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/Himahie.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SokosokoJikan-ipa
+          path: Himahie/build/export/*.ipa
+          if-no-files-found: ignore

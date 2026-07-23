@@ -1,0 +1,378 @@
+[
+  {
+    "code": "01",
+    "name": "北海道",
+    "fileName": "spots_01",
+    "spotCount": 612,
+    "centerLatitude": 43.0642,
+    "centerLongitude": 141.3469
+  },
+  {
+    "code": "02",
+    "name": "青森県",
+    "fileName": "spots_02",
+    "spotCount": 126,
+    "centerLatitude": 40.8244,
+    "centerLongitude": 140.74
+  },
+  {
+    "code": "03",
+    "name": "岩手県",
+    "fileName": "spots_03",
+    "spotCount": 136,
+    "centerLatitude": 39.7036,
+    "centerLongitude": 141.1527
+  },
+  {
+    "code": "04",
+    "name": "宮城県",
+    "fileName": "spots_04",
+    "spotCount": 217,
+    "centerLatitude": 38.2688,
+    "centerLongitude": 140.8721
+  },
+  {
+    "code": "05",
+    "name": "秋田県",
+    "fileName": "spots_05",
+    "spotCount": 234,
+    "centerLatitude": 39.7186,
+    "centerLongitude": 140.1024
+  },
+  {
+    "code": "06",
+    "name": "山形県",
+    "fileName": "spots_06",
+    "spotCount": 127,
+    "centerLatitude": 38.2404,
+    "centerLongitude": 140.3633
+  },
+  {
+    "code": "07",
+    "name": "福島県",
+    "fileName": "spots_07",
+    "spotCount": 186,
+    "centerLatitude": 37.7503,
+    "centerLongitude": 140.4676
+  },
+  {
+    "code": "08",
+    "name": "茨城県",
+    "fileName": "spots_08",
+    "spotCount": 166,
+    "centerLatitude": 36.3418,
+    "centerLongitude": 140.4468
+  },
+  {
+    "code": "09",
+    "name": "栃木県",
+    "fileName": "spots_09",
+    "spotCount": 182,
+    "centerLatitude": 36.5657,
+    "centerLongitude": 139.8836
+  },
+  {
+    "code": "10",
+    "name": "群馬県",
+    "fileName": "spots_10",
+    "spotCount": 199,
+    "centerLatitude": 36.3911,
+    "centerLongitude": 139.0608
+  },
+  {
+    "code": "11",
+    "name": "埼玉県",
+    "fileName": "spots_11",
+    "spotCount": 360,
+    "centerLatitude": 35.8569,
+    "centerLongitude": 139.6489
+  },
+  {
+    "code": "12",
+    "name": "千葉県",
+    "fileName": "spots_12",
+    "spotCount": 396,
+    "centerLatitude": 35.6047,
+    "centerLongitude": 140.1233
+  },
+  {
+    "code": "13",
+    "name": "東京都",
+    "fileName": "spots_13",
+    "spotCount": 1257,
+    "centerLatitude": 35.6762,
+    "centerLongitude": 139.6503
+  },
+  {
+    "code": "14",
+    "name": "神奈川県",
+    "fileName": "spots_14",
+    "spotCount": 511,
+    "centerLatitude": 35.4478,
+    "centerLongitude": 139.6425
+  },
+  {
+    "code": "15",
+    "name": "新潟県",
+    "fileName": "spots_15",
+    "spotCount": 258,
+    "centerLatitude": 37.9026,
+    "centerLongitude": 139.0232
+  },
+  {
+    "code": "16",
+    "name": "富山県",
+    "fileName": "spots_16",
+    "spotCount": 194,
+    "centerLatitude": 36.6953,
+    "centerLongitude": 137.2113
+  },
+  {
+    "code": "17",
+    "name": "石川県",
+    "fileName": "spots_17",
+    "spotCount": 226,
+    "centerLatitude": 36.5947,
+    "centerLongitude": 136.6256
+  },
+  {
+    "code": "18",
+    "name": "福井県",
+    "fileName": "spots_18",
+    "spotCount": 159,
+    "centerLatitude": 36.0652,
+    "centerLongitude": 136.2216
+  },
+  {
+    "code": "19",
+    "name": "山梨県",
+    "fileName": "spots_19",
+    "spotCount": 161,
+    "centerLatitude": 35.6642,
+    "centerLongitude": 138.5684
+  },
+  {
+    "code": "20",
+    "name": "長野県",
+    "fileName": "spots_20",
+    "spotCount": 393,
+    "centerLatitude": 36.6513,
+    "centerLongitude": 138.181
+  },
+  {
+    "code": "21",
+    "name": "岐阜県",
+    "fileName": "spots_21",
+    "spotCount": 289,
+    "centerLatitude": 35.3912,
+    "centerLongitude": 136.7223
+  },
+  {
+    "code": "22",
+    "name": "静岡県",
+    "fileName": "spots_22",
+    "spotCount": 354,
+    "centerLatitude": 34.9769,
+    "centerLongitude": 138.3831
+  },
+  {
+    "code": "23",
+    "name": "愛知県",
+    "fileName": "spots_23",
+    "spotCount": 505,
+    "centerLatitude": 35.1802,
+    "centerLongitude": 136.9066
+  },
+  {
+    "code": "24",
+    "name": "三重県",
+    "fileName": "spots_24",
+    "spotCount": 155,
+    "centerLatitude": 34.7303,
+    "centerLongitude": 136.5086
+  },
+  {
+    "code": "25",
+    "name": "滋賀県",
+    "fileName": "spots_25",
+    "spotCount": 222,
+    "centerLatitude": 35.0045,
+    "centerLongitude": 135.8686
+  },
+  {
+    "code": "26",
+    "name": "京都府",
+    "fileName": "spots_26",
+    "spotCount": 345,
+    "centerLatitude": 35.0116,
+    "centerLongitude": 135.7681
+  },
+  {
+    "code": "27",
+    "name": "大阪府",
+    "fileName": "spots_27",
+    "spotCount": 476,
+    "centerLatitude": 34.6863,
+    "centerLongitude": 135.52
+  },
+  {
+    "code": "28",
+    "name": "兵庫県",
+    "fileName": "spots_28",
+    "spotCount": 459,
+    "centerLatitude": 34.6913,
+    "centerLongitude": 135.183
+  },
+  {
+    "code": "29",
+    "name": "奈良県",
+    "fileName": "spots_29",
+    "spotCount": 170,
+    "centerLatitude": 34.6851,
+    "centerLongitude": 135.8048
+  },
+  {
+    "code": "30",
+    "name": "和歌山県",
+    "fileName": "spots_30",
+    "spotCount": 113,
+    "centerLatitude": 34.226,
+    "centerLongitude": 135.1675
+  },
+  {
+    "code": "31",
+    "name": "鳥取県",
+    "fileName": "spots_31",
+    "spotCount": 113,
+    "centerLatitude": 35.5039,
+    "centerLongitude": 134.2377
+  },
+  {
+    "code": "32",
+    "name": "島根県",
+    "fileName": "spots_32",
+    "spotCount": 168,
+    "centerLatitude": 35.4723,
+    "centerLongitude": 133.0505
+  },
+  {
+    "code": "33",
+    "name": "岡山県",
+    "fileName": "spots_33",
+    "spotCount": 279,
+    "centerLatitude": 34.6618,
+    "centerLongitude": 133.9344
+  },
+  {
+    "code": "34",
+    "name": "広島県",
+    "fileName": "spots_34",
+    "spotCount": 236,
+    "centerLatitude": 34.3966,
+    "centerLongitude": 132.4596
+  },
+  {
+    "code": "35",
+    "name": "山口県",
+    "fileName": "spots_35",
+    "spotCount": 155,
+    "centerLatitude": 34.186,
+    "centerLongitude": 131.4705
+  },
+  {
+    "code": "36",
+    "name": "徳島県",
+    "fileName": "spots_36",
+    "spotCount": 82,
+    "centerLatitude": 34.0658,
+    "centerLongitude": 134.5593
+  },
+  {
+    "code": "37",
+    "name": "香川県",
+    "fileName": "spots_37",
+    "spotCount": 119,
+    "centerLatitude": 34.3401,
+    "centerLongitude": 134.0434
+  },
+  {
+    "code": "38",
+    "name": "愛媛県",
+    "fileName": "spots_38",
+    "spotCount": 150,
+    "centerLatitude": 33.8416,
+    "centerLongitude": 132.7657
+  },
+  {
+    "code": "39",
+    "name": "高知県",
+    "fileName": "spots_39",
+    "spotCount": 104,
+    "centerLatitude": 33.5597,
+    "centerLongitude": 133.5311
+  },
+  {
+    "code": "40",
+    "name": "福岡県",
+    "fileName": "spots_40",
+    "spotCount": 272,
+    "centerLatitude": 33.6064,
+    "centerLongitude": 130.4183
+  },
+  {
+    "code": "41",
+    "name": "佐賀県",
+    "fileName": "spots_41",
+    "spotCount": 138,
+    "centerLatitude": 33.2494,
+    "centerLongitude": 130.2988
+  },
+  {
+    "code": "42",
+    "name": "長崎県",
+    "fileName": "spots_42",
+    "spotCount": 132,
+    "centerLatitude": 32.7448,
+    "centerLongitude": 129.8737
+  },
+  {
+    "code": "43",
+    "name": "熊本県",
+    "fileName": "spots_43",
+    "spotCount": 128,
+    "centerLatitude": 32.7898,
+    "centerLongitude": 130.7417
+  },
+  {
+    "code": "44",
+    "name": "大分県",
+    "fileName": "spots_44",
+    "spotCount": 124,
+    "centerLatitude": 33.2382,
+    "centerLongitude": 131.6126
+  },
+  {
+    "code": "45",
+    "name": "宮崎県",
+    "fileName": "spots_45",
+    "spotCount": 79,
+    "centerLatitude": 31.9111,
+    "centerLongitude": 131.4239
+  },
+  {
+    "code": "46",
+    "name": "鹿児島県",
+    "fileName": "spots_46",
+    "spotCount": 209,
+    "centerLatitude": 31.5602,
+    "centerLongitude": 130.5581
+  },
+  {
+    "code": "47",
+    "name": "沖縄県",
+    "fileName": "spots_47",
+    "spotCount": 157,
+    "centerLatitude": 26.2124,
+    "centerLongitude": 127.6809
+  }
+]
