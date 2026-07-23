@@ -27,6 +27,11 @@ INVALID_SERIALS = {
     "797262360B421323CA2A52F022C3F0BF",
 }
 CI_CERT_MARKERS = ("sokosokojikan", "sokosoko jikan")
+STALE_CERTIFICATE_IDS = {
+    value.strip()
+    for value in os.environ.get("STALE_CERTIFICATE_IDS", "").split(",")
+    if value.strip()
+}
 
 
 def run(args):
@@ -216,6 +221,17 @@ def create_certificate():
     raise RuntimeError(last_error)
 
 
+def delete_explicit_stale_certificates():
+    for certificate_id in sorted(STALE_CERTIFICATE_IDS):
+        response = api("DELETE", f"/certificates/{certificate_id}")
+        if response.status_code not in (204, 404):
+            raise RuntimeError(
+                f"Could not delete stale certificate {certificate_id}: "
+                f"{response.status_code} {response.text[:400]}"
+            )
+        print(f"Deleted stale CI certificate {certificate_id}: {response.status_code}")
+
+
 def import_certificate(certificate):
     content = certificate.get("attributes", {}).get("certificateContent")
     if not content:
@@ -244,6 +260,7 @@ def import_certificate(certificate):
 
 def main():
     generate_csr()
+    delete_explicit_stale_certificates()
     certificate = create_certificate()
     import_certificate(certificate)
 

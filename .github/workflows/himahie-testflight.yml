@@ -11,6 +11,10 @@ on:
         description: Build number (blank uses GitHub run number + 100)
         required: false
         default: ""
+      skip_tests:
+        description: Skip tests after a previously successful run
+        required: false
+        default: "false"
   push:
     branches:
       - codex/himahie-testflight
@@ -57,6 +61,7 @@ jobs:
         run: xcodegen generate
 
       - name: Run unit tests
+        if: ${{ inputs.skip_tests != 'true' }}
         run: |
           DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for values in d.values() for x in values if x["name"].startswith("iPhone")))' )"
           xcodebuild test \
@@ -96,6 +101,7 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
+          STALE_CERTIFICATE_IDS: "RF2Y43ZKA4,D986YLC856"
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
