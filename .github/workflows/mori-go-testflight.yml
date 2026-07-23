@@ -77,7 +77,7 @@ jobs:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'temporary-keychain-password' }}
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
-          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "0"
+          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "1"
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
