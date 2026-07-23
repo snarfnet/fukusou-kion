@@ -23,5 +23,6 @@
     <string>UIInterfaceOrientationLandscapeLeft</string>
     <string>UIInterfaceOrientationLandscapeRight</string>
   </array>
+  <key>ITSAppUsesNonExemptEncryption</key><false/>
   <key>UILaunchScreen</key><dict/>
 </dict></plist>
