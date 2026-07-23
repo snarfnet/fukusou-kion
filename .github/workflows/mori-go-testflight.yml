@@ -102,7 +102,7 @@ jobs:
         env:
           ASC_P8_PATH: /tmp/asc_key.p8
         run: |
-          IOS_DISTRIBUTION_CERT_SHA1="$(security find-certificate -a -c 'Apple Distribution' -Z build.keychain | awk '/SHA-1 hash:/ {print $3; exit}')"
+          IOS_DISTRIBUTION_CERT_SHA1="$(security find-identity -v -p codesigning build.keychain | awk 'NR == 1 {print $2}')"
           test -n "$IOS_DISTRIBUTION_CERT_SHA1"
           echo "IOS_DISTRIBUTION_CERT_SHA1=$IOS_DISTRIBUTION_CERT_SHA1" >> "$GITHUB_ENV"
           . .venv/bin/activate
