@@ -33,8 +33,12 @@ final class SpotViewModel {
     var spots: [Spot] = []
     var prefectures: [PrefectureCatalog] = []
     var selectedPrefectureCode = "14" {
-        didSet { loadSelectedPrefecture() }
+        didSet {
+            usesCurrentLocation = false
+            loadSelectedPrefecture()
+        }
     }
+    var usesCurrentLocation = true
     var searchText = ""
     var categoryFilter: SpotCategoryFilter = .all
     var maxDistance = 5.0
@@ -70,7 +74,9 @@ final class SpotViewModel {
             longitude: selectedPrefecture?.centerLongitude ?? 139.6425
         )
     }
-    var currentLocation: CLLocation { locationService.location ?? fallbackLocation }
+    var currentLocation: CLLocation {
+        usesCurrentLocation ? (locationService.location ?? fallbackLocation) : fallbackLocation
+    }
     var filtered: [Spot] {
         spots.filter { spot in
             let matchesText = searchText.isEmpty || spot.name.localizedCaseInsensitiveContains(searchText) || spot.category.localizedCaseInsensitiveContains(searchText) || spot.address.localizedCaseInsensitiveContains(searchText)
@@ -93,6 +99,10 @@ final class SpotViewModel {
         wifiOnly = false
         verifiedOnly = false
         distanceFilterEnabled = false
+    }
+    func searchFromCurrentLocation() {
+        usesCurrentLocation = true
+        locationService.request()
     }
     func loadSelectedPrefecture() {
         guard let prefecture = selectedPrefecture else { return }

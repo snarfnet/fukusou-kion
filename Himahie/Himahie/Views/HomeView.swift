@@ -11,7 +11,7 @@ struct HomeView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
                 header
-                locationBar
+                searchAreaCard
                 categoryPicker
 
                 if let featured = model.recommended.first {
@@ -56,26 +56,52 @@ struct HomeView: View {
         .padding(.top, 18)
     }
 
-    private var locationBar: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "location.fill").foregroundStyle(Theme.blue)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(model.locationService.location == nil ? "\(model.selectedPrefecture?.name ?? "地域")の中心から検索" : "現在地の近くを検索")
-                    .font(.subheadline.weight(.semibold))
-                Text(model.locationService.location == nil ? "現在地を使うと距離が正確になります" : "現在地を取得済み")
-                    .font(.caption).foregroundStyle(.secondary)
-            }
-            Spacer()
-            Button(model.locationService.location == nil ? "現在地" : "更新") { model.locationService.request() }
-                .font(.subheadline.weight(.semibold)).buttonStyle(.bordered)
+    private var searchAreaCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("探すエリア", systemImage: "map.fill")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(Theme.blue)
+
             Menu {
                 Picker("都道府県", selection: $model.selectedPrefectureCode) {
-                    ForEach(model.prefectures) { Text($0.name).tag($0.code) }
+                    ForEach(model.prefectures) { prefecture in
+                        Text(prefecture.name).tag(prefecture.code)
+                    }
                 }
-            } label: { Image(systemName: "chevron.down.circle.fill").font(.title3).foregroundStyle(Theme.blue) }
-            .accessibilityLabel("都道府県を変更")
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(model.usesCurrentLocation ? "現在地の近く" : model.selectedPrefecture?.name ?? "都道府県を選ぶ")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text(model.usesCurrentLocation ? "位置情報をもとに距離を計算" : "県庁所在地付近から距離を計算")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Text("変更")
+                        .font(.subheadline.weight(.bold))
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption.bold())
+                }
+                .contentShape(Rectangle())
+            }
+
+            Button {
+                model.searchFromCurrentLocation()
+            } label: {
+                Label(
+                    model.usesCurrentLocation ? "現在地を更新" : "現在地に戻す",
+                    systemImage: "location.fill"
+                )
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .tint(Theme.blue)
         }
-        .padding(14).background(Theme.elevatedSurface.opacity(0.92), in: RoundedRectangle(cornerRadius: 18))
+        .padding(16)
+        .background(Theme.elevatedSurface.opacity(0.94), in: RoundedRectangle(cornerRadius: 20))
         .shadow(color: Theme.deepBlue.opacity(0.08), radius: 14, y: 5)
     }
 
@@ -136,34 +162,56 @@ private struct FeaturedSpotCard: View {
     let distance: Double
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            Image("cool-breeze-background")
-                .resizable().scaledToFill().frame(height: 340).clipped()
-            LinearGradient(colors: [.white.opacity(0.10), Theme.deepBlue.opacity(0.88)], startPoint: .top, endPoint: .bottom)
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Label("おすすめ", systemImage: "sparkles").font(.subheadline.bold()).padding(.horizontal, 11).padding(.vertical, 7).background(.ultraThinMaterial, in: Capsule())
-                    Spacer()
-                    Image(systemName: spot.categoryIcon).font(.title2).padding(13).background(Theme.blue.gradient, in: Circle()).foregroundStyle(.white)
+        GeometryReader { proxy in
+            let compactCard = proxy.size.width < 350
+            ZStack(alignment: .bottomLeading) {
+                Image("cool-breeze-background")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
+                LinearGradient(colors: [.clear, Theme.deepBlue.opacity(0.94)], startPoint: .center, endPoint: .bottom)
+                VStack(alignment: .leading, spacing: compactCard ? 8 : 11) {
+                    HStack {
+                        Label("おすすめ", systemImage: "sparkles")
+                            .font(.subheadline.bold())
+                            .padding(.horizontal, 11)
+                            .padding(.vertical, 7)
+                            .background(.ultraThinMaterial, in: Capsule())
+                        Spacer()
+                        Image(systemName: spot.categoryIcon)
+                            .font(.headline)
+                            .padding(11)
+                            .background(Theme.blue.gradient, in: Circle())
+                    }
+                    Spacer(minLength: 12)
+                    Text(spot.name)
+                        .font(.system(compactCard ? .title2 : .title, design: .rounded, weight: .bold))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.72)
+                    if !compactCard {
+                        Text(spot.notes)
+                            .font(.subheadline)
+                            .lineLimit(2)
+                            .foregroundStyle(.white.opacity(0.88))
+                    }
+                    HStack(spacing: 7) {
+                        FeaturedFact(icon: "yensign", text: spot.priceText)
+                        FeaturedFact(icon: "snowflake", text: spot.airConditioned == true ? "冷房あり" : "冷房未確認")
+                    }
+                    HStack(spacing: 18) {
+                        Label("徒歩 \(max(1, Int(distance / 4.5 * 60)))分", systemImage: "figure.walk")
+                        Label(spot.stayText, systemImage: "clock")
+                    }
+                    .font(.caption.weight(.semibold))
                 }
-                Spacer(minLength: 24)
-                Text(spot.name).font(.system(.title, design: .rounded, weight: .bold)).lineLimit(3).minimumScaleFactor(0.76)
-                Text(spot.notes).font(.subheadline).lineLimit(2).foregroundStyle(.white.opacity(0.88))
-                HStack(spacing: 8) {
-                    FeaturedFact(icon: "yensign", text: spot.priceText)
-                    FeaturedFact(icon: "snowflake", text: spot.airConditioned == true ? "冷房あり" : "冷房未確認")
-                    if spot.verificationStatus == "verified" { FeaturedFact(icon: "checkmark.shield.fill", text: "確認済み") }
-                }
-                HStack(spacing: 22) {
-                    Label("徒歩 \(max(1, Int(distance / 4.5 * 60)))分", systemImage: "figure.walk")
-                    Label(spot.stayText, systemImage: "clock")
-                }.font(.subheadline.weight(.semibold))
+                .padding(compactCard ? 16 : 20)
+                .foregroundStyle(.white)
             }
-            .padding(20).foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 26))
+            .shadow(color: Theme.deepBlue.opacity(0.20), radius: 18, y: 9)
         }
-        .frame(height: 340)
-        .clipShape(RoundedRectangle(cornerRadius: 26))
-        .shadow(color: Theme.deepBlue.opacity(0.20), radius: 18, y: 9)
+        .frame(height: 300)
         .accessibilityElement(children: .combine)
     }
 }

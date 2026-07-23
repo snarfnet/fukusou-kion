@@ -33,4 +33,28 @@ final class SpotViewModelTests: XCTestCase {
             )
         }
     }
+
+    func testSelectingPrefectureUsesItsCenterInsteadOfCurrentLocation() {
+        let model = SpotViewModel(repository: AreaSelectionRepository())
+        model.usesCurrentLocation = true
+
+        model.selectedPrefectureCode = "13"
+
+        XCTAssertFalse(model.usesCurrentLocation)
+        XCTAssertEqual(model.currentLocation.coordinate.latitude, 35.6762, accuracy: 0.0001)
+        XCTAssertEqual(model.currentLocation.coordinate.longitude, 139.6503, accuracy: 0.0001)
+    }
+}
+
+private struct AreaSelectionRepository: SpotRepositoryProtocol {
+    func loadCatalog() throws -> [PrefectureCatalog] {
+        [
+            .init(code: "13", name: "東京都", fileName: "spots_13", spotCount: 0, centerLatitude: 35.6762, centerLongitude: 139.6503),
+            .init(code: "14", name: "神奈川県", fileName: "spots_14", spotCount: 0, centerLatitude: 35.4478, centerLongitude: 139.6425)
+        ]
+    }
+
+    func load(prefecture: PrefectureCatalog) throws -> [Spot] {
+        []
+    }
 }
