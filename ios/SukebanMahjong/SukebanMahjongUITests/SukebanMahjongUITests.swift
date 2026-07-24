@@ -106,7 +106,7 @@ final class SukebanMahjongUITests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        for _ in 0..<8 where !element.exists {
+        for _ in 0..<20 where !element.exists {
             scrollView.swipeUp()
         }
         XCTAssertTrue(element.waitForExistence(timeout: 2), file: file, line: line)
