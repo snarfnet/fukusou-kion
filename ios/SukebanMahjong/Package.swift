@@ -4,6 +4,10 @@ import PackageDescription
 
 let package = Package(
     name: "SukebanMahjongCore",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v17)
+    ],
     products: [
         .library(name: "SukebanMahjong", targets: ["SukebanMahjong"])
     ],
