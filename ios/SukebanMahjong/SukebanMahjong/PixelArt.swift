@@ -49,7 +49,6 @@ struct TitleBackdrop: View {
             }
             block(0, 22, 32, 2, ink)
         }
-        .interpolation(.none)
         .accessibilityHidden(true)
     }
 }
@@ -153,7 +152,6 @@ struct PixelPortrait: View {
             }
         }
         .frame(width: size, height: size)
-        .interpolation(.none)
         .overlay(Rectangle().stroke(Color.white.opacity(0.8), lineWidth: 3))
         .shadow(color: girl.colors[0], radius: 0, x: 5, y: 5)
         .accessibilityLabel("\(girl.name)のドット絵")
