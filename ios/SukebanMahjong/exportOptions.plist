@@ -7,14 +7,9 @@
     <key>destination</key>
     <string>export</string>
     <key>signingStyle</key>
-    <string>manual</string>
+    <string>automatic</string>
     <key>teamID</key>
     <string>83VGKGSQUH</string>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.tokyonasu.sukebanmahjong</key>
-        <string>SukebanMahjong App Store</string>
-    </dict>
     <key>uploadSymbols</key>
     <true/>
 </dict>
