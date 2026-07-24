@@ -55,19 +55,19 @@ final class SukebanMahjongUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["cast.profile.name"].waitForExistence(timeout: 3))
         let profile = app.scrollViews.firstMatch
         assertExistsAfterScrolling(
-            app.otherElements["cast.profile.favoriteFood"],
+            app.staticTexts["cast.profile.favoriteFood"],
             in: profile
         )
         assertExistsAfterScrolling(
-            app.otherElements["cast.profile.favoriteType"],
+            app.staticTexts["cast.profile.favoriteType"],
             in: profile
         )
         assertExistsAfterScrolling(
-            app.otherElements["cast.profile.favoriteMotorcycle"],
+            app.staticTexts["cast.profile.favoriteMotorcycle"],
             in: profile
         )
         assertExistsAfterScrolling(
-            app.otherElements["cast.profile.favoriteCar"],
+            app.staticTexts["cast.profile.favoriteCar"],
             in: profile
         )
     }

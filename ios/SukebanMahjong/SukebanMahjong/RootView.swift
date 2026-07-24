@@ -327,14 +327,26 @@ struct RootView: View {
                 storyCard("この子の物語", selected.story)
                 storyCard("誰にも言えない夢", selected.secret)
                 storyCard("得意な打ち筋", selected.specialty)
-                storyCard("好きな食べ物", selected.favoriteFood)
-                    .accessibilityIdentifier("cast.profile.favoriteFood")
-                storyCard("好きなタイプ", selected.favoriteType)
-                    .accessibilityIdentifier("cast.profile.favoriteType")
-                storyCard("好きな単車", selected.favoriteMotorcycle)
-                    .accessibilityIdentifier("cast.profile.favoriteMotorcycle")
-                storyCard("好きな車", selected.favoriteCar)
-                    .accessibilityIdentifier("cast.profile.favoriteCar")
+                storyCard(
+                    "好きな食べ物",
+                    selected.favoriteFood,
+                    identifier: "cast.profile.favoriteFood"
+                )
+                storyCard(
+                    "好きなタイプ",
+                    selected.favoriteType,
+                    identifier: "cast.profile.favoriteType"
+                )
+                storyCard(
+                    "好きな単車",
+                    selected.favoriteMotorcycle,
+                    identifier: "cast.profile.favoriteMotorcycle"
+                )
+                storyCard(
+                    "好きな車",
+                    selected.favoriteCar,
+                    identifier: "cast.profile.favoriteCar"
+                )
                 Button("人物録へ戻る") { screen = .cast }
                     .buttonStyle(PixelButtonStyle(color: selected.colors[0]))
             }
@@ -397,10 +409,17 @@ struct RootView: View {
         }
     }
 
-    private func storyCard(_ title: String, _ body: String) -> some View {
+    private func storyCard(
+        _ title: String,
+        _ body: String,
+        identifier: String? = nil
+    ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title).foregroundStyle(.cyan)
-            Text(body).font(.callout).lineSpacing(5)
+            Text(body)
+                .font(.callout)
+                .lineSpacing(5)
+                .accessibilityIdentifier(identifier ?? "")
         }
         .frame(maxWidth: 520, alignment: .leading)
         .padding()
