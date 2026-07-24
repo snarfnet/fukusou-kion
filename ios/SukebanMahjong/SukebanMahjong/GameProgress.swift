@@ -1,4 +1,5 @@
 import Foundation
+#if canImport(Combine)
 import Combine
 
 @MainActor
@@ -36,3 +37,4 @@ final class GameProgress: ObservableObject {
         defaults.set(cleared.sorted(), forKey: key)
     }
 }
+#endif

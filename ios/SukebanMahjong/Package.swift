@@ -18,7 +18,6 @@ let package = Package(
                 "BattleView.swift",
                 "CharacterColors.swift",
                 "GameFeedback.swift",
-                "GameProgress.swift",
                 "GuideViews.swift",
                 "PixelArt.swift",
                 "RootView.swift",
@@ -26,6 +25,7 @@ let package = Package(
             ],
             sources: [
                 "GameModels.swift",
+                "GameProgress.swift",
                 "CastData.swift",
                 "MahjongModels.swift",
                 "MahjongEngine.swift",
