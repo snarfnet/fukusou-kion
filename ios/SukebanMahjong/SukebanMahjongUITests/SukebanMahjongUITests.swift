@@ -70,6 +70,11 @@ final class SukebanMahjongUITests: XCTestCase {
             app.staticTexts["cast.profile.favoriteCar"],
             in: profile
         )
+
+        let back = app.buttons["cast.profile.back"]
+        XCTAssertTrue(back.exists)
+        back.tap()
+        XCTAssertTrue(app.staticTexts["cast.title"].waitForExistence(timeout: 3))
     }
 
     func testStoryArchiveOpensFirstOfSixtySixChapters() {

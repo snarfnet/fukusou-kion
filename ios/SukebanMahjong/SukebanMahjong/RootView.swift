@@ -311,46 +311,56 @@ struct RootView: View {
     }
 
     private var castProfile: some View {
-        ScrollView {
-            VStack(spacing: 18) {
+        VStack(spacing: 0) {
+            HStack {
+                Button("← 人物録へ戻る") { screen = .cast }
+                    .buttonStyle(PixelButtonStyle(color: selected.colors[0]))
+                    .accessibilityIdentifier("cast.profile.back")
+                Spacer()
                 Text(String(format: "No.%03d / 100", selected.id + 1))
                     .foregroundStyle(.cyan)
-                PixelPortrait(girl: selected, size: 180)
-                Text(selected.alias).foregroundStyle(selected.colors[0])
-                Text(selected.name)
-                    .font(.largeTitle)
-                    .accessibilityIdentifier("cast.profile.name")
-                Text("\(selected.region)　\(selected.school)")
-                    .foregroundStyle(.gray)
-                Text("「\(selected.catchphrase)」").foregroundStyle(.yellow)
-                storyCard("昭和の装い", selected.appearance)
-                storyCard("この子の物語", selected.story)
-                storyCard("誰にも言えない夢", selected.secret)
-                storyCard("得意な打ち筋", selected.specialty)
-                storyCard(
-                    "好きな食べ物",
-                    selected.favoriteFood,
-                    identifier: "cast.profile.favoriteFood"
-                )
-                storyCard(
-                    "好きなタイプ",
-                    selected.favoriteType,
-                    identifier: "cast.profile.favoriteType"
-                )
-                storyCard(
-                    "好きな単車",
-                    selected.favoriteMotorcycle,
-                    identifier: "cast.profile.favoriteMotorcycle"
-                )
-                storyCard(
-                    "好きな車",
-                    selected.favoriteCar,
-                    identifier: "cast.profile.favoriteCar"
-                )
-                Button("人物録へ戻る") { screen = .cast }
-                    .buttonStyle(PixelButtonStyle(color: selected.colors[0]))
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(Color.black)
+
+            ScrollView {
+                VStack(spacing: 18) {
+                    PixelPortrait(girl: selected, size: 180)
+                    Text(selected.alias).foregroundStyle(selected.colors[0])
+                    Text(selected.name)
+                        .font(.largeTitle)
+                        .accessibilityIdentifier("cast.profile.name")
+                    Text("\(selected.region)　\(selected.school)")
+                        .foregroundStyle(.gray)
+                    Text("「\(selected.catchphrase)」").foregroundStyle(.yellow)
+                    storyCard("昭和の装い", selected.appearance)
+                    storyCard("この子の物語", selected.story)
+                    storyCard("誰にも言えない夢", selected.secret)
+                    storyCard("得意な打ち筋", selected.specialty)
+                    storyCard(
+                        "好きな食べ物",
+                        selected.favoriteFood,
+                        identifier: "cast.profile.favoriteFood"
+                    )
+                    storyCard(
+                        "好きなタイプ",
+                        selected.favoriteType,
+                        identifier: "cast.profile.favoriteType"
+                    )
+                    storyCard(
+                        "好きな単車",
+                        selected.favoriteMotorcycle,
+                        identifier: "cast.profile.favoriteMotorcycle"
+                    )
+                    storyCard(
+                        "好きな車",
+                        selected.favoriteCar,
+                        identifier: "cast.profile.favoriteCar"
+                    )
+                }
+                .padding()
+            }
         }
     }
 
