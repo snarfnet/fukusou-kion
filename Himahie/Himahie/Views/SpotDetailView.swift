@@ -42,11 +42,22 @@ struct SpotDetailView: View {
                     Text(spot.category).font(.subheadline).foregroundStyle(Theme.blue)
                     Text(spot.name).font(.largeTitle.bold())
                     if !spot.address.isEmpty { Text(spot.address).foregroundStyle(.secondary) }
-                    HStack { Badge(spot.priceText); Badge("徒歩目安 \(Int(distance / 4.5 * 60))分"); Badge(spot.stayText) }
+                    HStack {
+                        Badge(spot.priceText)
+                        Badge(distance <= 5 ? "徒歩約 \(Int(distance / 4.5 * 60))分" : "直線 \(String(format: "%.1f", distance))km")
+                        Badge(spot.stayText)
+                    }
                 }
                 scoreGrid
                 detailRows
-                Text(spot.notes).padding().frame(maxWidth: .infinity, alignment: .leading).background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
+                VStack(alignment: .leading, spacing: 7) {
+                    Label(spot.verificationText, systemImage: spot.verificationStatus == "verified" ? "checkmark.shield.fill" : "exclamationmark.triangle.fill")
+                        .font(.subheadline.bold())
+                    Text(spot.notes)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(spot.verificationStatus == "verified" ? Theme.ice.opacity(0.8) : Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
                 if let officialURL = URL(string: spot.officialURL), !spot.officialURL.isEmpty {
                     Link(destination: officialURL) { Label("公式サイトを確認", systemImage: "safari").frame(maxWidth: .infinity) }
                         .buttonStyle(.bordered)
@@ -60,7 +71,9 @@ struct SpotDetailView: View {
                 }
                 Button { openMaps() } label: { Label("Appleマップで経路を開く", systemImage: "arrow.triangle.turn.up.right.diamond.fill").frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent).controlSize(.large)
                 Button("情報の修正を報告") { showReport = true }.frame(maxWidth: .infinity)
-                Text("最終確認: \(spot.lastVerifiedAt)　\(spot.verificationText)。営業時間や利用条件は現地・公式情報も確認してください。") .font(.caption).foregroundStyle(.secondary)
+                Text("\(spot.verificationStatus == "verified" ? "公式確認日" : "データ取得日"): \(spot.lastVerifiedAt)　\(spot.verificationText)。営業時間や利用条件は現地・公式情報も確認してください。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }.padding()
         }
         .background(LinearGradient(colors: [Theme.ice.opacity(0.45), Color(uiColor: .systemBackground)], startPoint: .top, endPoint: .center))

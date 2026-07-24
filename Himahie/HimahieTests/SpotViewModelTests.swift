@@ -1,4 +1,6 @@
 import XCTest
+import CoreLocation
+import UIKit
 @testable import Himahie
 
 final class SpotViewModelTests: XCTestCase {
@@ -34,15 +36,39 @@ final class SpotViewModelTests: XCTestCase {
         }
     }
 
-    func testSelectingPrefectureUsesItsCenterInsteadOfCurrentLocation() {
+    func testHeroArtworkIsBundled() {
+        XCTAssertNotNil(UIImage(named: "cool-breeze-background"))
+    }
+
+    func testSelectingTokyoKeepsKawasakiAsDistanceOrigin() {
+        let locationService = LocationService()
+        locationService.location = CLLocation(latitude: 35.5308, longitude: 139.7030)
+        let model = SpotViewModel(
+            repository: AreaSelectionRepository(),
+            locationService: locationService
+        )
+        model.followsCurrentLocation = true
+
+        model.selectPrefecture("13")
+
+        XCTAssertFalse(model.followsCurrentLocation)
+        XCTAssertFalse(model.distanceFilterEnabled)
+        XCTAssertEqual(model.currentLocation.coordinate.latitude, 35.5308, accuracy: 0.0001)
+        XCTAssertEqual(model.currentLocation.coordinate.longitude, 139.7030, accuracy: 0.0001)
+        XCTAssertTrue(model.distanceBasisText.contains("現在地"))
+    }
+
+    func testDefaultResultsDoNotHideUnknownPriceMuseums() {
         let model = SpotViewModel(repository: AreaSelectionRepository())
-        model.usesCurrentLocation = true
+        XCTAssertFalse(model.freeOnly)
+        XCTAssertTrue(model.indoorOnly)
+    }
 
-        model.selectedPrefectureCode = "13"
+    func testRecommendationsMixFacilityTypes() {
+        let model = SpotViewModel(repository: DiversityRepository())
+        let categories = Set(model.recommended.prefix(4).map(\.category))
 
-        XCTAssertFalse(model.usesCurrentLocation)
-        XCTAssertEqual(model.currentLocation.coordinate.latitude, 35.6762, accuracy: 0.0001)
-        XCTAssertEqual(model.currentLocation.coordinate.longitude, 139.6503, accuracy: 0.0001)
+        XCTAssertEqual(categories.count, 4)
     }
 }
 
@@ -57,4 +83,48 @@ private struct AreaSelectionRepository: SpotRepositoryProtocol {
     func load(prefecture: PrefectureCatalog) throws -> [Spot] {
         []
     }
+}
+
+private struct DiversityRepository: SpotRepositoryProtocol {
+    func loadCatalog() throws -> [PrefectureCatalog] {
+        [.init(code: "14", name: "神奈川県", fileName: "spots_14", spotCount: 4, centerLatitude: 35.4478, centerLongitude: 139.6425)]
+    }
+
+    func load(prefecture: PrefectureCatalog) throws -> [Spot] {
+        [
+            testSpot(id: "library", category: "図書館"),
+            testSpot(id: "museum", category: "博物館"),
+            testSpot(id: "gallery", category: "ギャラリー"),
+            testSpot(id: "guide", category: "ビジターセンター")
+        ]
+    }
+}
+
+private func testSpot(id: String, category: String) -> Spot {
+    Spot(
+        id: id,
+        name: id,
+        category: category,
+        latitude: 35.4478,
+        longitude: 139.6425,
+        address: "",
+        price: category == "図書館" ? 0 : -1,
+        indoor: true,
+        airConditioned: nil,
+        hasSeats: nil,
+        hasToilet: nil,
+        hasWifi: nil,
+        hasPower: nil,
+        soloFriendly: 4,
+        funScore: 4,
+        stayScore: 3,
+        estimatedStayMinutes: 60,
+        openingHoursText: "未確認",
+        officialURL: "",
+        notes: "",
+        lastVerifiedAt: "2026-07-25",
+        sourceName: "OpenStreetMap contributors",
+        sourceURL: "https://www.openstreetmap.org/",
+        verificationStatus: "unverified"
+    )
 }

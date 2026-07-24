@@ -18,7 +18,7 @@ from urllib.request import Request, urlopen, urlretrieve
 import osmium
 from deduplicate_spots import deduplicate
 
-PBF_URL = "https://download.geofabrik.de/asia/japan-260721.osm.pbf"
+PBF_URL = "https://download.geofabrik.de/asia/japan-latest.osm.pbf"
 BOUNDARIES_URL = "https://raw.githubusercontent.com/amay077/JapanPrefGeoJson/master/japan.geojson"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 

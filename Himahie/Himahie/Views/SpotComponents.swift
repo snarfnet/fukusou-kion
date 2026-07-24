@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SpotCard: View {
     let spot: Spot
-    let distance: Double
+    let distanceText: String
 
     var body: some View {
         HStack(spacing: 14) {
@@ -13,7 +13,7 @@ struct SpotCard: View {
                 .background(spot.categoryColor.gradient, in: Circle())
             VStack(alignment: .leading, spacing: 5) {
                 Text(spot.name).font(.headline).foregroundStyle(.primary).lineLimit(2)
-                Text("\(spot.category) ・ \(String(format: "%.1f", distance))km")
+                Text("\(spot.category) ・ \(distanceText)")
                     .font(.caption).foregroundStyle(.secondary)
                 HStack(spacing: 6) {
                     Badge(spot.priceText)
