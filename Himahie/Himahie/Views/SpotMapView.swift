@@ -29,10 +29,15 @@ struct SpotMapView: View {
             }
             .navigationTitle("近くの地図").navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Spot.self) { SpotDetailView(spot: $0, distance: model.distance(to: $0)) }
-            .onChange(of: model.selectedPrefectureCode) { _, _ in recenter() }
-            .onChange(of: model.locationService.location?.coordinate.latitude) { _, _ in recenter() }
+            .onChange(of: model.selectedPrefectureCode) { _, _ in recenterToSelectedArea() }
+            .onChange(of: model.locationService.location?.coordinate.latitude) { _, _ in
+                if model.followsCurrentLocation { recenterToCurrentLocation() }
+            }
     }
-    private func recenter() {
+    private func recenterToSelectedArea() {
+        position = .region(.init(center: model.fallbackLocation.coordinate, span: .init(latitudeDelta: 0.45, longitudeDelta: 0.45)))
+    }
+    private func recenterToCurrentLocation() {
         position = .region(.init(center: model.currentLocation.coordinate, span: .init(latitudeDelta: 0.15, longitudeDelta: 0.15)))
     }
 }

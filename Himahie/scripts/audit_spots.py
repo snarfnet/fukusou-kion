@@ -32,6 +32,12 @@ def main() -> None:
             errors.append(f"count mismatch: {prefecture['code']}")
         all_spots.extend(spots)
 
+    for spot in all_spots:
+        if not spot.get("sourceName") or not spot.get("sourceURL"):
+            errors.append(f"missing source: {spot['id']}")
+        if spot.get("verificationStatus") == "verified" and not spot.get("officialURL"):
+            errors.append(f"verified spot missing official URL: {spot['id']}")
+
     by_name: dict[str, list[dict]] = defaultdict(list)
     for spot in all_spots:
         by_name[normalized(spot["name"])].append(spot)
@@ -50,6 +56,9 @@ def main() -> None:
     print(f"spots={len(all_spots)}")
     print(f"verified={sum(spot.get('verificationStatus') == 'verified' for spot in all_spots)}")
     print(f"free_or_likely={sum(spot['price'] == 0 for spot in all_spots)}")
+    print(f"price_unknown={sum(spot['price'] < 0 for spot in all_spots)}")
+    print(f"air_conditioning_unknown={sum(spot.get('airConditioned') is None for spot in all_spots)}")
+    print(f"official_url_present={sum(bool(spot.get('officialURL')) for spot in all_spots)}")
     print(f"nearby_duplicate_pairs={len(nearby_duplicates)}")
     print(f"duplicates_within_30m={sum(item[0] <= 30 for item in nearby_duplicates)}")
     print(f"errors={len(errors)}")

@@ -33,28 +33,29 @@ final class SpotViewModel {
     var spots: [Spot] = []
     var prefectures: [PrefectureCatalog] = []
     var selectedPrefectureCode = "14" {
-        didSet {
-            usesCurrentLocation = false
-            loadSelectedPrefecture()
-        }
+        didSet { loadSelectedPrefecture() }
     }
-    var usesCurrentLocation = true
+    var followsCurrentLocation = false
     var searchText = ""
     var categoryFilter: SpotCategoryFilter = .all
-    var maxDistance = 5.0
+    var maxDistance = 15.0
     var distanceFilterEnabled = true
-    var freeOnly = true
+    var freeOnly = false
     var indoorOnly = true
     var seatsOnly = false
     var toiletOnly = false
     var wifiOnly = false
     var verifiedOnly = false
     var errorMessage: String?
-    let locationService = LocationService()
+    let locationService: LocationService
     private let repository: SpotRepositoryProtocol
 
-    init(repository: SpotRepositoryProtocol = SpotRepository()) {
+    init(
+        repository: SpotRepositoryProtocol = SpotRepository(),
+        locationService: LocationService = LocationService()
+    ) {
         self.repository = repository
+        self.locationService = locationService
         do {
             prefectures = try repository.loadCatalog()
             if !prefectures.contains(where: { $0.code == selectedPrefectureCode }), let first = prefectures.first {
@@ -74,8 +75,13 @@ final class SpotViewModel {
             longitude: selectedPrefecture?.centerLongitude ?? 139.6425
         )
     }
-    var currentLocation: CLLocation {
-        usesCurrentLocation ? (locationService.location ?? fallbackLocation) : fallbackLocation
+    var hasPreciseLocation: Bool { locationService.location != nil }
+    var currentLocation: CLLocation { locationService.location ?? fallbackLocation }
+    var distanceBasisText: String {
+        if let location = locationService.location {
+            return "現在地からの直線距離（精度 ±\(max(1, Int(location.horizontalAccuracy)))m）"
+        }
+        return "\(selectedPrefecture?.name ?? "地域")中心からの概算距離"
     }
     var filtered: [Spot] {
         spots.filter { spot in
@@ -84,10 +90,45 @@ final class SpotViewModel {
         }.sorted { distance(to: $0) < distance(to: $1) }
     }
     func distance(to spot: Spot) -> Double { currentLocation.distance(from: .init(latitude: spot.latitude, longitude: spot.longitude)) / 1000 }
+    func distanceText(to spot: Spot) -> String {
+        let value = distance(to: spot)
+        let prefix = hasPreciseLocation ? "" : "約"
+        if value < 1 {
+            return "\(prefix)\(max(10, Int((value * 1000 / 10).rounded()) * 10))m"
+        }
+        return "\(prefix)\(String(format: value < 10 ? "%.1fkm" : "%.0fkm", value))"
+    }
+    func travelText(to spot: Spot) -> String {
+        let value = distance(to: spot)
+        if value <= 5 {
+            return "徒歩約\(max(1, Int(value / 4.5 * 60)))分"
+        }
+        return "直線 \(distanceText(to: spot))"
+    }
     func recommendation(minutes: Int) -> Spot? {
         filtered.filter { $0.estimatedStayMinutes >= minutes }.max { score($0) < score($1) } ?? filtered.first
     }
-    var recommended: [Spot] { filtered.sorted { score($0) > score($1) } }
+    var recommended: [Spot] {
+        let ranked = filtered.sorted { score($0) > score($1) }
+        guard !ranked.isEmpty else { return [] }
+        let buckets = Dictionary(grouping: ranked, by: categoryGroup)
+        let groupOrder = buckets.keys.sorted {
+            score(buckets[$0]!.first!) > score(buckets[$1]!.first!)
+        }
+        var result: [Spot] = []
+        var index = 0
+        while result.count < ranked.count {
+            var appended = false
+            for group in groupOrder {
+                guard let items = buckets[group], index < items.count else { continue }
+                result.append(items[index])
+                appended = true
+            }
+            if !appended { break }
+            index += 1
+        }
+        return result
+    }
     var hasActiveFilters: Bool { categoryFilter != .all || freeOnly || indoorOnly || seatsOnly || toiletOnly || wifiOnly || verifiedOnly || distanceFilterEnabled || !searchText.isEmpty }
     func resetFilters() {
         searchText = ""
@@ -100,9 +141,39 @@ final class SpotViewModel {
         verifiedOnly = false
         distanceFilterEnabled = false
     }
+    func selectPrefecture(_ code: String) {
+        followsCurrentLocation = false
+        distanceFilterEnabled = false
+        selectedPrefectureCode = code
+    }
     func searchFromCurrentLocation() {
-        usesCurrentLocation = true
+        followsCurrentLocation = true
+        distanceFilterEnabled = true
+        maxDistance = 15
+        syncPrefectureToCurrentLocation()
         locationService.request()
+    }
+    func syncPrefectureToCurrentLocation() {
+        guard followsCurrentLocation, let location = locationService.location else { return }
+        if let administrativeArea = locationService.administrativeArea,
+           let matched = prefectures.first(where: {
+               $0.name == administrativeArea
+               || $0.name.replacingOccurrences(of: "都", with: "")
+                   .replacingOccurrences(of: "府", with: "")
+                   .replacingOccurrences(of: "県", with: "") == administrativeArea
+           }) {
+            if selectedPrefectureCode != matched.code {
+                selectedPrefectureCode = matched.code
+            }
+            return
+        }
+        guard let nearest = prefectures.min(by: {
+                  location.distance(from: CLLocation(latitude: $0.centerLatitude, longitude: $0.centerLongitude))
+                  < location.distance(from: CLLocation(latitude: $1.centerLatitude, longitude: $1.centerLongitude))
+              }) else { return }
+        if selectedPrefectureCode != nearest.code {
+            selectedPrefectureCode = nearest.code
+        }
     }
     func loadSelectedPrefecture() {
         guard let prefecture = selectedPrefecture else { return }
@@ -117,8 +188,15 @@ final class SpotViewModel {
     private func score(_ spot: Spot) -> Double {
         Double(spot.funScore * 8 + spot.stayScore * 4)
         + (spot.verificationStatus == "verified" ? 30 : 0)
-        + (spot.isFree ? 15 : 0)
+        + (spot.isFree ? 12 : 0)
+        + (spot.price < 0 ? 3 : 0)
         + (spot.airConditioned == true ? 15 : 0)
-        - distance(to: spot) * 2
+        - min(distance(to: spot), 50) * 0.4
+    }
+    private func categoryGroup(_ spot: Spot) -> String {
+        if spot.category.contains("図書") { return "library" }
+        if spot.category.contains("博物館") { return "museum" }
+        if spot.category.contains("ギャラリー") || spot.category.contains("文化") { return "culture" }
+        return "guide"
     }
 }

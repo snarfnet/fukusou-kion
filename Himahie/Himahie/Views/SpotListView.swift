@@ -9,7 +9,11 @@ struct SpotListView: View {
                 ContentUnavailableView.search(text: model.searchText)
             } else {
                 List(model.filtered) { spot in
-                    NavigationLink(value: spot) { SpotCard(spot: spot, distance: model.distance(to: spot)).listRowInsets(.init()).padding(.vertical, 6) }
+                    NavigationLink(value: spot) {
+                        SpotCard(spot: spot, distanceText: model.distanceText(to: spot))
+                            .listRowInsets(.init())
+                            .padding(.vertical, 6)
+                    }
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                 }

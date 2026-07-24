@@ -16,7 +16,11 @@ struct HomeView: View {
 
                 if let featured = model.recommended.first {
                     NavigationLink(value: featured) {
-                        FeaturedSpotCard(spot: featured, distance: model.distance(to: featured))
+                        FeaturedSpotCard(
+                            spot: featured,
+                            distanceText: model.distanceText(to: featured),
+                            travelText: model.travelText(to: featured)
+                        )
                     }
                     .buttonStyle(.plain)
                 }
@@ -29,6 +33,7 @@ struct HomeView: View {
                 .controlSize(.large)
                 .tint(Theme.blue)
 
+                dataQualityNotice
                 nearbySection
             }
             .padding(.horizontal, 20)
@@ -42,6 +47,12 @@ struct HomeView: View {
         .alert("候補がありません", isPresented: $showNoSuggestion) { Button("OK") {} } message: { Text("距離を広げるか、条件を減らしてください。") }
         .alert("読み込みエラー", isPresented: Binding(get: { model.errorMessage != nil }, set: { if !$0 { model.errorMessage = nil } })) { Button("OK") { model.errorMessage = nil } } message: { Text(model.errorMessage ?? "") }
         .alert("位置情報", isPresented: Binding(get: { model.locationService.errorMessage != nil }, set: { if !$0 { model.locationService.errorMessage = nil } })) { Button("OK") { model.locationService.errorMessage = nil } } message: { Text(model.locationService.errorMessage ?? "") }
+        .onChange(of: model.locationService.location?.coordinate.latitude) { _, _ in
+            model.syncPrefectureToCurrentLocation()
+        }
+        .onChange(of: model.locationService.administrativeArea) { _, _ in
+            model.syncPrefectureToCurrentLocation()
+        }
     }
 
     private var header: some View {
@@ -50,7 +61,7 @@ struct HomeView: View {
                 .font(.system(size: 38, weight: .black, design: .rounded))
                 .foregroundStyle(LinearGradient(colors: [Theme.deepBlue, Theme.blue], startPoint: .leading, endPoint: .trailing))
                 .accessibilityAddTraits(.isHeader)
-            Text("無料で、涼しくて、ちょっと楽しい場所を近くから。")
+            Text("無料情報と涼める屋内候補を、近い順に。")
                 .font(.subheadline).foregroundStyle(.secondary)
         }
         .padding(.top, 18)
@@ -63,7 +74,13 @@ struct HomeView: View {
                 .foregroundStyle(Theme.blue)
 
             Menu {
-                Picker("都道府県", selection: $model.selectedPrefectureCode) {
+                Picker(
+                    "都道府県",
+                    selection: Binding(
+                        get: { model.selectedPrefectureCode },
+                        set: { model.selectPrefecture($0) }
+                    )
+                ) {
                     ForEach(model.prefectures) { prefecture in
                         Text(prefecture.name).tag(prefecture.code)
                     }
@@ -71,10 +88,10 @@ struct HomeView: View {
             } label: {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(model.usesCurrentLocation ? "現在地の近く" : model.selectedPrefecture?.name ?? "都道府県を選ぶ")
+                        Text(model.selectedPrefecture?.name ?? "都道府県を選ぶ")
                             .font(.headline)
                             .foregroundStyle(.primary)
-                        Text(model.usesCurrentLocation ? "位置情報をもとに距離を計算" : "県庁所在地付近から距離を計算")
+                        Text(model.distanceBasisText)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -91,7 +108,7 @@ struct HomeView: View {
                 model.searchFromCurrentLocation()
             } label: {
                 Label(
-                    model.usesCurrentLocation ? "現在地を更新" : "現在地に戻す",
+                    model.followsCurrentLocation ? "現在地を更新" : "現在地から探す",
                     systemImage: "location.fill"
                 )
                 .font(.subheadline.weight(.semibold))
@@ -99,6 +116,13 @@ struct HomeView: View {
             }
             .buttonStyle(.bordered)
             .tint(Theme.blue)
+
+            Label(
+                "都道府県は施設の範囲、距離は現在地が基準です。",
+                systemImage: "info.circle"
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
         .padding(16)
         .background(Theme.elevatedSurface.opacity(0.94), in: RoundedRectangle(cornerRadius: 20))
@@ -125,6 +149,22 @@ struct HomeView: View {
         }
     }
 
+    private var dataQualityNotice: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "checkmark.shield")
+                .foregroundStyle(Theme.blue)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("確認済みと候補を分けて表示")
+                    .font(.subheadline.weight(.semibold))
+                Text("「無料情報あり」「冷房未確認」は確定情報ではありません。詳細画面の情報元を確認してください。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(13)
+        .background(Theme.ice.opacity(0.7), in: RoundedRectangle(cornerRadius: 16))
+    }
+
     @ViewBuilder private var nearbySection: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -141,7 +181,10 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(Array(model.recommended.prefix(4).enumerated()), id: \.element.id) { index, spot in
-                        NavigationLink(value: spot) { SpotCard(spot: spot, distance: model.distance(to: spot)) }.buttonStyle(.plain)
+                        NavigationLink(value: spot) {
+                            SpotCard(spot: spot, distanceText: model.distanceText(to: spot))
+                        }
+                        .buttonStyle(.plain)
                         if index < min(model.recommended.count, 4) - 1 { Divider().padding(.leading, 62) }
                     }
                 }
@@ -159,7 +202,8 @@ struct HomeView: View {
 
 private struct FeaturedSpotCard: View {
     let spot: Spot
-    let distance: Double
+    let distanceText: String
+    let travelText: String
 
     var body: some View {
         GeometryReader { proxy in
@@ -200,7 +244,7 @@ private struct FeaturedSpotCard: View {
                         FeaturedFact(icon: "snowflake", text: spot.airConditioned == true ? "冷房あり" : "冷房未確認")
                     }
                     HStack(spacing: 18) {
-                        Label("徒歩 \(max(1, Int(distance / 4.5 * 60)))分", systemImage: "figure.walk")
+                        Label(travelText, systemImage: "location")
                         Label(spot.stayText, systemImage: "clock")
                     }
                     .font(.caption.weight(.semibold))

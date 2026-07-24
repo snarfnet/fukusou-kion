@@ -101,7 +101,7 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
-          STALE_CERTIFICATE_IDS: "RF2Y43ZKA4,D986YLC856,97869786PS,896JJJZ7KU,62QJ6RHZRG"
+          STALE_CERTIFICATE_IDS: "RF2Y43ZKA4,D986YLC856,97869786PS,896JJJZ7KU,62QJ6RHZRG,9QT448993J"
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
@@ -170,6 +170,12 @@ jobs:
             --file "$IPA_PATH" \
             --apiKey "$ASC_KEY_ID" \
             --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Revoke temporary distribution certificate
+        if: ${{ always() && env.ASC_CERTIFICATE_ID != '' }}
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: python3 scripts/revoke_ci_certificate.py
 
       - name: Upload IPA artifact
         if: always()
