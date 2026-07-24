@@ -23,6 +23,9 @@ def find_bundle():
 
 
 def find_distribution_certificate():
+    certificate_id = os.environ.get("CERTIFICATE_ID")
+    if certificate_id:
+        return api_json("GET", f"/certificates/{certificate_id}")["data"]
     result = api_json(
         "GET",
         f"/certificates?{query({'filter[certificateType]': 'IOS_DISTRIBUTION', 'limit': '200'})}",
@@ -55,8 +58,8 @@ def ensure_profile(bundle, certificate):
     existing = first(
         f"/profiles?{query({'filter[name]': PROFILE_NAME, 'limit': '1'})}"
     )
-    if existing and existing.get("attributes", {}).get("profileContent"):
-        return existing
+    if existing:
+        api_json("DELETE", f"/profiles/{existing['id']}")
 
     payload = {
         "data": {
