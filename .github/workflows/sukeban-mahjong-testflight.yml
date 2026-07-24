@@ -87,6 +87,8 @@ jobs:
           P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
           P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: temporary-keychain-password
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
         run: |
           test -n "$P12_BASE64"
           test -n "$P12_PASSWORD"
@@ -110,7 +112,25 @@ jobs:
             awk '/Apple Distribution|iPhone Distribution/{print $2; exit}'
           )"
           test -n "$CERT_SHA1"
-          echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
+          export IOS_DISTRIBUTION_CERT_SHA1="$CERT_SHA1"
+          . .venv/bin/activate
+          python scripts/ensure_distribution_certificate.py |
+            tee /tmp/sukeban-certificate.log
+          FINAL_CERT_SHA1="$(
+            grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/sukeban-certificate.log |
+            cut -d= -f2
+          )"
+          test -n "$FINAL_CERT_SHA1"
+          echo "IOS_DISTRIBUTION_CERT_SHA1=$FINAL_CERT_SHA1" >> "$GITHUB_ENV"
+
+      - name: Preserve refreshed distribution certificate
+        if: ${{ hashFiles('ios/SukebanMahjong/build/signing/distribution.p12') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: SukebanMahjong-refreshed-signing
+          path: ios/SukebanMahjong/build/signing/distribution.p12
+          if-no-files-found: error
+          retention-days: 1
 
       - name: Prepare provisioning profile
         env:
