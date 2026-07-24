@@ -18,14 +18,30 @@ def is_expired(item):
 
 
 def main():
+    profile_result = api_json(
+        "GET",
+        f"/profiles?{query({'filter[name]': os.environ['PROFILE_NAME'], 'include': 'certificates', 'limit': '1'})}",
+    )
+    replaceable_ids = {
+        item["id"] for item in profile_result.get("included", [])
+        if item.get("type") == "certificates"
+    }
+    if profile_result.get("data"):
+        api_json("DELETE", f"/profiles/{profile_result['data'][0]['id']}")
+
     result = api_json(
         "GET",
         f"/certificates?{query({'filter[certificateType]': 'IOS_DISTRIBUTION', 'limit': '200'})}",
     )
     for certificate in result.get("data", []):
-        if is_expired(certificate):
+        attributes = certificate.get("attributes", {})
+        if (
+            is_expired(certificate)
+            or certificate["id"] in replaceable_ids
+            or attributes.get("name") == "Moonshot Mahjong CI"
+        ):
             api_json("DELETE", f"/certificates/{certificate['id']}")
-            print(f"Removed expired certificate {certificate['id']}")
+            print(f"Removed replaceable certificate {certificate['id']}")
 
     payload = {
         "data": {
