@@ -20,6 +20,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.moonshotmahjong
         DEVELOPMENT_TEAM: 83VGKGSQUH
+        GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: "Moonshot Mahjong"
         INFOPLIST_KEY_CFBundleDevelopmentRegion: en
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
