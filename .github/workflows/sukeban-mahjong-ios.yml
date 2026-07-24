@@ -1,0 +1,102 @@
+name: Sukeban Mahjong iOS
+
+on:
+  push:
+    paths:
+      - "ios/SukebanMahjong/**"
+      - ".github/workflows/sukeban-mahjong-ios.yml"
+  pull_request:
+    paths:
+      - "ios/SukebanMahjong/**"
+      - ".github/workflows/sukeban-mahjong-ios.yml"
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: ios/SukebanMahjong
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Select available iPhone simulator
+        id: simulator
+        shell: bash
+        run: |
+          DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          data = json.load(sys.stdin)
+          for devices in data["devices"].values():
+              for device in devices:
+                  if device.get("isAvailable") and device["name"].startswith("iPhone"):
+                      print(device["udid"])
+                      raise SystemExit
+          raise SystemExit("No available iPhone simulator")
+          ')"
+          echo "id=$DEVICE_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Build and run unit tests
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SukebanMahjong.xcodeproj \
+            -scheme SukebanMahjong \
+            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}" \
+            -derivedDataPath .build/DerivedData \
+            -resultBundlePath .build/SukebanMahjongTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+          test -d .build/SukebanMahjongTests.xcresult
+          xcrun xcresulttool get test-results summary \
+            --path .build/SukebanMahjongTests.xcresult \
+            > .build/xcodebuild-test-summary.json
+
+      - name: Create unsigned archive
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SukebanMahjong.xcodeproj \
+            -scheme SukebanMahjong \
+            -destination "generic/platform=iOS" \
+            -archivePath .build/SukebanMahjong.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+          test -f .build/SukebanMahjong.xcarchive/Info.plist
+          APP_PATH=".build/SukebanMahjong.xcarchive/Products/Applications/SukebanMahjong.app"
+          test -d "$APP_PATH"
+          EXECUTABLE_NAME="$(
+            /usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "$APP_PATH/Info.plist"
+          )"
+          test -n "$EXECUTABLE_NAME"
+          test -x "$APP_PATH/$EXECUTABLE_NAME"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sukeban-mahjong-xcresult
+          path: |
+            ios/SukebanMahjong/.build/SukebanMahjongTests.xcresult
+            ios/SukebanMahjong/.build/xcodebuild-test-summary.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload unsigned archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: sukeban-mahjong-unsigned-archive
+          path: ios/SukebanMahjong/.build/SukebanMahjong.xcarchive
+          if-no-files-found: error
+          retention-days: 7

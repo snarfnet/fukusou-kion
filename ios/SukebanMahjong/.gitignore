@@ -1,0 +1,7 @@
+.build/
+.swiftpm/
+.playwright-cli/
+SukebanMahjong.xcodeproj/
+xcuserdata/
+*.xcresult
+*.xcarchive

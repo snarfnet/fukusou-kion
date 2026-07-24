@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>雀華番長 対局画面プレビュー</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; min-height: 100%; background: #080d16; }
+  body {
+    color: #f6f0cf;
+    font-family: ui-monospace, "Yu Gothic UI", "Noto Sans JP", monospace;
+    font-weight: 800;
+  }
+  .phone {
+    position: relative;
+    width: 430px;
+    min-height: 720px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 18px 15px 24px;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 4px),
+      #0a1320;
+  }
+  .phone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 6px solid #050812;
+  }
+  .header { display: flex; gap: 13px; align-items: center; }
+  canvas { image-rendering: pixelated; border: 3px solid #fff; background: #090a14; }
+  .bio { flex: 1; min-width: 0; }
+  .alias { color: #d69aff; font-size: 14px; margin-bottom: 4px; }
+  .score { font-size: 16px; color: #fff; white-space: nowrap; }
+  .bar { height: 8px; margin-top: 7px; border: 2px solid #fff; background: #181828; }
+  .bar > i { display: block; height: 100%; background: #df3045; }
+  .style { width: 70px; color: #98a0ac; font-size: 10px; text-align: right; }
+  .river {
+    display: flex;
+    gap: 3px;
+    min-height: 35px;
+    margin: 8px 0;
+    overflow: hidden;
+  }
+  .mini, .tile {
+    display: grid;
+    place-items: center;
+    flex: none;
+    color: #111;
+    background: #f3eac4;
+    border: 2px solid #050812;
+    box-shadow: inset -3px -3px #d0a42d;
+  }
+  .mini { width: 27px; height: 33px; font-size: 10px; }
+  .mini.man, .tile.man { color: #d51d32; }
+  .mini.pin, .tile.pin { color: #1f62bc; }
+  .mini.sou, .tile.sou { color: #087b4c; }
+  .status {
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 0; border-top: 2px solid #1e8fa5; border-bottom: 2px solid #1e8fa5;
+    font-size: 13px;
+  }
+  .status strong { color: #ffd12c; }
+  .status .spacer { flex: 1; }
+  .message {
+    min-height: 49px;
+    display: grid;
+    place-items: center;
+    margin: 8px 0;
+    padding: 7px;
+    text-align: center;
+    color: #fff;
+    background: #02030a;
+    border: 3px solid #fff;
+    box-shadow: 4px 4px #d82038;
+  }
+  .player {
+    display: flex; align-items: center; margin-top: 5px;
+    color: #fff; font-size: 17px;
+  }
+  .player .dealer { color: #ffd12c; margin-left: 8px; }
+  .player .bar { flex: 1; margin: 0 0 0 12px; }
+  .player .bar i { background: #22c6d8; width: 56%; }
+  .hand {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 9px;
+  }
+  .tile {
+    width: 52px; height: 64px;
+    font-size: 15px;
+    box-shadow: inset -5px -5px #d0a42d;
+  }
+  .tile.drawn { outline: 4px solid #ffe12d; transform: translateY(-4px); }
+  .actions { display: flex; justify-content: center; gap: 13px; margin-top: 13px; }
+  .button {
+    min-width: 125px;
+    padding: 13px 16px;
+    text-align: center;
+    color: #fff;
+    border: 3px solid #fff;
+    box-shadow: 4px 4px #050812;
+  }
+  .button.blue { background: #1659b7; }
+  .button.red { background: #ce2035; }
+  .foot { text-align: center; color: #78828e; font-size: 10px; margin-top: 14px; }
+</style>
+</head>
+<body>
+<main class="phone">
+  <section class="header">
+    <canvas id="enemy" width="16" height="16" style="width:70px;height:70px"></canvas>
+    <div class="bio">
+      <div class="alias">薩摩の紫電</div>
+      <div class="score">伊集院 紫苑　10400点　立直</div>
+      <div class="bar"><i style="width:43%"></i></div>
+    </div>
+    <div class="style">高打点の<br>門前</div>
+  </section>
+
+  <div class="river">
+    <span class="mini man">九萬</span><span class="mini pin">二筒</span>
+    <span class="mini sou">一索</span><span class="mini">北</span>
+    <span class="mini man">三萬</span><span class="mini pin">七筒</span>
+    <span class="mini">白</span><span class="mini sou">九索</span>
+  </div>
+
+  <div class="status">
+    <strong>東三局　1本場　8巡</strong>
+    <span class="spacer"></span>
+    <span>供託1</span><span>ドラ表示</span><span class="mini">西</span><span>山68</span>
+  </div>
+
+  <div class="message">紫苑「リーチ」<br>次の一牌で、家名の檻を破る。</div>
+
+  <div class="river">
+    <span class="mini pin">一筒</span><span class="mini">南</span>
+    <span class="mini man">六萬</span><span class="mini sou">二索</span>
+    <span class="mini pin">九筒</span><span class="mini">發</span>
+    <span class="mini man">一萬</span>
+  </div>
+
+  <section class="player">
+    <canvas id="hero" width="16" height="16" style="width:58px;height:58px"></canvas>
+    <span style="margin-left:10px">朱莉　12600点</span>
+    <span class="dealer">親</span>
+    <div class="bar"><i></i></div>
+  </section>
+
+  <div class="hand">
+    <span class="tile man">二萬</span><span class="tile man">三萬</span>
+    <span class="tile man">四萬</span><span class="tile pin">三筒</span>
+    <span class="tile pin">四筒</span><span class="tile pin">五筒</span>
+    <span class="tile sou">四索</span><span class="tile sou">五索</span>
+    <span class="tile sou">六索</span><span class="tile man">七萬</span>
+    <span class="tile man">八萬</span><span class="tile man">九萬</span>
+    <span class="tile">白</span><span class="tile drawn">白</span>
+  </div>
+
+  <div class="actions">
+    <div class="button blue">リーチ</div>
+    <div class="button red">ツモ！</div>
+  </div>
+  <div class="foot">雀華番長　対局画面デザインプレビュー</div>
+</main>
+<script>
+function portrait(canvas, main, hair) {
+  const c = canvas.getContext("2d");
+  const ink="#0a0a14", skin="#ffb87a", light="#f0e8c2";
+  c.imageSmoothingEnabled=false;
+  function b(x,y,w,h,color){c.fillStyle=color;c.fillRect(x,y,w,h)}
+  b(0,0,16,16,ink); b(5,4,6,8,skin);
+  if(hair==="long"){b(3,1,10,4,main);b(2,4,4,10,main);b(10,4,4,10,main)}
+  else {b(3,2,10,3,main);b(5,0,8,3,main);b(3,5,3,7,main)}
+  b(6,7,1,1,ink);b(9,7,1,1,ink);b(7,10,3,1,main);
+  b(4,12,8,4,main);b(7,12,2,4,light);
+}
+portrait(document.querySelector("#enemy"), "#9a4ad6", "long");
+portrait(document.querySelector("#hero"), "#da1f2d", "pompadour");
+</script>
+</body>
+</html>

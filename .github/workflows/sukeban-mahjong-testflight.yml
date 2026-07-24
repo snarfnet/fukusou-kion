@@ -1,0 +1,220 @@
+name: Sukeban Mahjong TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Marketing version
+        required: false
+        default: "1.0.0"
+      build_number:
+        description: Build number (blank uses GitHub run number)
+        required: false
+        default: ""
+  push:
+    branches:
+      - codex/sukeban-mahjong-testflight
+    paths:
+      - ".github/workflows/sukeban-mahjong-testflight.yml"
+      - "ios/SukebanMahjong/**"
+
+concurrency:
+  group: sukeban-mahjong-testflight
+  cancel-in-progress: false
+
+jobs:
+  test-build-upload:
+    runs-on: macos-26
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ios/SukebanMahjong
+    env:
+      APP_BUNDLE_ID: com.tokyonasu.sukebanmahjong
+      APP_NAME: "雀華番長 全国制覇編"
+      APP_SKU: sukeban-mahjong-ios
+      BUNDLE_NAME: SukebanMahjong
+      PROFILE_NAME: "SukebanMahjong App Store"
+      APP_VERSION: ${{ inputs.version || '1.0.0' }}
+      BUILD_NUM: ${{ inputs.build_number || github.run_number }}
+      DEVELOPMENT_TEAM: 83VGKGSQUH
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew install xcodegen
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_PRIVATE_KEY"
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" \
+            "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 \
+            "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+
+      - name: Ensure App Store Connect app
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/ensure_asc_app.py | tee /tmp/sukeban-app.log
+          grep '^APP_ID=' /tmp/sukeban-app.log >> "$GITHUB_ENV"
+
+      - name: Install distribution certificate
+        env:
+          P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+        run: |
+          test -n "$P12_BASE64"
+          test -n "$P12_PASSWORD"
+          printf '%s' "$P12_BASE64" | base64 --decode > /tmp/distribution.p12
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security import /tmp/distribution.p12 \
+            -k build.keychain \
+            -P "$P12_PASSWORD" \
+            -T /usr/bin/codesign \
+            -T /usr/bin/security
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s \
+            -k "$KEYCHAIN_PASSWORD" \
+            build.keychain
+          CERT_SHA1="$(
+            security find-identity -v -p codesigning build.keychain |
+            awk '/Apple Distribution|iPhone Distribution/{print $2; exit}'
+          )"
+          test -n "$CERT_SHA1"
+          echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
+
+      - name: Prepare provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/prepare_profile.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run package tests
+        run: swift test
+
+      - name: Run iOS unit and UI tests
+        run: |
+          DEVICE_ID="$(
+            xcrun simctl list devices available -j |
+            python3 -c 'import json,sys; data=json.load(sys.stdin)["devices"]; print(next(device["udid"] for devices in data.values() for device in devices if device.get("isAvailable") and device["name"].startswith("iPhone")))'
+          )"
+          xcodebuild test \
+            -project SukebanMahjong.xcodeproj \
+            -scheme SukebanMahjong \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -derivedDataPath build/DerivedData \
+            -resultBundlePath build/SukebanMahjongTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Archive
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild archive \
+            -project SukebanMahjong.xcodeproj \
+            -scheme SukebanMahjong \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/SukebanMahjong.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUM"
+
+      - name: Verify archive
+        run: |
+          APP_PATH="build/SukebanMahjong.xcarchive/Products/Applications/SukebanMahjong.app"
+          test -d "$APP_PATH"
+          test -f "$APP_PATH/PrivacyInfo.xcprivacy"
+          EXECUTABLE_NAME="$(
+            /usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "$APP_PATH/Info.plist"
+          )"
+          test -x "$APP_PATH/$EXECUTABLE_NAME"
+          test "$(
+            /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist"
+          )" = "$APP_BUNDLE_ID"
+
+      - name: Export IPA
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/SukebanMahjong.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist exportOptions.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_P8_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Upload to TestFlight
+        run: |
+          set -o pipefail
+          IPA_PATH="$(find build/export -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apple-id "$APP_ID" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID" 2>&1 |
+            tee /tmp/sukeban-upload.log
+          grep -q "UPLOAD SUCCEEDED" /tmp/sukeban-upload.log
+
+      - name: Wait for TestFlight processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/wait_for_build.py
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SukebanMahjong-build-${{ github.run_number }}
+          path: |
+            ios/SukebanMahjong/build/export/*.ipa
+            ios/SukebanMahjong/build/SukebanMahjongTests.xcresult
+          if-no-files-found: ignore
+          retention-days: 7

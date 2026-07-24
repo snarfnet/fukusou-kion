@@ -1,0 +1,52 @@
+name: SukebanMahjong
+options:
+  bundleIdPrefix: com.tokyonasu
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  base:
+    SWIFT_VERSION: 5.9
+    DEVELOPMENT_LANGUAGE: ja
+    MARKETING_VERSION: 1.0.0
+    CURRENT_PROJECT_VERSION: 1
+    TARGETED_DEVICE_FAMILY: "1,2"
+targets:
+  SukebanMahjong:
+    type: application
+    platform: iOS
+    sources:
+      - SukebanMahjong
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tokyonasu.sukebanmahjong
+        INFOPLIST_KEY_CFBundleDisplayName: "雀華番長"
+        INFOPLIST_KEY_CFBundleDevelopmentRegion: ja
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  SukebanMahjongTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - SukebanMahjongTests
+    dependencies:
+      - target: SukebanMahjong
+  SukebanMahjongUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - SukebanMahjongUITests
+    dependencies:
+      - target: SukebanMahjong
+schemes:
+  SukebanMahjong:
+    build:
+      targets:
+        SukebanMahjong: all
+        SukebanMahjongTests: [test]
+        SukebanMahjongUITests: [test]
+    test:
+      targets:
+        - SukebanMahjongTests
+        - SukebanMahjongUITests
