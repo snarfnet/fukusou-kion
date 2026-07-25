@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
@@ -54,6 +55,21 @@ CATEGORIES = {
     "arts_centre": ("文化施設", 90, 4),
     "exhibition_centre": ("展示施設", 90, 4),
 }
+
+JAPANESE_TEXT = re.compile(r"[\u3040-\u30ff\u3400-\u9fff]")
+
+
+def preferred_name(tags) -> str | None:
+    explicit = tags.get("name:ja") or tags.get("official_name:ja")
+    if explicit:
+        return explicit
+    name = tags.get("name")
+    english = tags.get("name:en")
+    if name and english and name.startswith(english):
+        remainder = name[len(english):].lstrip(" /・-–—")
+        if remainder and JAPANESE_TEXT.search(remainder):
+            return remainder
+    return name
 
 
 def tag_bool(value: str | None, *, yes_values: set[str] | None = None, positive_nonzero: bool = False) -> bool | None:
@@ -141,7 +157,10 @@ class SpotHandler(osmium.SimpleHandler):
             category, stay, fun = ("無料見学施設", 60, 4)
         else:
             return
-        name = tags.get("name") or tags.get("name:ja")
+        # Japanese labels are the best fit for this Japanese-language app.
+        # Keep `name` as a fallback because some facilities intentionally use
+        # an English or Latin-script brand name.
+        name = preferred_name(tags)
         if not name or (kind, osm_id) in self.seen:
             return
         pref = self.lookup.find(lon, lat)
