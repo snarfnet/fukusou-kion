@@ -58,6 +58,35 @@ def create_certificate():
     raise RuntimeError(last_error)
 
 
+def delete_pending_certificate_requests():
+    deleted = 0
+    seen = set()
+    for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
+        certificates = api_json(
+            "GET", f"/certificates?filter[certificateType]={cert_type}&limit=20"
+        ).get("data", [])
+        for certificate in certificates:
+            if certificate["id"] in seen:
+                continue
+            seen.add(certificate["id"])
+            attrs = certificate.get("attributes", {})
+            is_pending = (
+                not attrs.get("serialNumber")
+                and not attrs.get("expirationDate")
+                and not attrs.get("certificateContent")
+            )
+            if not is_pending:
+                print(
+                    f"Keeping active certificate: {certificate['id']} "
+                    f"expires={attrs.get('expirationDate') or 'unknown'}"
+                )
+                continue
+            print(f"Deleting pending certificate request: {certificate['id']}")
+            api_json("DELETE", f"/certificates/{certificate['id']}")
+            deleted += 1
+    return deleted
+
+
 def replace_current_certificates():
     deleted = False
     for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
@@ -90,7 +119,16 @@ def main():
     generate_csr()
     if os.environ.get("REPLACE_CURRENT_DISTRIBUTION", "") == "1":
         replace_current_certificates()
-    certificate = create_certificate()
+    try:
+        certificate = create_certificate()
+    except Exception as error:
+        if "pending certificate request" not in str(error).lower():
+            raise
+        deleted = delete_pending_certificate_requests()
+        if not deleted:
+            raise
+        print(f"Retrying after deleting {deleted} pending request(s).")
+        certificate = create_certificate()
     import_certificate(certificate)
 
 
