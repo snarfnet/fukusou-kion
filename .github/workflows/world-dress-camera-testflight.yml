@@ -85,7 +85,9 @@ jobs:
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
           . .venv/bin/activate
-          python scripts/create_distribution_certificate.py
+          python scripts/create_distribution_certificate.py | tee /tmp/world-dress-camera-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/world-dress-camera-cert.log >> "$GITHUB_ENV"
+          grep '^ASC_CERTIFICATE_ID=' /tmp/world-dress-camera-cert.log >> "$GITHUB_ENV"
 
       - name: Ensure App Store Connect app
         env:
