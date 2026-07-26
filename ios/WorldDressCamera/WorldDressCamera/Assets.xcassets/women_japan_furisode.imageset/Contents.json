@@ -1,0 +1,13 @@
+{
+  "images" : [
+    {
+      "filename" : "women_japan_furisode.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

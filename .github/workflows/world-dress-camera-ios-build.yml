@@ -1,0 +1,63 @@
+name: WorldDressCamera iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/world-dress-camera-build
+    paths:
+      - "ios/WorldDressCamera/**"
+      - ".github/workflows/world-dress-camera-ios-build.yml"
+
+concurrency:
+  group: world-dress-camera-ios-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/WorldDressCamera
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Inspect project
+        run: |
+          plutil -lint WorldDressCamera/Info.plist
+          plutil -lint WorldDressCamera.xcodeproj/project.pbxproj
+          xcodebuild -list -project WorldDressCamera.xcodeproj
+
+      - name: Build for simulator
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project WorldDressCamera.xcodeproj \
+            -scheme WorldDressCamera \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build | tee build.log
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: WorldDressCamera-simulator
+          path: ios/WorldDressCamera/build/DerivedData/Build/Products/Debug-iphonesimulator/WorldDressCamera.app
+          if-no-files-found: error
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WorldDressCamera-build-log
+          path: ios/WorldDressCamera/build.log
+          if-no-files-found: warn
