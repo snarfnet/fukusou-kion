@@ -6,6 +6,29 @@ struct FilterView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    ForEach(SpotFacilityType.allCases) { type in
+                        Button {
+                            model.toggleFacilityType(type)
+                        } label: {
+                            HStack {
+                                Label(type.rawValue, systemImage: type.icon)
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Image(systemName: model.selectedFacilityTypes.contains(type) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(model.selectedFacilityTypes.contains(type) ? Theme.blue : .secondary)
+                                    .font(.title3)
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityAddTraits(model.selectedFacilityTypes.contains(type) ? .isSelected : [])
+                    }
+                } header: {
+                    Text("施設の種類")
+                } footer: {
+                    Text(model.selectedFacilityTypes.isEmpty ? "未選択の場合は、すべての種類を表示します。" : "チェックした種類のどれかに当てはまる施設を表示します。")
+                }
                 Section("検索範囲") {
                     Toggle("距離で絞る", isOn: $model.distanceFilterEnabled)
                     if model.distanceFilterEnabled {

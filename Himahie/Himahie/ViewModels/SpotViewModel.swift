@@ -28,6 +28,45 @@ enum SpotCategoryFilter: String, CaseIterable, Identifiable {
     }
 }
 
+enum SpotFacilityType: String, CaseIterable, Identifiable {
+    case library = "図書館"
+    case museum = "博物館"
+    case gallery = "ギャラリー"
+    case culture = "文化・展示施設"
+    case guide = "観光案内・見学"
+    case showroom = "ショールーム"
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .library: "books.vertical.fill"
+        case .museum: "building.columns.fill"
+        case .gallery: "photo.artframe"
+        case .culture: "theatermasks.fill"
+        case .guide: "map.fill"
+        case .showroom: "sparkles.rectangle.stack.fill"
+        }
+    }
+
+    func matches(_ spot: Spot) -> Bool {
+        switch self {
+        case .library: spot.category.contains("図書")
+        case .museum: spot.category.contains("博物館")
+        case .gallery: spot.category.contains("ギャラリー")
+        case .culture:
+            spot.category.contains("文化")
+                || spot.category.contains("展示")
+                || spot.category.contains("アート")
+        case .guide:
+            spot.category.contains("ビジター")
+                || spot.category.contains("見学")
+                || spot.category.contains("案内")
+        case .showroom: spot.category.contains("ショールーム")
+        }
+    }
+}
+
 @Observable
 final class SpotViewModel {
     var spots: [Spot] = []
@@ -38,6 +77,7 @@ final class SpotViewModel {
     var followsCurrentLocation = false
     var searchText = ""
     var categoryFilter: SpotCategoryFilter = .all
+    var selectedFacilityTypes: Set<SpotFacilityType> = []
     var maxDistance = 15.0
     var distanceFilterEnabled = true
     var freeOnly = false
@@ -86,7 +126,9 @@ final class SpotViewModel {
     var filtered: [Spot] {
         spots.filter { spot in
             let matchesText = searchText.isEmpty || spot.name.localizedCaseInsensitiveContains(searchText) || spot.category.localizedCaseInsensitiveContains(searchText) || spot.address.localizedCaseInsensitiveContains(searchText)
-            return matchesText && categoryFilter.matches(spot) && (!freeOnly || spot.isFree) && (!indoorOnly || spot.indoor) && (!seatsOnly || spot.hasSeats == true) && (!toiletOnly || spot.hasToilet == true) && (!wifiOnly || spot.hasWifi == true) && (!verifiedOnly || spot.verificationStatus == "verified") && (!distanceFilterEnabled || distance(to: spot) <= maxDistance)
+            let matchesFacilityType = selectedFacilityTypes.isEmpty
+                || selectedFacilityTypes.contains { $0.matches(spot) }
+            return matchesText && categoryFilter.matches(spot) && matchesFacilityType && (!freeOnly || spot.isFree) && (!indoorOnly || spot.indoor) && (!seatsOnly || spot.hasSeats == true) && (!toiletOnly || spot.hasToilet == true) && (!wifiOnly || spot.hasWifi == true) && (!verifiedOnly || spot.verificationStatus == "verified") && (!distanceFilterEnabled || distance(to: spot) <= maxDistance)
         }.sorted { distance(to: $0) < distance(to: $1) }
     }
     func distance(to spot: Spot) -> Double { currentLocation.distance(from: .init(latitude: spot.latitude, longitude: spot.longitude)) / 1000 }
@@ -129,10 +171,18 @@ final class SpotViewModel {
         }
         return result
     }
-    var hasActiveFilters: Bool { categoryFilter != .all || freeOnly || indoorOnly || seatsOnly || toiletOnly || wifiOnly || verifiedOnly || distanceFilterEnabled || !searchText.isEmpty }
+    var hasActiveFilters: Bool { categoryFilter != .all || !selectedFacilityTypes.isEmpty || freeOnly || indoorOnly || seatsOnly || toiletOnly || wifiOnly || verifiedOnly || distanceFilterEnabled || !searchText.isEmpty }
+    func toggleFacilityType(_ type: SpotFacilityType) {
+        if selectedFacilityTypes.contains(type) {
+            selectedFacilityTypes.remove(type)
+        } else {
+            selectedFacilityTypes.insert(type)
+        }
+    }
     func resetFilters() {
         searchText = ""
         categoryFilter = .all
+        selectedFacilityTypes.removeAll()
         freeOnly = false
         indoorOnly = false
         seatsOnly = false

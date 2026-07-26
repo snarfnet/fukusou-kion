@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Bindable var model: SpotViewModel
+    @Binding var selectedTab: AppTab
     @State private var showFilters = false
     @State private var minutes = 60
     @State private var suggestion: Spot?
@@ -170,7 +171,21 @@ struct HomeView: View {
             HStack {
                 Text("近くのスポット").font(.title3.bold())
                 Spacer()
-                Text("\(model.filtered.count)件").font(.subheadline).foregroundStyle(.secondary)
+                Button {
+                    selectedTab = .list
+                } label: {
+                    HStack(spacing: 5) {
+                        Text("\(model.filtered.count)件を一覧で見る")
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.blue)
+                    .padding(.vertical, 8)
+                    .padding(.leading, 10)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("スポット一覧タブを開きます")
             }.padding(.bottom, 6)
 
             if model.filtered.isEmpty {
@@ -180,12 +195,12 @@ struct HomeView: View {
                 actions: { Button("条件をリセット") { model.resetFilters() } }
             } else {
                 VStack(spacing: 0) {
-                    ForEach(Array(model.recommended.prefix(4).enumerated()), id: \.element.id) { index, spot in
+                    ForEach(Array(model.filtered.prefix(4).enumerated()), id: \.element.id) { index, spot in
                         NavigationLink(value: spot) {
                             SpotCard(spot: spot, distanceText: model.distanceText(to: spot))
                         }
                         .buttonStyle(.plain)
-                        if index < min(model.recommended.count, 4) - 1 { Divider().padding(.leading, 62) }
+                        if index < min(model.filtered.count, 4) - 1 { Divider().padding(.leading, 62) }
                     }
                 }
                 .padding(.horizontal, 14)
