@@ -2,6 +2,7 @@
 import hashlib
 import os
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 from asc_helpers import api_json, fail, json_body
@@ -61,6 +62,7 @@ def create_certificate():
 def delete_pending_certificate_requests():
     deleted = 0
     seen = set()
+    active = []
     for cert_type in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
         certificates = api_json(
             "GET", f"/certificates?filter[certificateType]={cert_type}&limit=20"
@@ -76,6 +78,14 @@ def delete_pending_certificate_requests():
                 and not attrs.get("certificateContent")
             )
             if not is_pending:
+                expiration = attrs.get("expirationDate")
+                if expiration:
+                    active.append(
+                        (
+                            datetime.fromisoformat(expiration.replace("Z", "+00:00")),
+                            certificate,
+                        )
+                    )
                 print(
                     f"Keeping active certificate: {certificate['id']} "
                     f"expires={attrs.get('expirationDate') or 'unknown'}"
@@ -84,6 +94,18 @@ def delete_pending_certificate_requests():
             print(f"Deleting pending certificate request: {certificate['id']}")
             api_json("DELETE", f"/certificates/{certificate['id']}")
             deleted += 1
+    if (
+        deleted == 0
+        and active
+        and os.environ.get("REPLACE_OLDEST_DISTRIBUTION", "") == "1"
+    ):
+        expiration, certificate = min(active, key=lambda item: item[0])
+        print(
+            f"Deleting oldest active certificate: {certificate['id']} "
+            f"expires={expiration.isoformat()}"
+        )
+        api_json("DELETE", f"/certificates/{certificate['id']}")
+        deleted = 1
     return deleted
 
 
