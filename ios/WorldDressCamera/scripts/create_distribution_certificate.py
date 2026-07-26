@@ -27,6 +27,7 @@ INVALID_SERIALS = {
     "797262360B421323CA2A52F022C3F0BF",
 }
 CI_CERT_MARKERS = ("worlddresscamera", "world dress camera")
+STALE_CERTIFICATE_ID = os.environ.get("STALE_CERTIFICATE_ID", "")
 
 
 def run(args):
@@ -243,6 +244,9 @@ def import_certificate(certificate):
 
 
 def main():
+    if STALE_CERTIFICATE_ID:
+        response = api("DELETE", f"/certificates/{STALE_CERTIFICATE_ID}")
+        print(f"Deleted specified stale certificate {STALE_CERTIFICATE_ID}: {response.status_code}")
     generate_csr()
     certificate = create_certificate()
     import_certificate(certificate)
