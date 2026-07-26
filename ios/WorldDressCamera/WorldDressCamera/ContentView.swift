@@ -71,7 +71,7 @@ struct ContentView: View {
                     }
                 }
 
-                if showsGuide { FullBodyGuide().padding(12) }
+                if showsGuide { FullBodyGuideCanvas() }
 
                 if let selected, UIImage(named: selected.imageName) != nil {
                     Image(selected.imageName)
@@ -113,7 +113,7 @@ struct ContentView: View {
                 .padding(10)
             }
         }
-        .aspectRatio(3 / 4, contentMode: .fit)
+        .aspectRatio(PhotoCanvas.aspectRatio, contentMode: .fit)
     }
 
     private var controls: some View {

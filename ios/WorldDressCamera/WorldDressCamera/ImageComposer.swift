@@ -3,7 +3,7 @@ import SwiftUI
 
 enum ImageComposer {
     static func compose(photo: UIImage, garment: UIImage?, offset: CGSize, scale: CGFloat, rotation: Angle) -> UIImage {
-        let outputSize = aspectFillSize(for: photo.size, aspect: 3 / 4)
+        let outputSize = aspectFillSize(for: photo.size, aspect: PhotoCanvas.aspectRatio)
         let format = UIGraphicsImageRendererFormat()
         format.scale = photo.scale
         return UIGraphicsImageRenderer(size: outputSize, format: format).image { context in

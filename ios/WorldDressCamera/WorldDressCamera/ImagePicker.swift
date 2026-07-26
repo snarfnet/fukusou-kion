@@ -17,7 +17,8 @@ struct ImagePicker: UIViewControllerRepresentable {
             picker.cameraDevice = .rear
             let guide = UIHostingController(
                 rootView: ZStack {
-                    FullBodyGuide()
+                    Color.clear
+                    FullBodyGuideCanvas(showsBoundary: true)
                     VStack {
                         Text("頭から足元まで枠内に入れてください")
                             .font(.subheadline.bold())
@@ -39,7 +40,8 @@ struct ImagePicker: UIViewControllerRepresentable {
             )
             guide.view.backgroundColor = .clear
             guide.view.isUserInteractionEnabled = false
-            guide.view.frame = UIScreen.main.bounds
+            guide.view.frame = picker.view.bounds
+            guide.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             picker.cameraOverlayView = guide.view
             context.coordinator.overlayController = guide
         }
