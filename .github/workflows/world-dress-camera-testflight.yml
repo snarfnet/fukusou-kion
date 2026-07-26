@@ -7,6 +7,12 @@ on:
         description: "Delete existing distribution certificates if Apple blocks creating a CI certificate"
         required: false
         default: "false"
+  push:
+    branches:
+      - codex/world-dress-camera-build
+    paths:
+      - ".github/workflows/world-dress-camera-testflight.yml"
+      - "ios/WorldDressCamera/**"
 
 concurrency:
   group: world-dress-camera-testflight
