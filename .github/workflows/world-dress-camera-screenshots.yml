@@ -1,0 +1,65 @@
+name: WorldDressCamera App Store Screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/world-dress-camera-build
+    paths:
+      - ".github/workflows/world-dress-camera-screenshots.yml"
+      - "ios/WorldDressCamera/**"
+
+concurrency:
+  group: world-dress-camera-screenshots
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/WorldDressCamera
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: Build for simulator
+        run: |
+          xcodebuild build \
+            -project WorldDressCamera.xcodeproj \
+            -scheme WorldDressCamera \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro Max" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Capture App Store screenshots
+        run: |
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for rows in d.values() for x in rows if x["name"]=="iPhone 17 Pro Max"))')
+          xcrun simctl boot "$DEVICE_ID" || true
+          open -a Simulator
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+          APP_PATH=$(find build/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 1 -name "WorldDressCamera.app" -print -quit)
+          xcrun simctl install "$DEVICE_ID" "$APP_PATH"
+          mkdir -p build/screenshots
+
+          xcrun simctl launch --terminate-running-process "$DEVICE_ID" com.tokyonasu.worlddresscamera -screenshot-editor
+          sleep 3
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/01-try-on.png
+
+          xcrun simctl launch --terminate-running-process "$DEVICE_ID" com.tokyonasu.worlddresscamera -screenshot-catalog
+          sleep 3
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/02-costume-catalog.png
+
+          xcrun simctl launch --terminate-running-process "$DEVICE_ID" com.tokyonasu.worlddresscamera
+          sleep 3
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/03-camera-guide.png
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: WorldDressCamera-AppStore-screenshots
+          path: ios/WorldDressCamera/build/screenshots/*.png

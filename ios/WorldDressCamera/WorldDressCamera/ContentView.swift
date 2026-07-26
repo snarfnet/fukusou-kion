@@ -16,6 +16,17 @@ struct ContentView: View {
     @State private var committedRotation = Angle.zero
     @State private var notice: String?
 
+    init() {
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-screenshot-editor") {
+            _photo = State(initialValue: UIImage(named: "DemoPhoto"))
+            _selected = State(initialValue: GarmentCatalog.all.first)
+            _showsGuide = State(initialValue: false)
+        } else if arguments.contains("-screenshot-catalog") {
+            _showsCatalog = State(initialValue: true)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
