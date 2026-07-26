@@ -86,22 +86,17 @@ jobs:
       - name: Install distribution certificate
         if: ${{ github.event.inputs.register_only != 'true' }}
         env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
-          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
-          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
         run: |
-          test -n "$IOS_DISTRIBUTION_P12_BASE64"
-          test -n "$IOS_DISTRIBUTION_P12_PASSWORD"
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
-          printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > /tmp/distribution.p12
-          CERT_SHA1=$(openssl pkcs12 -in /tmp/distribution.p12 -nokeys -clcerts -passin pass:"$IOS_DISTRIBUTION_P12_PASSWORD" | openssl x509 -noout -fingerprint -sha1 | sed 's/.*=//' | tr -d ':' | tr '[:lower:]' '[:upper:]')
-          security import /tmp/distribution.p12 -k build.keychain -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
-          echo "IOS_DISTRIBUTION_CERT_SHA1=$CERT_SHA1" >> "$GITHUB_ENV"
-          rm /tmp/distribution.p12
+          . .venv/bin/activate
+          python scripts/create_distribution_certificate.py | tee /tmp/chop170-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/chop170-cert.log >> "$GITHUB_ENV"
 
       - name: Prepare provisioning profile
         if: ${{ github.event.inputs.register_only != 'true' }}
