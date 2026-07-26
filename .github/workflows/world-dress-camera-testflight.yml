@@ -33,7 +33,7 @@ jobs:
       PROFILE_NAME: "WorldDressCamera App Store"
       DEVELOPMENT_TEAM: 83VGKGSQUH
       APP_VERSION: "1.0"
-      WORLD_DRESS_CAMERA_APP_ID: ${{ secrets.WORLD_DRESS_CAMERA_APP_ID }}
+      WORLD_DRESS_CAMERA_APP_ID: ${{ secrets.WORLD_DRESS_CAMERA_APP_ID || '6794936502' }}
 
     steps:
       - name: Checkout
