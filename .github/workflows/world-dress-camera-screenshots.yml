@@ -7,7 +7,8 @@ on:
       - codex/world-dress-camera-build
     paths:
       - ".github/workflows/world-dress-camera-screenshots.yml"
-      - "ios/WorldDressCamera/**"
+      - "ios/WorldDressCamera/WorldDressCamera/**"
+      - "ios/WorldDressCamera/WorldDressCamera.xcodeproj/**"
 
 concurrency:
   group: world-dress-camera-screenshots
