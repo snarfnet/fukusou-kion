@@ -1,0 +1,62 @@
+name: WorldDressCamera TestFlight Distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: "Processed TestFlight build number"
+        required: true
+        default: "109"
+  push:
+    branches:
+      - codex/world-dress-camera-build
+    paths:
+      - ".github/workflows/world-dress-camera-distribute.yml"
+      - "ios/WorldDressCamera/scripts/assign_testflight_build.py"
+
+jobs:
+  distribute:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios/WorldDressCamera
+    env:
+      APP_ID: "6794936502"
+      BUILD_NUMBER: ${{ github.event.inputs.build_number || '109' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install pyjwt cryptography requests
+
+      - name: Write App Store Connect key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          if [ -n "$ASC_PRIVATE_KEY" ]; then
+            printf '%s' "$ASC_PRIVATE_KEY" > /tmp/asc_key.p8
+          else
+            test -n "$ASC_API_KEY_CONTENT"
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > /tmp/asc_key.p8
+          fi
+          chmod 600 /tmp/asc_key.p8
+
+      - name: Assign build to internal testers
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+        run: |
+          . .venv/bin/activate
+          python scripts/assign_testflight_build.py
