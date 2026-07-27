@@ -111,11 +111,11 @@ jobs:
         shell: bash
         run: |
           . .venv/bin/activate
-          export PYTHONPATH="../SermonNotes/scripts"
+          export PYTHONPATH="scripts"
           if [ -n "$APP_ID" ]; then
             APP_ID_VALUE="$APP_ID"
           else
-            python ../SermonNotes/scripts/ensure_asc_app.py | tee /tmp/kazu-ensure-app.log
+            python scripts/ensure_asc_app.py | tee /tmp/kazu-ensure-app.log
             APP_ID_VALUE="$(grep '^APP_ID=' /tmp/kazu-ensure-app.log | tail -1 | cut -d= -f2)"
           fi
           if [ -z "$APP_ID_VALUE" ]; then
@@ -130,8 +130,8 @@ jobs:
         shell: bash
         run: |
           . .venv/bin/activate
-          export PYTHONPATH="../SermonNotes/scripts"
-          python ../SermonNotes/scripts/prepare_profile.py
+          export PYTHONPATH="scripts"
+          python scripts/prepare_profile.py
 
       - name: Generate Xcode project
         run: xcodegen generate
@@ -216,8 +216,8 @@ jobs:
         shell: bash
         run: |
           . .venv/bin/activate
-          export PYTHONPATH="../SermonNotes/scripts"
-          python ../SermonNotes/scripts/wait_for_testflight_build.py
+          export PYTHONPATH="scripts"
+          python scripts/wait_for_testflight_build.py
 
       - name: Upload IPA artifact
         if: always()
@@ -226,4 +226,3 @@ jobs:
           name: kazu-ipa
           path: ios/KAZU/build/export/*.ipa
           if-no-files-found: ignore
-
