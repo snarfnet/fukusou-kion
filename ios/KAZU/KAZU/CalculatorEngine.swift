@@ -8,7 +8,7 @@ enum BinaryOperation: String {
     case power = "xʸ"
 
     func apply(_ lhs: Double, _ rhs: Double) -> Double? {
-        switch self {
+        return switch self {
         case .add: lhs + rhs
         case .subtract: lhs - rhs
         case .multiply: lhs * rhs
@@ -23,7 +23,7 @@ enum UnaryOperation: String {
 
     func apply(_ value: Double, degrees: Bool = true) -> Double? {
         let angle = degrees ? value * .pi / 180 : value
-        switch self {
+        return switch self {
         case .sin: Foundation.sin(angle)
         case .cos: Foundation.cos(angle)
         case .tan: Foundation.tan(angle)
@@ -45,4 +45,3 @@ enum NumberFormatter {
         return value.formatted(.number.grouping(.automatic).precision(.fractionLength(0...10)))
     }
 }
-

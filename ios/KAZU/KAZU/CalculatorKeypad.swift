@@ -16,8 +16,8 @@ struct CalculatorKeypad: View {
         VStack(spacing: 10) {
             if scientific {
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(["sin", "cos", "tan", "log", "√", "x²", "1/x", "xʸ"], id: \.self) {
-                        KeyButton(title: $0, kind: .function) { handle($0) }
+                    ForEach(["sin", "cos", "tan", "log", "√", "x²", "1/x", "xʸ"], id: \.self) { function in
+                        KeyButton(title: function, kind: .function) { handle(function) }
                     }
                 }
             }
