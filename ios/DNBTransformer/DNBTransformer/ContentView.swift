@@ -241,6 +241,9 @@ struct ContentView: View {
                 .frame(width: 76, height: 76)
                 Text("刻んでいます…")
                     .font(.system(size: 16, weight: .bold))
+                Text("通常は数秒で完成します")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.white.opacity(0.48))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 26)

@@ -58,6 +58,14 @@ final class AudioTransformer: NSObject, ObservableObject {
             try? FileManager.default.removeItem(at: destination)
 
             state = .rendering(0.2)
+            let progressTask = Task { @MainActor [weak self] in
+                for progress in stride(from: 0.28, through: 0.86, by: 0.08) {
+                    try? await Task.sleep(for: .milliseconds(350))
+                    guard !Task.isCancelled else { return }
+                    self?.state = .rendering(progress)
+                }
+            }
+            defer { progressTask.cancel() }
             try await Task.detached(priority: .userInitiated) {
                 try Self.render(sourceURL: sourceURL, destination: destination, bpm: bpm, style: style)
             }.value
@@ -187,15 +195,18 @@ final class AudioTransformer: NSObject, ObservableObject {
     ) throws {
         let input = try AVAudioFile(forReading: sourceURL)
         let sourceFormat = input.processingFormat
+        let maximumInputFrames = AVAudioFrameCount(
+            min(Double(input.length), sourceFormat.sampleRate * 60)
+        )
         guard let source = AVAudioPCMBuffer(
             pcmFormat: sourceFormat,
-            frameCapacity: AVAudioFrameCount(input.length)
+            frameCapacity: maximumInputFrames
         ) else { throw CocoaError(.fileReadCorruptFile) }
-        try input.read(into: source)
+        try input.read(into: source, frameCount: maximumInputFrames)
 
         let sampleRate = 44_100.0
         let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 2)!
-        let bars = 16
+        let bars = 8
         let secondsPerBeat = 60.0 / Double(bpm)
         let outputFrames = AVAudioFrameCount(Double(bars * 4) * secondsPerBeat * sampleRate)
         guard let output = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: outputFrames),
@@ -391,38 +402,24 @@ final class AudioTransformer: NSObject, ObservableObject {
         var rms: Float = 0
         vDSP_rmsqv(samples, 1, &rms, vDSP_Length(analysisFrames))
 
-        let minPitch = 75.0
-        let maxPitch = 650.0
-        let minimumLag = max(1, Int(sampleRate / maxPitch))
-        let maximumLag = min(analysisFrames / 2, Int(sampleRate / minPitch))
-        var bestLag = 0
-        var bestCorrelation = -Double.infinity
-
-        for lag in minimumLag...maximumLag {
-            var correlation = 0.0
-            var energyA = 0.0
-            var energyB = 0.0
-            var index = 0
-            while index < analysisFrames - lag {
-                let a = Double(samples[index])
-                let b = Double(samples[index + lag])
-                correlation += a * b
-                energyA += a * a
-                energyB += b * b
-                index += 2
+        let threshold = max(0.008, Double(rms) * 0.18)
+        var crossings = 0
+        var previous = Double(samples[0])
+        var index = 1
+        while index < analysisFrames {
+            let current = Double(samples[index])
+            if abs(previous) > threshold,
+               abs(current) > threshold,
+               (previous < 0) != (current < 0) {
+                crossings += 1
             }
-            let denominator = sqrt(energyA * energyB)
-            guard denominator > 0 else { continue }
-            let normalized = correlation / denominator
-            if normalized > bestCorrelation {
-                bestCorrelation = normalized
-                bestLag = lag
-            }
+            previous = current
+            index += 1
         }
 
-        let pitch = bestLag > 0 && bestCorrelation > 0.22
-            ? sampleRate / Double(bestLag)
-            : nil
+        let seconds = Double(analysisFrames) / sampleRate
+        let estimatedPitch = seconds > 0 ? Double(crossings) / (2 * seconds) : 0
+        let pitch = (75...650).contains(estimatedPitch) ? estimatedPitch : nil
         return (Double(rms), pitch)
     }
 
