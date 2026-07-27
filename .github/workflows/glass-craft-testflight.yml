@@ -68,7 +68,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "App Store Connect registration attempt $attempt/5"
             set +e
-            python ios/CellArtisan/scripts/ensure_asc_app.py 2>&1 | tee /tmp/glass-craft-app.log
+            python WindowCleanerUnity/CI/ensure_asc_app.py 2>&1 | tee /tmp/glass-craft-app.log
             STATUS=${PIPESTATUS[0]}
             set -e
             APP_ID="$(sed -n 's/^APP_ID=//p' /tmp/glass-craft-app.log | tail -1)"
