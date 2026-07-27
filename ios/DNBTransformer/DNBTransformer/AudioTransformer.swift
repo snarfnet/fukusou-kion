@@ -204,23 +204,85 @@ final class AudioTransformer: NSObject, ObservableObject {
             throw CocoaError(.fileWriteUnknown)
         }
         output.frameLength = outputFrames
+        vDSP_vclr(out[0], 1, vDSP_Length(outputFrames))
+        vDSP_vclr(out[1], 1, vDSP_Length(outputFrames))
 
         let sourceFrames = Int(source.frameLength)
         let sourceChannels = Int(sourceFormat.channelCount)
         let stepFrames = Int(secondsPerBeat * sampleRate / 4.0)
-        let sliceFrames = max(1, min(stepFrames, sourceFrames / 6))
         let seed = abs(sourceURL.lastPathComponent.hashValue)
+        let analysis = analyzeSource(
+            input: inputData[0],
+            frames: sourceFrames,
+            sampleRate: sourceFormat.sampleRate
+        )
+        let materialGain = Float(min(1.15, max(0.52, 0.32 / max(analysis.rms, 0.01))))
 
         for step in 0..<(bars * 16) {
+            let local = step % 16
+            let bar = step / 16
             let destinationStart = step * stepFrames
-            let sliceIndex = (step * 7 + seed) % max(1, sourceFrames - sliceFrames)
-            let gate: Float = style == .jungle ? (step % 4 == 3 ? 0.55 : 0.82) : 0.72
+            let shouldPlay: Bool
+            switch style {
+            case .liquid:
+                shouldPlay = [0, 3, 6, 8, 11, 14].contains(local)
+            case .jungle:
+                shouldPlay = ![5, 13].contains(local)
+            case .dark:
+                shouldPlay = local.isMultiple(of: 2) || [7, 15].contains(local)
+            }
+            guard shouldPlay else { continue }
 
-            for frame in 0..<sliceFrames where destinationStart + frame < Int(outputFrames) {
-                let fade = min(Float(frame) / 180, Float(sliceFrames - frame) / 220, 1)
-                for channel in 0..<2 {
-                    let sourceChannel = min(channel, sourceChannels - 1)
-                    out[channel][destinationStart + frame] += inputData[sourceChannel][sliceIndex + frame] * fade * gate
+            let rates: [Double]
+            switch style {
+            case .liquid: rates = [1.0, 0.84, 1.0, 1.19]
+            case .jungle: rates = [1.0, 1.34, 0.72, 1.0, 1.5]
+            case .dark: rates = [0.62, 0.75, 1.0, 0.5]
+            }
+            let rate = rates[(step + seed) % rates.count]
+            let reversed = style == .jungle
+                ? [3, 10, 15].contains(local)
+                : (style == .dark && [7, 15].contains(local))
+            let sourceStart = (seed + bar * 9_973 + local * 4_091)
+                % max(1, sourceFrames)
+
+            mixSlice(
+                input: inputData,
+                sourceChannels: sourceChannels,
+                sourceFrames: sourceFrames,
+                sourceSampleRate: sourceFormat.sampleRate,
+                output: out,
+                outputFrames: Int(outputFrames),
+                outputSampleRate: sampleRate,
+                sourceStart: sourceStart,
+                destinationStart: destinationStart,
+                length: stepFrames,
+                rate: rate,
+                reversed: reversed,
+                gain: materialGain * (style == .jungle ? 0.72 : 0.64)
+            )
+
+            let shouldStutter = (style == .jungle && [14, 15].contains(local))
+                || (style == .dark && local == 7)
+                || (style == .liquid && local == 14)
+            if shouldStutter {
+                let repeatLength = max(1, stepFrames / 4)
+                for repeatIndex in 1..<4 {
+                    mixSlice(
+                        input: inputData,
+                        sourceChannels: sourceChannels,
+                        sourceFrames: sourceFrames,
+                        sourceSampleRate: sourceFormat.sampleRate,
+                        output: out,
+                        outputFrames: Int(outputFrames),
+                        outputSampleRate: sampleRate,
+                        sourceStart: sourceStart,
+                        destinationStart: destinationStart + repeatIndex * repeatLength,
+                        length: repeatLength,
+                        rate: rate * (1 + Double(repeatIndex) * 0.08),
+                        reversed: repeatIndex.isMultiple(of: 2) ? !reversed : reversed,
+                        gain: materialGain * 0.54
+                    )
                 }
             }
         }
@@ -241,11 +303,15 @@ final class AudioTransformer: NSObject, ObservableObject {
             }
         }
 
+        let detectedRoot = bassFrequency(from: analysis.pitch)
         let bassNotes: [Double]
         switch style {
-        case .liquid: bassNotes = [43.65, 43.65, 51.91, 38.89]
-        case .jungle: bassNotes = [43.65, 58.27, 43.65, 38.89]
-        case .dark: bassNotes = [36.71, 36.71, 43.65, 34.65]
+        case .liquid:
+            bassNotes = [detectedRoot, detectedRoot, detectedRoot * 1.1892, detectedRoot * 0.8909]
+        case .jungle:
+            bassNotes = [detectedRoot, detectedRoot * 1.3348, detectedRoot, detectedRoot * 0.8909]
+        case .dark:
+            bassNotes = [detectedRoot * 0.8409, detectedRoot * 0.8409, detectedRoot, detectedRoot * 0.7492]
         }
         for bar in 0..<bars {
             synthBass(
@@ -269,6 +335,102 @@ final class AudioTransformer: NSObject, ObservableObject {
 
         let file = try AVAudioFile(forWriting: destination, settings: format.settings)
         try file.write(from: output)
+    }
+
+    private nonisolated static func mixSlice(
+        input: UnsafePointer<UnsafeMutablePointer<Float>>,
+        sourceChannels: Int,
+        sourceFrames: Int,
+        sourceSampleRate: Double,
+        output: UnsafePointer<UnsafeMutablePointer<Float>>,
+        outputFrames: Int,
+        outputSampleRate: Double,
+        sourceStart: Int,
+        destinationStart: Int,
+        length: Int,
+        rate: Double,
+        reversed: Bool,
+        gain: Float
+    ) {
+        guard sourceFrames > 1, length > 0, destinationStart < outputFrames else { return }
+        let readStep = sourceSampleRate / outputSampleRate * rate
+        let availableOutputFrames = min(length, outputFrames - destinationStart)
+        let sourceSpan = max(1, Int(Double(availableOutputFrames) * readStep))
+        let safeStart = min(max(0, sourceStart), max(0, sourceFrames - 2))
+
+        for frame in 0..<availableOutputFrames {
+            let offset = Int(Double(frame) * readStep) % sourceSpan
+            let rawIndex = reversed ? safeStart - offset : safeStart + offset
+            let wrappedIndex = ((rawIndex % sourceFrames) + sourceFrames) % sourceFrames
+            let nextIndex = (wrappedIndex + 1) % sourceFrames
+            let fraction = Float(Double(frame) * readStep - floor(Double(frame) * readStep))
+            let fadeIn = min(1, Float(frame) / 120)
+            let fadeOut = min(1, Float(availableOutputFrames - frame) / 180)
+            let envelope = min(fadeIn, fadeOut) * gain
+
+            for channel in 0..<2 {
+                let sourceChannel = min(channel, sourceChannels - 1)
+                let first = input[sourceChannel][wrappedIndex]
+                let second = input[sourceChannel][nextIndex]
+                let sample = first + (second - first) * fraction
+                output[channel][destinationStart + frame] += sample * envelope
+            }
+        }
+    }
+
+    private nonisolated static func analyzeSource(
+        input: UnsafeMutablePointer<Float>,
+        frames: Int,
+        sampleRate: Double
+    ) -> (rms: Double, pitch: Double?) {
+        guard frames > 128 else { return (0.1, nil) }
+        let analysisFrames = min(frames, 16_384)
+        let start = max(0, (frames - analysisFrames) / 2)
+        let samples = input.advanced(by: start)
+
+        var rms: Float = 0
+        vDSP_rmsqv(samples, 1, &rms, vDSP_Length(analysisFrames))
+
+        let minPitch = 75.0
+        let maxPitch = 650.0
+        let minimumLag = max(1, Int(sampleRate / maxPitch))
+        let maximumLag = min(analysisFrames / 2, Int(sampleRate / minPitch))
+        var bestLag = 0
+        var bestCorrelation = -Double.infinity
+
+        for lag in minimumLag...maximumLag {
+            var correlation = 0.0
+            var energyA = 0.0
+            var energyB = 0.0
+            var index = 0
+            while index < analysisFrames - lag {
+                let a = Double(samples[index])
+                let b = Double(samples[index + lag])
+                correlation += a * b
+                energyA += a * a
+                energyB += b * b
+                index += 2
+            }
+            let denominator = sqrt(energyA * energyB)
+            guard denominator > 0 else { continue }
+            let normalized = correlation / denominator
+            if normalized > bestCorrelation {
+                bestCorrelation = normalized
+                bestLag = lag
+            }
+        }
+
+        let pitch = bestLag > 0 && bestCorrelation > 0.22
+            ? sampleRate / Double(bestLag)
+            : nil
+        return (Double(rms), pitch)
+    }
+
+    private nonisolated static func bassFrequency(from detectedPitch: Double?) -> Double {
+        var frequency = detectedPitch ?? 43.65
+        while frequency > 65 { frequency /= 2 }
+        while frequency < 32 { frequency *= 2 }
+        return min(65, max(32, frequency))
     }
 
     private nonisolated static func synthKick(
