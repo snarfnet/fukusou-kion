@@ -85,8 +85,8 @@ jobs:
 
       - name: Import distribution certificate
         env:
-          P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
-          P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          P12_BASE64: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: temporary-kazu-keychain-password
         shell: bash
         run: |
