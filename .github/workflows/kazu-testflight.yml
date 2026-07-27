@@ -39,7 +39,7 @@ jobs:
       APP_SKU: kazu-professional-calculator-ios
       APP_ID: ${{ inputs.app_id || '' }}
       BUNDLE_NAME: KAZU
-      PROFILE_NAME: "KAZU App Store"
+      PROFILE_NAME: KAZU-AppStore-${{ github.run_id }}-${{ github.run_attempt }}
       KAZU_VERSION: ${{ inputs.version || '1.0' }}
       KAZU_BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
 
@@ -177,6 +177,9 @@ jobs:
           ASC_P8_PATH: /tmp/asc_key.p8
         shell: bash
         run: |
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist || true
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$APP_BUNDLE_ID string $PROFILE_NAME" exportOptions.plist
           xcodebuild -exportArchive \
             -archivePath build/KAZU.xcarchive \
             -exportOptionsPlist exportOptions.plist \
