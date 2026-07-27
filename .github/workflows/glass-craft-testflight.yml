@@ -125,7 +125,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: glass-craft-xcode
-          path: build/iOS
+          path: build
 
       - name: Select Xcode
         run: |
