@@ -21,6 +21,14 @@ namespace GlassCraft.Editor
             PlayerSettings.allowedAutorotateToLandscapeRight = true;
             PlayerSettings.iOS.targetOSVersionString = "15.0";
             PlayerSettings.iOS.appleEnableAutomaticSigning = false;
+            var appIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/AppIcon.png");
+            if (appIcon != null)
+            {
+                var iconSizes = PlayerSettings.GetIconSizesForTargetGroup(BuildTargetGroup.iOS);
+                var icons = new Texture2D[iconSizes.Length];
+                for (var index = 0; index < icons.Length; index++) icons[index] = appIcon;
+                PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.iOS, icons);
+            }
             EditorApplication.delayCall += EnsureStartupScene;
         }
 
