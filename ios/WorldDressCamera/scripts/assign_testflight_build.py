@@ -53,13 +53,20 @@ def main():
         attrs = group.get("attributes", {})
         testers = api_json(
             "GET",
-            f"/v1/betaGroups/{group['id']}/relationships/betaTesters?limit=200",
+            f"/v1/betaGroups/{group['id']}/betaTesters?"
+            f"{query({'limit': '200', 'fields[betaTesters]': 'state,inviteType'})}",
         ).get("data", [])
         tester_count += len(testers)
         print(
             f"Internal group {attrs.get('name')} contains "
             f"{len(testers)} tester(s)."
         )
+        for tester in testers:
+            tester_attrs = tester.get("attributes", {})
+            print(
+                f"Tester status: state={tester_attrs.get('state')} "
+                f"inviteType={tester_attrs.get('inviteType')}"
+            )
         if attrs.get("hasAccessToAllBuilds") is True:
             print(
                 f"Group {attrs.get('name')} already has automatic access "
