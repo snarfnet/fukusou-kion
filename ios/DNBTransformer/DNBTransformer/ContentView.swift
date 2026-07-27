@@ -94,14 +94,43 @@ struct ContentView: View {
             WaveformView(samples: audio.waveform, tint: audio.sourceURL == nil ? .white.opacity(0.22) : style.color)
                 .frame(height: 94)
 
-            Button {
-                showingImporter = true
-            } label: {
-                Label(audio.sourceURL == nil ? "ファイルから音を選ぶ" : "別の音に替える", systemImage: "plus")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 13)
+            HStack(spacing: 10) {
+                Button {
+                    showingImporter = true
+                } label: {
+                    Label(audio.sourceURL == nil ? "ファイルを選ぶ" : "別の音を選ぶ", systemImage: "folder")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
+                }
+                .buttonStyle(OutlineButtonStyle())
+                .disabled(audio.isRecording)
+
+                Button {
+                    Task { await audio.toggleRecording() }
+                } label: {
+                    Label(audio.isRecording ? "停止" : "録音",
+                          systemImage: audio.isRecording ? "stop.fill" : "mic.fill")
+                        .frame(minWidth: 72)
+                        .padding(.vertical, 13)
+                }
+                .buttonStyle(RecordingButtonStyle(isRecording: audio.isRecording, color: amber))
             }
-            .buttonStyle(OutlineButtonStyle())
+
+            if audio.isRecording {
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(amber)
+                        .frame(width: 7, height: 7)
+                    Text("録音中")
+                        .fontWeight(.bold)
+                    Spacer()
+                    Text(recordingDurationText)
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                }
+                .font(.system(size: 12))
+                .foregroundStyle(amber)
+                .accessibilityElement(children: .combine)
+            }
         }
         .panelStyle(panel)
     }
@@ -281,6 +310,12 @@ struct ContentView: View {
         let total = Int(audio.duration)
         return String(format: "%d:%02d", total / 60, total % 60)
     }
+
+    private var recordingDurationText: String {
+        let total = Int(audio.recordingDuration)
+        let tenths = Int((audio.recordingDuration * 10).rounded(.down)) % 10
+        return String(format: "%d:%02d.%d", total / 60, total % 60, tenths)
+    }
 }
 
 private struct WaveformView: View {
@@ -326,6 +361,26 @@ private struct OutlineButtonStyle: ButtonStyle {
     }
 }
 
+private struct RecordingButtonStyle: ButtonStyle {
+    let isRecording: Bool
+    let color: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 14, weight: .bold))
+            .foregroundStyle(isRecording ? Color(red: 0.055, green: 0.06, blue: 0.12) : color)
+            .background(
+                isRecording ? color.opacity(configuration.isPressed ? 0.72 : 1) : color.opacity(0.09),
+                in: RoundedRectangle(cornerRadius: 13)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 13)
+                    .stroke(color.opacity(isRecording ? 1 : 0.48))
+            }
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+    }
+}
+
 private extension View {
     func panelStyle(_ color: Color) -> some View {
         padding(18)
@@ -340,4 +395,3 @@ private extension View {
 #Preview {
     ContentView()
 }
-

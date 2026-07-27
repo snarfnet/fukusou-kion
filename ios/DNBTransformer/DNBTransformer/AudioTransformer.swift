@@ -3,7 +3,7 @@ import Accelerate
 import Foundation
 
 @MainActor
-final class AudioTransformer: ObservableObject {
+final class AudioTransformer: NSObject, ObservableObject {
     @Published var sourceURL: URL?
     @Published var outputURL: URL?
     @Published var sourceName = ""
@@ -11,12 +11,22 @@ final class AudioTransformer: ObservableObject {
     @Published var waveform: [CGFloat] = Array(repeating: 0.12, count: 72)
     @Published var state: TransformState = .empty
     @Published var isPlaying = false
+    @Published var isRecording = false
+    @Published var recordingDuration: TimeInterval = 0
 
     private var player: AVAudioPlayer?
+    private var recorder: AVAudioRecorder?
+    private var recordingTimer: Timer?
     private var securityScopedURL: URL?
+
+    override init() {
+        super.init()
+        try? activatePlaybackSession()
+    }
 
     deinit {
         securityScopedURL?.stopAccessingSecurityScopedResource()
+        recordingTimer?.invalidate()
     }
 
     func load(url: URL) async {
@@ -54,7 +64,9 @@ final class AudioTransformer: ObservableObject {
 
             state = .rendering(0.95)
             outputURL = destination
+            try activatePlaybackSession()
             player = try AVAudioPlayer(contentsOf: destination)
+            player?.volume = 1
             player?.prepareToPlay()
             state = .complete
         } catch {
@@ -68,8 +80,18 @@ final class AudioTransformer: ObservableObject {
             player.pause()
             isPlaying = false
         } else {
-            player.play()
-            isPlaying = true
+            do {
+                try activatePlaybackSession()
+                if player.currentTime >= player.duration {
+                    player.currentTime = 0
+                }
+                isPlaying = player.play()
+                if !isPlaying {
+                    state = .failed("再生を開始できませんでした。音量と出力先を確認してください。")
+                }
+            } catch {
+                state = .failed("スピーカーを使えませんでした。もう一度再生してください。")
+            }
         }
     }
 
@@ -77,6 +99,84 @@ final class AudioTransformer: ObservableObject {
         player?.stop()
         player?.currentTime = 0
         isPlaying = false
+    }
+
+    func toggleRecording() async {
+        if isRecording {
+            await finishRecording()
+            return
+        }
+
+        let permission = await requestRecordPermission()
+        guard permission else {
+            state = .failed("録音にはマイクの許可が必要です。設定からマイクを許可してください。")
+            return
+        }
+
+        do {
+            stop()
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(
+                .playAndRecord,
+                mode: .default,
+                options: [.defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP]
+            )
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+
+            let destination = FileManager.default.temporaryDirectory
+                .appendingPathComponent("CHOP-Recording-\(UUID().uuidString.prefix(6)).m4a")
+            let settings: [String: Any] = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 44_100,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            ]
+
+            recorder = try AVAudioRecorder(url: destination, settings: settings)
+            recorder?.prepareToRecord()
+            guard recorder?.record() == true else {
+                throw CocoaError(.fileWriteUnknown)
+            }
+
+            recordingDuration = 0
+            isRecording = true
+            recordingTimer?.invalidate()
+            recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                Task { @MainActor in
+                    self?.recordingDuration = self?.recorder?.currentTime ?? 0
+                }
+            }
+        } catch {
+            isRecording = false
+            recordingTimer?.invalidate()
+            state = .failed("録音を開始できませんでした。マイクの接続を確認してください。")
+            try? activatePlaybackSession()
+        }
+    }
+
+    private func finishRecording() async {
+        guard let url = recorder?.url else { return }
+        recorder?.stop()
+        recorder = nil
+        recordingTimer?.invalidate()
+        recordingTimer = nil
+        isRecording = false
+        try? activatePlaybackSession()
+        await load(url: url)
+    }
+
+    private func requestRecordPermission() async -> Bool {
+        await withCheckedContinuation { continuation in
+            AVAudioSession.sharedInstance().requestRecordPermission { allowed in
+                continuation.resume(returning: allowed)
+            }
+        }
+    }
+
+    private func activatePlaybackSession() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playback, mode: .default, options: [.allowAirPlay, .allowBluetoothA2DP])
+        try session.setActive(true, options: .notifyOthersOnDeactivation)
     }
 
     private nonisolated static func render(
@@ -261,4 +361,3 @@ final class AudioTransformer: ObservableObject {
         }
     }
 }
-
