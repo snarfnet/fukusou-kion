@@ -64,8 +64,19 @@ jobs:
           PYTHONPATH: ios/CellArtisan/scripts
         run: |
           . /tmp/glass-craft-venv/bin/activate
-          python ios/CellArtisan/scripts/ensure_asc_app.py | tee /tmp/glass-craft-app.log
-          APP_ID="$(sed -n 's/^APP_ID=//p' /tmp/glass-craft-app.log | tail -1)"
+          APP_ID=""
+          for attempt in 1 2 3 4 5; do
+            echo "App Store Connect registration attempt $attempt/5"
+            set +e
+            python ios/CellArtisan/scripts/ensure_asc_app.py 2>&1 | tee /tmp/glass-craft-app.log
+            STATUS=${PIPESTATUS[0]}
+            set -e
+            APP_ID="$(sed -n 's/^APP_ID=//p' /tmp/glass-craft-app.log | tail -1)"
+            if [ "$STATUS" -eq 0 ] && [ -n "$APP_ID" ]; then
+              break
+            fi
+            sleep 30
+          done
           test -n "$APP_ID"
           echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
 
