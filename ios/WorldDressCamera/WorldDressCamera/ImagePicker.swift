@@ -57,12 +57,47 @@ struct ImagePicker: UIViewControllerRepresentable {
         init(_ parent: ImagePicker) { self.parent = parent }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-            parent.image = info[.originalImage] as? UIImage
+            parent.image = (info[.originalImage] as? UIImage)?.normalizedForEditing()
             parent.dismiss()
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             parent.dismiss()
+        }
+    }
+}
+
+private extension UIImage {
+    /// Bakes EXIF rotation into the pixels and removes mirrored camera metadata.
+    /// SwiftUI, Core Graphics and the photo library then share one `.up`
+    /// coordinate system, so the preview and saved composite stay aligned.
+    func normalizedForEditing() -> UIImage {
+        let wasMirrored: Bool
+        switch imageOrientation {
+        case .upMirrored, .downMirrored, .leftMirrored, .rightMirrored:
+            wasMirrored = true
+        default:
+            wasMirrored = false
+        }
+
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        let upright = UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+
+        guard wasMirrored, let cgImage = upright.cgImage else {
+            return upright
+        }
+        return UIImage(cgImage: cgImage, scale: upright.scale, orientation: .upMirrored)
+            .renderedWithUpOrientation()
+    }
+
+    func renderedWithUpOrientation() -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
         }
     }
 }
