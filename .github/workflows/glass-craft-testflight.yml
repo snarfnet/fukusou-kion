@@ -21,6 +21,7 @@ concurrency:
 
 env:
   APP_BUNDLE_ID: com.tokyonasu.glasscraft
+  APP_STORE_CONNECT_APP_ID: "6795121449"
   APP_NAME: "ガラス清掃職人"
   APP_SKU: glass-craft-unity-ios
   BUNDLE_NAME: GlassCraft
@@ -57,28 +58,11 @@ jobs:
           . /tmp/glass-craft-venv/bin/activate
           pip install --quiet --upgrade pip pyjwt cryptography requests
 
-      - name: Ensure bundle ID and app record
+      - name: Use registered App Store Connect app
         id: register
-        env:
-          ASC_P8_PATH: /tmp/asc_key.p8
-          PYTHONPATH: ios/CellArtisan/scripts
         run: |
-          . /tmp/glass-craft-venv/bin/activate
-          APP_ID=""
-          for attempt in 1 2 3 4 5; do
-            echo "App Store Connect registration attempt $attempt/5"
-            set +e
-            python WindowCleanerUnity/CI/ensure_asc_app.py 2>&1 | tee /tmp/glass-craft-app.log
-            STATUS=${PIPESTATUS[0]}
-            set -e
-            APP_ID="$(sed -n 's/^APP_ID=//p' /tmp/glass-craft-app.log | tail -1)"
-            if [ "$STATUS" -eq 0 ] && [ -n "$APP_ID" ]; then
-              break
-            fi
-            sleep 30
-          done
-          test -n "$APP_ID"
-          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+          test -n "$APP_STORE_CONNECT_APP_ID"
+          echo "app_id=$APP_STORE_CONNECT_APP_ID" >> "$GITHUB_OUTPUT"
 
   build-unity:
     name: Build Unity iOS project
