@@ -1,0 +1,239 @@
+name: Glass Craft Unity TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      register_only:
+        description: "App Store Connectのアプリ登録だけ行う"
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches:
+      - agent/glass-craft-testflight
+    paths:
+      - ".github/workflows/glass-craft-testflight.yml"
+      - "WindowCleanerUnity/**"
+
+concurrency:
+  group: glass-craft-unity-testflight
+  cancel-in-progress: false
+
+env:
+  APP_BUNDLE_ID: com.tokyonasu.glasscraft
+  APP_NAME: "ガラス清掃職人"
+  APP_SKU: glass-craft-unity-ios
+  BUNDLE_NAME: GlassCraft
+  PROFILE_NAME: "Glass Craft App Store"
+  UNITY_PROJECT_PATH: WindowCleanerUnity
+
+jobs:
+  register-app:
+    name: Register App Store Connect app
+    runs-on: macos-26
+    outputs:
+      app_id: ${{ steps.register.outputs.app_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare App Store Connect API
+        env:
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          test -n "$ASC_KEY_ID_SECRET"
+          test -n "$ASC_ISSUER_ID_SECRET"
+          test -n "$ASC_PRIVATE_KEY"
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" \
+            "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          python3 -m venv /tmp/glass-craft-venv
+          . /tmp/glass-craft-venv/bin/activate
+          pip install --quiet --upgrade pip pyjwt cryptography requests
+
+      - name: Ensure bundle ID and app record
+        id: register
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          PYTHONPATH: ios/CellArtisan/scripts
+        run: |
+          . /tmp/glass-craft-venv/bin/activate
+          python ios/CellArtisan/scripts/ensure_asc_app.py | tee /tmp/glass-craft-app.log
+          APP_ID="$(sed -n 's/^APP_ID=//p' /tmp/glass-craft-app.log | tail -1)"
+          test -n "$APP_ID"
+          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+
+  build-unity:
+    name: Build Unity iOS project
+    if: ${{ github.event_name == 'push' || inputs.register_only != true }}
+    runs-on: ubuntu-latest
+    needs: register-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require Unity license
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ] && { [ -z "$UNITY_SERIAL" ] || [ -z "$UNITY_EMAIL" ] || [ -z "$UNITY_PASSWORD" ]; }; then
+            echo "::error::Unity認証がありません。UNITY_LICENSE、または UNITY_SERIAL・UNITY_EMAIL・UNITY_PASSWORD をRepository Secretsへ登録してください。"
+            exit 1
+          fi
+
+      - uses: actions/cache@v4
+        with:
+          path: WindowCleanerUnity/Library
+          key: glass-craft-unity-ios-${{ hashFiles('WindowCleanerUnity/Assets/**', 'WindowCleanerUnity/Packages/**', 'WindowCleanerUnity/ProjectSettings/**') }}
+          restore-keys: glass-craft-unity-ios-
+
+      - name: Build iOS Xcode project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: WindowCleanerUnity
+          unityVersion: 6000.0.54f1
+          targetPlatform: iOS
+          buildsPath: build
+          buildName: iOS
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: glass-craft-xcode
+          path: build/iOS
+          if-no-files-found: error
+          retention-days: 7
+
+  upload-testflight:
+    name: Sign and upload TestFlight build
+    if: ${{ github.event_name == 'push' || inputs.register_only != true }}
+    runs-on: macos-26
+    needs: [register-app, build-unity]
+    env:
+      APP_ID: ${{ needs.register-app.outputs.app_id }}
+      BUILD_NUM: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: glass-craft-xcode
+          path: build/iOS
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Prepare App Store Connect API
+        env:
+          ASC_KEY_ID_SECRET: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID_SECRET: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          echo "ASC_KEY_ID=$ASC_KEY_ID_SECRET" >> "$GITHUB_ENV"
+          echo "ASC_ISSUER_ID=$ASC_ISSUER_ID_SECRET" >> "$GITHUB_ENV"
+          mkdir -p /tmp/asc "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$ASC_PRIVATE_KEY" > "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" /tmp/asc_key.p8
+          cp "/tmp/asc/AuthKey_${ASC_KEY_ID_SECRET}.p8" \
+            "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          chmod 600 /tmp/asc_key.p8 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID_SECRET}.p8"
+          python3 -m venv /tmp/glass-craft-venv
+          . /tmp/glass-craft-venv/bin/activate
+          pip install --quiet --upgrade pip pyjwt cryptography requests
+
+      - name: Create and install distribution certificate
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_KEYCHAIN: build.keychain
+          KEYCHAIN_PASSWORD: temporary-keychain-password
+          REPLACE_OLDEST_DISTRIBUTION_CERTIFICATE: "1"
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          . /tmp/glass-craft-venv/bin/activate
+          python ios/CellArtisan/scripts/create_distribution_certificate.py | tee /tmp/glass-craft-cert.log
+          grep '^IOS_DISTRIBUTION_CERT_SHA1=' /tmp/glass-craft-cert.log >> "$GITHUB_ENV"
+          grep '^ASC_CERTIFICATE_ID=' /tmp/glass-craft-cert.log >> "$GITHUB_ENV"
+
+      - name: Create provisioning profile
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          PROFILE_NAME: "Glass Craft App Store"
+        run: |
+          . /tmp/glass-craft-venv/bin/activate
+          python ios/CellArtisan/scripts/prepare_profile.py
+
+      - name: Archive Unity app
+        run: |
+          xcodebuild archive \
+            -project build/iOS/Unity-iPhone.xcodeproj \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/GlassCraft.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath /tmp/asc_key.p8 \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            PRODUCT_BUNDLE_IDENTIFIER="$APP_BUNDLE_ID" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUM" \
+            MARKETING_VERSION="0.1.0"
+
+      - name: Export and upload IPA
+        run: |
+          cat > /tmp/ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+          <key>method</key><string>app-store-connect</string>
+          <key>destination</key><string>upload</string>
+          <key>signingStyle</key><string>automatic</string>
+          <key>stripSwiftSymbols</key><true/>
+          <key>uploadSymbols</key><true/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath build/GlassCraft.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist /tmp/ExportOptions.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath /tmp/asc_key.p8 \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Wait for TestFlight processing
+        env:
+          ASC_P8_PATH: /tmp/asc_key.p8
+          BUILD_NUMBER: ${{ env.BUILD_NUM }}
+          WAIT_SECONDS: "1800"
+          POLL_SECONDS: "30"
+          PYTHONPATH: ios/CellArtisan/scripts
+        run: |
+          . /tmp/glass-craft-venv/bin/activate
+          python ios/CellArtisan/scripts/wait_for_testflight_build.py
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: glass-craft-ios-output
+          path: |
+            build/GlassCraft.xcarchive
+            build/export
+          if-no-files-found: ignore
+          retention-days: 7
