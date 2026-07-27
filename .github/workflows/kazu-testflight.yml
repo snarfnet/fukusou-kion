@@ -1,6 +1,12 @@
 name: KAZU Build and TestFlight
 
 on:
+  push:
+    branches:
+      - agent/kazu-testflight
+    paths:
+      - "ios/KAZU/**"
+      - ".github/workflows/kazu-testflight.yml"
   workflow_dispatch:
     inputs:
       version:
