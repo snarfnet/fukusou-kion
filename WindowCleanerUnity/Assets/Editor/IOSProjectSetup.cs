@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using System;
 using System.IO;
 
 namespace GlassCraft.Editor
@@ -14,6 +15,10 @@ namespace GlassCraft.Editor
             PlayerSettings.productName = "Glass Craft";
             PlayerSettings.companyName = "Independent Studio";
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.tokyonasu.glasscraft");
+            PlayerSettings.bundleVersion = "0.1.0";
+            var githubRunNumber = Environment.GetEnvironmentVariable("GITHUB_RUN_NUMBER");
+            if (!string.IsNullOrWhiteSpace(githubRunNumber))
+                PlayerSettings.iOS.buildNumber = githubRunNumber;
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
             PlayerSettings.allowedAutorotateToPortrait = false;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
