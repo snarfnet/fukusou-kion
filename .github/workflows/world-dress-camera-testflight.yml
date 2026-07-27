@@ -7,6 +7,12 @@ on:
         description: "Delete existing distribution certificates if Apple blocks creating a CI certificate"
         required: false
         default: "false"
+  push:
+    branches:
+      - codex/world-dress-camera-build
+    paths:
+      - ".github/workflows/world-dress-camera-testflight.yml"
+      - "ios/WorldDressCamera/WorldDressCamera/**"
 
 concurrency:
   group: world-dress-camera-testflight
@@ -73,7 +79,7 @@ jobs:
           BUILD_KEYCHAIN: build.keychain
           KEYCHAIN_PASSWORD: temporary-keychain-password
           REPLACE_DISTRIBUTION_CERTIFICATE: ${{ github.event.inputs.replace_distribution_certificate }}
-          STALE_CERTIFICATE_ID: KBQ64FFJ7C
+          STALE_CERTIFICATE_ID: 9BN5H8XP5F
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
