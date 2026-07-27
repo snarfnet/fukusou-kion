@@ -48,8 +48,24 @@ def main():
     payload = {
         "data": [{"type": "builds", "id": build["id"]}],
     }
+    tester_count = 0
     for group in internal_groups:
         attrs = group.get("attributes", {})
+        testers = api_json(
+            "GET",
+            f"/v1/betaGroups/{group['id']}/relationships/betaTesters?limit=200",
+        ).get("data", [])
+        tester_count += len(testers)
+        print(
+            f"Internal group {attrs.get('name')} contains "
+            f"{len(testers)} tester(s)."
+        )
+        if attrs.get("hasAccessToAllBuilds") is True:
+            print(
+                f"Group {attrs.get('name')} already has automatic access "
+                f"to all builds, including {BUILD_NUMBER}."
+            )
+            continue
         api_json(
             "POST",
             f"/v1/betaGroups/{group['id']}/relationships/builds",
@@ -58,6 +74,13 @@ def main():
         print(
             f"Assigned build {BUILD_NUMBER} to internal group "
             f"{attrs.get('name')} ({group['id']})."
+        )
+
+    if tester_count == 0:
+        raise RuntimeError(
+            "The internal groups have access to build "
+            f"{BUILD_NUMBER}, but contain no testers. Add your App Store "
+            "Connect user to the internal TestFlight group."
         )
 
 
