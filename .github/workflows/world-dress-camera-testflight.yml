@@ -13,6 +13,7 @@ on:
     paths:
       - ".github/workflows/world-dress-camera-testflight.yml"
       - "ios/WorldDressCamera/WorldDressCamera/**"
+      - "ios/WorldDressCamera/scripts/create_distribution_certificate.py"
 
 concurrency:
   group: world-dress-camera-testflight

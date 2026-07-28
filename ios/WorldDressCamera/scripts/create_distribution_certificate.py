@@ -28,6 +28,7 @@ INVALID_SERIALS = {
 }
 CI_CERT_MARKERS = ("worlddresscamera", "world dress camera")
 STALE_CERTIFICATE_ID = os.environ.get("STALE_CERTIFICATE_ID", "")
+PROFILE_NAME = os.environ.get("PROFILE_NAME", "WorldDressCamera App Store")
 
 
 def run(args):
@@ -245,6 +246,21 @@ def import_certificate(certificate):
 
 def main():
     if STALE_CERTIFICATE_ID:
+        profiles = api_json(
+            "GET",
+            f"/profiles?filter[name]={PROFILE_NAME.replace(' ', '%20')}&limit=200",
+        ).get("data", [])
+        for profile in profiles:
+            relationships = api_json(
+                "GET",
+                f"/profiles/{profile['id']}/relationships/certificates?limit=10",
+            ).get("data", [])
+            if any(item["id"] == STALE_CERTIFICATE_ID for item in relationships):
+                response = api("DELETE", f"/profiles/{profile['id']}")
+                print(
+                    f"Deleted stale profile {profile['id']} before certificate "
+                    f"rotation: {response.status_code}"
+                )
         response = api("DELETE", f"/certificates/{STALE_CERTIFICATE_ID}")
         print(f"Deleted specified stale certificate {STALE_CERTIFICATE_ID}: {response.status_code}")
     generate_csr()
