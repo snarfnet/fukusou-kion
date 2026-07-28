@@ -55,7 +55,7 @@ enum ImageComposer {
         guard let cgImage = photo.cgImage else { return nil }
         let request = VNDetectFaceRectanglesRequest()
         try? VNImageRequestHandler(cgImage: cgImage, orientation: .up).perform([request])
-        guard let face = (request.results as? [VNFaceObservation])?.max(by: {
+        guard let face = request.results?.max(by: {
             $0.boundingBox.width < $1.boundingBox.width
         }) else { return nil }
 
@@ -101,7 +101,8 @@ enum ImageComposer {
     private static func averageBrightness(_ image: UIImage) -> Double {
         guard let source = CIImage(image: image) else { return 0.5 }
         let input = source.composited(over:
-            CIImage(color: CIColor(gray: 0.5)).cropped(to: source.extent)
+            CIImage(color: CIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1))
+                .cropped(to: source.extent)
         )
         let extent = input.extent
         let parameters: [String: Any] = [
