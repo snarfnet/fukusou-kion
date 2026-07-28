@@ -23,7 +23,9 @@ namespace GlassCraft
 
         private RectTransform glass;
         private RectTransform handRig;
+        private Image storefrontImage;
         private Image handImage;
+        private Button progressionButton;
         private CanvasGroup handCanvas;
         private Text status;
         private Text scoreText;
@@ -45,8 +47,25 @@ namespace GlassCraft
         private Tool selected = Tool.Inspect;
         private int stage = 1;
 
+        private static readonly string[] StageNames =
+        {
+            "朝のカフェ正面", "商店街のベーカリー", "小型オフィス受付", "ホテル東玄関", "カフェ閉店後",
+            "駅前ベーカリー", "本社ビルロビー", "ホテル宴会場側", "雨上がりのカフェ", "オフィス西面",
+            "ベーカリー繁忙期", "ホテル正面大窓", "高層階ラウンジ", "夕方のカフェ", "高層オフィス南面",
+            "ホテル夜間作業", "展望ラウンジ外窓", "複合汚れのベーカリー", "超高層カーテンウォール", "最終検定・東京タワー面"
+        };
+
+        private static readonly string[] StageScenes =
+        {
+            "Art/CafeStorefront", "Art/BakeryStorefront", "Art/OfficeEntrance", "Art/HotelLobby", "Art/CafeStorefront",
+            "Art/BakeryStorefront", "Art/OfficeEntrance", "Art/HotelLobby", "Art/CafeStorefront", "Art/OfficeEntrance",
+            "Art/BakeryStorefront", "Art/HotelLobby", "Art/HighRiseLounge", "Art/CafeStorefront", "Art/HighRiseLounge",
+            "Art/HotelLobby", "Art/HighRiseLounge", "Art/BakeryStorefront", "Art/HighRiseLounge", "Art/HighRiseLounge"
+        };
+
         private void Awake()
         {
+            stage = Mathf.Clamp(PlayerPrefs.GetInt("GlassCraftUnlockedStage", 1), 1, StageNames.Length);
             BuildInterface();
             StartStage();
         }
@@ -61,6 +80,8 @@ namespace GlassCraft
             {
                 finished = true;
                 status.text = "時間切れ。開店に間に合いませんでした。もう一度挑戦してください。";
+                progressionButton = Button(status.transform.parent, "再挑戦", new Vector2(0.66f, 0.018f), new Vector2(0.795f, 0.095f));
+                progressionButton.onClick.AddListener(StartStage);
                 return;
             }
 
@@ -130,8 +151,9 @@ namespace GlassCraft
             AddToolButton(left, Tool.Squeegee, "4　スクイジー", 0.265f);
             AddToolButton(left, Tool.Detail, "5　クロス仕上げ", 0.11f);
 
-            var store = PhotoPanel(background, "CafeStorefront", "Art/CafeStorefront",
+            var store = PhotoPanel(background, "Storefront", "Art/CafeStorefront",
                 new Vector2(0.245f, 0.105f), new Vector2(0.795f, 0.85f));
+            storefrontImage = store.GetComponent<Image>();
             var frame = Panel(store, "InteractiveWindow", Color.clear, Vector2.zero, Vector2.one);
             BuildStoreWindow(frame);
 
@@ -223,18 +245,32 @@ namespace GlassCraft
 
         private void StartStage()
         {
+            if (progressionButton != null)
+            {
+                Destroy(progressionButton.gameObject);
+                progressionButton = null;
+            }
+            stage = Mathf.Clamp(stage, 1, StageNames.Length);
             var random = new System.Random(8173 + stage * 97);
             for (var i = 0; i < dirt.Length; i++)
             {
                 var x = i % Columns;
                 var y = i / Columns;
                 var edge = x < 2 || x > Columns - 3 || y < 2;
-                dirt[i] = Mathf.Clamp01((float)random.NextDouble() * 0.58f + (edge ? 0.30f : 0.12f));
+                var difficulty = (stage - 1) / 19f;
+                dirt[i] = Mathf.Clamp01((float)random.NextDouble() * (0.48f + difficulty * 0.22f) +
+                                         (edge ? 0.25f + difficulty * 0.13f : 0.08f + difficulty * 0.17f));
                 water[i] = 0;
                 streak[i] = 0;
                 agitation[i] = 0;
-                var typeRoll = (x / 4 + y / 3 + stage) % 10;
-                dirtKinds[i] = typeRoll < 5 ? DirtKind.Mud : typeRoll < 8 ? DirtKind.Oil : DirtKind.Stuck;
+                var roll = random.NextDouble();
+                var oilChance = 0.18f + difficulty * 0.22f;
+                var stuckChance = 0.08f + difficulty * 0.25f;
+                if (stage is >= 6 and <= 10) oilChance += 0.18f;
+                if (stage is >= 11 and <= 15) stuckChance += 0.17f;
+                dirtKinds[i] = roll < stuckChance ? DirtKind.Stuck
+                    : roll < stuckChance + oilChance ? DirtKind.Oil
+                    : DirtKind.Mud;
             }
 
             selected = Tool.Inspect;
@@ -243,9 +279,10 @@ namespace GlassCraft
             finished = false;
             productUsed = 0;
             wrongActions = 0;
-            remainingTime = Mathf.Max(105f, 180f - (stage - 1) * 10f);
+            remainingTime = Mathf.Max(105f, 195f - (stage - 1) * 4.5f);
             startedAt = Time.time;
-            instruction.text = $"STAGE {stage:00}\n開店前のカフェ\n\n泥汚れ：水でゆるめる\n油膜：よく擦る\n固着汚れ：クロス仕上げ\n\n縦にスクイジーを動かすと\n水筋を残しにくい";
+            storefrontImage.sprite = LoadSprite(StageScenes[stage - 1]);
+            instruction.text = $"STAGE {stage:00} / 20\n{StageNames[stage - 1]}\n\n泥：水でゆるめる\n油膜：よく擦る\n固着：クロス仕上げ\n\n制限 {Mathf.CeilToInt(remainingTime)}秒\n難易度 {"★".PadRight(1 + (stage - 1) / 4, '★')}";
             status.text = "まず検査灯で、汚れの種類と範囲を確認してください。";
             handTarget = new Vector2(190, -250);
             RefreshAll();
@@ -385,14 +422,24 @@ namespace GlassCraft
             if (passed)
             {
                 finished = true;
-                status.text = $"合格！ 汚れ {dirtAverage * 100:0.0}% / 水筋 {streakAverage * 100:0.0}%";
-                var next = Button(status.transform.parent, "次の現場", new Vector2(0.66f, 0.018f), new Vector2(0.795f, 0.095f));
-                next.onClick.AddListener(() =>
+                if (stage >= StageNames.Length)
                 {
-                    Destroy(next.gameObject);
-                    stage++;
-                    StartStage();
-                });
+                    status.text = $"全20ステージ制覇！ 最終汚れ {dirtAverage * 100:0.0}% / 水筋 {streakAverage * 100:0.0}%";
+                    PlayerPrefs.SetInt("GlassCraftUnlockedStage", StageNames.Length);
+                    PlayerPrefs.Save();
+                }
+                else
+                {
+                    status.text = $"STAGE {stage:00} 合格！ 汚れ {dirtAverage * 100:0.0}% / 水筋 {streakAverage * 100:0.0}%";
+                    PlayerPrefs.SetInt("GlassCraftUnlockedStage", stage + 1);
+                    PlayerPrefs.Save();
+                    progressionButton = Button(status.transform.parent, "次の現場", new Vector2(0.66f, 0.018f), new Vector2(0.795f, 0.095f));
+                    progressionButton.onClick.AddListener(() =>
+                    {
+                        stage++;
+                        StartStage();
+                    });
+                }
             }
             else
             {
