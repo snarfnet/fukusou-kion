@@ -157,7 +157,7 @@ struct GeometryCalculatorView: View {
     }
 }
 
-private struct SpecialistCard<Content: View>: View {
+struct SpecialistCard<Content: View>: View {
     let title: String
     let subtitle: String
     let result: String
@@ -189,7 +189,7 @@ private struct SpecialistCard<Content: View>: View {
     }
 }
 
-private struct ValueField: View {
+struct ValueField: View {
     let title: String
     @Binding var value: Double
     let suffix: String
@@ -208,7 +208,7 @@ private struct ValueField: View {
     }
 }
 
-private struct RecordButton: View {
+struct RecordButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -222,7 +222,7 @@ private struct RecordButton: View {
     }
 }
 
-private struct Metric: View {
+struct Metric: View {
     let label: String
     let value: String
     var body: some View {

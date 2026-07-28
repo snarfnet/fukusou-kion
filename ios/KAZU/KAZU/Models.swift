@@ -8,6 +8,10 @@ enum CalculatorMode: String, CaseIterable, Identifiable {
     case date = "日付"
     case statistics = "統計"
     case geometry = "図形"
+    case compound = "複利"
+    case percentage = "割合"
+    case health = "健康"
+    case electrical = "電気"
 
     var id: Self { self }
 
@@ -20,6 +24,10 @@ enum CalculatorMode: String, CaseIterable, Identifiable {
         case .date: "calendar"
         case .statistics: "chart.bar"
         case .geometry: "triangle"
+        case .compound: "chart.line.uptrend.xyaxis"
+        case .percentage: "percent"
+        case .health: "heart.text.square"
+        case .electrical: "bolt"
         }
     }
 }
@@ -43,4 +51,3 @@ enum RootTab: String {
     case formulas = "公式"
     case history = "履歴"
 }
-

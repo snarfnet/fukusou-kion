@@ -37,9 +37,17 @@ struct CalculatorHomeView: View {
                 .padding(.bottom, 20)
             }
             .scrollIndicators(.hidden)
+            .scrollDismissesKeyboard(.interactively)
             .background(KazuTheme.canvas.ignoresSafeArea())
+            .background(KeyboardDismissBridge())
             .navigationTitle("KAZU")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("完了") { KeyboardDismissBridge.dismiss() }
+                }
+            }
         }
     }
 
@@ -53,6 +61,10 @@ struct CalculatorHomeView: View {
         case .date: DateCalculatorView()
         case .statistics: StatisticsCalculatorView()
         case .geometry: GeometryCalculatorView()
+        case .compound: CompoundInterestCalculatorView()
+        case .percentage: PercentageCalculatorView()
+        case .health: HealthCalculatorView()
+        case .electrical: ElectricalCalculatorView()
         }
     }
 }
@@ -125,4 +137,3 @@ private struct ModePicker: View {
         .scrollIndicators(.hidden)
     }
 }
-
