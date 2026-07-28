@@ -29,9 +29,9 @@ namespace GlassCraft
         private bool finished;
         private int stage = 1;
 
-        private readonly Color cleanGlass = new(0.52f, 0.75f, 0.82f, 0.46f);
-        private readonly Color wetGlass = new(0.30f, 0.62f, 0.78f, 0.72f);
-        private readonly Color dirtColor = new(0.24f, 0.18f, 0.10f, 0.90f);
+        private readonly Color cleanGlass = new(0.32f, 0.52f, 0.60f, 0.30f);
+        private readonly Color wetGlass = new(0.18f, 0.50f, 0.65f, 0.58f);
+        private readonly Color dirtColor = new(0.22f, 0.15f, 0.08f, 0.88f);
 
         private void Awake()
         {
@@ -72,40 +72,102 @@ namespace GlassCraft
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             var scaler = canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(2532, 1170);
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
 
             if (FindFirstObjectByType<EventSystem>() == null)
                 new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
 
-            var background = Panel(canvas.transform, "Workshop", new Color(0.055f, 0.075f, 0.09f, 1f),
+            var background = Panel(canvas.transform, "StreetAtDusk", new Color(0.055f, 0.065f, 0.075f, 1f),
                 Vector2.zero, Vector2.one);
+            CreateFacade(background);
 
-            var header = Panel(background, "Header", new Color(0.035f, 0.05f, 0.06f, 0.98f),
-                new Vector2(0, 0.86f), Vector2.one);
-            Label(header, "GLASS CRAFT", 42, TextAnchor.MiddleLeft,
-                new Vector2(0.035f, 0), new Vector2(0.35f, 1), new Color(0.87f, 0.95f, 0.97f));
-            scoreText = Label(header, "", 34, TextAnchor.MiddleRight,
-                new Vector2(0.65f, 0), new Vector2(0.965f, 1), Color.white);
+            var header = Panel(background, "Header", new Color(0.025f, 0.035f, 0.04f, 0.98f),
+                new Vector2(0, 0.875f), Vector2.one);
+            Label(header, "GLASS CRAFT", 52, FontStyle.Bold, TextAnchor.MiddleLeft,
+                new Vector2(0.035f, 0), new Vector2(0.42f, 1), new Color(0.90f, 0.97f, 0.98f));
+            Label(header, "PRO WINDOW SERVICE", 25, FontStyle.Normal, TextAnchor.MiddleLeft,
+                new Vector2(0.285f, 0), new Vector2(0.56f, 1), new Color(0.48f, 0.72f, 0.76f));
+            scoreText = Label(header, "", 42, FontStyle.Bold, TextAnchor.MiddleRight,
+                new Vector2(0.66f, 0), new Vector2(0.965f, 1), Color.white);
 
-            var left = Panel(background, "ToolRack", new Color(0.075f, 0.10f, 0.115f, 1f),
-                new Vector2(0.025f, 0.06f), new Vector2(0.22f, 0.83f));
-            Label(left, "道具", 31, TextAnchor.MiddleCenter, new Vector2(0, 0.88f), Vector2.one, Color.white);
+            var left = Panel(background, "ToolRack", new Color(0.045f, 0.06f, 0.067f, 0.98f),
+                new Vector2(0.018f, 0.055f), new Vector2(0.235f, 0.845f));
+            Label(left, "清掃ツール", 38, FontStyle.Bold, TextAnchor.MiddleCenter,
+                new Vector2(0, 0.88f), Vector2.one, Color.white);
+            AddToolButton(left, Tool.Inspect, "1  汚れを確認", 0.73f);
+            AddToolButton(left, Tool.Soak, "2  予備洗浄", 0.575f);
+            AddToolButton(left, Tool.Washer, "3  ウォッシャー", 0.42f);
+            AddToolButton(left, Tool.Squeegee, "4  スクイジー", 0.265f);
+            AddToolButton(left, Tool.Detail, "5  端部を仕上げ", 0.11f);
 
-            AddToolButton(left, Tool.Inspect, "1  汚れを確認", 0.75f);
-            AddToolButton(left, Tool.Soak, "2  予備洗浄", 0.60f);
-            AddToolButton(left, Tool.Washer, "3  洗剤・ウォッシャー", 0.45f);
-            AddToolButton(left, Tool.Squeegee, "4  スクイジー", 0.30f);
-            AddToolButton(left, Tool.Detail, "5  端部を乾拭き", 0.15f);
+            var store = Panel(background, "Storefront", new Color(0.16f, 0.15f, 0.135f, 1f),
+                new Vector2(0.25f, 0.11f), new Vector2(0.79f, 0.845f));
+            Label(store, "AOYAMA  FLAGSHIP  STORE", 28, FontStyle.Bold, TextAnchor.MiddleCenter,
+                new Vector2(0.08f, 0.91f), new Vector2(0.92f, 0.985f), new Color(0.93f, 0.88f, 0.72f));
+            var frame = Panel(store, "AluminiumFrame", new Color(0.045f, 0.052f, 0.055f, 1f),
+                new Vector2(0.028f, 0.035f), new Vector2(0.972f, 0.90f));
+            BuildStoreWindow(frame);
 
-            var frame = Panel(background, "WindowFrame", new Color(0.09f, 0.12f, 0.13f, 1f),
-                new Vector2(0.245f, 0.13f), new Vector2(0.78f, 0.82f));
-            glass = Panel(frame, "Glass", cleanGlass, new Vector2(0.025f, 0.035f), new Vector2(0.975f, 0.965f));
+            var right = Panel(background, "JobCard", new Color(0.045f, 0.06f, 0.067f, 0.98f),
+                new Vector2(0.805f, 0.11f), new Vector2(0.982f, 0.845f));
+            Label(right, "作業指示", 38, FontStyle.Bold, TextAnchor.MiddleCenter,
+                new Vector2(0, 0.87f), Vector2.one, Color.white);
+            instruction = Label(right, "", 31, FontStyle.Normal, TextAnchor.UpperLeft,
+                new Vector2(0.08f, 0.34f), new Vector2(0.92f, 0.84f), new Color(0.88f, 0.93f, 0.94f));
+            instruction.horizontalOverflow = HorizontalWrapMode.Wrap;
+            instruction.verticalOverflow = VerticalWrapMode.Overflow;
+
+            var judge = Button(right, "仕上がりを検査", new Vector2(0.07f, 0.07f), new Vector2(0.93f, 0.26f));
+            judge.onClick.AddListener(Judge);
+
+            status = Label(background, "", 31, FontStyle.Bold, TextAnchor.MiddleCenter,
+                new Vector2(0.25f, 0.025f), new Vector2(0.79f, 0.095f), new Color(0.92f, 0.96f, 0.97f));
+        }
+
+        private void CreateFacade(Transform parent)
+        {
+            Panel(parent, "ConcreteWall", new Color(0.18f, 0.17f, 0.155f, 1f),
+                new Vector2(0.235f, 0.095f), new Vector2(0.805f, 0.875f));
+            Panel(parent, "Pavement", new Color(0.08f, 0.085f, 0.09f, 1f),
+                new Vector2(0, 0), new Vector2(1, 0.055f));
+            Panel(parent, "WarmWallLightLeft", new Color(0.75f, 0.52f, 0.25f, 0.18f),
+                new Vector2(0.237f, 0.68f), new Vector2(0.25f, 0.82f));
+            Panel(parent, "WarmWallLightRight", new Color(0.75f, 0.52f, 0.25f, 0.18f),
+                new Vector2(0.79f, 0.68f), new Vector2(0.803f, 0.82f));
+        }
+
+        private void BuildStoreWindow(RectTransform frame)
+        {
+            var interior = Panel(frame, "StoreInterior", new Color(0.10f, 0.09f, 0.075f, 1f),
+                new Vector2(0.018f, 0.022f), new Vector2(0.982f, 0.978f));
+            Panel(interior, "CeilingGlow", new Color(0.95f, 0.78f, 0.48f, 0.50f),
+                new Vector2(0, 0.82f), new Vector2(1, 1));
+            Panel(interior, "BackWall", new Color(0.37f, 0.30f, 0.22f, 1f),
+                new Vector2(0.06f, 0.12f), new Vector2(0.94f, 0.82f));
+            Panel(interior, "DisplayShelf1", new Color(0.09f, 0.07f, 0.055f, 1f),
+                new Vector2(0.10f, 0.31f), new Vector2(0.90f, 0.35f));
+            Panel(interior, "DisplayShelf2", new Color(0.09f, 0.07f, 0.055f, 1f),
+                new Vector2(0.10f, 0.54f), new Vector2(0.90f, 0.58f));
+            for (var i = 0; i < 7; i++)
+            {
+                var x = 0.12f + i * 0.115f;
+                Panel(interior, $"Product_{i}", new Color(0.65f - i * 0.035f, 0.52f, 0.34f, 1f),
+                    new Vector2(x, 0.35f), new Vector2(x + 0.055f, 0.51f));
+            }
+            Panel(interior, "Counter", new Color(0.12f, 0.09f, 0.07f, 1f),
+                new Vector2(0.57f, 0.10f), new Vector2(0.94f, 0.27f));
+            Panel(interior, "PersonSilhouette", new Color(0.035f, 0.038f, 0.04f, 0.82f),
+                new Vector2(0.43f, 0.10f), new Vector2(0.50f, 0.48f));
+
+            glass = Panel(frame, "GlassSurface", cleanGlass,
+                new Vector2(0.018f, 0.022f), new Vector2(0.982f, 0.978f));
             var grid = glass.gameObject.AddComponent<GridLayoutGroup>();
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = Columns;
-            grid.spacing = new Vector2(1, 1);
-            grid.cellSize = new Vector2(62, 62);
+            grid.spacing = Vector2.zero;
             grid.childAlignment = TextAnchor.MiddleCenter;
+            grid.cellSize = new Vector2(49, 55);
 
             for (var i = 0; i < Columns * Rows; i++)
             {
@@ -116,19 +178,18 @@ namespace GlassCraft
                 cells.Add(image);
             }
 
-            var right = Panel(background, "JobCard", new Color(0.075f, 0.10f, 0.115f, 1f),
-                new Vector2(0.80f, 0.13f), new Vector2(0.975f, 0.82f));
-            Label(right, "作業票", 31, TextAnchor.MiddleCenter, new Vector2(0, 0.88f), Vector2.one, Color.white);
-            instruction = Label(right, "", 27, TextAnchor.UpperLeft,
-                new Vector2(0.08f, 0.35f), new Vector2(0.92f, 0.84f), new Color(0.82f, 0.89f, 0.91f));
-            instruction.horizontalOverflow = HorizontalWrapMode.Wrap;
-            instruction.verticalOverflow = VerticalWrapMode.Overflow;
-
-            var judge = Button(right, "仕上がりを検査", new Vector2(0.08f, 0.08f), new Vector2(0.92f, 0.27f));
-            judge.onClick.AddListener(Judge);
-
-            status = Label(background, "", 29, TextAnchor.MiddleCenter,
-                new Vector2(0.245f, 0.035f), new Vector2(0.78f, 0.115f), new Color(0.85f, 0.92f, 0.94f));
+            Panel(frame, "SkyReflection", new Color(0.52f, 0.71f, 0.78f, 0.10f),
+                new Vector2(0.04f, 0.62f), new Vector2(0.96f, 0.91f));
+            Panel(frame, "ReflectionStreak", new Color(0.90f, 0.96f, 1f, 0.12f),
+                new Vector2(0.16f, 0.05f), new Vector2(0.21f, 0.94f));
+            Panel(frame, "ReflectionStreak2", new Color(0.90f, 0.96f, 1f, 0.07f),
+                new Vector2(0.72f, 0.04f), new Vector2(0.76f, 0.95f));
+            Panel(frame, "CenterMullion", new Color(0.055f, 0.065f, 0.068f, 1f),
+                new Vector2(0.488f, 0), new Vector2(0.512f, 1));
+            Panel(frame, "Transom", new Color(0.055f, 0.065f, 0.068f, 1f),
+                new Vector2(0, 0.68f), new Vector2(1, 0.705f));
+            Panel(frame, "BottomSeal", new Color(0.025f, 0.03f, 0.032f, 1f),
+                new Vector2(0, 0), new Vector2(1, 0.025f));
         }
 
         private void StartStage()
@@ -147,7 +208,7 @@ namespace GlassCraft
             productUsed = 0;
             wrongActions = 0;
             startedAt = Time.time;
-            instruction.text = $"STAGE {stage:00}\n一般住宅・外窓\n\n目標\n・汚れ残り 3%未満\n・正しい工程\n・洗剤を使いすぎない";
+            instruction.text = $"STAGE {stage:00}\n店舗・大型ガラス\n\n目標\n・汚れ残り 3%未満\n・正しい作業手順\n・洗剤を使いすぎない";
             status.text = "まず光の反射を見て、汚れの種類と範囲を確認";
             RefreshAll();
             RefreshButtons();
@@ -207,10 +268,10 @@ namespace GlassCraft
             status.text = selected switch
             {
                 Tool.Inspect => "汚れを確認しました。上から下へ予備洗浄",
-                Tool.Soak => "砂や埃を水で流し、傷を防ぐ",
-                Tool.Washer => "洗剤を均一に広げて汚れを浮かせる",
+                Tool.Soak => "砂や泥を水で流し、ガラスを十分に濡らす",
+                Tool.Washer => "洗剤を均一に広げて、汚れを浮かせる",
                 Tool.Squeegee => "ゴムを寝かせすぎず、上から水を切る",
-                _ => "四辺の水分をクロスで回収"
+                _ => "四辺に残った水分をクロスで回収"
             };
         }
 
@@ -244,8 +305,8 @@ namespace GlassCraft
             if (remaining <= 0.03f && moisture <= 0.025f && score >= 7200)
             {
                 finished = true;
-                status.text = $"合格　汚れ残り {remaining * 100:0.0}%　タップで次の現場へ";
-                var next = Button(status.transform.parent, "次の現場", new Vector2(0.62f, 0.035f), new Vector2(0.78f, 0.115f));
+                status.text = $"合格　汚れ残り {remaining * 100:0.0}%　次の現場へ";
+                var next = Button(status.transform.parent, "次の現場", new Vector2(0.64f, 0.025f), new Vector2(0.79f, 0.095f));
                 next.onClick.AddListener(() =>
                 {
                     Destroy(next.gameObject);
@@ -277,15 +338,15 @@ namespace GlassCraft
             {
                 var colors = item.Value.colors;
                 colors.normalColor = item.Key == selected
-                    ? new Color(0.12f, 0.55f, 0.63f)
-                    : new Color(0.12f, 0.16f, 0.18f);
+                    ? new Color(0.08f, 0.55f, 0.62f)
+                    : new Color(0.10f, 0.13f, 0.14f);
                 item.Value.colors = colors;
             }
         }
 
         private void AddToolButton(Transform parent, Tool tool, string title, float y)
         {
-            var button = Button(parent, title, new Vector2(0.07f, y), new Vector2(0.93f, y + 0.115f));
+            var button = Button(parent, title, new Vector2(0.055f, y), new Vector2(0.945f, y + 0.125f));
             button.onClick.AddListener(() => SelectTool(tool));
             toolButtons.Add(tool, button);
         }
@@ -299,11 +360,13 @@ namespace GlassCraft
             rect.anchorMax = max;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            go.GetComponent<Image>().color = color;
+            var image = go.GetComponent<Image>();
+            image.color = color;
+            image.raycastTarget = false;
             return rect;
         }
 
-        private static Text Label(Transform parent, string value, int size, TextAnchor anchor,
+        private static Text Label(Transform parent, string value, int size, FontStyle style, TextAnchor anchor,
             Vector2 min, Vector2 max, Color color)
         {
             var go = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
@@ -317,6 +380,7 @@ namespace GlassCraft
             text.text = value;
             text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             text.fontSize = size;
+            text.fontStyle = style;
             text.alignment = anchor;
             text.color = color;
             text.raycastTarget = false;
@@ -325,13 +389,14 @@ namespace GlassCraft
 
         private static Button Button(Transform parent, string title, Vector2 min, Vector2 max)
         {
-            var panel = Panel(parent, title, new Color(0.12f, 0.16f, 0.18f), min, max);
+            var panel = Panel(parent, title, new Color(0.10f, 0.13f, 0.14f), min, max);
+            panel.GetComponent<Image>().raycastTarget = true;
             var button = panel.gameObject.AddComponent<Button>();
             var colors = button.colors;
-            colors.highlightedColor = new Color(0.16f, 0.60f, 0.68f);
-            colors.pressedColor = new Color(0.08f, 0.42f, 0.50f);
+            colors.highlightedColor = new Color(0.12f, 0.60f, 0.68f);
+            colors.pressedColor = new Color(0.06f, 0.40f, 0.47f);
             button.colors = colors;
-            Label(panel, title, 24, TextAnchor.MiddleCenter, Vector2.zero, Vector2.one, Color.white);
+            Label(panel, title, 32, FontStyle.Bold, TextAnchor.MiddleCenter, Vector2.zero, Vector2.one, Color.white);
             return button;
         }
     }
