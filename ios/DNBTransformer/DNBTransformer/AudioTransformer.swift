@@ -35,14 +35,23 @@ final class AudioTransformer: NSObject, ObservableObject {
         securityScopedURL = url.startAccessingSecurityScopedResource() ? url : nil
 
         do {
-            let file = try AVAudioFile(forReading: url)
-            sourceURL = url
+            let localURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("CHOP-Source-\(UUID().uuidString)")
+                .appendingPathExtension(url.pathExtension.isEmpty ? "m4a" : url.pathExtension)
+            try FileManager.default.copyItem(at: url, to: localURL)
+            securityScopedURL?.stopAccessingSecurityScopedResource()
+            securityScopedURL = nil
+
+            let file = try AVAudioFile(forReading: localURL)
+            sourceURL = localURL
             sourceName = url.deletingPathExtension().lastPathComponent
             duration = Double(file.length) / file.fileFormat.sampleRate
-            waveform = try await Self.makeWaveform(from: url, buckets: 72)
+            waveform = try await Self.makeWaveform(from: localURL, buckets: 72)
             outputURL = nil
             state = .ready
         } catch {
+            securityScopedURL?.stopAccessingSecurityScopedResource()
+            securityScopedURL = nil
             state = .failed("この音声ファイルは読み込めませんでした。")
         }
     }
@@ -66,19 +75,30 @@ final class AudioTransformer: NSObject, ObservableObject {
                 }
             }
             defer { progressTask.cancel() }
-            try await Task.detached(priority: .userInitiated) {
-                try Self.render(sourceURL: sourceURL, destination: destination, bpm: bpm, style: style)
-            }.value
+            do {
+                try await Task.detached(priority: .userInitiated) {
+                    try Self.render(sourceURL: sourceURL, destination: destination, bpm: bpm, style: style)
+                }.value
+            } catch {
+                state = .failed("音の変換中に失敗しました。短い音で試してください。\n\(error.localizedDescription)")
+                return
+            }
 
             state = .rendering(0.95)
             outputURL = destination
-            try activatePlaybackSession()
-            player = try AVAudioPlayer(contentsOf: destination)
-            player?.volume = 1
-            player?.prepareToPlay()
-            state = .complete
+            do {
+                try activatePlaybackSession()
+                player = try AVAudioPlayer(contentsOf: destination)
+                player?.volume = 1
+                guard player?.prepareToPlay() == true else {
+                    throw CocoaError(.fileReadCorruptFile)
+                }
+                state = .complete
+            } catch {
+                state = .failed("曲は作成できましたが、再生の準備に失敗しました。\n\(error.localizedDescription)")
+            }
         } catch {
-            state = .failed("変換に失敗しました。別の音で試してください。")
+            state = .failed("保存先を準備できませんでした。\n\(error.localizedDescription)")
         }
     }
 
@@ -344,7 +364,21 @@ final class AudioTransformer: NSObject, ObservableObject {
             vDSP_vsmul(out[1], 1, &scale, out[1], 1, vDSP_Length(outputFrames))
         }
 
-        let file = try AVAudioFile(forWriting: destination, settings: format.settings)
+        let waveSettings: [String: Any] = [
+            AVFormatIDKey: Int(kAudioFormatLinearPCM),
+            AVSampleRateKey: sampleRate,
+            AVNumberOfChannelsKey: 2,
+            AVLinearPCMBitDepthKey: 16,
+            AVLinearPCMIsFloatKey: false,
+            AVLinearPCMIsBigEndianKey: false,
+            AVLinearPCMIsNonInterleaved: false
+        ]
+        let file = try AVAudioFile(
+            forWriting: destination,
+            settings: waveSettings,
+            commonFormat: .pcmFormatFloat32,
+            interleaved: false
+        )
         try file.write(from: output)
     }
 
