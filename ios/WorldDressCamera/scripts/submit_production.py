@@ -264,6 +264,61 @@ def update_metadata(version_id):
         require_ok(response, f"Metadata {locale}")
 
 
+def publish_privacy_answers(app_id):
+    def iris(method, path, **kwargs):
+        now = int(base.time.time())
+        token = base.jwt.encode(
+            {"iss": base.ISSUER, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+            base.p8,
+            algorithm="ES256",
+            headers={"kid": base.KEY_ID, "typ": "JWT"},
+        )
+        response = base.requests.request(
+            method,
+            f"https://appstoreconnect.apple.com/iris/v1{path}",
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            timeout=120,
+            **kwargs,
+        )
+        try:
+            return response, response.json()
+        except Exception:
+            return response, {}
+
+    response, body = iris(
+        "GET",
+        f"/apps/{app_id}/dataUsages?include=category,grouping,purpose,dataProtection&limit=500",
+    )
+    require_ok(response, "Privacy usage lookup")
+    if not body.get("data"):
+        response, _ = iris("POST", "/appDataUsages", json={
+            "data": {
+                "type": "appDataUsages",
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": app_id}},
+                    "dataProtection": {
+                        "data": {
+                            "type": "appDataUsageDataProtections",
+                            "id": "DATA_NOT_COLLECTED",
+                        }
+                    },
+                },
+            }
+        })
+        require_ok(response, "No data collected declaration")
+    response, body = iris("GET", f"/apps/{app_id}/dataUsagePublishState")
+    require_ok(response, "Privacy publish state")
+    state_id = body["data"]["id"]
+    response, _ = iris("PATCH", f"/appDataUsagesPublishState/{state_id}", json={
+        "data": {
+            "type": "appDataUsagesPublishState",
+            "id": state_id,
+            "attributes": {"published": True},
+        }
+    })
+    require_ok(response, "Privacy answers publish")
+
+
 def main():
     app_id = base.find_app_id()
     if app_id != base.APP_ID:
@@ -274,6 +329,7 @@ def main():
         return
     ensure_release_prerequisites(version_id)
     update_metadata(version_id)
+    publish_privacy_answers(app_id)
     build_id = base.wait_for_build(app_id)
     base.cancel_blocking_submissions(app_id)
     base.upload_screenshots(version_id)
