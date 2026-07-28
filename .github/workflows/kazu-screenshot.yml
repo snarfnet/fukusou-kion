@@ -1,0 +1,58 @@
+name: KAZU App Store Screenshot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        working-directory: ios/KAZU
+        run: xcodegen generate
+
+      - name: Build for simulator
+        working-directory: ios/KAZU
+        run: |
+          xcodebuild \
+            -project KAZU.xcodeproj \
+            -scheme KAZU \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -derivedDataPath "$RUNNER_TEMP/KAZUDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Launch and capture
+        run: |
+          DEVICE_ID="$(xcrun simctl list devices available -j | jq -r '
+            [.devices[][] | select(.name == "iPhone 16 Pro")] | first | .udid
+          ')"
+          xcrun simctl boot "$DEVICE_ID" || true
+          open -a Simulator
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+
+          APP_PATH="$(find "$RUNNER_TEMP/KAZUDerivedData/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name 'KAZU.app' -print -quit)"
+          xcrun simctl install "$DEVICE_ID" "$APP_PATH"
+          xcrun simctl launch "$DEVICE_ID" com.tokyonasu.kazu
+          sleep 4
+
+          mkdir -p "$RUNNER_TEMP/kazu-screenshots"
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/kazu-screenshots/KAZU-standard-native.png"
+          sips -z 2688 1242 \
+            "$RUNNER_TEMP/kazu-screenshots/KAZU-standard-native.png" \
+            --out "$RUNNER_TEMP/kazu-screenshots/KAZU-standard-6.5.png"
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: kazu-app-store-screenshot
+          path: ${{ runner.temp }}/kazu-screenshots/KAZU-standard-6.5.png
