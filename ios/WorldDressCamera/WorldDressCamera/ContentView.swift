@@ -14,6 +14,10 @@ struct ContentView: View {
     @State private var committedScale: CGFloat = 1
     @State private var rotation = Angle.zero
     @State private var committedRotation = Angle.zero
+    @State private var blend = BlendSettings()
+    @State private var faceForeground: UIImage?
+    @State private var faceLayerEnabled = true
+    @State private var showsBlendControls = false
     @State private var notice: String?
 
     init() {
@@ -47,12 +51,27 @@ struct ContentView: View {
             .sheet(isPresented: $showsCatalog) {
                 CatalogView(selection: $selected)
             }
+            .sheet(isPresented: $showsBlendControls) {
+                BlendControlsView(settings: $blend, faceLayerEnabled: $faceLayerEnabled) {
+                    autoBlend()
+                }
+                .presentationDetents([.medium, .large])
+            }
             .alert("お知らせ", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
                 Button("OK") { notice = nil }
             } message: {
                 Text(notice ?? "")
             }
             .onChange(of: selected?.id) { _, _ in resetTransform() }
+            .task(id: photo.map(ObjectIdentifier.init)) {
+                guard let photo else {
+                    faceForeground = nil
+                    return
+                }
+                faceForeground = await Task.detached {
+                    ImageComposer.makeFaceForeground(photo: photo)
+                }.value
+            }
         }
         .preferredColorScheme(.dark)
     }
@@ -82,13 +101,16 @@ struct ContentView: View {
                     }
                 }
 
-                if showsGuide { FullBodyGuideCanvas() }
-
                 if let selected, UIImage(named: selected.imageName) != nil {
                     Image(selected.imageName)
                         .resizable()
                         .scaledToFit()
-                        .scaleEffect(scale)
+                        .scaleEffect(x: scale * blend.width, y: scale * blend.height)
+                        .brightness(blend.brightness)
+                        .saturation(blend.saturation)
+                        .contrast(blend.contrast)
+                        .opacity(blend.opacity)
+                        .blur(radius: blend.softness)
                         .rotationEffect(rotation)
                         .offset(offset)
                         .gesture(
@@ -111,6 +133,17 @@ struct ContentView: View {
                         )
                         .accessibilityLabel("\(selected.community)の\(selected.garmentName)")
                 }
+
+                if faceLayerEnabled, let faceForeground {
+                    Image(uiImage: faceForeground)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
+                        .allowsHitTesting(false)
+                }
+
+                if showsGuide { FullBodyGuideCanvas() }
             }
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(alignment: .topTrailing) {
@@ -170,6 +203,12 @@ struct ContentView: View {
                         Image(systemName: "arrow.counterclockwise")
                     }
                     .accessibilityLabel("衣装の位置を戻す")
+                    Button {
+                        showsBlendControls = true
+                    } label: {
+                        Label("なじませる", systemImage: "sparkles")
+                    }
+                    .font(.subheadline.bold())
                     NavigationLink("詳しく見る") { GarmentDetailView(garment: selected) }
                         .font(.subheadline.bold())
                 }
@@ -186,6 +225,7 @@ struct ContentView: View {
         committedScale = 1
         rotation = .zero
         committedRotation = .zero
+        blend = BlendSettings()
     }
 
     private func action(_ title: String, _ icon: String, perform: @escaping () -> Void) -> some View {
@@ -207,7 +247,9 @@ struct ContentView: View {
             return
         }
         let output = ImageComposer.compose(photo: photo, garment: selected.flatMap { UIImage(named: $0.imageName) },
-                                           offset: offset, scale: scale, rotation: rotation)
+                                           offset: offset, scale: scale, rotation: rotation,
+                                           blend: blend,
+                                           faceForeground: faceLayerEnabled ? faceForeground : nil)
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             guard status == .authorized || status == .limited else {
                 Task { @MainActor in notice = "写真への保存を許可してください。" }
@@ -220,6 +262,58 @@ struct ContentView: View {
                     notice = success ? "合成写真を保存しました。" : "保存できませんでした。\(error?.localizedDescription ?? "")"
                 }
             }
+        }
+    }
+
+    private func autoBlend() {
+        guard let photo, let selected, let garment = UIImage(named: selected.imageName) else { return }
+        blend = ImageComposer.suggestedBlend(photo: photo, garment: garment)
+    }
+}
+
+private struct BlendControlsView: View {
+    @Binding var settings: BlendSettings
+    @Binding var faceLayerEnabled: Bool
+    let autoAdjust: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Button(action: autoAdjust) {
+                        Label("写真に合わせて自動調整", systemImage: "wand.and.stars")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                Section("見た目") {
+                    slider("透明度", value: $settings.opacity, range: 0.55...1)
+                    slider("明るさ", value: $settings.brightness, range: -0.3...0.3)
+                    slider("彩度", value: $settings.saturation, range: 0.45...1.45)
+                    slider("コントラスト", value: $settings.contrast, range: 0.7...1.3)
+                    slider("輪郭のなじみ", value: $settings.softness, range: 0...2)
+                }
+                Section("体型に合わせる") {
+                    slider("横幅", value: $settings.width, range: 0.65...1.4)
+                    slider("縦幅", value: $settings.height, range: 0.65...1.4)
+                }
+                Section {
+                    Toggle("顔と髪を衣装の前に表示", isOn: $faceLayerEnabled)
+                } footer: {
+                    Text("顔を検出できた写真では自動的に適用されます。写真は端末外へ送信しません。")
+                }
+            }
+            .navigationTitle("衣装をなじませる")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { Button("完了") { dismiss() } }
+        }
+    }
+
+    private func slider(_ title: String, value: Binding<Double>,
+                        range: ClosedRange<Double>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.subheadline)
+            Slider(value: value, in: range)
         }
     }
 }
