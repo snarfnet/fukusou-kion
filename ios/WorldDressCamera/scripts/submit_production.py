@@ -3,12 +3,15 @@ import os
 from pathlib import Path
 
 
-BASE_PATH = Path(__file__).resolve().parents[2] / "CellArtisan" / "scripts" / "submit_production.py"
+BASE_PATH = Path(__file__).resolve().parents[2] / "FukusouKion" / "scripts" / "submit_production.py"
 spec = importlib.util.spec_from_file_location("asc_submission_base", BASE_PATH)
 base = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(base)
 
 base.APP_ID = os.environ.get("WORLD_DRESS_CAMERA_APP_ID", "6794936502")
+base.BUNDLE_ID = "com.tokyonasu.worlddresscamera"
+base.APP_NAME = "民族衣装カメラ"
+base.APP_SKU = "world-dress-camera-ios"
 base.APP_VERSION = os.environ.get("APP_VERSION", "1.0")
 base.BUILD_NUMBER = os.environ.get("BUILD_NUMBER", "114")
 base.APP_PRICE_JPY = os.environ.get("APP_PRICE_JPY", "300")
@@ -147,14 +150,91 @@ def ensure_release_prerequisites(version_id):
             },
         }
     }), "Version settings")
-    base.ensure_price()
+    ensure_price()
     ensure_review_detail(version_id)
 
 
-base.ensure_app_info = ensure_app_info
-base.ensure_review_detail = ensure_review_detail
-base.ensure_release_prerequisites = ensure_release_prerequisites
+def ensure_price():
+    target = str(base.APP_PRICE_JPY)
+    response, body = base.api_json("GET", f"/apps/{base.APP_ID}/relationships/appPriceSchedule")
+    if response.status_code == 200 and body.get("data"):
+        schedule_id = body["data"]["id"]
+        response, current = base.api_json(
+            "GET",
+            f"/appPriceSchedules/{schedule_id}/manualPrices"
+            "?limit=200&include=appPricePoint,territory"
+            "&fields[appPricePoints]=customerPrice&filter[territory]=JPN",
+        )
+        if response.status_code == 200:
+            points = {
+                item["id"]: str(item.get("attributes", {}).get("customerPrice"))
+                for item in current.get("included", [])
+                if item.get("type") == "appPricePoints"
+            }
+            for price in current.get("data", []):
+                point_id = (
+                    price.get("relationships", {})
+                    .get("appPricePoint", {})
+                    .get("data", {})
+                    .get("id")
+                )
+                if price.get("attributes", {}).get("endDate") is None and points.get(point_id) == target:
+                    print(f"Price JPN {target}: already set")
+                    return
+
+    response, body = base.api_json(
+        "GET",
+        f"/apps/{base.APP_ID}/appPricePoints"
+        "?filter[territory]=JPN&fields[appPricePoints]=customerPrice&limit=200",
+    )
+    require_ok(response, "Japan price points")
+    point = next(
+        (
+            item for item in body.get("data", [])
+            if str(item.get("attributes", {}).get("customerPrice")) == target
+        ),
+        None,
+    )
+    if not point:
+        raise RuntimeError(f"The JPY {target} App Store price point was not found.")
+    local_id = "${manualPrice0}"
+    require_ok(base.api("POST", "/appPriceSchedules", json={
+        "data": {
+            "type": "appPriceSchedules",
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": base.APP_ID}},
+                "baseTerritory": {"data": {"type": "territories", "id": "JPN"}},
+                "manualPrices": {"data": [{"type": "appPrices", "id": local_id}]},
+            },
+        },
+        "included": [{
+            "type": "appPrices",
+            "id": local_id,
+            "attributes": {"startDate": None},
+            "relationships": {
+                "appPricePoint": {"data": {"type": "appPricePoints", "id": point["id"]}}
+            },
+        }],
+    }), f"Price JPN {target}")
+
+
+def main():
+    app_id = base.find_app_id()
+    if app_id != base.APP_ID:
+        raise RuntimeError(f"Unexpected App Store Connect app id: {app_id}")
+    version_id, state = base.find_or_create_version(app_id)
+    if state in ("WAITING_FOR_REVIEW", "IN_REVIEW"):
+        print(f"Already submitted: {state}")
+        return
+    ensure_release_prerequisites(version_id)
+    base.update_metadata(version_id)
+    build_id = base.wait_for_build(app_id)
+    base.cancel_blocking_submissions(app_id)
+    base.upload_screenshots(version_id)
+    base.wait_for_screenshot_processing(version_id)
+    base.assign_build(version_id, build_id)
+    base.submit_for_review(app_id, version_id)
 
 
 if __name__ == "__main__":
-    base.main()
+    main()
