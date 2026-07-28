@@ -119,17 +119,38 @@ private struct ModePicker: View {
                             Button {
                                 withAnimation(.snappy) { store.mode = mode }
                             } label: {
-                                VStack(spacing: 6) {
+                                VStack(spacing: 5) {
                                     Image(systemName: mode.symbol)
-                                        .font(.system(size: 17, weight: .semibold))
+                                        .symbolRenderingMode(.hierarchical)
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundStyle(store.mode == mode ? .white : accent(for: mode))
+                                        .frame(width: 34, height: 34)
+                                        .background {
+                                            Circle()
+                                                .fill(store.mode == mode ? .white.opacity(0.18) : accent(for: mode).opacity(0.12))
+                                        }
+                                        .overlay {
+                                            Circle()
+                                                .stroke(.white.opacity(store.mode == mode ? 0.24 : 0), lineWidth: 1)
+                                        }
                                     Text(mode.rawValue).font(.caption2.weight(.semibold))
                                 }
-                                .frame(width: 64, height: 58)
+                                .frame(width: 68, height: 68)
                                 .foregroundStyle(store.mode == mode ? .white : KazuTheme.ink)
-                                .background(store.mode == mode ? KazuTheme.cobalt : Color.white.opacity(0.7),
-                                            in: RoundedRectangle(cornerRadius: 15))
-                                .overlay(RoundedRectangle(cornerRadius: 15)
-                                    .stroke(store.mode == mode ? .clear : KazuTheme.line.opacity(0.7)))
+                                .background {
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .fill(store.mode == mode
+                                              ? LinearGradient(colors: [accent(for: mode), KazuTheme.navy],
+                                                               startPoint: .topLeading, endPoint: .bottomTrailing)
+                                              : LinearGradient(colors: [.white.opacity(0.92), .white.opacity(0.62)],
+                                                               startPoint: .top, endPoint: .bottom))
+                                }
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(store.mode == mode ? .white.opacity(0.18) : KazuTheme.line.opacity(0.55))
+                                }
+                                .shadow(color: store.mode == mode ? accent(for: mode).opacity(0.3) : .clear,
+                                        radius: 8, y: 4)
                             }
                             .id(mode)
                             .buttonStyle(.plain)
@@ -169,6 +190,22 @@ private struct ModePicker: View {
         withAnimation(.snappy) {
             store.mode = nextMode
             proxy.scrollTo(nextMode, anchor: .center)
+        }
+    }
+
+    private func accent(for mode: CalculatorMode) -> Color {
+        switch mode {
+        case .standard: KazuTheme.cobalt
+        case .scientific: Color.indigo
+        case .finance: Color.green
+        case .convert: Color.cyan
+        case .date: Color.orange
+        case .statistics: Color.purple
+        case .geometry: Color.pink
+        case .compound: Color.teal
+        case .percentage: Color.mint
+        case .health: Color.red
+        case .electrical: Color.yellow
         }
     }
 }
