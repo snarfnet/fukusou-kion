@@ -167,6 +167,32 @@ def delete_known_invalid_certificates():
         )
         if response.status_code in (200, 204):
             deleted += 1
+    if deleted == 0:
+        referenced_certificate_ids = set()
+        profiles = api_json("GET", "/profiles?limit=200").get("data", [])
+        for profile in profiles:
+            relationships = api_json(
+                "GET",
+                f"/profiles/{profile['id']}/relationships/certificates?limit=10",
+            ).get("data", [])
+            referenced_certificate_ids.update(item["id"] for item in relationships)
+
+        orphaned = [
+            item for item in inspected
+            if item[1]["id"] not in referenced_certificate_ids
+        ]
+        if orphaned:
+            expiration, certificate, serial = sorted(
+                orphaned, key=lambda item: item[0]
+            )[0]
+            response = api("DELETE", f"/certificates/{certificate['id']}")
+            print(
+                f"Deleted unreferenced distribution certificate "
+                f"{certificate['id']} serial={serial or 'unknown'} "
+                f"expires={expiration.isoformat()} status={response.status_code}"
+            )
+            if response.status_code in (200, 204):
+                deleted += 1
     return deleted
 
 
