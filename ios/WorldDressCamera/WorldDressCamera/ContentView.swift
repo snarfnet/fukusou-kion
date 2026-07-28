@@ -123,6 +123,21 @@ struct ContentView: View {
                 }
                 .padding(10)
             }
+            .overlay(alignment: .topLeading) {
+                if let photo {
+                    Button {
+                        self.photo = photo.flippedHorizontallyForEditing()
+                    } label: {
+                        Label("左右反転", systemImage: "arrow.left.and.right")
+                            .labelStyle(.iconOnly)
+                            .font(.title2)
+                            .padding(12)
+                            .background(.black.opacity(0.4), in: Circle())
+                    }
+                    .accessibilityLabel("写真を左右反転")
+                    .padding(10)
+                }
+            }
         }
         .aspectRatio(PhotoCanvas.aspectRatio, contentMode: .fit)
     }

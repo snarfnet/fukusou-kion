@@ -67,36 +67,25 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
-private extension UIImage {
-    /// Bakes EXIF rotation into the pixels and removes mirrored camera metadata.
+extension UIImage {
+    /// Bakes EXIF rotation and mirroring into the pixels exactly as displayed.
     /// SwiftUI, Core Graphics and the photo library then share one `.up`
     /// coordinate system, so the preview and saved composite stay aligned.
     func normalizedForEditing() -> UIImage {
-        let wasMirrored: Bool
-        switch imageOrientation {
-        case .upMirrored, .downMirrored, .leftMirrored, .rightMirrored:
-            wasMirrored = true
-        default:
-            wasMirrored = false
-        }
-
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = scale
-        let upright = UIGraphicsImageRenderer(size: size, format: format).image { _ in
-            draw(in: CGRect(origin: .zero, size: size))
-        }
-
-        guard wasMirrored, let cgImage = upright.cgImage else {
-            return upright
-        }
-        return UIImage(cgImage: cgImage, scale: upright.scale, orientation: .upMirrored)
-            .renderedWithUpOrientation()
-    }
-
-    func renderedWithUpOrientation() -> UIImage {
+        guard imageOrientation != .up else { return self }
         let format = UIGraphicsImageRendererFormat()
         format.scale = scale
         return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+
+    func flippedHorizontallyForEditing() -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            context.cgContext.translateBy(x: size.width, y: 0)
+            context.cgContext.scaleBy(x: -1, y: 1)
             draw(in: CGRect(origin: .zero, size: size))
         }
     }
