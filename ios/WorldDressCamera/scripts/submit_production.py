@@ -36,6 +36,21 @@ base.META = {
         "marketingUrl": "https://snarfnet.github.io/",
         "supportUrl": "https://snarfnet.github.io/",
     },
+    "en-US": {
+        "description": (
+            "World Dress Camera lets you overlay traditional clothing from around the world onto "
+            "a full-body photo.\n\nChoose from 100 outfits: 50 for women and 50 for men. Use the "
+            "shooting guide, automatic alignment, and controls for position, size, rotation, "
+            "brightness, saturation, opacity, and edge softness.\n\nEach outfit includes information "
+            "about its region, people, history, materials, features, and occasions. Photo processing "
+            "stays on your device and photos are not uploaded to an external server."
+        ),
+        "keywords": "traditional dress,camera,costume,photo editor,culture,travel,outfit,overlay",
+        "whatsNew": "Initial release.",
+        "promotionalText": "Try 100 traditional outfits from around the world on your full-body photos.",
+        "marketingUrl": "https://snarfnet.github.io/",
+        "supportUrl": "https://snarfnet.github.io/",
+    },
 }
 
 
