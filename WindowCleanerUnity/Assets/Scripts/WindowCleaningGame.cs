@@ -21,6 +21,13 @@ namespace GlassCraft
         private Text status;
         private Text scoreText;
         private Text instruction;
+        private RectTransform handRig;
+        private RectTransform toolHandle;
+        private RectTransform toolHead;
+        private CanvasGroup handCanvas;
+        private Vector2 handTarget;
+        private Vector2 handVelocity;
+        private float handActivity;
         private Tool selected = Tool.Inspect;
         private float startedAt;
         private float productUsed;
@@ -62,7 +69,10 @@ namespace GlassCraft
                 var x = Mathf.FloorToInt((local.x - rect.xMin) / rect.width * Columns);
                 var y = Mathf.FloorToInt((local.y - rect.yMin) / rect.height * Rows);
                 ApplyTool(x, y);
+                MoveHand(position);
             }
+
+            AnimateHand();
         }
 
         private void BuildInterface()
@@ -190,6 +200,102 @@ namespace GlassCraft
                 new Vector2(0, 0.68f), new Vector2(1, 0.705f));
             Panel(frame, "BottomSeal", new Color(0.025f, 0.03f, 0.032f, 1f),
                 new Vector2(0, 0), new Vector2(1, 0.025f));
+            BuildAnimatedHand(frame);
+        }
+
+        private void BuildAnimatedHand(RectTransform frame)
+        {
+            handRig = Panel(frame, "CleanerHand", Color.clear, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
+            handRig.sizeDelta = new Vector2(230, 310);
+            handRig.anchoredPosition = new Vector2(150, -250);
+            handCanvas = handRig.gameObject.AddComponent<CanvasGroup>();
+            handCanvas.alpha = 0.88f;
+
+            var sleeve = Panel(handRig, "Sleeve", new Color(0.06f, 0.10f, 0.12f, 1f),
+                new Vector2(0.33f, -0.18f), new Vector2(0.82f, 0.34f));
+            sleeve.localRotation = Quaternion.Euler(0, 0, -12);
+            var cuff = Panel(handRig, "GloveCuff", new Color(0.08f, 0.42f, 0.52f, 1f),
+                new Vector2(0.29f, 0.18f), new Vector2(0.78f, 0.36f));
+            cuff.localRotation = Quaternion.Euler(0, 0, -10);
+            var palm = Panel(handRig, "GlovedPalm", new Color(0.10f, 0.57f, 0.66f, 1f),
+                new Vector2(0.25f, 0.30f), new Vector2(0.76f, 0.65f));
+            palm.localRotation = Quaternion.Euler(0, 0, -8);
+            for (var i = 0; i < 4; i++)
+            {
+                var finger = Panel(handRig, $"Finger_{i}", new Color(0.12f, 0.62f, 0.70f, 1f),
+                    new Vector2(0.27f + i * 0.105f, 0.58f), new Vector2(0.36f + i * 0.105f, 0.82f));
+                finger.localRotation = Quaternion.Euler(0, 0, -8 + i * 2);
+            }
+            var thumb = Panel(handRig, "Thumb", new Color(0.11f, 0.59f, 0.68f, 1f),
+                new Vector2(0.12f, 0.38f), new Vector2(0.39f, 0.53f));
+            thumb.localRotation = Quaternion.Euler(0, 0, 25);
+
+            toolHandle = Panel(handRig, "ToolHandle", new Color(0.08f, 0.09f, 0.095f, 1f),
+                new Vector2(0.48f, 0.53f), new Vector2(0.58f, 1.20f));
+            toolHandle.localRotation = Quaternion.Euler(0, 0, 4);
+            toolHead = Panel(handRig, "ToolHead", new Color(0.04f, 0.05f, 0.055f, 1f),
+                new Vector2(0.15f, 1.10f), new Vector2(0.91f, 1.22f));
+            UpdateHeldTool();
+        }
+
+        private void MoveHand(Vector2 screenPosition)
+        {
+            if (handRig == null) return;
+            var frame = handRig.parent as RectTransform;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(frame, screenPosition, null, out var local))
+            {
+                handTarget = local + new Vector2(92, -135);
+                handActivity = 1f;
+            }
+        }
+
+        private void AnimateHand()
+        {
+            if (handRig == null) return;
+            handActivity = Mathf.MoveTowards(handActivity, 0.35f, Time.deltaTime * 0.45f);
+            handRig.anchoredPosition = Vector2.SmoothDamp(
+                handRig.anchoredPosition, handTarget, ref handVelocity, 0.075f);
+            var speedTilt = Mathf.Clamp(-handVelocity.x * 0.018f, -11f, 11f);
+            var workingMotion = Mathf.Sin(Time.time * 8f) * 2.2f * handActivity;
+            handRig.localRotation = Quaternion.Euler(0, 0, speedTilt + workingMotion);
+            handCanvas.alpha = Mathf.MoveTowards(handCanvas.alpha, 0.94f, Time.deltaTime * 2f);
+        }
+
+        private void UpdateHeldTool()
+        {
+            if (toolHead == null || toolHandle == null) return;
+            var headImage = toolHead.GetComponent<Image>();
+            var handleImage = toolHandle.GetComponent<Image>();
+            toolHead.gameObject.SetActive(selected != Tool.Inspect);
+            toolHandle.gameObject.SetActive(selected != Tool.Inspect && selected != Tool.Detail);
+
+            switch (selected)
+            {
+                case Tool.Soak:
+                    toolHead.anchorMin = new Vector2(0.25f, 1.08f);
+                    toolHead.anchorMax = new Vector2(0.82f, 1.28f);
+                    headImage.color = new Color(0.22f, 0.55f, 0.72f, 0.90f);
+                    break;
+                case Tool.Washer:
+                    toolHead.anchorMin = new Vector2(0.13f, 1.08f);
+                    toolHead.anchorMax = new Vector2(0.93f, 1.26f);
+                    headImage.color = new Color(0.82f, 0.72f, 0.36f, 1f);
+                    handleImage.color = new Color(0.12f, 0.13f, 0.14f, 1f);
+                    break;
+                case Tool.Squeegee:
+                    toolHead.anchorMin = new Vector2(0.08f, 1.12f);
+                    toolHead.anchorMax = new Vector2(0.98f, 1.21f);
+                    headImage.color = new Color(0.025f, 0.03f, 0.032f, 1f);
+                    handleImage.color = new Color(0.16f, 0.17f, 0.18f, 1f);
+                    break;
+                case Tool.Detail:
+                    toolHead.anchorMin = new Vector2(0.27f, 0.82f);
+                    toolHead.anchorMax = new Vector2(0.80f, 1.14f);
+                    headImage.color = new Color(0.84f, 0.88f, 0.88f, 0.92f);
+                    break;
+            }
+            toolHead.offsetMin = Vector2.zero;
+            toolHead.offsetMax = Vector2.zero;
         }
 
         private void StartStage()
@@ -279,6 +385,7 @@ namespace GlassCraft
         {
             selected = tool;
             RefreshButtons();
+            UpdateHeldTool();
         }
 
         private void Judge()
