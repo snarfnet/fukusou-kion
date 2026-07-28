@@ -6,7 +6,7 @@ on:
       build_number:
         description: "Processed TestFlight build number"
         required: true
-        default: "109"
+        default: "112"
   push:
     branches:
       - codex/world-dress-camera-build
@@ -22,7 +22,7 @@ jobs:
         working-directory: ios/WorldDressCamera
     env:
       APP_ID: "6794936502"
-      BUILD_NUMBER: ${{ github.event.inputs.build_number || '109' }}
+      BUILD_NUMBER: ${{ github.event.inputs.build_number || '112' }}
 
     steps:
       - name: Checkout
