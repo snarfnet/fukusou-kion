@@ -111,29 +111,64 @@ private struct ModePicker: View {
     @EnvironmentObject private var store: CalculatorStore
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                ForEach(CalculatorMode.allCases) { mode in
-                    Button {
-                        withAnimation(.snappy) { store.mode = mode }
-                    } label: {
-                        VStack(spacing: 6) {
-                            Image(systemName: mode.symbol)
-                                .font(.system(size: 17, weight: .semibold))
-                            Text(mode.rawValue).font(.caption2.weight(.semibold))
+        ScrollViewReader { proxy in
+            ZStack(alignment: .trailing) {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(CalculatorMode.allCases) { mode in
+                            Button {
+                                withAnimation(.snappy) { store.mode = mode }
+                            } label: {
+                                VStack(spacing: 6) {
+                                    Image(systemName: mode.symbol)
+                                        .font(.system(size: 17, weight: .semibold))
+                                    Text(mode.rawValue).font(.caption2.weight(.semibold))
+                                }
+                                .frame(width: 64, height: 58)
+                                .foregroundStyle(store.mode == mode ? .white : KazuTheme.ink)
+                                .background(store.mode == mode ? KazuTheme.cobalt : Color.white.opacity(0.7),
+                                            in: RoundedRectangle(cornerRadius: 15))
+                                .overlay(RoundedRectangle(cornerRadius: 15)
+                                    .stroke(store.mode == mode ? .clear : KazuTheme.line.opacity(0.7)))
+                            }
+                            .id(mode)
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("\(mode.rawValue)電卓")
                         }
-                        .frame(width: 64, height: 58)
-                        .foregroundStyle(store.mode == mode ? .white : KazuTheme.ink)
-                        .background(store.mode == mode ? KazuTheme.cobalt : Color.white.opacity(0.7),
-                                    in: RoundedRectangle(cornerRadius: 15))
-                        .overlay(RoundedRectangle(cornerRadius: 15)
-                            .stroke(store.mode == mode ? .clear : KazuTheme.line.opacity(0.7)))
+                    }
+                    .padding(.trailing, 48)
+                }
+                .scrollIndicators(.hidden)
+
+                if store.mode != CalculatorMode.allCases.last {
+                    Button {
+                        showNextMode(using: proxy)
+                    } label: {
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 38, height: 38)
+                            .background(KazuTheme.cobalt, in: Circle())
+                            .shadow(color: KazuTheme.navy.opacity(0.2), radius: 7, y: 2)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("\(mode.rawValue)電卓")
+                    .padding(.trailing, 4)
+                    .accessibilityLabel("次の専門計算を表示")
                 }
             }
         }
-        .scrollIndicators(.hidden)
+    }
+
+    private func showNextMode(using proxy: ScrollViewProxy) {
+        guard
+            let index = CalculatorMode.allCases.firstIndex(of: store.mode),
+            CalculatorMode.allCases.indices.contains(index + 1)
+        else { return }
+
+        let nextMode = CalculatorMode.allCases[index + 1]
+        withAnimation(.snappy) {
+            store.mode = nextMode
+            proxy.scrollTo(nextMode, anchor: .center)
+        }
     }
 }
