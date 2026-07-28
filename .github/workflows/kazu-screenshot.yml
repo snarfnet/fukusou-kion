@@ -2,6 +2,11 @@ name: KAZU App Store Screenshot
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - agent/kazu-testflight
+    paths:
+      - .github/workflows/kazu-screenshot.yml
 
 jobs:
   screenshot:
