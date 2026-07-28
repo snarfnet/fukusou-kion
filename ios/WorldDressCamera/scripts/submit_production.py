@@ -233,6 +233,37 @@ def ensure_price():
     }), f"Price JPN {target}")
 
 
+def update_metadata(version_id):
+    for localization in base.ensure_localizations(version_id):
+        locale = localization["attributes"]["locale"]
+        attrs = dict(base.META.get(locale, base.META["en-US"]))
+        response = base.api(
+            "PATCH",
+            f"/appStoreVersionLocalizations/{localization['id']}",
+            json={
+                "data": {
+                    "type": "appStoreVersionLocalizations",
+                    "id": localization["id"],
+                    "attributes": attrs,
+                }
+            },
+        )
+        if response.status_code == 409 and "whatsNew" in response.text:
+            attrs.pop("whatsNew", None)
+            response = base.api(
+                "PATCH",
+                f"/appStoreVersionLocalizations/{localization['id']}",
+                json={
+                    "data": {
+                        "type": "appStoreVersionLocalizations",
+                        "id": localization["id"],
+                        "attributes": attrs,
+                    }
+                },
+            )
+        require_ok(response, f"Metadata {locale}")
+
+
 def main():
     app_id = base.find_app_id()
     if app_id != base.APP_ID:
@@ -242,7 +273,7 @@ def main():
         print(f"Already submitted: {state}")
         return
     ensure_release_prerequisites(version_id)
-    base.update_metadata(version_id)
+    update_metadata(version_id)
     build_id = base.wait_for_build(app_id)
     base.cancel_blocking_submissions(app_id)
     base.upload_screenshots(version_id)
