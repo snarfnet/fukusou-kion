@@ -289,6 +289,9 @@ def publish_privacy_answers(app_id):
         "GET",
         f"/apps/{app_id}/dataUsages?include=category,grouping,purpose,dataProtection&limit=500",
     )
+    if response.status_code == 401:
+        print("Privacy answers: browser-managed; API access is unavailable")
+        return
     require_ok(response, "Privacy usage lookup")
     if not body.get("data"):
         response, _ = iris("POST", "/appDataUsages", json={
