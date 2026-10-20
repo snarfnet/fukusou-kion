@@ -168,4 +168,43 @@ final class TYPOTests: XCTestCase {
         XCTAssertEqual(bytes[3], 0, "The corner must remain transparent")
         XCTAssertTrue(stride(from: 3, to: bytes.count, by: 4).contains { bytes[$0] > 0 }, "The sculpture must be visible")
     }
+
+    @MainActor
+    func testExtrudedCountersSurviveImageRendering() throws {
+        for (letter, expected) in [("A", 1), ("8", 2), ("O", 1)] {
+            var artwork = Artwork()
+            artwork.text = letter; artwork.yaw = 0; artwork.pitch = 0; artwork.bevel = 0
+            artwork.surface = .paper
+            let image = try SculptureRenderer().image(artwork, size: CGSize(width: 160, height: 160), transparent: true)
+            let cg = try XCTUnwrap(image.cgImage)
+            let width = cg.width, height = cg.height
+            var bytes = [UInt8](repeating: 0, count: width * height * 4)
+            try bytes.withUnsafeMutableBytes { buffer in
+                let context = try XCTUnwrap(CGContext(data: buffer.baseAddress, width: width, height: height,
+                    bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+                context.draw(cg, in: CGRect(x: 0, y: 0, width: width, height: height))
+            }
+            var visited = Set<Int>(), enclosed = 0
+            for seed in 0..<(width * height) where !visited.contains(seed) && bytes[seed * 4 + 3] < 128 {
+                var queue = [seed], cursor = 0, border = false
+                visited.insert(seed)
+                while cursor < queue.count {
+                    let pixel = queue[cursor]; cursor += 1
+                    let x = pixel % width, y = pixel / width
+                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 { border = true }
+                    for (dx, dy) in [(1,0),(-1,0),(0,1),(0,-1)] {
+                        let nx = x + dx, ny = y + dy
+                        guard nx >= 0, ny >= 0, nx < width, ny < height else { continue }
+                        let next = ny * width + nx
+                        if bytes[next * 4 + 3] < 128 && visited.insert(next).inserted { queue.append(next) }
+                    }
+                }
+                if !border && queue.count > 3 { enclosed += 1 }
+            }
+            XCTAssertEqual(enclosed, expected, "\(letter) must preserve its counters in the actual mesh render")
+            let attachment = XCTAttachment(image: image)
+            attachment.name = "Counter validation \(letter)"; attachment.lifetime = .keepAlways; add(attachment)
+        }
+    }
 }

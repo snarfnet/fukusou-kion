@@ -242,7 +242,7 @@ struct StudioView: View {
                         .accessibilityIdentifier("studio.tab.\(title)")
                     }
                 }.padding(.horizontal, 20)
-            }
+            }.accessibilityIdentifier("studio.tabs")
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     switch tab {
@@ -325,7 +325,7 @@ struct StudioView: View {
                         }
                     }
                 }.padding(20)
-            }
+            }.accessibilityIdentifier("studio.controls")
         }.background(Color(white: 0.07))
     }
     private func slider(_ title: String, _ key: WritableKeyPath<Artwork, Double>, _ range: ClosedRange<Double>) -> some View {
