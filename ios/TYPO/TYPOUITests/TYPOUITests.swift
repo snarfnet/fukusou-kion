@@ -68,14 +68,17 @@ final class TYPOUITests: XCTestCase {
         app.buttons["export.share"].tap()
         let shareSheet = app.otherElements["ActivityListView"]
         XCTAssertTrue(shareSheet.waitForExistence(timeout: 30), "The rendered image should reach the system share sheet")
+        let closeShare = app.buttons["header.closeButton"]
+        expectation(for: NSPredicate { _, _ in closeShare.isHittable }, evaluatedWith: nil)
+        waitForExpectations(timeout: 15)
         capture("Image share sheet")
         // Dismiss without sending the generated image anywhere.
-        shareSheet.swipeDown()
-        if !app.buttons["完了"].isHittable {
-            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
-                .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
-        }
+        closeShare.tap()
+        expectation(for: NSPredicate { _, _ in !shareSheet.exists }, evaluatedWith: nil)
+        waitForExpectations(timeout: 10)
         app.buttons["完了"].tap()
+        expectation(for: NSPredicate { _, _ in app.buttons["studio.exhibit"].isHittable }, evaluatedWith: nil)
+        waitForExpectations(timeout: 10)
         app.buttons["studio.exhibit"].tap()
         capture("Exhibition")
         // Exhibition intentionally hides its controls; a tap must reveal them again.
