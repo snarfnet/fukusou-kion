@@ -80,11 +80,12 @@ final class TYPOUITests: XCTestCase {
         expectation(for: NSPredicate { _, _ in app.buttons["studio.exhibit"].isHittable }, evaluatedWith: nil)
         waitForExpectations(timeout: 10)
         app.buttons["studio.exhibit"].tap()
+        expectation(for: NSPredicate { _, _ in !save.exists }, evaluatedWith: nil)
+        waitForExpectations(timeout: 10)
         capture("Exhibition")
-        // Exhibition intentionally hides its controls; a tap must reveal them again.
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)).tap()
-        XCTAssertTrue(app.buttons["展示を終了"].waitForExistence(timeout: 5))
-        app.buttons["展示を終了"].tap()
+        // The permanent gesture remains available after exhibition controls fade away.
+        app.otherElements["studio.viewport"].doubleTap()
+        XCTAssertTrue(save.waitForExistence(timeout: 10))
         app.buttons["studio.close"].tap()
         app.terminate()
         app.launch()

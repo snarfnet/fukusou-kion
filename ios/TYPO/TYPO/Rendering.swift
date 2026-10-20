@@ -432,6 +432,9 @@ struct SculptureView: UIViewRepresentable {
             let reset = UITapGestureRecognizer(target: self, action: #selector(reset(_:)))
             reset.numberOfTapsRequired = 2
             view.addGestureRecognizer(reset)
+            let tap = UITapGestureRecognizer(target: self, action: #selector(tap(_:)))
+            tap.require(toFail: reset)
+            view.addGestureRecognizer(tap)
         }
         @objc private func pan(_ gesture: UIPanGestureRecognizer) {
             if gesture.state == .began { interaction(.begin) }
@@ -459,9 +462,10 @@ struct SculptureView: UIViewRepresentable {
             }
         }
         @objc private func reset(_ gesture: UITapGestureRecognizer) { interaction(.reset) }
+        @objc private func tap(_ gesture: UITapGestureRecognizer) { interaction(.tap) }
     }
 }
 
 enum SculptureInteraction {
-    case begin, end, rotate(CGPoint), move(CGPoint), zoom(CGFloat), select(Int), reset
+    case begin, end, rotate(CGPoint), move(CGPoint), zoom(CGFloat), select(Int), reset, tap
 }

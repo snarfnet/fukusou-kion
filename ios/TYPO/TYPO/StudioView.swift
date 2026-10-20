@@ -199,7 +199,7 @@ struct StudioView: View {
             .task(id: controlsRevealedAt) {
                 guard exhibition else { return }
                 do { try await Task.sleep(for: .seconds(3)) } catch { return }
-                exhibitionControls = false
+                if !UIAccessibility.isVoiceOverRunning { exhibitionControls = false }
             }
             .onChange(of: exhibition) { _, active in
                 model.render()
@@ -220,13 +220,13 @@ struct StudioView: View {
             SculptureView(renderer: model.renderer,
                           lowPower: lowPower || thermalLimited || ProcessInfo.processInfo.isLowPowerModeEnabled,
                           interaction: handleInteraction)
+                .accessibilityIdentifier("studio.viewport")
                 .overlay(alignment: .bottomLeading) {
                     if !exhibition {
                         Text("ドラッグで回転・2本指で移動・長押しで選択").font(.caption).foregroundStyle(.secondary).padding(20)
+                    } else if exhibitionControls {
+                        Text("タップで操作を表示・ダブルタップで編集に戻る").font(.caption).foregroundStyle(.secondary).padding(20)
                     }
-                }
-                .onTapGesture {
-                    if exhibition { exhibitionControls = true; controlsRevealedAt = Date() }
                 }
                 .onAppear { resize(geometry.size) }
                 .onChange(of: geometry.size) { _, size in resize(size) }
@@ -354,7 +354,11 @@ struct StudioView: View {
         model.edit { $0.yaw = yaw; $0.pitch = pitch; $0.layout.roll = 0; $0.panX = 0; $0.panY = 0; $0.zoom = 1 }
     }
     private func handleInteraction(_ event: SculptureInteraction) {
-        guard !exhibition else { return }
+        if exhibition {
+            if case .reset = event { exhibition = false }
+            if case .tap = event { exhibitionControls = true; controlsRevealedAt = Date() }
+            return
+        }
         switch event {
         case .begin: model.beginGesture()
         case .end: model.gestureStart = nil
@@ -376,6 +380,7 @@ struct StudioView: View {
             model.select(index)
             tab = "文字ごと"
         case .reset: resetCamera()
+        case .tap: break
         }
     }
     private func resetCamera() {
