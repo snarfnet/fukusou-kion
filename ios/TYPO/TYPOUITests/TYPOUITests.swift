@@ -77,8 +77,10 @@ final class TYPOUITests: XCTestCase {
         }
         app.buttons["完了"].tap()
         app.buttons["studio.exhibit"].tap()
-        XCTAssertTrue(app.buttons["展示を終了"].waitForExistence(timeout: 5))
         capture("Exhibition")
+        // Exhibition intentionally hides its controls; a tap must reveal them again.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)).tap()
+        XCTAssertTrue(app.buttons["展示を終了"].waitForExistence(timeout: 5))
         app.buttons["展示を終了"].tap()
         app.buttons["studio.close"].tap()
         app.terminate()

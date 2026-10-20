@@ -51,7 +51,7 @@ enum ExportService {
         let width = Int(size.width), height = Int(size.height)
         let input = AVAssetWriterInput(mediaType: .video, outputSettings: [
             AVVideoCodecKey: AVVideoCodecType.h264, AVVideoWidthKey: width, AVVideoHeightKey: height,
-            AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: max(6_000_000, width * height * 5),
+            AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: max(500_000, width * height * 5),
                                                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel]
         ])
         input.expectsMediaDataInRealTime = false
@@ -79,7 +79,7 @@ enum ExportService {
                 while !input.isReadyForMoreMediaData {
                     try Task.checkCancellation()
                     guard writer.status == .writing else { throw writer.error ?? ExportError.failed("動画の作成が中断しました。") }
-                    guard Date().timeIntervalSince(startedWaiting) < 30 else {
+                    guard Date().timeIntervalSince(startedWaiting) < 120 else {
                         throw ExportError.failed("動画の処理に時間がかかっています。サイズを下げて再試行してください。")
                     }
                     try await Task.sleep(for: .milliseconds(10))
