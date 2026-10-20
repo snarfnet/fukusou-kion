@@ -6,6 +6,19 @@ import ImageIO
 @testable import TYPO
 
 final class TYPOTests: XCTestCase {
+    @MainActor
+    func testSelectionRemainsValidAcrossTextHistory() {
+        var artwork = Artwork()
+        artwork.text = "AB"
+        let model = StudioModel(artwork)
+        model.edit { $0.replaceText("A") }
+        model.undo()
+        model.select(1)
+        model.redo()
+        XCTAssertTrue(model.selection.isEmpty)
+        XCTAssertEqual(model.artwork.text, "A")
+    }
+
     func testInputLimits() {
         for text in ["永", "A", "8", "O", "タイポ", "TYPO 2026", "A\nB"] {
             XCTAssertNil(InputCheck.validate(text))

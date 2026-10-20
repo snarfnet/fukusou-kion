@@ -33,7 +33,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, subprocess, time
-          deadline = time.monotonic() + 1200
+          deadline = time.monotonic() + 1800
           while time.monotonic() < deadline:
               runs = json.loads(subprocess.check_output(["gh", "run", "list", "--workflow", "typo-ci.yml", "--branch", "codex/typo-testflight", "--limit", "5", "--json", "status,conclusion,headSha,databaseId"]))
               latest = runs[0]

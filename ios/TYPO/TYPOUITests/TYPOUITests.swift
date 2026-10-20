@@ -32,8 +32,13 @@ final class TYPOUITests: XCTestCase {
         app.buttons["Bronze"].tap()
         XCTAssertTrue(app.buttons["studio.undo"].isEnabled)
         capture("Studio portrait")
+        save.tap()
+        XCTAssertLessThan(Date().timeIntervalSince(start), 60, "First saved artwork should take less than a minute")
         XCUIDevice.shared.orientation = .landscapeLeft
         XCTAssertTrue(save.waitForExistence(timeout: 5))
+        let landscape = NSPredicate { _, _ in app.frame.width > app.frame.height }
+        expectation(for: landscape, evaluatedWith: nil)
+        waitForExpectations(timeout: 10)
         capture("Studio landscape")
         XCUIDevice.shared.orientation = .portrait
         save.tap()
@@ -51,13 +56,30 @@ final class TYPOUITests: XCTestCase {
         let workTab = app.buttons["studio.tab.作品"]
         for _ in 0..<3 {
             if workTab.isHittable { break }
-            app.scrollViews["studio.tabs"].swipeLeft()
+            let tabs = app.scrollViews["studio.tabs"]
+            // Scroll the visible tab row, below the navigation bar's safe-area extension.
+            tabs.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.85))
+                .press(forDuration: 0.05, thenDragTo: tabs.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.85)))
         }
         workTab.tap()
         app.buttons["studio.export"].tap()
         XCTAssertTrue(app.navigationBars["書き出し"].waitForExistence(timeout: 5))
         capture("Export options")
+        app.buttons["export.share"].tap()
+        let shareSheet = app.otherElements["ActivityListView"]
+        XCTAssertTrue(shareSheet.waitForExistence(timeout: 30), "The rendered image should reach the system share sheet")
+        capture("Image share sheet")
+        // Dismiss without sending the generated image anywhere.
+        shareSheet.swipeDown()
+        if !app.buttons["完了"].isHittable {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+                .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+        }
         app.buttons["完了"].tap()
+        app.buttons["studio.exhibit"].tap()
+        XCTAssertTrue(app.buttons["展示を終了"].waitForExistence(timeout: 5))
+        capture("Exhibition")
+        app.buttons["展示を終了"].tap()
         app.buttons["studio.close"].tap()
         app.terminate()
         app.launch()

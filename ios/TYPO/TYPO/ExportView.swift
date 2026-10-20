@@ -51,6 +51,7 @@ struct ExportView: View {
                         Button("中止", role: .cancel) { exportTask?.cancel() }
                     } else {
                         Button(LocalizedStringKey(movie ? "動画を作成して共有" : "画像を作成して共有"), systemImage: "square.and.arrow.up") { start() }
+                            .accessibilityIdentifier("export.share")
                     }
                 }
             }
@@ -61,11 +62,11 @@ struct ExportView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .background && busy {
                     exportTask?.cancel()
-                    error = "書き出しを中止しました。この画面を開いたまま再試行してください。"
+                    error = L10n.text("書き出しを中止しました。この画面を開いたまま再試行してください。")
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in
-                if busy { exportTask?.cancel(); error = "メモリが不足しています。サイズを下げて再試行してください。" }
+                if busy { exportTask?.cancel(); error = L10n.text("メモリが不足しています。サイズを下げて再試行してください。") }
             }
             .onDisappear { exportTask?.cancel() }
             .sheet(item: $share, onDismiss: cleanExport) { ShareSheet(url: $0.url) }

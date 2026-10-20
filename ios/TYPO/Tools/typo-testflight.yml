@@ -1,0 +1,118 @@
+name: TYPO TestFlight
+
+on:
+  push:
+    branches: [codex/typo-testflight]
+    paths: [".github/workflows/typo-testflight.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: typo-testflight
+  cancel-in-progress: false
+
+jobs:
+  distribute:
+    runs-on: macos-26
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ios/TYPO
+    env:
+      ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require successful verification of this application
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, time
+          deadline = time.monotonic() + 1200
+          while time.monotonic() < deadline:
+              runs = json.loads(subprocess.check_output(["gh", "run", "list", "--workflow", "typo-ci.yml", "--branch", "codex/typo-testflight", "--limit", "5", "--json", "status,conclusion,headSha,databaseId"]))
+              latest = runs[0]
+              # Compare the complete app tree, allowing a workflow-only commit.
+              current = subprocess.check_output(["git", "rev-parse", "HEAD:ios/TYPO"]).strip()
+              subprocess.run(["git", "fetch", "origin", latest["headSha"], "--depth=1"], check=True)
+              tested = subprocess.check_output(["git", "rev-parse", latest["headSha"] + ":ios/TYPO"]).strip()
+              if tested != current:
+                  raise SystemExit("The current app tree has not been verified.")
+              if latest["status"] == "completed":
+                  if latest["conclusion"] != "success":
+                      raise SystemExit("iPhone/iPad verification failed.")
+                  print("Verified app tree, run", latest["databaseId"])
+                  break
+              time.sleep(30)
+          else:
+              raise SystemExit("Verification did not finish in time.")
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepare isolated signing identity
+        run: |
+          python3 -m pip install 'PyJWT[crypto]' requests
+          PASSWORD="$(openssl rand -hex 24)"
+          echo "::add-mask::$PASSWORD"
+          echo "SIGNING_PASSWORD=$PASSWORD" >> "$GITHUB_ENV"
+          export SIGNING_PASSWORD="$PASSWORD"
+          python3 Tools/signing.py prepare
+      - name: Import signing key into temporary keychain
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/typo.keychain-db"
+          security create-keychain -p "$SIGNING_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$SIGNING_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/typo-distribution.p12" -P "$SIGNING_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -k "$SIGNING_PASSWORD" "$KEYCHAIN"
+          echo "TYPO_BUILD_NUMBER=$((100 + GITHUB_RUN_NUMBER * 10 + GITHUB_RUN_ATTEMPT))" >> "$GITHUB_ENV"
+      - name: Archive and export
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild archive -project TYPO.xcodeproj -scheme TYPO \
+            -destination 'generic/platform=iOS' -archivePath build/TYPO.xcarchive \
+            CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=83VGKGSQUH \
+            CODE_SIGN_IDENTITY="$TYPO_CERT_SHA1" PROVISIONING_PROFILE_SPECIFIER="$TYPO_PROFILE_NAME" \
+            CURRENT_PROJECT_VERSION="$TYPO_BUILD_NUMBER" MARKETING_VERSION=1.0 \
+            2>&1 | tee build/archive.log
+          xcodebuild -exportArchive -archivePath build/TYPO.xcarchive \
+            -exportOptionsPlist "$RUNNER_TEMP/typo-export-options.plist" -exportPath build/export \
+            2>&1 | tee build/export.log
+      - name: Upload to TestFlight
+        run: |
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s' "$ASC_PRIVATE_KEY" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          xcrun altool --upload-app --type ios --file build/export/TYPO.ipa \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+      - name: Confirm Apple processing
+        run: python3 Tools/signing.py wait
+      - name: Remove only this job's temporary signing resources
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/typo-signing-state.json" ]; then
+            python3 Tools/signing.py cleanup
+          fi
+          if [ -f "$RUNNER_TEMP/typo.keychain-db" ]; then
+            security delete-keychain "$RUNNER_TEMP/typo.keychain-db"
+          fi
+          rm -f "$RUNNER_TEMP/typo-distribution.p12" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: TYPO-TestFlight-${{ github.run_number }}
+          path: |
+            ios/TYPO/build/export/*.ipa
+            ios/TYPO/build/TYPO.xcarchive/dSYMs
+            ios/TYPO/build/*.log
+            ios/TYPO/build/testflight-result.json
+          if-no-files-found: warn

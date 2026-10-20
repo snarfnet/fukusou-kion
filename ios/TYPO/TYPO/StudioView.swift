@@ -26,6 +26,7 @@ final class StudioModel: ObservableObject {
         Binding(get: { self.artwork[keyPath: key] }, set: { self.change(key, $0) })
     }
     func render() {
+        selection.formIntersection(Set(artwork.editableIndices))
         do {
             try renderer.update(artwork, aspect: aspect)
             renderer.select(artwork.expandedSelection(selection))
@@ -318,7 +319,7 @@ struct StudioView: View {
                         }
                         TextField("作品名", text: model.binding(\.title)).textFieldStyle(.roundedBorder)
                         Button("画像を書き出す", systemImage: "square.and.arrow.up") { exporting = true }.accessibilityIdentifier("studio.export")
-                        Button("展示する", systemImage: "play.rectangle") { exhibition = true }
+                        Button("展示する", systemImage: "play.rectangle") { exhibition = true }.accessibilityIdentifier("studio.exhibit")
                         Button("別の作品として保存", systemImage: "doc.on.doc") {
                             model.artwork.id = UUID()
                             model.artwork.createdAt = Date()
