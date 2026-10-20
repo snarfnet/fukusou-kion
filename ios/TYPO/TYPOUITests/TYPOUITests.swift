@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 
 final class TYPOUITests: XCTestCase {
     @MainActor
@@ -68,12 +69,22 @@ final class TYPOUITests: XCTestCase {
         app.buttons["export.share"].tap()
         let shareSheet = app.otherElements["ActivityListView"]
         XCTAssertTrue(shareSheet.waitForExistence(timeout: 30), "The rendered image should reach the system share sheet")
-        let closeShare = app.buttons["header.closeButton"]
-        expectation(for: NSPredicate { _, _ in closeShare.isHittable }, evaluatedWith: nil)
-        waitForExpectations(timeout: 15)
-        capture("Image share sheet")
         // Dismiss without sending the generated image anywhere.
-        closeShare.tap()
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            capture("Image share sheet")
+            shareSheet.swipeDown()
+            let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !shareSheet.exists }, object: nil)
+            if XCTWaiter.wait(for: [dismissed], timeout: 3) != .completed {
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+                    .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+            }
+        } else {
+            let closeShare = app.buttons["header.closeButton"]
+            expectation(for: NSPredicate { _, _ in closeShare.isHittable }, evaluatedWith: nil)
+            waitForExpectations(timeout: 15)
+            capture("Image share sheet")
+            closeShare.tap()
+        }
         expectation(for: NSPredicate { _, _ in !shareSheet.exists }, evaluatedWith: nil)
         waitForExpectations(timeout: 10)
         app.buttons["完了"].tap()
