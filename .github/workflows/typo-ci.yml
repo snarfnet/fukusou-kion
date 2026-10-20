@@ -42,9 +42,15 @@ jobs:
           mkdir -p build/screenshots
           APP="build/DerivedData/Build/Products/Debug-iphonesimulator/TYPO.app"
           xcrun simctl install "$DEVICE_ID" "$APP"
-          xcrun simctl launch "$DEVICE_ID" studio.typo.architect
+          xcrun simctl launch "$DEVICE_ID" com.tokyonasu.typo
           sleep 5
           xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/home.png
+      - name: Export test screenshots
+        if: always()
+        run: |
+          if [ -d build/TYPO.xcresult ]; then
+            xcrun xcresulttool export attachments --path build/TYPO.xcresult --output-path build/attachments
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -53,4 +59,5 @@ jobs:
             ios/TYPO/build.log
             ios/TYPO/build/TYPO.xcresult
             ios/TYPO/build/screenshots
+            ios/TYPO/build/attachments
           if-no-files-found: warn

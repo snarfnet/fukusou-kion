@@ -25,6 +25,8 @@ struct HomeView: View {
     @State private var creating = false
     @State private var settings = false
     @State private var gallery = false
+    @State private var collection = false
+    @State private var pendingArtwork: Artwork?
     @StateObject private var hero = SculptureRenderer()
     var body: some View {
         NavigationStack {
@@ -49,10 +51,15 @@ struct HomeView: View {
                         HStack { Text("文字を作る"); Spacer(); Image(systemName: "plus") }
                             .padding(20).foregroundStyle(Theme.background).background(Theme.ivory, in: RoundedRectangle(cornerRadius: 6))
                     }
+                    .accessibilityIdentifier("home.create")
+                    Button { collection = true } label: {
+                        HStack { Text("コレクションから始める"); Spacer(); Image(systemName: "square.stack.3d.up") }
+                            .padding(.vertical, 8)
+                    }
                     HStack {
                         Text("最近の作品").font(.headline)
                         Spacer()
-                        Button("ギャラリー", systemImage: "square.grid.2x2") { gallery = true }
+                        Button("ギャラリー", systemImage: "square.grid.2x2") { gallery = true }.accessibilityIdentifier("home.gallery")
                     }
                     if store.projects.isEmpty {
                         Text("最初の作品を、ここに。保存した彫刻をいつでも編集できます。")
@@ -66,9 +73,10 @@ struct HomeView: View {
             }
             .background(Theme.background)
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $creating) {
-                NewArtworkView { selection = $0 }
+            .sheet(isPresented: $creating, onDismiss: openPending) {
+                NewArtworkView { pendingArtwork = $0 }
             }
+            .sheet(isPresented: $collection, onDismiss: openPending) { CollectionView { pendingArtwork = $0 } }
             .sheet(isPresented: $settings) { SettingsView() }
             .navigationDestination(isPresented: $gallery) { GalleryView() }
             .fullScreenCover(item: $selection) { artwork in StudioView(artwork: artwork) }
@@ -82,6 +90,9 @@ struct HomeView: View {
                 do { try hero.update(sample, aspect: 1.5) } catch { store.issue = error.localizedDescription }
             }
         }
+    }
+    private func openPending() {
+        if let artwork = pendingArtwork { selection = artwork; pendingArtwork = nil }
     }
 }
 
@@ -108,15 +119,17 @@ struct ArtworkRow: View {
 struct NewArtworkView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var text = "永"
-    @State private var surface = Surface.chrome
+    @State private var preset = ArtworkPreset.chrome
     let create: (Artwork) -> Void
     var body: some View {
         NavigationStack {
             Form {
                 Section("彫刻にする文字") {
-                    TextField("永、A、TYPO…", text: $text).font(.system(size: 48, design: .serif))
+                    TextField("永、A、TYPO…", text: $text, axis: .vertical).font(.system(size: 48, design: .serif))
+                        .accessibilityIdentifier("new.text")
+                        .lineLimit(1...3)
                         .autocorrectionDisabled().textInputAutocapitalization(.never)
-                    Text("\(text.count) / 12文字").foregroundStyle(.secondary)
+                    Text("\(text.filter { $0 != "\n" }.count) / 12文字・3行まで").foregroundStyle(.secondary)
                     HStack {
                         ForEach(["永", "光", "A", "8", "TYPO"], id: \.self) { sample in
                             Button(sample) { text = sample }.buttonStyle(.bordered)
@@ -124,22 +137,69 @@ struct NewArtworkView: View {
                     }
                     if let issue = InputCheck.validate(text) { Text(issue).foregroundStyle(.orange) }
                 }
-                Section("最初の素材") {
-                    Picker("素材", selection: $surface) {
-                        ForEach(Surface.allCases) { Text($0.title).tag($0) }
+                Section("プリセット") {
+                    Picker("スタイル", selection: $preset) {
+                        ForEach(ArtworkPreset.allCases) { Text($0.title).tag($0) }
                     }
+                    Text(preset.caption).font(.caption).foregroundStyle(.secondary)
                 }
                 Button("スタジオを開く") {
                     var artwork = Artwork()
                     artwork.text = text
-                    artwork.title = "\(text) — \(surface.title)"
-                    artwork.surface = surface
+                    artwork.title = "\(text.replacingOccurrences(of: "\n", with: " ")) — \(preset.title)"
+                    preset.apply(to: &artwork)
                     dismiss()
                     create(artwork)
-                }.disabled(InputCheck.validate(text) != nil)
+                }.disabled(InputCheck.validate(text) != nil).accessibilityIdentifier("new.open")
             }
             .navigationTitle("文字を作る")
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("キャンセル") { dismiss() } } }
+        }
+    }
+}
+
+struct CollectionView: View {
+    @Environment(\.dismiss) private var dismiss
+    let create: (Artwork) -> Void
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 155), spacing: 20)], spacing: 28) {
+                    ForEach(ArtworkPreset.allCases) { preset in
+                        Button {
+                            var artwork = Artwork()
+                            artwork.text = preset == .architectural ? "A" : "永"
+                            artwork.title = "\(artwork.text) — \(preset.title)"
+                            preset.apply(to: &artwork)
+                            create(artwork)
+                            dismiss()
+                        } label: { PresetCard(preset: preset) }.buttonStyle(.plain)
+                    }
+                }.padding(20)
+            }.background(Theme.background)
+                .navigationTitle("コレクション")
+                .toolbar { Button("完了") { dismiss() } }
+        }
+    }
+}
+
+struct PresetCard: View {
+    let preset: ArtworkPreset
+    @State private var image: UIImage?
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Group {
+                if let image { Image(uiImage: image).resizable().scaledToFit() }
+                else { ProgressView().frame(maxWidth: .infinity).frame(height: 160) }
+            }.aspectRatio(1, contentMode: .fit)
+            Text(preset.title).font(.system(.title3, design: .serif))
+            Text(preset.caption).font(.caption).foregroundStyle(.secondary)
+        }.task {
+            guard image == nil else { return }
+            var artwork = Artwork()
+            artwork.text = preset == .architectural ? "A" : "永"
+            preset.apply(to: &artwork)
+            image = try? SculptureRenderer().image(artwork, size: CGSize(width: 320, height: 320), transparent: false)
         }
     }
 }
@@ -170,6 +230,7 @@ struct GalleryView: View {
                             }
                         }
                     }
+                    .accessibilityIdentifier("gallery.project.\(artwork.id)")
                     .accessibilityLabel(artwork.title)
                     .contextMenu { Button("作品を削除", role: .destructive) { pendingDelete = artwork } }
                 }
