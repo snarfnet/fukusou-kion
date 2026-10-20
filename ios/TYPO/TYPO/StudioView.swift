@@ -15,6 +15,13 @@ final class StudioModel: ObservableObject {
     var viewportHeight = 400.0
 
     init(_ artwork: Artwork) { self.artwork = artwork }
+    var selectedSurface: Surface? {
+        let indices = artwork.expandedSelection(selection)
+        guard !indices.isEmpty else { return artwork.surface }
+        let surfaces = indices.map { artwork.adjustment(at: $0).surface ?? artwork.surface }
+        guard let first = surfaces.first else { return nil }
+        return surfaces.allSatisfy { $0 == first } ? first : nil
+    }
     func change<Value: Equatable>(_ key: WritableKeyPath<Artwork, Value>, _ value: Value) {
         guard artwork[keyPath: key] != value else { return }
         history.record(artwork)
@@ -259,9 +266,9 @@ struct StudioView: View {
                                             .frame(width: 36, height: 36)
                                         Text(surface.title).font(.caption)
                                     }.frame(maxWidth: .infinity).padding(12)
-                                        .background(model.artwork.surface == surface ? .white.opacity(0.10) : .clear, in: RoundedRectangle(cornerRadius: 8))
-                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(model.artwork.surface == surface ? Theme.gold : .white.opacity(0.12)))
-                                }.buttonStyle(.plain).accessibilityAddTraits(model.artwork.surface == surface ? .isSelected : [])
+                                        .background(model.selectedSurface == surface ? .white.opacity(0.10) : .clear, in: RoundedRectangle(cornerRadius: 8))
+                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(model.selectedSurface == surface ? Theme.gold : .white.opacity(0.12)))
+                                }.buttonStyle(.plain).accessibilityAddTraits(model.selectedSurface == surface ? .isSelected : [])
                             }
                         }
                         if !model.selection.isEmpty {

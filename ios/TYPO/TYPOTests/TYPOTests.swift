@@ -7,6 +7,21 @@ import ImageIO
 
 final class TYPOTests: XCTestCase {
     @MainActor
+    func testMaterialSelectionReflectsSelectedGlyphs() {
+        var artwork = Artwork()
+        artwork.text = "AB"
+        let model = StudioModel(artwork)
+        model.select(1)
+        model.applySurface(.bronze)
+        XCTAssertEqual(model.selectedSurface, .bronze)
+        XCTAssertEqual(model.artwork.surface, .chrome)
+        model.select(0, additive: true)
+        XCTAssertNil(model.selectedSurface, "A mixed selection must not highlight the global material")
+        model.selection = []
+        XCTAssertEqual(model.selectedSurface, .chrome)
+    }
+
+    @MainActor
     func testSelectionRemainsValidAcrossTextHistory() {
         var artwork = Artwork()
         artwork.text = "AB"
