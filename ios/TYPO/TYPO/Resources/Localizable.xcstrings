@@ -1860,6 +1860,16 @@
           }
         }
       }
+    },
+    "タップで操作を表示・ダブルタップで編集に戻る": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap for controls. Double-tap to return to editing."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
