@@ -2,6 +2,17 @@ import XCTest
 
 final class TYPOUITests: XCTestCase {
     @MainActor
+    func testEnglishHome() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        let create = app.buttons["home.create"]
+        XCTAssertTrue(create.waitForExistence(timeout: 15))
+        XCTAssertTrue(create.label.contains("Create"), "English resources must ship inside the app")
+        capture("English home")
+    }
+
+    @MainActor
     func testCreateEditRotateSaveReopenAndExport() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

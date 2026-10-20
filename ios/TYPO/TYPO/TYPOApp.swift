@@ -21,19 +21,23 @@ struct TYPOApp: App {
 
 struct HomeView: View {
     @EnvironmentObject private var store: ProjectStore
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selection: Artwork?
     @State private var creating = false
     @State private var settings = false
     @State private var gallery = false
     @State private var collection = false
     @State private var pendingArtwork: Artwork?
+    @State private var isVisible = false
     @StateObject private var hero = SculptureRenderer()
+    @ScaledMetric(relativeTo: .largeTitle) private var headlineSize = 38.0
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
                     HStack {
-                        Text("TYPO").font(.system(size: 26, weight: .medium, design: .serif)).tracking(5)
+                        Text("TYPO").font(.system(.title2, design: .serif).weight(.medium)).tracking(5)
                         Spacer()
                         Button { settings = true } label: { Image(systemName: "slider.horizontal.3").frame(width: 44, height: 44) }
                             .accessibilityLabel("設定")
@@ -44,7 +48,7 @@ struct HomeView: View {
                         Text("文字の建築家").font(.caption).foregroundStyle(.secondary)
                     }
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("一文字が、\n美術館になる。").font(.system(size: 38, weight: .regular, design: .serif))
+                        Text("一文字が、\n美術館になる。").font(.system(size: headlineSize, weight: .regular, design: .serif))
                         Text("文字に、かたちと光を。").foregroundStyle(.secondary)
                     }
                     Button { creating = true } label: {
@@ -89,6 +93,18 @@ struct HomeView: View {
                 sample.depth = 35
                 do { try hero.update(sample, aspect: 1.5) } catch { store.issue = error.localizedDescription }
             }
+            .onAppear { isVisible = true }
+            .onDisappear { isVisible = false }
+            .task(id: isVisible && selection == nil && !reduceMotion && scenePhase == .active) {
+                guard isVisible, selection == nil, !reduceMotion, scenePhase == .active else { return }
+                let start = Date()
+                var sample = Artwork()
+                sample.text = "T"
+                while !Task.isCancelled {
+                    hero.exhibition(at: Date().timeIntervalSince(start), artwork: sample)
+                    do { try await Task.sleep(for: .milliseconds(33)) } catch { return }
+                }
+            }
         }
     }
     private func openPending() {
@@ -120,15 +136,19 @@ struct NewArtworkView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var text = "永"
     @State private var preset = ArtworkPreset.chrome
+    @State private var latinInput = false
     let create: (Artwork) -> Void
     var body: some View {
         NavigationStack {
             Form {
                 Section("彫刻にする文字") {
+                    Picker("入力の種類", selection: $latinInput) { Text("日本語").tag(false); Text("英数字").tag(true) }
+                        .pickerStyle(.segmented)
                     TextField("永、A、TYPO…", text: $text, axis: .vertical).font(.system(size: 48, design: .serif))
                         .accessibilityIdentifier("new.text")
                         .lineLimit(1...3)
                         .autocorrectionDisabled().textInputAutocapitalization(.never)
+                        .keyboardType(latinInput ? .asciiCapable : .default)
                     Text("\(text.filter { $0 != "\n" }.count) / 12文字・3行まで").foregroundStyle(.secondary)
                     HStack {
                         ForEach(["永", "光", "A", "8", "TYPO"], id: \.self) { sample in
@@ -139,9 +159,9 @@ struct NewArtworkView: View {
                 }
                 Section("プリセット") {
                     Picker("スタイル", selection: $preset) {
-                        ForEach(ArtworkPreset.allCases) { Text($0.title).tag($0) }
+                        ForEach(ArtworkPreset.allCases) { Text(LocalizedStringKey($0.title)).tag($0) }
                     }
-                    Text(preset.caption).font(.caption).foregroundStyle(.secondary)
+                    Text(LocalizedStringKey(preset.caption)).font(.caption).foregroundStyle(.secondary)
                 }
                 Button("スタジオを開く") {
                     var artwork = Artwork()
@@ -193,7 +213,7 @@ struct PresetCard: View {
                 else { ProgressView().frame(maxWidth: .infinity).frame(height: 160) }
             }.aspectRatio(1, contentMode: .fit)
             Text(preset.title).font(.system(.title3, design: .serif))
-            Text(preset.caption).font(.caption).foregroundStyle(.secondary)
+            Text(LocalizedStringKey(preset.caption)).font(.caption).foregroundStyle(.secondary)
         }.task {
             guard image == nil else { return }
             var artwork = Artwork()
@@ -258,13 +278,22 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("lowPower") private var lowPower = false
     @AppStorage("panelOnRight") private var panelOnRight = false
+    @AppStorage("haptics") private var haptics = true
+    @AppStorage("editingSound") private var editingSound = false
     var body: some View {
         NavigationStack {
             Form {
                 Section("スタジオ") {
                     Toggle("省電力描画", isOn: $lowPower)
                     Toggle("広い画面で操作パネルを右に置く", isOn: $panelOnRight)
+                    Toggle("触覚フィードバック", isOn: $haptics)
+                    Toggle("操作音", isOn: $editingSound)
                     Text("発熱時は自動で描画品質を下げます。").font(.caption).foregroundStyle(.secondary)
+                }
+                Section("言語") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        Link("iPhoneの設定で言語を変更", destination: url)
+                    }
                 }
                 Section("プライバシー") {
                     Text("作品はこの端末に保存します。アカウント、広告、アプリ内課金はありません。共有したときだけ、選んだアプリに画像を渡します。")

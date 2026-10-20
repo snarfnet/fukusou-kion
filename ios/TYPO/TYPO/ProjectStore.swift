@@ -13,7 +13,7 @@ final class ProjectStore: ObservableObject {
         do {
             try FileManager.default.createDirectory(at: self.folder, withIntermediateDirectories: true)
             try reload()
-        } catch { issue = "作品を読み込めませんでした。\(error.localizedDescription)" }
+        } catch { issue = L10n.text("作品を読み込めませんでした。") + error.localizedDescription }
     }
 
     func file(_ id: UUID) -> URL { folder.appendingPathComponent(id.uuidString).appendingPathExtension("json") }
@@ -31,7 +31,7 @@ final class ProjectStore: ObservableObject {
             } catch { rejected += 1 }
         }
         projects = loaded.sorted { $0.updatedAt > $1.updatedAt }
-        if rejected > 0 { issue = "\(rejected)件の作品を読み込めませんでした。元のファイルは保持しています。" }
+        if rejected > 0 { issue = L10n.format("%lld件の作品を読み込めませんでした。元のファイルは保持しています。", rejected) }
     }
 
     func load(_ artwork: Artwork) throws -> SavedArtwork {

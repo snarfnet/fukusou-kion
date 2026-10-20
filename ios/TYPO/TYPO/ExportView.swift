@@ -28,14 +28,14 @@ struct ExportView: View {
                     Picker("書き出すもの", selection: $movie) { Text("画像").tag(false); Text("回転動画").tag(true) }
                         .pickerStyle(.segmented)
                 }.disabled(busy)
-                Section(movie ? "MP4動画" : "画像") {
+                Section(LocalizedStringKey(movie ? "MP4動画" : "画像")) {
                     if !movie {
                         Picker("形式", selection: $format) {
                             ForEach(ImageFormat.allCases.filter(\.supported)) { Text($0.rawValue).tag($0) }
                         }
                     }
                     Picker("サイズ", selection: $dimension) {
-                        ForEach(labels.indices.filter { !movie || $0 != 3 }, id: \.self) { Text(labels[$0]).tag($0) }
+                        ForEach(labels.indices.filter { !movie || $0 != 3 }, id: \.self) { Text(LocalizedStringKey(labels[$0])).tag($0) }
                     }
                     if movie {
                         Picker("長さ", selection: $seconds) { ForEach([5, 10, 15], id: \.self) { Text("\($0)秒").tag($0) } }
@@ -50,7 +50,7 @@ struct ExportView: View {
                         else { ProgressView("画像を作成中") }
                         Button("中止", role: .cancel) { exportTask?.cancel() }
                     } else {
-                        Button(movie ? "動画を作成して共有" : "画像を作成して共有", systemImage: "square.and.arrow.up") { start() }
+                        Button(LocalizedStringKey(movie ? "動画を作成して共有" : "画像を作成して共有"), systemImage: "square.and.arrow.up") { start() }
                     }
                 }
             }

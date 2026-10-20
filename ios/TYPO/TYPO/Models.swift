@@ -1,5 +1,12 @@
 import Foundation
 
+enum L10n {
+    static func text(_ key: String) -> String { NSLocalizedString(key, comment: "") }
+    static func format(_ key: String, _ arguments: CVarArg...) -> String {
+        String(format: text(key), locale: Locale.current, arguments: arguments)
+    }
+}
+
 enum Surface: String, Codable, CaseIterable, Identifiable {
     case chrome, bronze, glass, paper, monolith, neon
     var id: String { rawValue }
@@ -225,14 +232,14 @@ struct SavedArtwork: Codable {
 
 enum InputCheck {
     static func validate(_ text: String) -> String? {
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "文字を入力してください。" }
-        if text.filter({ $0 != "\n" }).count > 12 { return "文字は12文字まで入力できます。" }
-        if text.filter({ $0 == "\n" }).count > 2 { return "改行は2回まで使えます。" }
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return L10n.text("文字を入力してください。") }
+        if text.filter({ $0 != "\n" }).count > 12 { return L10n.text("文字は12文字まで入力できます。") }
+        if text.filter({ $0 == "\n" }).count > 2 { return L10n.text("改行は2回まで使えます。") }
         for scalar in text.unicodeScalars {
             let v = scalar.value
             let supported = v == 10 || (0x20...0x7E).contains(v) || (0x3000...0x30FF).contains(v)
                 || (0x3400...0x9FFF).contains(v) || (0xFF01...0xFF60).contains(v)
-            if !supported { return "「\(scalar)」は未対応です。日本語・英字・数字を使ってください。絵文字は使えません。" }
+            if !supported { return L10n.format("「%@」は未対応です。日本語・英字・数字を使ってください。絵文字は使えません。", String(scalar)) }
         }
         return nil
     }

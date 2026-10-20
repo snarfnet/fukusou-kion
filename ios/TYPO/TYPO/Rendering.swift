@@ -4,12 +4,29 @@ import CoreText
 
 enum GeometryError: LocalizedError {
     case invalid(String)
-    var errorDescription: String? { if case let .invalid(message) = self { return message }; return nil }
+    var errorDescription: String? { if case let .invalid(message) = self { return L10n.text(message) }; return nil }
 }
 
 struct GlyphOutline {
     let index: Int
     let path: CGPath
+}
+
+final class GlyphNode: SCNNode {
+    var glyphIndex = 0
+    var basePosition = SCNVector3Zero
+    var arcAngle: Float = 0
+
+    override init() { super.init() }
+    required init?(coder: NSCoder) { super.init(coder: coder) }
+
+    func apply(_ adjustment: GlyphAdjustment) {
+        position = SCNVector3(basePosition.x + Float(adjustment.x), basePosition.y + Float(adjustment.y),
+                             Float(adjustment.z + Double(adjustment.layer) * 2))
+        eulerAngles = SCNVector3(Float(adjustment.rotationX), Float(adjustment.rotationY), Float(adjustment.rotationZ) + arcAngle)
+        scale = SCNVector3(Float(adjustment.scale), Float(adjustment.scale), Float(adjustment.scale))
+        renderingOrder = adjustment.layer
+    }
 }
 
 enum GlyphOutlineBuilder {
@@ -65,7 +82,7 @@ enum GlyphOutlineBuilder {
                 let runFont = attrs[kCTFontAttributeName] as! CTFont
                 for i in 0..<count {
                     guard let index = utf16ToCharacter[indices[i]] else { throw GeometryError.invalid("文字の位置を取得できませんでした。") }
-                    guard glyphs[i] != 0 else { throw GeometryError.invalid("「\(characters[index])」の字形がありません。") }
+                    guard glyphs[i] != 0 else { throw GeometryError.invalid(L10n.format("「%@」の字形がありません。", String(characters[index]))) }
                     if let path = CTFontCreatePathForGlyph(runFont, glyphs[i], nil) {
                         path.applyWithBlock { _ in segments += 1 }
                         let combined = paths[index] ?? CGMutablePath()
@@ -73,7 +90,7 @@ enum GlyphOutlineBuilder {
                                                                             y: positions[i].y - Double(row) * 100 * layout.lineHeight))
                         paths[index] = combined
                     } else if !characters[index].isWhitespace {
-                        throw GeometryError.invalid("「\(characters[index])」の輪郭を作れませんでした。")
+                        throw GeometryError.invalid(L10n.format("「%@」の輪郭を作れませんでした。", String(characters[index])))
                     }
                 }
             }
@@ -103,17 +120,16 @@ enum GlyphMeshBuilder {
             shape.chamferRadius = CGFloat(min(artwork.bevel, artwork.depth / 2))
             let adjustment = artwork.adjustment(at: outline.index)
             shape.materials = [material(adjustment.surface ?? artwork.surface, finish: artwork.finish)]
-            let node = SCNNode(geometry: shape)
+            let node = GlyphNode()
+            node.geometry = shape
+            node.glyphIndex = outline.index
             node.name = "glyph:\(outline.index)"
             let unit = bounds.width > 0 ? (box.midX - bounds.midX) / bounds.width : 0
             let arc = artwork.layout.arc * unit
             let lift = sin(abs(arc)) * abs(box.midX - bounds.midX) * (artwork.layout.arc < 0 ? -1 : 1)
-            node.position = SCNVector3(Float(box.midX - bounds.midX + adjustment.x),
-                                       Float(box.midY - bounds.midY + adjustment.y + lift),
-                                       Float(adjustment.z + Double(adjustment.layer) * 2))
-            node.eulerAngles = SCNVector3(Float(adjustment.rotationX), Float(adjustment.rotationY), Float(adjustment.rotationZ + arc))
-            node.scale = SCNVector3(Float(adjustment.scale), Float(adjustment.scale), Float(adjustment.scale))
-            node.renderingOrder = adjustment.layer
+            node.basePosition = SCNVector3(Float(box.midX - bounds.midX), Float(box.midY - bounds.midY + lift), 0)
+            node.arcAngle = Float(arc)
+            node.apply(adjustment)
             root.addChildNode(node)
         }
         return root
@@ -134,9 +150,12 @@ enum GlyphMeshBuilder {
             material.normal.wrapT = .repeat
         }
         if surface == .glass {
-            material.transparency = 0.48
+            material.transparency = 0.32
+            material.transparencyMode = .dualLayer
             material.isDoubleSided = true
             material.roughness.contents = 0.08
+            material.fresnelExponent = 2
+            material.clearCoat.contents = 1.0
         }
         if surface == .neon { material.emission.contents = UIColor(red: 0.35, green: 0.8, blue: 1, alpha: 1) }
         return material
@@ -177,6 +196,7 @@ extension Surface {
 final class SculptureRenderer: ObservableObject {
     let scene = SCNScene()
     let camera = SCNNode()
+    private let stage = SCNNode()
     private let sculpture = SCNNode()
     private var last: Artwork?
     private var modelWidth: Float = 100
@@ -190,12 +210,17 @@ final class SculptureRenderer: ObservableObject {
         camera.camera?.zFar = 5000
         camera.position = SCNVector3(0, 0, 500)
         scene.rootNode.addChildNode(camera)
-        scene.rootNode.addChildNode(sculpture)
+        scene.rootNode.addChildNode(stage)
+        stage.addChildNode(sculpture)
         let floorGeometry = SCNFloor()
         floorGeometry.reflectivity = 0
+        let floorMaterial = SCNMaterial()
+        floorMaterial.lightingModel = .physicallyBased
+        floorMaterial.roughness.contents = 0.9
+        floorGeometry.materials = [floorMaterial]
         floor.geometry = floorGeometry
         floor.position.y = -65
-        scene.rootNode.addChildNode(floor)
+        stage.addChildNode(floor)
         for (position, intensity, color) in [
             (SCNVector3(-150, 200, 250), 1400.0, UIColor.white),
             (SCNVector3(180, 50, 100), 900.0, UIColor(red: 0.68, green: 0.78, blue: 1, alpha: 1)),
@@ -243,8 +268,9 @@ final class SculptureRenderer: ObservableObject {
 
     func update(_ artwork: Artwork, aspect: Double = 1) throws {
         if last?.text != artwork.text || last?.depth != artwork.depth || last?.bevel != artwork.bevel
-            || last?.spacing != artwork.spacing || last?.surface != artwork.surface
-            || last?.layout != artwork.layout || last?.glyphs != artwork.glyphs || last?.finish != artwork.finish {
+            || last?.spacing != artwork.spacing
+            || last?.layout.arc != artwork.layout.arc || last?.layout.alignment != artwork.layout.alignment
+            || last?.layout.lineHeight != artwork.layout.lineHeight || last?.layout.smoothness != artwork.layout.smoothness {
             let node = try GlyphMeshBuilder.build(artwork)
             let bounds = node.boundingBox
             modelWidth = bounds.max.x - bounds.min.x
@@ -252,8 +278,19 @@ final class SculptureRenderer: ObservableObject {
             sculpture.childNodes.forEach { $0.removeFromParentNode() }
             sculpture.addChildNode(node)
         }
-        sculpture.eulerAngles = SCNVector3(Float(artwork.pitch), Float(artwork.yaw), Float(artwork.layout.roll))
-        sculpture.position = SCNVector3(Float(artwork.panX), Float(artwork.panY), 0)
+        // Camera, light, material, and per-letter transforms reuse the existing meshes.
+        for root in sculpture.childNodes {
+            for case let node as GlyphNode in root.childNodes {
+                node.apply(artwork.adjustment(at: node.glyphIndex))
+                if last?.surface != artwork.surface || last?.finish != artwork.finish
+                    || last?.adjustment(at: node.glyphIndex).surface != artwork.adjustment(at: node.glyphIndex).surface {
+                    node.geometry?.materials = [GlyphMeshBuilder.material(artwork.adjustment(at: node.glyphIndex).surface ?? artwork.surface,
+                                                                         finish: artwork.finish)]
+                }
+            }
+        }
+        stage.eulerAngles = SCNVector3(Float(artwork.pitch), Float(artwork.yaw), Float(artwork.layout.roll))
+        stage.position = SCNVector3(Float(artwork.panX), Float(artwork.panY), 0)
         camera.camera?.orthographicScale = Double(max(85, modelHeight * 0.72, modelWidth / Float(max(aspect, 0.2)) * 0.72)) / artwork.zoom
         lights[0].light?.intensity = CGFloat(1400 * artwork.light)
         lights[1].light?.intensity = CGFloat(1200 * artwork.lighting.fill)
@@ -263,6 +300,7 @@ final class SculptureRenderer: ObservableObject {
         switch artwork.lighting.style {
         case .gallery:
             lights[0].position = SCNVector3(-150, 200, 250)
+            lights[0].light?.shadowRadius = 8
         case .daylight:
             lights[0].position = SCNVector3(150, 300, 160)
             lights[0].light?.shadowRadius = 12
@@ -278,7 +316,7 @@ final class SculptureRenderer: ObservableObject {
                 : artwork.backdrop == .concrete ? UIColor(white: 0.32, alpha: 1) : UIColor(white: 0.94, alpha: 1)
             floor.geometry?.firstMaterial?.roughness.contents = 0.9
         }
-        floor.position.y = -max(65, modelHeight * 0.6) + Float(artwork.panY)
+        floor.position.y = -max(65, modelHeight * 0.6)
         floor.isHidden = artwork.backdrop == .obsidian || artwork.backdrop == .gradient
         last = artwork
     }
@@ -303,7 +341,7 @@ final class SculptureRenderer: ObservableObject {
     }
 
     func exhibition(at time: Double, artwork: Artwork) {
-        sculpture.eulerAngles.y = Float(artwork.yaw + time * 0.06)
+        stage.eulerAngles.y = Float(artwork.yaw + time * 0.06)
         lights[0].light?.intensity = CGFloat(1400 * artwork.light * (1 + sin(time * 0.25) * 0.06))
     }
 
@@ -365,7 +403,7 @@ struct SculptureView: UIViewRepresentable {
         view.backgroundColor = .clear
         view.antialiasingMode = .multisampling4X
         view.isAccessibilityElement = true
-        view.accessibilityLabel = "文字の立体作品。下の構図パネルでも角度を調整できます。"
+        view.accessibilityLabel = L10n.text("文字の立体作品。下の構図パネルでも角度を調整できます。")
         context.coordinator.install(on: view)
         return view
     }

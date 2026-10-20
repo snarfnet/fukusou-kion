@@ -17,15 +17,21 @@ jobs:
   verify:
     runs-on: macos-26
     timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [iPhone, iPad]
     defaults:
       run:
         working-directory: ios/TYPO
     steps:
       - uses: actions/checkout@v4
       - name: Select iPhone simulator
+        env:
+          DEVICE_FAMILY: ${{ matrix.family }}
         run: |
           xcodebuild -version
-          DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for values in d.values() for x in values if x["name"].startswith("iPhone")))' )"
+          DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys,os; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for values in d.values() for x in values if x["name"].startswith(os.environ["DEVICE_FAMILY"])))' )"
           echo "DEVICE_ID=$DEVICE_ID" >> "$GITHUB_ENV"
           xcrun simctl boot "$DEVICE_ID" || true
           xcrun simctl bootstatus "$DEVICE_ID" -b
@@ -54,7 +60,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: TYPO-verification-${{ github.run_number }}
+          name: TYPO-verification-${{ github.run_number }}-${{ matrix.family }}
           path: |
             ios/TYPO/build.log
             ios/TYPO/build/TYPO.xcresult

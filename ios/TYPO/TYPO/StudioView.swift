@@ -43,6 +43,7 @@ final class StudioModel: ObservableObject {
             if selection.contains(index) { selection.remove(index) } else { selection.insert(index) }
         } else { selection = [index] }
         renderer.select(artwork.expandedSelection(selection))
+        StudioFeedback.shared.selection()
     }
     func applySurface(_ surface: Surface) {
         let indices = artwork.expandedSelection(selection)
@@ -50,6 +51,7 @@ final class StudioModel: ObservableObject {
             if indices.isEmpty { artwork.surface = surface }
             else { for index in indices { artwork.updateGlyph(at: index) { $0.surface = surface } } }
         }
+        StudioFeedback.shared.selection()
     }
     func setGlyphValue(_ key: WritableKeyPath<GlyphAdjustment, Double>, _ value: Double) {
         guard let first = selection.sorted().first else { return }
@@ -86,7 +88,8 @@ final class StudioModel: ObservableObject {
             let preview = thumbnail ? try renderer.image(artwork, size: CGSize(width: 400, height: 400), transparent: false).pngData() : nil
             try store.save(artwork, history: history, thumbnail: preview)
             saved = true
-        } catch { self.error = "保存できませんでした。\(error.localizedDescription)" }
+            if thumbnail { StudioFeedback.shared.saved() }
+        } catch { self.error = L10n.text("保存できませんでした。") + error.localizedDescription }
     }
 }
 
@@ -143,7 +146,7 @@ struct StudioView: View {
                         Button { model.redo() } label: { Image(systemName: "arrow.uturn.forward") }
                             .disabled(model.history.future.isEmpty).accessibilityLabel("やり直す")
                         Button { model.save(store) } label: { Image(systemName: model.saved ? "checkmark" : "square.and.arrow.down") }
-                            .accessibilityLabel(model.saved ? "保存済み" : "作品を保存").accessibilityIdentifier("studio.save")
+                            .accessibilityLabel(LocalizedStringKey(model.saved ? "保存済み" : "作品を保存")).accessibilityIdentifier("studio.save")
                     }
                 }
             }
@@ -235,7 +238,7 @@ struct StudioView: View {
                 HStack(spacing: 22) {
                     ForEach(["素材", "形状", "文字ごと", "光と背景", "構図", "作品"], id: \.self) { title in
                         Button { tab = title } label: {
-                            Text(title).font(.subheadline).foregroundStyle(tab == title ? Theme.ivory : .gray)
+                            Text(LocalizedStringKey(title)).font(.subheadline).foregroundStyle(tab == title ? Theme.ivory : .gray)
                                 .padding(.vertical, 16)
                                 .overlay(alignment: .bottom) { if tab == title { Rectangle().fill(Theme.gold).frame(height: 2) } }
                         }
@@ -275,7 +278,7 @@ struct StudioView: View {
                         slider("行間", \.layout.lineHeight, 0.7...2)
                         slider("アーチ", \.layout.arc, -1.5...1.5)
                         Picker("整列", selection: model.binding(\.layout.alignment)) {
-                            ForEach(TextAlignmentMode.allCases) { Text($0.title).tag($0) }
+                            ForEach(TextAlignmentMode.allCases) { Text(LocalizedStringKey($0.title)).tag($0) }
                         }
                         Picker("曲線の品質", selection: model.binding(\.layout.smoothness)) {
                             Text("標準").tag(0.5); Text("高精細").tag(0.25); Text("最高精細").tag(0.1)
@@ -284,14 +287,14 @@ struct StudioView: View {
                         GlyphControls(model: model)
                     case "光と背景":
                         Picker("照明", selection: model.binding(\.lighting.style)) {
-                            ForEach(LightStyle.allCases) { Text($0.title).tag($0) }
+                            ForEach(LightStyle.allCases) { Text(LocalizedStringKey($0.title)).tag($0) }
                         }
                         slider("光の強さ", \.light, 0.2...2.5)
                         slider("補助光", \.lighting.fill, 0...2)
                         slider("輪郭の光", \.lighting.rim, 0...2)
                         slider("光の暖かさ", \.lighting.temperature, -1...1)
                         Picker("背景", selection: model.binding(\.backdrop)) {
-                            ForEach(Backdrop.allCases) { Text($0.title).tag($0) }
+                            ForEach(Backdrop.allCases) { Text(LocalizedStringKey($0.title)).tag($0) }
                         }.pickerStyle(.menu)
                     case "構図":
                         slider("左右の角度", \.yaw, -Double.pi...Double.pi)
@@ -330,7 +333,7 @@ struct StudioView: View {
     }
     private func slider(_ title: String, _ key: WritableKeyPath<Artwork, Double>, _ range: ClosedRange<Double>) -> some View {
         VStack(spacing: 8) {
-            HStack { Text(title); Spacer(); Text(model.artwork[keyPath: key], format: .number.precision(.fractionLength(1))).foregroundStyle(.secondary).monospacedDigit() }
+            HStack { Text(LocalizedStringKey(title)); Spacer(); Text(model.artwork[keyPath: key], format: .number.precision(.fractionLength(1))).foregroundStyle(.secondary).monospacedDigit() }
                 .font(.caption)
             Slider(value: Binding(get: { model.artwork[keyPath: key] }, set: {
                 model.artwork[keyPath: key] = $0
@@ -338,7 +341,7 @@ struct StudioView: View {
                 model.render()
             }), in: range, onEditingChanged: { editing in
                 if editing { model.history.record(model.artwork) }
-            }).accessibilityLabel(title)
+            }).accessibilityLabel(LocalizedStringKey(title))
         }
     }
     private func resize(_ size: CGSize) {
@@ -461,14 +464,14 @@ struct GlyphControls: View {
         let index = model.selection.sorted().first ?? 0
         return VStack {
             HStack {
-                Text(title)
+                Text(LocalizedStringKey(title))
                 Spacer()
                 Text(model.artwork.adjustment(at: index)[keyPath: key], format: .number.precision(.fractionLength(1))).monospacedDigit()
             }.font(.caption)
             Slider(value: Binding(get: { model.artwork.adjustment(at: index)[keyPath: key] },
                                   set: { model.setGlyphValue(key, $0) }),
                    in: range, onEditingChanged: { if $0 { model.history.record(model.artwork) } })
-                .accessibilityLabel(title)
+                .accessibilityLabel(LocalizedStringKey(title))
         }
     }
 }

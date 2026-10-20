@@ -2,6 +2,7 @@ import XCTest
 import UIKit
 import CoreText
 import AVFoundation
+import ImageIO
 @testable import TYPO
 
 final class TYPOTests: XCTestCase {
@@ -125,6 +126,31 @@ final class TYPOTests: XCTestCase {
             _ = try await task.value
             XCTFail("Cancelled export must not complete")
         } catch is CancellationError {}
+    }
+
+    @MainActor
+    func testSupportedExportDimensions() async throws {
+        for size in [CGSize(width: 1080, height: 1080), CGSize(width: 2160, height: 2160),
+                     CGSize(width: 1080, height: 1920), CGSize(width: 2480, height: 3508),
+                     CGSize(width: 3840, height: 2160)] {
+            let url = try await ExportService.image(Artwork(), size: size, format: .png, transparent: true)
+            defer { try? FileManager.default.removeItem(at: url) }
+            let source = try XCTUnwrap(CGImageSourceCreateWithURL(url as CFURL, nil))
+            let properties = try XCTUnwrap(CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any])
+            XCTAssertEqual(properties[kCGImagePropertyPixelWidth as String] as? Int, Int(size.width))
+            XCTAssertEqual(properties[kCGImagePropertyPixelHeight as String] as? Int, Int(size.height))
+        }
+    }
+
+    @MainActor
+    func testFullVideoDurations() async throws {
+        for seconds in [5, 10, 15] {
+            let url = try await ExportService.movie(Artwork(), size: CGSize(width: 128, height: 128), seconds: seconds) { _ in }
+            defer { try? FileManager.default.removeItem(at: url) }
+            let asset = AVURLAsset(url: url)
+            let duration = try await asset.load(.duration)
+            XCTAssertEqual(CMTimeGetSeconds(duration), Double(seconds), accuracy: 0.04)
+        }
     }
 
     @MainActor

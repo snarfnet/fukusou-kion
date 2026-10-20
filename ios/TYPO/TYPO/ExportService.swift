@@ -17,7 +17,7 @@ enum ImageFormat: String, CaseIterable, Identifiable {
 enum ExportError: LocalizedError {
     case failed(String)
     var errorDescription: String? {
-        switch self { case .failed(let message): return message }
+        switch self { case .failed(let message): return L10n.text(message) }
     }
 }
 
@@ -116,7 +116,7 @@ enum ExportService {
             guard writer.status == .completed else { throw writer.error ?? ExportError.failed("動画を保存できませんでした。") }
             return url
         } catch {
-            writer.cancelWriting()
+            if writer.status == .writing || writer.status == .unknown { writer.cancelWriting() }
             try? FileManager.default.removeItem(at: url)
             throw error
         }
