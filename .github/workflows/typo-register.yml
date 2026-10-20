@@ -18,9 +18,16 @@ jobs:
           ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          IOS_P12: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          APNG_P12: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_BASE64 }}
+          APNG_PASSWORD: ${{ secrets.APNG_IOS_DISTRIBUTION_P12_PASSWORD }}
         run: |
           python - <<'PY'
-          import os, time, jwt, requests
+          import os, time, jwt, requests, base64
+          from cryptography.hazmat.primitives.serialization import pkcs12
+          from cryptography.hazmat.primitives import hashes
+          from cryptography import x509
           now = int(time.time())
           token = jwt.encode(
               {"iss": os.environ["ASC_ISSUER_ID"], "iat": now, "exp": now + 600, "aud": "appstoreconnect-v1"},
@@ -44,6 +51,21 @@ jobs:
           print("App ready: " + apps[0]["id"] if apps else "App record must be created in App Store Connect.")
           response = session.get(base + "/certificates", params={"filter[certificateType]": "DISTRIBUTION,IOS_DISTRIBUTION", "limit": 200}, timeout=60)
           response.raise_for_status()
-          for cert in response.json()["data"]:
+          live = response.json()["data"]
+          fingerprints = {}
+          for cert in live:
               print("Distribution certificate:", cert["id"], "expires", cert["attributes"].get("expirationDate"))
+              content = cert["attributes"].get("certificateContent")
+              if content:
+                  fingerprints[x509.load_der_x509_certificate(base64.b64decode(content)).fingerprint(hashes.SHA256())] = cert["id"]
+          for prefix in ["IOS", "APNG"]:
+              if os.environ.get(prefix + "_P12"):
+                  try:
+                      key, cert, chain = pkcs12.load_key_and_certificates(
+                          base64.b64decode(os.environ[prefix + "_P12"]),
+                          os.environ[prefix + "_PASSWORD"].encode())
+                      match = fingerprints.get(cert.fingerprint(hashes.SHA256())) if cert else None
+                      print(prefix + " stored signing identity:", "active " + match if match and key else "not among active certificates")
+                  except Exception:
+                      print(prefix + " stored signing identity: could not decode")
           PY
