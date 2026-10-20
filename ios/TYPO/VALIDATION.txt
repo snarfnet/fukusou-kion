@@ -1,22 +1,37 @@
 TYPO 検証記録 — 2026-10-20
 
-実行環境: Windows / Swift 6.3.3
+実装
+- iOS 17以降 / SwiftUI + Core Text + SceneKit
+- アプリ内課金、購入制限、透かし、広告、登録はなし
+- 検証・配布したソース: 49572768d17fe7a31223c794ff5265976dfb65ff
 
-PASS
-- アプリ6ファイルとXCTestファイルのSwift構文解析
-- Windows SDKによるModels.swift + 検証ハーネスのコンパイル・実行
-- 18項目: 対応文字7件、不正入力5件、Undo上限、Redo、
-  分岐後のRedo破棄、作品JSON往復、履歴JSON往復、schemaVersion
-- Xcodeプロジェクトの参照先ファイル存在チェック
-- Xcodeオブジェクト参照の整合性チェック
-- 同梱フォントのPillow読込・アイコン描画
+確認済み
+- Windows / Swift 6.3.3: モデル実行テスト37項目成功
+- Xcodeプロジェクト参照、フォント識別名、plist、アセットカタログ
+- GitHub Actions 39429569584 / Xcode 26.6: 全ジョブ成功
+  iPhone 17 Pro: 機能テスト15件、UIテスト2件成功
+  iPad Pro 13-inch (M5): 機能テスト15件、UIテスト2件成功
+- 文字数・複数行・字形・A/8/Oの穴・個別素材・グループ・履歴・破損データ分離
+- 8プリセットの描画、PNG透明度、画像エンコーダー、4Kを含む全5解像度
+- 5・10・15秒の30fps MP4生成、動画の長さ、中止処理
+  時間検証は128×128で実行。実機での高解像度連続動画出力は未測定
+- 保存・再起動・縦横回転・英語UI・共有シート・展示とダブルタップ終了
 
-NOT RUN
-- iOS SDKでの型チェック・リンク・Xcodeビルド
-- TYPOTestsの実行
-- シミュレータ/実機でのUI・3D描画・PNG透明度検証
-- 60fps / 30fpsの性能測定
-- App Store審査・署名・IPA生成
+TestFlight
+- 1.0（191）アップロード完了
+- GitHub Actions 39429570459: アーカイブ・書き出し・アップロード・後片付け成功
+- Apple processingState: VALID / 管理画面: 提出準備完了
+- App ID: 6824906557 / Bundle ID: com.tokyonasu.typo
+- テスター招待、外部テスト審査、App Store正式審査への提出は未実施
 
-構文解析はiOSビルドの成功を保証しません。
-MacではREADME.mdの手順に従ってビルドとテストを実行してください。
+検証ログ: https://github.com/snarfnet/fukusou-kion/actions/runs/39429569584
+配布ログ: https://github.com/snarfnet/fukusou-kion/actions/runs/39429570459
+TestFlight: https://appstoreconnect.apple.com/apps/6824906557/testflight
+
+実機で未測定
+- 60/30fps、発熱、連続4K動画、VoiceOverの読み上げ、低メモリ・空き容量不足
+- ピンチ、2本指移動、長押しの操作感
+
+提供しない機能
+- 特定の折りたたみ機種と未確認の角度API
+- 透過動画（仕様上、対応可否確認後の条件付き機能）

@@ -4,11 +4,13 @@
 
 ## 使い方
 
-1. ホームの「文字をつくる」から最大12文字・3行まで入力します。
+1. ホームの「文字を作る」から最大12文字・3行まで入力します。
 2. スタジオで素材、厚さ、ベベル、字間、行間、アーチ、照明、背景を調整します。
 3. 1本指で回転、2本指で移動、ピンチで拡大します。文字の長押しで個別選択、ダブルタップで構図を戻します。
 4. 「文字ごと」で移動・回転・サイズ・重なり順・グループ化を調整します。素材は選択中の文字にも適用できます。
 5. 保存するとギャラリーから再編集できます。「作品」タブから書き出し・共有・展示を開きます。
+
+展示中はタップで操作ボタンを再表示し、ダブルタップで編集へ戻ります。VoiceOver使用時は終了ボタンを自動で隠しません。
 
 編集は1.5秒後とバックグラウンド移行時に自動保存します。明示保存ではサムネイルも更新します。取り消し・やり直しは60操作まで作品と一緒に保持します。
 
@@ -67,3 +69,22 @@ GitHubの専用ブランチ`codex/typo-testflight`、`ios/TYPO`に同じソー�
 - [Noto CJK配布元](https://github.com/notofonts/noto-cjk)
 - [Core Text](https://developer.apple.com/documentation/coretext)
 - [SCNShape](https://developer.apple.com/documentation/scenekit/scnshape)
+
+## 続きの配布
+
+GitHub CLIから、専用ブランチの配布処理を起動できます。
+
+```sh
+gh workflow run typo-testflight.yml --repo snarfnet/fukusou-kion --ref codex/typo-testflight
+```
+
+最新のアプリ本体・リソース・Xcodeプロジェクト・テストが検証済みの内容と一致する場合にだけアップロードします。説明書だけを更新した場合は再テストを要求しません。
+
+## 配布済みビルド
+
+TestFlight **1.0（191）** をアップロードし、Appleの処理完了（VALID）を確認しました。iPhone・iPadのシミュレータで各17件のテストが成功しています。テスターの招待は未設定です。
+
+- [TestFlight管理画面](https://appstoreconnect.apple.com/apps/6824906557/testflight)
+- [検証結果](https://github.com/snarfnet/fukusou-kion/actions/runs/39429569584)
+- [配布結果](https://github.com/snarfnet/fukusou-kion/actions/runs/39429570459)
+- 検証・配布したソース: `49572768d17fe7a31223c794ff5265976dfb65ff`

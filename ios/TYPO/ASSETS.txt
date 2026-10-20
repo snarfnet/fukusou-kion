@@ -1,0 +1,28 @@
+TYPO 同梱アセット台帳
+
+1. NotoSerifCJKjp-Regular.otf
+   用途: 日本語・ラテン文字の表示、輪郭生成、アプリアイコンの文字
+   配布元: https://github.com/notofonts/noto-cjk/tree/main/Serif/OTF/Japanese
+   ライセンス: SIL Open Font License 1.1
+   ライセンス全文: TYPO/Resources/OFL.txt（アプリ内設定にも表示）
+   改変: なし
+   SHA-256: d9854c7a8ef170b5a7932558856fd64eb8de0b007cd823fed6f9f514ad2803d3
+
+2. AppIcon.png
+   用途: アプリアイコン
+   制作: このプロジェクトで生成。上記フォントのTと単色背景を使用
+
+3. EditTick.wav
+   用途: 設定で有効にした場合の操作音
+   制作: このプロジェクトで波形を合成。外部の音源・BGMを使用しない
+
+4. 反射環境・表面傷・背景グラデーション
+   用途: 立体文字のレンダリング
+   制作: Rendering.swift内で図形・色から生成。外部画像を使用しない
+
+5. 操作ボタンのアイコン
+   用途: 保存、共有、取り消しなど
+   実装: OS提供のSF SymbolsをシステムAPIで表示
+
+広告・分析SDK・購入SDK・外部Swiftパッケージは含まない。
+CIで使うPythonツールの依存パッケージはMacランナーでのみ使用し、アプリへ同梱しない。

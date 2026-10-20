@@ -1,0 +1,16 @@
+{
+  "appID": "6824906557",
+  "bundleID": "com.tokyonasu.typo",
+  "build": "191",
+  "buildID": "a01ce3e0-3e51-4f39-bed5-b3c81cd04540",
+  "processingState": "VALID",
+  "version": "1.0",
+  "sourceCommit": "49572768d17fe7a31223c794ff5265976dfb65ff",
+  "verificationRun": 39429569584,
+  "distributionRun": 39429570459,
+  "simulatorTests": {
+    "iPhone": 17,
+    "iPad": 17
+  },
+  "testerInvitationsConfigured": false
+}

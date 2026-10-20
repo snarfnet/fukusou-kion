@@ -17,7 +17,7 @@ concurrency:
 jobs:
   distribute:
     runs-on: macos-26
-    timeout-minutes: 60
+    timeout-minutes: 75
     defaults:
       run:
         working-directory: ios/TYPO
@@ -27,31 +27,6 @@ jobs:
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v4
-      - name: Require successful verification of this application
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 - <<'PY'
-          import json, subprocess, time
-          deadline = time.monotonic() + 1200
-          while time.monotonic() < deadline:
-              runs = json.loads(subprocess.check_output(["gh", "run", "list", "--workflow", "typo-ci.yml", "--branch", "codex/typo-testflight", "--limit", "5", "--json", "status,conclusion,headSha,databaseId"]))
-              latest = runs[0]
-              # Compare the complete app tree, allowing a workflow-only commit.
-              current = subprocess.check_output(["git", "rev-parse", "HEAD:ios/TYPO"]).strip()
-              subprocess.run(["git", "fetch", "origin", latest["headSha"], "--depth=1"], check=True)
-              tested = subprocess.check_output(["git", "rev-parse", latest["headSha"] + ":ios/TYPO"]).strip()
-              if tested != current:
-                  raise SystemExit("The current app tree has not been verified.")
-              if latest["status"] == "completed":
-                  if latest["conclusion"] != "success":
-                      raise SystemExit("iPhone/iPad verification failed.")
-                  print("Verified app tree, run", latest["databaseId"])
-                  break
-              time.sleep(30)
-          else:
-              raise SystemExit("Verification did not finish in time.")
-          PY
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -73,6 +48,34 @@ jobs:
           security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
           security set-key-partition-list -S apple-tool:,apple:,codesign: -k "$SIGNING_PASSWORD" "$KEYCHAIN"
           echo "TYPO_BUILD_NUMBER=$((100 + GITHUB_RUN_NUMBER * 10 + GITHUB_RUN_ATTEMPT))" >> "$GITHUB_ENV"
+      - name: Require successful verification of this application
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, time
+          def build_inputs(ref):
+              paths = ("TYPO", "TYPO.xcodeproj", "TYPOTests", "TYPOUITests")
+              return subprocess.check_output(["git", "rev-parse", *[f"{ref}:ios/TYPO/{p}" for p in paths]]).strip()
+          deadline = time.monotonic() + 1800
+          while time.monotonic() < deadline:
+              runs = json.loads(subprocess.check_output(["gh", "run", "list", "--workflow", "typo-ci.yml", "--branch", "codex/typo-testflight", "--limit", "5", "--json", "status,conclusion,headSha,databaseId"]))
+              latest = runs[0]
+              # Verify all build inputs, allowing documentation-only updates.
+              current = build_inputs("HEAD")
+              subprocess.run(["git", "fetch", "origin", latest["headSha"], "--depth=1"], check=True)
+              tested = build_inputs(latest["headSha"])
+              if tested != current:
+                  raise SystemExit("The current app tree has not been verified.")
+              if latest["status"] == "completed":
+                  if latest["conclusion"] != "success":
+                      raise SystemExit("iPhone/iPad verification failed.")
+                  print("Verified app tree, run", latest["databaseId"])
+                  break
+              time.sleep(30)
+          else:
+              raise SystemExit("Verification did not finish in time.")
+          PY
       - name: Archive and export
         run: |
           set -o pipefail
