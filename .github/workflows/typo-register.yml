@@ -1,0 +1,49 @@
+name: TYPO distribution preparation
+on:
+  push:
+    branches: [codex/typo-testflight]
+    paths: [".github/workflows/typo-register.yml", "ios/TYPO/Tools/register_bundle.py"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install PyJWT cryptography requests
+      - name: Register TYPO bundle and inspect distribution readiness
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          python - <<'PY'
+          import os, time, jwt, requests
+          now = int(time.time())
+          token = jwt.encode(
+              {"iss": os.environ["ASC_ISSUER_ID"], "iat": now, "exp": now + 600, "aud": "appstoreconnect-v1"},
+              os.environ["ASC_PRIVATE_KEY"], algorithm="ES256",
+              headers={"kid": os.environ["ASC_KEY_ID"], "typ": "JWT"})
+          session = requests.Session()
+          session.headers["Authorization"] = "Bearer " + token
+          base = "https://api.appstoreconnect.apple.com/v1"
+          response = session.get(base + "/bundleIds", params={"filter[identifier]": "com.tokyonasu.typo"}, timeout=60)
+          response.raise_for_status()
+          bundles = response.json()["data"]
+          if not bundles:
+              response = session.post(base + "/bundleIds", json={"data": {"type": "bundleIds", "attributes": {
+                  "identifier": "com.tokyonasu.typo", "name": "TYPO", "platform": "IOS"
+              }}}, timeout=60)
+              response.raise_for_status()
+          print("Bundle ID ready: com.tokyonasu.typo")
+          response = session.get(base + "/apps", params={"filter[bundleId]": "com.tokyonasu.typo"}, timeout=60)
+          response.raise_for_status()
+          apps = response.json()["data"]
+          print("App ready: " + apps[0]["id"] if apps else "App record must be created in App Store Connect.")
+          response = session.get(base + "/certificates", params={"filter[certificateType]": "DISTRIBUTION,IOS_DISTRIBUTION", "limit": 200}, timeout=60)
+          response.raise_for_status()
+          for cert in response.json()["data"]:
+              print("Distribution certificate:", cert["id"], "expires", cert["attributes"].get("expirationDate"))
+          PY
