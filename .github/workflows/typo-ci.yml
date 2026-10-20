@@ -1,0 +1,56 @@
+name: TYPO iOS verification
+
+on:
+  push:
+    branches: [codex/typo-testflight]
+    paths: ["ios/TYPO/**", ".github/workflows/typo-ci.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: typo-verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: macos-26
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: ios/TYPO
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select iPhone simulator
+        run: |
+          xcodebuild -version
+          DEVICE_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for values in d.values() for x in values if x["name"].startswith("iPhone")))' )"
+          echo "DEVICE_ID=$DEVICE_ID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+      - name: Build and test
+        run: |
+          set -o pipefail
+          xcodebuild test -project TYPO.xcodeproj -scheme TYPO \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -derivedDataPath build/DerivedData \
+            -resultBundlePath build/TYPO.xcresult \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build.log
+      - name: Capture launch screen
+        run: |
+          mkdir -p build/screenshots
+          APP="build/DerivedData/Build/Products/Debug-iphonesimulator/TYPO.app"
+          xcrun simctl install "$DEVICE_ID" "$APP"
+          xcrun simctl launch "$DEVICE_ID" studio.typo.architect
+          sleep 5
+          xcrun simctl io "$DEVICE_ID" screenshot build/screenshots/home.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: TYPO-verification-${{ github.run_number }}
+          path: |
+            ios/TYPO/build.log
+            ios/TYPO/build/TYPO.xcresult
+            ios/TYPO/build/screenshots
+          if-no-files-found: warn

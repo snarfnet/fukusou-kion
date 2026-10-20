@@ -1,0 +1,22 @@
+TYPO 検証記録 — 2026-10-20
+
+実行環境: Windows / Swift 6.3.3
+
+PASS
+- アプリ6ファイルとXCTestファイルのSwift構文解析
+- Windows SDKによるModels.swift + 検証ハーネスのコンパイル・実行
+- 18項目: 対応文字7件、不正入力5件、Undo上限、Redo、
+  分岐後のRedo破棄、作品JSON往復、履歴JSON往復、schemaVersion
+- Xcodeプロジェクトの参照先ファイル存在チェック
+- Xcodeオブジェクト参照の整合性チェック
+- 同梱フォントのPillow読込・アイコン描画
+
+NOT RUN
+- iOS SDKでの型チェック・リンク・Xcodeビルド
+- TYPOTestsの実行
+- シミュレータ/実機でのUI・3D描画・PNG透明度検証
+- 60fps / 30fpsの性能測定
+- App Store審査・署名・IPA生成
+
+構文解析はiOSビルドの成功を保証しません。
+MacではREADME.mdの手順に従ってビルドとテストを実行してください。
